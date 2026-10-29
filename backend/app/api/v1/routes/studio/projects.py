@@ -34,6 +34,20 @@ router = APIRouter()
 PROJECT_ORDER_FIELDS = {"name", "created_at", "updated_at", "progress"}
 
 
+# Nhãn hiển thị (tiếng Việt) cho các mã phong cách: giữ value là mã enum, label là chữ người dùng đọc được.
+STYLE_OPTION_LABELS: dict[str, str] = {
+    "live_action": "Thực tế",
+    "anime": "Hoạt hình",
+    "real_people_city": "Người thật đô thị",
+    "real_people_scifi": "Người thật khoa học viễn tưởng",
+    "real_people_ancient": "Người thật cổ trang",
+    "anime_scifi": "Hoạt hình khoa học viễn tưởng",
+    "anime_3d": "Hoạt hình 3D",
+    "guoman": "Hoạt hình Trung Quốc",
+    "ink_wash": "Tranh thủy mặc",
+}
+
+
 def _build_project_style_options() -> tuple[dict[ProjectVisualStyle, list[ProjectStyle]], dict[ProjectVisualStyle, ProjectStyle]]:
     mapping: dict[ProjectVisualStyle, list[ProjectStyle]] = {key: [] for key in ProjectVisualStyle}
     for item in ProjectStyle:
@@ -70,9 +84,9 @@ async def get_project_style_options(
 ) -> ApiResponse[ProjectStyleOptionsRead]:
     mapping, defaults = _build_project_style_options()
     data = ProjectStyleOptionsRead(
-        visual_styles=[StyleOption(value=x.value, label=x.value) for x in ProjectVisualStyle],
+        visual_styles=[StyleOption(value=x.value, label=STYLE_OPTION_LABELS.get(x.value, x.value)) for x in ProjectVisualStyle],
         styles_by_visual_style={
-            visual.value: [StyleOption(value=style.value, label=style.value) for style in styles]
+            visual.value: [StyleOption(value=style.value, label=STYLE_OPTION_LABELS.get(style.value, style.value)) for style in styles]
             for visual, styles in mapping.items()
         },
         default_style_by_visual_style={visual.value: style.value for visual, style in defaults.items()},

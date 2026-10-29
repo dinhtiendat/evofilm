@@ -185,7 +185,8 @@ def test_project_style_options_returns_grouped_choices(client: TestClient) -> No
     assert response.status_code == 200
     body = response.json()
     assert body["code"] == 200
-    assert "视觉" in body["data"]["visual_styles"][0]["label"] or body["data"]["visual_styles"][0]["value"] in {"live_action", "anime"}
+    assert body["data"]["visual_styles"][0]["label"] == "Thực tế"
+    assert body["data"]["visual_styles"][0]["value"] == "live_action"
     assert "thực tế" not in body["data"]["styles_by_visual_style"]
     assert "live_action" in body["data"]["styles_by_visual_style"]
     assert "anime" in body["data"]["styles_by_visual_style"]
