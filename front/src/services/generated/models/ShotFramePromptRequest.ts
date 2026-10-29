@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 镜头分镜帧提示词生成任务请求。
+ * Yêu cầu tác vụ tạo prompt khung hình phân cảnh.。
  */
 export type ShotFramePromptRequest = {
     /**
-     * 镜头 ID
+     * shot_id: str = Field(..., description=ID phân cảnh) ID
      */
     shot_id: string;
     /**

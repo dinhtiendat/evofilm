@@ -3,23 +3,23 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 剧本优化请求（基于一致性检查结果）。
+ * Yêu cầu tối ưu kịch bản (dựa trên kết quả kiểm tra nhất quán).
  */
 export type ScriptOptimizeRequest = {
     /**
-     * 项目 ID（异步任务关联可选）
+     * ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     project_id?: (string | null);
     /**
-     * 章节 ID（异步任务关联可选）
+     * ID chương (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     chapter_id?: (string | null);
     /**
-     * 原文剧本文本
+     * script_text: str = Field(..., description=Văn bản kịch bản gốc, min_length=1)
      */
     script_text: string;
     /**
-     * 一致性检查输出（ScriptConsistencyCheckResult 序列化）
+     * Đầu ra kiểm tra tính nhất quán (ScriptConsistencyCheckResult dạng serialized)
      */
     consistency: Record<string, any>;
 };

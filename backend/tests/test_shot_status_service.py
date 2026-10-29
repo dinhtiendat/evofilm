@@ -272,7 +272,7 @@ async def test_derive_video_preview_uses_prompt_pack() -> None:
         assert result.template_id == "video-template-1"
         assert "Phân cảnh một" in result.rendered_prompt
         assert "Cuối cùng bạn cũng đến." in result.rendered_prompt
-        assert "现实" in result.rendered_prompt
+        assert "live_action" in result.rendered_prompt
         assert result.pack.camera.duration == 3
     await engine.dispose()
 

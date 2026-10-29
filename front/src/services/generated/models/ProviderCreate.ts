@@ -4,47 +4,47 @@
 /* eslint-disable */
 import type { ProviderStatus } from './ProviderStatus';
 /**
- * 创建供应商时的请求体，允许填写敏感字段。
+ * Body yêu cầu khi tạo nhà cung cấp, cho phép điền trường nhạy cảm.
  */
 export type ProviderCreate = {
     /**
-     * 供应商名称
+     * name: str = Field(..., description=tên nhà cung cấp)
      */
     name: string;
     /**
-     * 文本/通用 API Base URL
+     * Base URL API văn bản/thông dụng
      */
     base_url: string;
     /**
-     * 图片能力 API Base URL（可选覆盖）
+     * Khả năng hình ảnh API Base URL(chép lên tùy chọn)
      */
     image_base_url?: (string | null);
     /**
-     * 视频能力 API Base URL（可选覆盖）
+     * Khả năng video API Base URL(chép lên tùy chọn)
      */
     video_base_url?: (string | null);
     /**
-     * 说明
+     * description: str = Field(, description=Mô tả)
      */
     description?: string;
     /**
-     * 状态：active/testing/disabled
+     * description=Trạng thái:active/testing/disabled,：active/testing/disabled
      */
     status?: ProviderStatus;
     /**
-     * 创建人
+     * created_by: str = Field(, description=Người tạo)
      */
     created_by?: string;
     /**
-     * 供应商 ID
+     * id: str = Field(..., description=nhà cung cấp ID) ID
      */
     id: string;
     /**
-     * API Key（敏感，不在响应中回显）
+     * API Key (nhạy cảm, không trả lại trong phản hồi)
      */
     api_key?: string;
     /**
-     * API Secret（敏感，不在响应中回显）
+     * API Secret (nhạy cảm, không hiển thị lại trong phản hồi)
      */
     api_secret?: string;
 };

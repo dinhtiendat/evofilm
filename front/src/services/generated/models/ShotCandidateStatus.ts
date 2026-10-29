@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 镜头提取候选确认状态。
+ * Trạng thái xác nhận ứng viên trích xuất phân cảnh.。
  */
 export type ShotCandidateStatus = 'pending' | 'linked' | 'ignored';

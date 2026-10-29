@@ -14,7 +14,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioPromptsService {
     /**
-     * 提示词模板列表（分页）
+     * Danh sách mẫu prompt (phân trang)
      * @returns ApiResponse_PaginatedData_PromptTemplateRead__ Successful Response
      * @throws ApiError
      */
@@ -29,19 +29,19 @@ export class StudioPromptsService {
         pageSize = 10,
     }: {
         /**
-         * 按类别过滤
+         * Lọc theo hạng mục
          */
         category?: (PromptCategory | null),
         /**
-         * 关键字，过滤 name
+         * từ khóa, lọc name
          */
         q?: (string | null),
         /**
-         * 过滤是否为默认
+         * lọc liệu là mặc định hay không
          */
         isDefault?: (boolean | null),
         /**
-         * 过滤是否为系统预置
+         * lọc liệu là hệ thống có sẵn hay không
          */
         isSystem?: (boolean | null),
         order?: (string | null),
@@ -68,7 +68,7 @@ export class StudioPromptsService {
         });
     }
     /**
-     * 创建提示词模板
+     * Tạo mẫu prompt
      * @returns ApiResponse_PromptTemplateRead_ Successful Response
      * @throws ApiError
      */
@@ -88,7 +88,7 @@ export class StudioPromptsService {
         });
     }
     /**
-     * 获取提示词类别枚举（含中文映射）
+     * Lấy enum hạng mục prompt (kèm ánh xạ tiếng Trung)
      * @returns ApiResponse_list_PromptCategoryOptionRead__ Successful Response
      * @throws ApiError
      */
@@ -99,7 +99,7 @@ export class StudioPromptsService {
         });
     }
     /**
-     * 获取提示词模板详情
+     * Lấy chi tiết mẫu prompt
      * @returns ApiResponse_PromptTemplateRead_ Successful Response
      * @throws ApiError
      */
@@ -120,7 +120,7 @@ export class StudioPromptsService {
         });
     }
     /**
-     * 局部更新提示词模板
+     * Cập nhật cục bộ mẫu prompt
      * @returns ApiResponse_PromptTemplateRead_ Successful Response
      * @throws ApiError
      */
@@ -145,7 +145,7 @@ export class StudioPromptsService {
         });
     }
     /**
-     * 删除提示词模板
+     * Xóa mẫu prompt
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

@@ -8,7 +8,7 @@ export type FileUpdate = {
     thumbnail?: (string | null);
     tags?: (Array<string> | null);
     /**
-     * 若提供则 upsert 一条 file_usages
+     * Nếu được cung cấp thì upsert một dòng file_usages
      */
     usage?: (FileUsageWrite | null);
 };

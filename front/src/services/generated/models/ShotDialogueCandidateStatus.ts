@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 镜头对白提取候选确认状态。
+ * Trạng thái xác nhận ứng viên trích xuất thoại của phân cảnh.。
  */
 export type ShotDialogueCandidateStatus = 'pending' | 'accepted' | 'ignored';

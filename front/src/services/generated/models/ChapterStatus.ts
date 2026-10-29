@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 章节生产状态。
+ * Trạng thái sản xuất của chương.。
  */
 export type ChapterStatus = 'draft' | 'shooting' | 'done';

@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type ShotSkipExtractionUpdate = {
     /**
-     * 是否明确跳过信息提取
+     * Có rõ ràng bỏ qua việc trích xuất thông tin không
      */
     skip: boolean;
 };

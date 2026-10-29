@@ -3,19 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 剧本分镜请求。
+ * Yêu cầu phân cảnh kịch bản.。
  */
 export type ScriptDividerRequest = {
     /**
-     * 完整剧本文本
+     * script_text: str = Field(..., description=Văn bản kịch bản đầy đủ, min_length=1)
      */
     script_text: string;
     /**
-     * 是否将分镜写入数据库（AI Studio shots 表）
+     * Có ghi phân cảnh vào cơ sở dữ liệu (bảng shots của AI Studio) hay không
      */
     write_to_db?: boolean;
     /**
-     * 章节 ID（write_to_db=true 时必填）
+     * ID chương(bắt buộc khi write_to_db=true)
      */
     chapter_id?: (string | null);
 };

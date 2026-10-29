@@ -1,6 +1,6 @@
 import { Form, Select } from 'antd'
 
-export type ProjectVisualStyleChoice = '现实' | '动漫'
+export type ProjectVisualStyleChoice = 'live_action' | 'anime'
 
 export type OptionItem = { value: string; label: string }
 export type ProjectStyleOptionsByVisual = Record<string, OptionItem[]>
@@ -11,25 +11,25 @@ export type ProjectStyleFieldOptions = {
 }
 
 export const PROJECT_STYLE_OPTIONS_BY_VISUAL: ProjectStyleOptionsByVisual = {
-  现实: [
-    { value: '真人都市', label: 'Người thật đô thị' },
-    { value: '真人科幻', label: 'Người thật khoa học viễn tưởng' },
-    { value: '真人古装', label: 'Người thật cổ trang' },
+  live_action: [
+    { value: 'real_people_city', label: 'Người thật đô thị' },
+    { value: 'real_people_scifi', label: 'Người thật khoa học viễn tưởng' },
+    { value: 'real_people_ancient', label: 'Người thật cổ trang' },
   ],
-  动漫: [
-    { value: '动漫科幻', label: 'Hoạt hình khoa học viễn tưởng' },
-    { value: '动漫3D', label: 'Hoạt hình 3D' },
-    { value: '国漫', label: 'Hoạt hình Trung Quốc' },
-    { value: '水墨画', label: 'Tranh thủy mặc' },
+  anime: [
+    { value: 'anime_scifi', label: 'Hoạt hình khoa học viễn tưởng' },
+    { value: 'anime_3d', label: 'Hoạt hình 3D' },
+    { value: 'guoman', label: 'Hoạt hình Trung Quốc' },
+    { value: 'ink_wash', label: 'Tranh thủy mặc' },
   ],
 }
 const DEFAULT_VISUAL_STYLE_OPTIONS: OptionItem[] = [
-  { value: '现实', label: 'Thực tế' },
-  { value: '动漫', label: 'Hoạt hình' },
+  { value: 'live_action', label: 'Thực tế' },
+  { value: 'anime', label: 'Hoạt hình' },
 ]
 const DEFAULT_STYLE_BY_VISUAL: Record<string, string> = {
-  现实: PROJECT_STYLE_OPTIONS_BY_VISUAL['现实']?.[0]?.value ?? '',
-  动漫: PROJECT_STYLE_OPTIONS_BY_VISUAL['动漫']?.[0]?.value ?? '',
+  live_action: PROJECT_STYLE_OPTIONS_BY_VISUAL['live_action']?.[0]?.value ?? '',
+  anime: PROJECT_STYLE_OPTIONS_BY_VISUAL['anime']?.[0]?.value ?? '',
 }
 
 type FormModeProps = {
@@ -92,7 +92,7 @@ export function ProjectVisualStyleAndStyleFields(props: FormModeProps | Controll
 
         <Form.Item noStyle shouldUpdate={(prev, next) => prev.visual_style !== next.visual_style}>
           {({ getFieldValue }) => {
-            const visual = (getFieldValue('visual_style') as string | undefined) ?? resolvedOptions.visualStyles[0]?.value ?? '现实'
+            const visual = (getFieldValue('visual_style') as string | undefined) ?? resolvedOptions.visualStyles[0]?.value ?? 'live_action'
             return (
               <Form.Item name="style" label="Phong cách video" rules={[{ required: true }]}>
                 <Select disabled={disabled} options={resolvedOptions.stylesByVisual[visual] ?? []} />

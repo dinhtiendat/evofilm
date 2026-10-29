@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type TaskCancelRequest = {
     /**
-     * 取消原因（可选）
+     * Lý do hủy (tùy chọn)
      */
     reason?: (string | null);
 };

@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 当前默认视频模型对应的生成参数选项。
+ * Tuỳ chọn tham số tạo tương ứng với mô hình video mặc định hiện tại.。
  */
 export type VideoGenerationOptionsRead = {
     /**
-     * 供应商稳定键
+     * provider: str = Field(..., description=khóa ổn định của nhà cung cấp)
      */
     provider: string;
     /**
-     * 默认视频模型 ID
+     * model_id: str = Field(..., description=ID mô hình video mặc định) ID
      */
     model_id: string;
     /**
-     * 默认视频模型名称
+     * model_name: str = Field(..., description=Tên mô hình video mặc định)
      */
     model_name: string;
     /**
-     * 当前模型允许的比例选项
+     * allowed_ratios: list[str] = Field(default_factory=list, description=Các lựa chọn tỷ lệ được phép của mô hình hiện tại)
      */
     allowed_ratios?: Array<string>;
     /**
-     * 当前模型默认比例
+     * default_ratio: str = Field(..., description=Tỷ lệ mặc định của mô hình hiện tại)
      */
     default_ratio: string;
 };

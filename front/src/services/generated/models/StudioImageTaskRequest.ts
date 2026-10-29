@@ -3,31 +3,31 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Studio 专用图片任务请求体：可选模型 ID，不传则用默认图片模型；供应商由模型反查。
+ * thân yêu cầu tác vụ ảnh dùng riêng cho Studio:ID mô hình tùy chọn, không truyền thì dùng mô hình ảnh mặc định；provider được tra ngược từ mô hình.
  *
- * image_id 表示具体的图片模型 ID，例如：
- * - 演员图片：ActorImage.id
- * - 场景图片：SceneImage.id
- * - 道具图片：PropImage.id
- * - 服装图片：CostumeImage.id
- * - 角色图片：CharacterImage.id
- * - 分镜帧图片：ShotFrameImage.id
+ * image_id là ID mô hình ảnh cụ thể, ví dụ:
+ * - - Ảnh diễn viên: ActorImage.id：ActorImage.id
+ * - - Ảnh bối cảnh: SceneImage.id：SceneImage.id
+ * - - Ảnh đạo cụ: PropImage.id：PropImage.id
+ * - - Ảnh trang phục: CostumeImage.id：CostumeImage.id
+ * - - Ảnh nhân vật: CharacterImage.id：CharacterImage.id
+ * - - Ảnh khung phân cảnh: ShotFrameImage.id：ShotFrameImage.id
  */
 export type StudioImageTaskRequest = {
     /**
-     * 可选模型 ID（models.id）；不传则使用 ModelSettings.default_image_model_id；Provider 由模型关联反查
+     * Mô hình tùy chọn ID(models.id); nếu không truyền sẽ dùng ModelSettings.default_image_model_id;Provider tra ngược từ liên kết của mô hình
      */
     model_id?: (string | null);
     /**
-     * 图片模型 ID，如 ActorImage.id / SceneImage.id / PropImage.id 等；必须与路径主体 ID 匹配
+     * ID mô hình ảnh, như ActorImage.id / SceneImage.id / PropImage.id...; phải khớp với ID chủ thể của đường dẫn
      */
     image_id?: (number | null);
     /**
-     * 提示词（由前端传入）。创建任务接口必填；render-prompt 接口可不传
+     * Prompt (do phía trước truyền). Giao diện tạo tác vụ bắt buộc phải truyền; giao diện render-prompt có thể không truyền
      */
     prompt?: (string | null);
     /**
-     * 参考图 file_id 列表（可多张，顺序有效）。创建任务接口会基于 file_id 从数据中解析为参考图
+     * Danh sách file_id của ảnh tham chiếu (nhiều ảnh, thứ tự có hiệu lực). API tạo tác vụ sẽ dựa vào file_id để phân tích thành ảnh tham chiếu từ dữ liệu
      */
     images?: Array<string>;
 };

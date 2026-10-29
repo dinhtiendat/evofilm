@@ -161,8 +161,8 @@ def test_create_project_returns_created_envelope(client: TestClient) -> None:
                 "id": "proj-create",
                 "name": "Dự án mới",
                 "description": "Giải thích",
-                "style": "真人都市",
-                "visual_style": "现实",
+                "style": "real_people_city",
+                "visual_style": "live_action",
                 "seed": 1,
                 "unify_style": True,
                 "progress": 0,
@@ -185,10 +185,10 @@ def test_project_style_options_returns_grouped_choices(client: TestClient) -> No
     assert response.status_code == 200
     body = response.json()
     assert body["code"] == 200
-    assert "视觉" in body["data"]["visual_styles"][0]["label"] or body["data"]["visual_styles"][0]["value"] in {"现实", "动漫"}
+    assert "视觉" in body["data"]["visual_styles"][0]["label"] or body["data"]["visual_styles"][0]["value"] in {"live_action", "anime"}
     assert "thực tế" not in body["data"]["styles_by_visual_style"]
-    assert "现实" in body["data"]["styles_by_visual_style"]
-    assert "动漫" in body["data"]["styles_by_visual_style"]
+    assert "live_action" in body["data"]["styles_by_visual_style"]
+    assert "anime" in body["data"]["styles_by_visual_style"]
     assert "video_ratios" not in body["data"]
     assert "default_video_ratio" not in body["data"]
 
@@ -203,8 +203,8 @@ def test_create_project_rejects_invalid_style_combo(client: TestClient) -> None:
                 "id": "proj-invalid-style",
                 "name": "Dự án mới",
                 "description": "Giải thích",
-                "style": "真人都市",
-                "visual_style": "动漫",
+                "style": "real_people_city",
+                "visual_style": "anime",
                 "seed": 1,
                 "unify_style": True,
                 "progress": 0,

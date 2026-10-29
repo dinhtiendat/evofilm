@@ -4,23 +4,23 @@
 /* eslint-disable */
 import type { ShotVideoReadinessCheck } from './ShotVideoReadinessCheck';
 /**
- * 镜头视频生成准备度。
+ * Độ sẵn sàng tạo video phân cảnh.
  */
 export type ShotVideoReadinessRead = {
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id: string;
     /**
-     * 参考模式
+     * Chế độ tham chiếu
      */
     reference_mode: string;
     /**
-     * 是否满足当前 reference_mode 下的视频生成条件
+     * Có thỏa điều kiện tạo video theo reference_mode hiện tại không
      */
     ready: boolean;
     /**
-     * 准备度检查项
+     * Mục kiểm tra độ sẵn sàng
      */
     checks?: Array<ShotVideoReadinessCheck>;
 };

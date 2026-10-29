@@ -4,11 +4,11 @@
 /* eslint-disable */
 export type RenderedPromptResponse = {
     /**
-     * 渲染后的提示词（已套用模板与变量替换）
+     * Prompt sau kết xuất (đã áp mẫu và thay thế biến)
      */
     prompt: string;
     /**
-     * 参考图 file_id 列表（自动选择；顺序有效）
+     * Danh sách file_id ảnh tham chiếu (tự chọn; thứ tự có hiệu lực)
      */
     images?: Array<string>;
 };

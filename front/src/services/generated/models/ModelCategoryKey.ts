@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 模型类别：文本/图片/视频。
+ * Hạng mục mô hình: văn bản/ảnh/video.
  */
 export type ModelCategoryKey = 'text' | 'image' | 'video';

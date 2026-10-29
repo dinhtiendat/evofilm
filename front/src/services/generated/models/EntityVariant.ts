@@ -4,23 +4,23 @@
 /* eslint-disable */
 import type { EvidenceSpan } from './EvidenceSpan';
 /**
- * 实体变体条目（最小可用结构，便于服装/外形演变）。
+ * Mục biến thể thực thể (cấu trúc tối thiểu dùng được, thuận tiện cho diễn biến trang phục/ngoại hình).
  */
 export type EntityVariant = {
     /**
-     * 变体键（例如 outfit_v1、wounded_state 等）
+     * Khóa biến thể (ví dụ outfit_v1, wounded_state...)
      */
     variant_key: string;
     /**
-     * 变体描述（简短）
+     * mô tả biến thể (ngắn gọn)
      */
     description?: (string | null);
     /**
-     * 涉及镜头序号
+     * affected_shots: List[int] = Field(default_factory=list, description=Số thứ tự phân cảnh bị ảnh hưởng)
      */
     affected_shots?: Array<number>;
     /**
-     * 原文依据（可选）
+     * Bằng chứng từ nguyên văn (tùy chọn)
      */
     evidence?: Array<EvidenceSpan>;
 };

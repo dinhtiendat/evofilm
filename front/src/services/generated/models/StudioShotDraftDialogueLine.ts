@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 镜头对白草稿：speaker/target 使用角色 name，导入时映射为 character_id。
+ * Nháp thoại phân cảnh: speaker/target dùng name nhân vật, khi import ánh xạ sang character_id.
  */
 export type StudioShotDraftDialogueLine = {
     /**
-     * 镜头内排序
+     * index: int = Field(0, ge=0, description=thứ tự trong shot)
      */
     index?: number;
     /**
-     * 台词内容
+     * text: str = Field(..., description=Nội dung lời thoại)
      */
     text: string;
     /**
-     * 对白模式
+     * line_mode: DialogueLineMode = Field(DIALOGUE, description=Chế độ thoại)
      */
     line_mode?: 'DIALOGUE' | 'VOICE_OVER' | 'OFF_SCREEN' | 'PHONE';
     /**
-     * 说话角色名称（可空）
+     * Tên nhân vật nói (null được)
      */
     speaker_name?: (string | null);
     /**
-     * 听者角色名称（可空）
+     * tên nhân vật nghe (để trống được)
      */
     target_name?: (string | null);
 };

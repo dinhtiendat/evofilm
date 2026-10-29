@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 供应商启用状态。
+ * Trạng thái kích hoạt nhà cung cấp.。
  */
 export type ProviderStatus = 'active' | 'testing' | 'disabled';

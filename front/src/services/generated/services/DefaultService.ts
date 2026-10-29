@@ -8,7 +8,7 @@ import { request as __request } from '../core/request';
 export class DefaultService {
     /**
      * Health
-     * 健康检查。
+     * Kiểm tra sức khỏe (health check).
      * @returns any Successful Response
      * @throws ApiError
      */

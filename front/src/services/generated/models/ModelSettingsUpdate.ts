@@ -4,27 +4,27 @@
 /* eslint-disable */
 import type { LogLevel } from './LogLevel';
 /**
- * 更新或保存模型全局设置请求体。
+ * Body yêu cầu cập nhật hoặc lưu cấu hình toàn cục của mô hình.。
  */
 export type ModelSettingsUpdate = {
     /**
-     * 默认文本模型 ID
+     * default_text_model_id: str | None = Field(None, description=ID mô hình văn bản mặc định) ID
      */
     default_text_model_id?: (string | null);
     /**
-     * 默认图片模型 ID
+     * default_image_model_id: str | None = Field(None, description=ID mô hình ảnh mặc định) ID
      */
     default_image_model_id?: (string | null);
     /**
-     * 默认视频模型 ID
+     * default_video_model_id: str | None = Field(None, description=ID mô hình video mặc định) ID
      */
     default_video_model_id?: (string | null);
     /**
-     * API 超时（秒）
+     * API timeout (giây)
      */
     api_timeout?: number;
     /**
-     * 日志级别
+     * log_level: LogLevel = Field(LogLevel.info, description=cấp nhật ký)
      */
     log_level?: LogLevel;
 };

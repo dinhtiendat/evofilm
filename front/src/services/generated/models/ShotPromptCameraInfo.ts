@@ -3,23 +3,23 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 用于提示词渲染的镜头语言信息。
+ * Thông tin ngôn ngữ điện ảnh dùng cho render prompt.
  */
 export type ShotPromptCameraInfo = {
     /**
-     * 景别
+     * cận (độ rộng shot)
      */
     camera_shot?: string;
     /**
-     * 机位角度
+     * góc máy
      */
     angle?: string;
     /**
-     * 运镜方式
+     * cách vận camera
      */
     movement?: string;
     /**
-     * 镜头时长（秒）
+     * Thời lượng phân cảnh (giây)
      */
     duration?: (number | null);
 };

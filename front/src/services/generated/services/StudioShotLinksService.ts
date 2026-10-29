@@ -14,7 +14,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioShotLinksService {
     /**
-     * 项目-章节-镜头-实体关联列表（分页）
+     * Danh sách liên kết dự án-chương-phân cảnh-thực thể (phân trang)
      * @returns ApiResponse_PaginatedData_Any__ Successful Response
      * @throws ApiError
      */
@@ -61,7 +61,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 创建项目-章节-镜头-演员关联
+     * Tạo liên kết dự án-chương-phân cảnh-diễn viên
      * @returns ApiResponse_ProjectActorLinkRead_ Successful Response
      * @throws ApiError
      */
@@ -81,7 +81,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 删除项目-章节-镜头-演员关联
+     * Xóa liên kết dự án-chương-phân cảnh-diễn viên
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */
@@ -102,7 +102,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 创建项目-章节-镜头-场景关联
+     * Tạo liên kết dự án-chương-phân cảnh-bối cảnh
      * @returns ApiResponse_ProjectSceneLinkRead_ Successful Response
      * @throws ApiError
      */
@@ -122,7 +122,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 删除项目-章节-镜头-场景关联
+     * Xóa liên kết dự án-chương-phân cảnh-bối cảnh
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */
@@ -143,7 +143,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 创建项目-章节-镜头-道具关联
+     * Tạo liên kết dự án-chương-phân cảnh-đạo cụ
      * @returns ApiResponse_ProjectPropLinkRead_ Successful Response
      * @throws ApiError
      */
@@ -163,7 +163,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 删除项目-章节-镜头-道具关联
+     * Xóa liên kết dự án-chương-phân cảnh-đạo cụ
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */
@@ -184,7 +184,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 创建项目-章节-镜头-服装关联
+     * Tạo liên kết dự án-chương-phân cảnh-trang phục
      * @returns ApiResponse_ProjectCostumeLinkRead_ Successful Response
      * @throws ApiError
      */
@@ -204,7 +204,7 @@ export class StudioShotLinksService {
         });
     }
     /**
-     * 删除项目-章节-镜头-服装关联
+     * Xóa liên kết dự án-chương-phân cảnh-trang phục
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

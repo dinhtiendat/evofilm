@@ -113,7 +113,7 @@ const ProjectLobby: React.FC = () => {
         props: getNum('props'),
       },
       updatedAt,
-      visualStyle: (p.visual_style as ProjectVisualStyleChoice | undefined) ?? '现实',
+      visualStyle: (p.visual_style as ProjectVisualStyleChoice | undefined) ?? 'live_action',
       defaultVideoRatio: p.default_video_ratio ?? null,
     }
   }
@@ -369,7 +369,7 @@ const ProjectLobby: React.FC = () => {
 
   const handleOpenCreate = () => {
     form.resetFields()
-    const defaultVisual = (projectStyleOptions.visualStyles[0]?.value ?? '现实') as ProjectVisualStyleChoice
+    const defaultVisual = (projectStyleOptions.visualStyles[0]?.value ?? 'live_action') as ProjectVisualStyleChoice
     const defaultStyle =
       projectStyleOptions.defaultStyleByVisual?.[defaultVisual] ??
       projectStyleOptions.stylesByVisual[defaultVisual]?.[0]?.value
@@ -426,7 +426,7 @@ const ProjectLobby: React.FC = () => {
       name: p.name,
       description: p.description,
       style: p.style,
-      visual_style: p.visualStyle ?? '现实',
+      visual_style: p.visualStyle ?? 'live_action',
       seed: p.seed,
       unifyStyle: p.unifyStyle,
       default_video_ratio: p.defaultVideoRatio ?? undefined,
@@ -967,8 +967,8 @@ const ProjectLobby: React.FC = () => {
           initialValues={{
             visual_style: projectStyleOptions.visualStyles[0]?.value ?? 'thực tế',
             style:
-              projectStyleOptions.defaultStyleByVisual?.[projectStyleOptions.visualStyles[0]?.value ?? '现实'] ??
-              projectStyleOptions.stylesByVisual[projectStyleOptions.visualStyles[0]?.value ?? '现实']?.[0]?.value ??
+              projectStyleOptions.defaultStyleByVisual?.[projectStyleOptions.visualStyles[0]?.value ?? 'live_action'] ??
+              projectStyleOptions.stylesByVisual[projectStyleOptions.visualStyles[0]?.value ?? 'live_action']?.[0]?.value ??
               'Người thật đô thị',
             seed: Math.floor(Math.random() * 99999),
             unifyStyle: true,
@@ -1026,7 +1026,7 @@ const ProjectLobby: React.FC = () => {
           form={editForm}
           layout="vertical"
           onFinish={handleEditSubmit}
-          initialValues={{ style: '真人都市', visual_style: '现实', unifyStyle: true }}
+          initialValues={{ style: 'real_people_city', visual_style: 'live_action', unifyStyle: true }}
         >
           <Form.Item name="name" label="Tên dự án" rules={[{ required: true, message: 'Vui lòng nhập tên dự án' }]}>
             <Input placeholder="Tên dự án" />

@@ -12,7 +12,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioShotDialogLinesService {
     /**
-     * 镜头对话行列表（分页）
+     * Danh sách dòng thoại phân cảnh (phân trang)
      * @returns ApiResponse_PaginatedData_ShotDialogLineRead__ Successful Response
      * @throws ApiError
      */
@@ -25,11 +25,11 @@ export class StudioShotDialogLinesService {
         pageSize = 10,
     }: {
         /**
-         * 按镜头细节过滤
+         * lọc theo chi tiết phân cảnh
          */
         shotDetailId?: (string | null),
         /**
-         * 关键字，过滤 text
+         * Từ khóa, lọc text
          */
         q?: (string | null),
         order?: (string | null),
@@ -54,7 +54,7 @@ export class StudioShotDialogLinesService {
         });
     }
     /**
-     * 创建镜头对话行
+     * Tạo dòng thoại phân cảnh
      * @returns ApiResponse_ShotDialogLineRead_ Successful Response
      * @throws ApiError
      */
@@ -74,7 +74,7 @@ export class StudioShotDialogLinesService {
         });
     }
     /**
-     * 更新镜头对话行
+     * Cập nhật dòng thoại phân cảnh
      * @returns ApiResponse_ShotDialogLineRead_ Successful Response
      * @throws ApiError
      */
@@ -99,7 +99,7 @@ export class StudioShotDialogLinesService {
         });
     }
     /**
-     * 删除镜头对话行
+     * Xóa dòng thoại phân cảnh
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

@@ -5,19 +5,19 @@
 import type { ShotPreparationLinkEntityType } from './ShotPreparationLinkEntityType';
 export type ShotPreparationLinkRequest = {
     /**
-     * 项目 ID
+     * ID dự án
      */
     project_id: string;
     /**
-     * 章节 ID
+     * ID chương
      */
     chapter_id: string;
     /**
-     * 准备页关联的实体类型
+     * Loại thực thể liên kết của trang chuẩn bị
      */
     entity_type: ShotPreparationLinkEntityType;
     /**
-     * 要关联的实体 ID
+     * ID thực thể cần liên kết
      */
     linked_entity_id: string;
 };

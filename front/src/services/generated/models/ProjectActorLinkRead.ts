@@ -4,24 +4,24 @@
 /* eslint-disable */
 export type ProjectActorLinkRead = {
     /**
-     * 关联行 ID
+     * ID hàng liên kết
      */
     id: number;
     /**
-     * 项目 ID
+     * ID dự án
      */
     project_id: string;
     /**
-     * 章节 ID（可空）
+     * ID chương (để trống được)
      */
     chapter_id?: (string | null);
     /**
-     * 镜头 ID（可空）
+     * ID phân cảnh (có thể để trống)
      */
     shot_id?: (string | null);
     actor_id: string;
     /**
-     * 演员缩略图下载地址
+     * URL tải về ảnh thu nhỏ diễn viên
      */
     thumbnail?: string;
 };

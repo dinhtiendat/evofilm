@@ -175,7 +175,7 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
                 "run_args": {
                     "shot_id": "shot-1",
                     "frame_type": "first",
-                    "input": {"script_excerpt": "Nhân vật chính quay lại.", "visual_style": "现实"},
+                    "input": {"script_excerpt": "Nhân vật chính quay lại.", "visual_style": "live_action"},
                 },
             },
             mode=DeliveryMode.async_polling,
@@ -199,7 +199,7 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
         run_args={
             "shot_id": "shot-1",
             "frame_type": "first",
-            "input": {"script_excerpt": "Nhân vật chính quay đầu.", "visual_style": "现实", "character_context": "- nhân vật chính: cảnh giác"},
+            "input": {"script_excerpt": "Nhân vật chính quay đầu.", "visual_style": "live_action", "character_context": "- nhân vật chính: cảnh giác"},
         },
     )
 
@@ -210,7 +210,7 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
         assert row.status == GenerationTaskStatus.succeeded
         assert isinstance(row.result, dict)
         assert row.result["prompt"] == "Cận cảnh, nhân vật chính cảnh giác quay đầu."
-        assert row.result["debug_context"]["visual_style"] == "现实"
+        assert row.result["debug_context"]["visual_style"] == "live_action"
         assert row.result["debug_context"]["character_context"] == "- nhân vật chính: cảnh giác"
         assert row.result["quality_checks"]["passed"] is True
         assert row.result["quality_checks"]["issues"] == []

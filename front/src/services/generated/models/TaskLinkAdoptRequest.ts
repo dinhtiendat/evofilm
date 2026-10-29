@@ -3,23 +3,23 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 更新采用状态请求：task_id + 三选一绑定对象（project_id/chapter_id/shot_id）。
+ * Yêu cầu cập nhật trạng thái áp dụng: task_id + đối tượng liên kết chọn một trong ba (project_id/chapter_id/shot_id).
  */
 export type TaskLinkAdoptRequest = {
     /**
-     * 绑定项目 ID（可选）
+     * ID dự án liên kết (tùy chọn)
      */
     project_id?: (string | null);
     /**
-     * 绑定章节 ID（可选）
+     * ID chương liên kết (tùy chọn)
      */
     chapter_id?: (string | null);
     /**
-     * 绑定镜头 ID（可选）
+     * ID phân cảnh liên kết (tùy chọn)
      */
     shot_id?: (string | null);
     /**
-     * 任务 ID
+     * task_id: str = Field(..., description=ID tác vụ) ID
      */
     task_id: string;
 };

@@ -3,41 +3,41 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Studio 资产草稿（Scene/Prop/Costume）。
+ * Studio Bản nháp tài nguyên của Studio (Scene/Prop/Costume).（Scene/Prop/Costume）。
  *
- * 导入 API 未传 id 时由服务端生成；分镜详情回填时可带 scene_id/prop_id/costume_id。
+ * Khi API import không truyền id, phía server sẽ tạo; khi điền ngược chi tiết phân cảnh có thể kèm scene_id/prop_id/costume_id.
  */
 export type StudioAssetDraft = {
     /**
-     * 资产 ID（已落库时回填，如 scene_id / prop_id / costume_id）
+     * ID tài nguyên (truyền ngược sau khi đã lưu CSDL, ví dụ scene_id / prop_id / costume_id)
      */
     id?: (string | null);
     /**
-     * 关联的文件 ID（可空）
+     * tệp liên kết ID(để trống được)
      */
     file_id?: (string | null);
     /**
-     * 缩略图下载地址（可空）
+     * Đường dẫn tải ảnh thu nhỏ (để trống được)
      */
     thumbnail?: (string | null);
     /**
-     * 名称（同项目内建议唯一）
+     * Tên (khuyến nghị duy nhất trong cùng dự án)
      */
     name: string;
     /**
-     * 描述
+     * description: str = Field(, description=Mô tả)
      */
     description?: string;
     /**
-     * 标签
+     * tags: List[str] = Field(default_factory=list, description=nhãn)
      */
     tags?: Array<string>;
     /**
-     * 提示词模板 ID（可空）
+     * ID mẫu prompt (để trống được)
      */
     prompt_template_id?: (string | null);
     /**
-     * 计划生成视角图数量
+     * view_count: int = Field(1, ge=1, description=Số ảnh góc nhìn dự kiến tạo)
      */
     view_count?: number;
 };

@@ -5,15 +5,15 @@
 import type { ShotVideoPromptPackRead } from './ShotVideoPromptPackRead';
 export type VideoPromptPreviewResponse = {
     /**
-     * 最终用于视频生成的提示词
+     * Prompt cuối cùng dùng để tạo video
      */
     prompt: string;
     /**
-     * 关联参考图 file_id 列表
+     * Danh sách file_id ảnh tham chiếu liên kết
      */
     images?: Array<string>;
     /**
-     * 视频提示词预览上下文包
+     * Gói ngữ cảnh xem trước prompt video
      */
     pack?: (ShotVideoPromptPackRead | null);
 };

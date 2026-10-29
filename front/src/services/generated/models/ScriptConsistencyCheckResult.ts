@@ -4,19 +4,19 @@
 /* eslint-disable */
 import type { ScriptConsistencyIssue } from './ScriptConsistencyIssue';
 /**
- * 基于原文的一致性检查结果（聚焦角色混淆）。
+ * Kết quả kiểm tra nhất quán dựa trên nguyên văn (tập trung vào nhầm lẫn nhân vật).
  */
 export type ScriptConsistencyCheckResult = {
     /**
-     * 问题列表
+     * issues: List[ScriptConsistencyIssue] = Field(default_factory=list, description=Danh sách vấn đề)
      */
     issues?: Array<ScriptConsistencyIssue>;
     /**
-     * 是否发现问题
+     * has_issues: bool = Field(..., description=Có phát hiện vấn đề không)
      */
     has_issues: boolean;
     /**
-     * 总结（可选）
+     * Tóm tắt (tùy chọn)
      */
     summary?: (string | null);
 };

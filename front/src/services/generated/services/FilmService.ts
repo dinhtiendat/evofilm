@@ -24,8 +24,8 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class FilmService {
     /**
-     * 视频提示词预览
-     * 预览视频生成的提示词与自动关联参考图。
+     * Xem trước prompt video
+     * Xem trước prompt tạo video và tự động liên kết ảnh tham chiếu.
      * @returns ApiResponse_VideoPromptPreviewResponse_ Successful Response
      * @throws ApiError
      */
@@ -45,8 +45,8 @@ export class FilmService {
         });
     }
     /**
-     * 视频生成（任务版）
-     * 创建视频生成任务并后台执行，结果通过 /tasks/{task_id}/result 获取。
+     * Tạo video (phiên bản tác vụ)
+     * Tạo tác vụ tạo video và thực thi ở nền, kết quả nhận qua /tasks/{task_id}/result.
      * @returns ApiResponse_TaskCreated_ Successful Response
      * @throws ApiError
      */
@@ -66,7 +66,7 @@ export class FilmService {
         });
     }
     /**
-     * 镜头分镜帧提示词生成（任务版）
+     * Tạo prompt khung phân cảnh của phân cảnh (phiên bản tác vụ)
      * @returns ApiResponse_TaskCreated_ Successful Response
      * @throws ApiError
      */
@@ -86,7 +86,7 @@ export class FilmService {
         });
     }
     /**
-     * 全局任务列表（任务中心）
+     * Danh sách tác vụ toàn cục (trung tâm tác vụ)
      * @returns ApiResponse_PaginatedData_TaskListItemRead__ Successful Response
      * @throws ApiError
      */
@@ -100,31 +100,31 @@ export class FilmService {
         pageSize = 20,
     }: {
         /**
-         * 按任务状态过滤，可多选
+         * Lọc theo trạng thái tác vụ, được chọn nhiều
          */
         statuses?: (Array<TaskStatus> | null),
         /**
-         * 按 task_kind 过滤
+         * lọc theo task_kind
          */
         taskKind?: (string | null),
         /**
-         * 按 relation_type 过滤
+         * theo relation_type lọc
          */
         relationType?: (string | null),
         /**
-         * 按 relation_entity_id 过滤
+         * theo relation_entity_id lọc
          */
         relationEntityId?: (string | null),
         /**
-         * 默认返回最近结束任务的时间窗口（秒）
+         * Cửa sổ thời gian (giây) mặc định trả về các tác vụ vừa kết thúc gần nhất
          */
         recentSeconds?: number,
         /**
-         * 页码
+         * page: int = Query(1, ge=1, description=Số trang),
          */
         page?: number,
         /**
-         * 每页条数
+         * page_size: int = Query(20, ge=1, le=100, description=số dòng mỗi trang),
          */
         pageSize?: number,
     }): CancelablePromise<ApiResponse_PaginatedData_TaskListItemRead__> {
@@ -146,7 +146,7 @@ export class FilmService {
         });
     }
     /**
-     * 查询任务状态/进度（轮询）
+     * Truy vấn trạng thái/tiến độ tác vụ (truy vấn lặp)
      * @returns ApiResponse_TaskStatusRead_ Successful Response
      * @throws ApiError
      */
@@ -167,7 +167,7 @@ export class FilmService {
         });
     }
     /**
-     * 获取任务结果
+     * summary=Lấy kết quả tác vụ,
      * @returns ApiResponse_TaskResultRead_ Successful Response
      * @throws ApiError
      */
@@ -188,7 +188,7 @@ export class FilmService {
         });
     }
     /**
-     * 请求取消任务
+     * summary=Yêu cầu hủy tác vụ,
      * @returns ApiResponse_TaskCancelRead_ Successful Response
      * @throws ApiError
      */
@@ -213,8 +213,8 @@ export class FilmService {
         });
     }
     /**
-     * 更新任务关联的采用状态（仅可正向变更）
-     * 将指定任务链接的状态设为 accepted；已采用不可改为未采用。
+     * Cập nhật trạng thái áp dụng liên quan tác vụ (chỉ cho phép chuyển theo chiều tiến)
+     * đặt trạng thái liên kết tác vụ được chỉ định thành accepted；đã áp dụng thì không đổi lại chưa áp dụng.
      * @returns ApiResponse_TaskLinkAdoptRead_ Successful Response
      * @throws ApiError
      */
@@ -234,7 +234,7 @@ export class FilmService {
         });
     }
     /**
-     * 生成任务关联列表（分页，支持多条件过滤）
+     * Danh sách liên kết tác vụ tạo (phân trang, hỗ trợ lọc đa điều kiện)
      * @returns ApiResponse_PaginatedData_GenerationTaskLinkRead__ Successful Response
      * @throws ApiError
      */
@@ -250,39 +250,39 @@ export class FilmService {
         pageSize = 10,
     }: {
         /**
-         * 按 resource_type 过滤
+         * Lọc theo resource_type
          */
         resourceType?: (string | null),
         /**
-         * 按 relation_type 过滤
+         * theo relation_type lọc
          */
         relationType?: (string | null),
         /**
-         * 按 relation_entity_id 过滤
+         * theo relation_entity_id lọc
          */
         relationEntityId?: (string | null),
         /**
-         * 按关联状态过滤（accepted/todo/rejected）
+         * status: str | None = Query(None, description=Lọc theo trạng thái liên kết (accepted/todo/rejected)),（accepted/todo/rejected）
          */
         status?: (string | null),
         /**
-         * 按 task_id 过滤
+         * lọc theo task_id
          */
         taskId?: (string | null),
         /**
-         * 排序字段：updated_at/created_at/id/status
+         * order: str | None = Query(None, description=Trường sắp xếp: updated_at/created_at/id/status),：updated_at/created_at/id/status
          */
         order?: (string | null),
         /**
-         * 是否倒序；默认 true
+         * Có sắp giảm dần; mặc định true
          */
         isDesc?: boolean,
         /**
-         * 页码
+         * page: int = Query(1, ge=1, description=Số trang),
          */
         page?: number,
         /**
-         * 每页条数
+         * page_size: int = Query(10, ge=1, le=100, description=số dòng mỗi trang),
          */
         pageSize?: number,
     }): CancelablePromise<ApiResponse_PaginatedData_GenerationTaskLinkRead__> {
@@ -306,7 +306,7 @@ export class FilmService {
         });
     }
     /**
-     * 创建生成任务关联
+     * summary=Tạo liên kết tác vụ tạo,
      * @returns ApiResponse_GenerationTaskLinkRead_ Successful Response
      * @throws ApiError
      */
@@ -326,7 +326,7 @@ export class FilmService {
         });
     }
     /**
-     * 获取生成任务关联详情
+     * summary=Lấy chi tiết liên kết tác vụ tạo,
      * @returns ApiResponse_GenerationTaskLinkRead_ Successful Response
      * @throws ApiError
      */
@@ -347,7 +347,7 @@ export class FilmService {
         });
     }
     /**
-     * 更新生成任务关联（不支持直接修改 is_adopted）
+     * Cập nhật liên kết của tác vụ tạo (không hỗ trợ sửa trực tiếp is_adopted)
      * @returns ApiResponse_GenerationTaskLinkRead_ Successful Response
      * @throws ApiError
      */
@@ -372,7 +372,7 @@ export class FilmService {
         });
     }
     /**
-     * 删除生成任务关联
+     * summary=Xóa liên kết tác vụ tạo,
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

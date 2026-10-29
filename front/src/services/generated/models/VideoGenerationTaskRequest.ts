@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 视频生成任务请求。
+ * Yêu cầu tác vụ tạo video.
  */
 export type VideoGenerationTaskRequest = {
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id: string;
     /**
-     * 参考模式：first | last | key | first_last | first_last_key | text_only
+     * Chế độ tham chiếu: first | last | key | first_last | first_last_key | text_only
      */
     reference_mode: 'first' | 'last' | 'key' | 'first_last' | 'first_last_key' | 'text_only';
     /**
-     * 视频提示词（text_only 必填）
+     * Prompt video (bắt buộc khi text_only)
      */
     prompt?: (string | null);
     /**
-     * 参考图 file_id 列表，数量需与 reference_mode 严格匹配
+     * Danh sách file_id của ảnh tham chiếu, số lượng phải khớp nghiêm ngặt với reference_mode
      */
     images?: Array<string>;
     /**
-     * 视频画幅比例，如 16:9 / 9:16
+     * tỷ lệ khung hình video, như 16:9 / 9:16
      */
     ratio: '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '21:9';
 };

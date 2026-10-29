@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 画面表现形式维度：用于区分现实/动漫等。
+ * Chiều kích hình thức biểu diễn khung hình: dùng để phân biệt live_action/anime.
  */
-export type ProjectVisualStyle = '现实';
+export type ProjectVisualStyle = 'live_action' | 'anime';

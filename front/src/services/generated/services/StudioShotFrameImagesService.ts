@@ -12,7 +12,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioShotFrameImagesService {
     /**
-     * 镜头分镜帧图片列表（分页）
+     * Danh sách ảnh khung phân cảnh của shot (phân trang)
      * @returns ApiResponse_PaginatedData_ShotFrameImageRead__ Successful Response
      * @throws ApiError
      */
@@ -24,7 +24,7 @@ export class StudioShotFrameImagesService {
         pageSize = 10,
     }: {
         /**
-         * 按镜头细节过滤
+         * lọc theo chi tiết phân cảnh
          */
         shotDetailId?: (string | null),
         order?: (string | null),
@@ -48,7 +48,7 @@ export class StudioShotFrameImagesService {
         });
     }
     /**
-     * 创建镜头分镜帧图片
+     * Tạo ảnh khung hình phân cảnh
      * @returns ApiResponse_ShotFrameImageRead_ Successful Response
      * @throws ApiError
      */
@@ -68,7 +68,7 @@ export class StudioShotFrameImagesService {
         });
     }
     /**
-     * 更新镜头分镜帧图片
+     * Cập nhật ảnh khung hình phân cảnh
      * @returns ApiResponse_ShotFrameImageRead_ Successful Response
      * @throws ApiError
      */
@@ -93,7 +93,7 @@ export class StudioShotFrameImagesService {
         });
     }
     /**
-     * 删除镜头分镜帧图片
+     * Xóa ảnh khung hình phân cảnh
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

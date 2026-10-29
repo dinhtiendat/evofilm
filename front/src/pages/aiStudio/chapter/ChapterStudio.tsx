@@ -491,8 +491,8 @@ const ChapterStudio: React.FC = () => {
   }>()
   const location = useLocation()
   const [chapter, setChapter] = useState<Chapter | null>(null)
-  const [projectVisualStyle, setProjectVisualStyle] = useState<'现实' | '动漫'>('现实')
-  const [projectStyle, setProjectStyle] = useState<string>('真人都市')
+  const [projectVisualStyle, setProjectVisualStyle] = useState<'live_action' | 'anime'>('live_action')
+  const [projectStyle, setProjectStyle] = useState<string>('real_people_city')
   const [projectDefaultVideoRatio, setProjectDefaultVideoRatio] = useState<string>('')
   const { videoRatioOptions, defaultVideoRatio: capabilityDefaultVideoRatio } = useProjectStyleOptions()
   const [imageGenerationOptions, setImageGenerationOptions] = useState<ImageGenerationOptionsRead | null>(null)
@@ -750,7 +750,7 @@ const ChapterStudio: React.FC = () => {
       const nextVisualStyle = projectRes?.data?.visual_style
       const nextStyle = projectRes?.data?.style
       const nextDefaultRatio = typeof projectRes?.data?.default_video_ratio === 'string' ? projectRes.data.default_video_ratio : ''
-      if (nextVisualStyle === '现实' || nextVisualStyle === '动漫') {
+      if (nextVisualStyle === 'live_action' || nextVisualStyle === 'anime') {
         setProjectVisualStyle(nextVisualStyle)
       }
       if (typeof nextStyle === 'string' && nextStyle.trim()) {
@@ -2898,7 +2898,7 @@ export default ChapterStudio
 function Inspector(props: {
   projectId?: string
   chapterId?: string
-  projectVisualStyle: '现实' | '动漫'
+  projectVisualStyle: 'live_action' | 'anime'
   projectStyle: string
   projectDefaultVideoRatio: string
   capabilityDefaultVideoRatio: string

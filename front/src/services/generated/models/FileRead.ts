@@ -5,23 +5,23 @@
 import type { FileTypeEnum } from './FileTypeEnum';
 export type FileRead = {
     /**
-     * 文件 ID
+     * ID tệp
      */
     id: string;
     /**
-     * 文件类型
+     * Loại tệp
      */
     type: FileTypeEnum;
     /**
-     * 文件名/标题
+     * tên tệp/tiêu đề
      */
     name: string;
     /**
-     * 缩略图 URL/路径
+     * Ảnh thu nhỏ URL/Đường
      */
     thumbnail?: string;
     /**
-     * 标签
+     * Nhãn
      */
     tags?: Array<string>;
 };

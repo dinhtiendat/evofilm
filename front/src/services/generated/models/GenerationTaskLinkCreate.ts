@@ -3,31 +3,31 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 创建生成任务关联请求体。
+ * Thân yêu cầu tạo liên kết tác vụ.。
  */
 export type GenerationTaskLinkCreate = {
     /**
-     * 生成任务 ID
+     * task_id: str = Field(..., description=tác vụ tạo ID) ID
      */
     task_id: string;
     /**
-     * 生成资源类型（如 image/video/text/task_link）
+     * Loại tài nguyên tạo (như image/video/text/task_link)
      */
     resource_type: string;
     /**
-     * 业务类型（如 prop/costume/scene 等）
+     * loại nghiệp vụ (như prop/costume/scene v.v.)
      */
     relation_type: string;
     /**
-     * 关联业务实体 ID
+     * relation_entity_id: str = Field(..., description=thực thể liên kết ID) ID
      */
     relation_entity_id: string;
     /**
-     * 关联产物文件 ID（files.id；适用于图片/音频/视频）
+     * ID tệp sản phẩm liên kết (files.id; áp dụng cho ảnh/âm thanh/video)
      */
     file_id?: (string | null);
     /**
-     * 关联状态：accepted=已采用、todo=待操作、rejected=未采用；默认 todo
+     * Trạng thái liên kết: accepted=đã áp dụng, todo=chưa thao tác, rejected=không áp dụng; mặc định todo
      */
     status?: string;
 };

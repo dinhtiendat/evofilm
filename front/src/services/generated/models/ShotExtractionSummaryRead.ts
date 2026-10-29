@@ -4,31 +4,31 @@
 /* eslint-disable */
 export type ShotExtractionSummaryRead = {
     /**
-     * 镜头提取确认状态摘要
+     * Tóm tắt trạng thái xác nhận trích xuất của phân cảnh
      */
     state: 'not_extracted' | 'extracted_empty' | 'extracted_pending' | 'extracted_resolved' | 'skipped';
     /**
-     * 是否已执行过提取
+     * Đã thực thi trích xuất chưa
      */
     has_extracted: boolean;
     /**
-     * 最近一次提取完成时间
+     * Thời điểm hoàn tất trích xuất gần nhất
      */
     last_extracted_at?: (string | null);
     /**
-     * 资产候选总数
+     * Tổng số ứng viên tài nguyên
      */
     asset_candidate_total?: number;
     /**
-     * 对白候选总数
+     * tổng số ứng viên thoại
      */
     dialogue_candidate_total?: number;
     /**
-     * 待确认资产候选数
+     * Số ứng viên tài nguyên chờ xác nhận
      */
     pending_asset_count?: number;
     /**
-     * 待确认对白候选数
+     * số ứng viên thoại chờ xác nhận
      */
     pending_dialogue_count?: number;
 };

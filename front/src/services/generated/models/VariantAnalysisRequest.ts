@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 变体分析请求。
+ * Yêu cầu phân tích biến thể.。
  */
 export type VariantAnalysisRequest = {
     /**
-     * 项目 ID（异步任务关联可选）
+     * ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     project_id?: (string | null);
     /**
-     * 章节 ID（异步任务关联可选）
+     * ID chương (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     chapter_id?: (string | null);
     /**
-     * 合并后的实体库（EntityLibrary 的序列化形式；来自 EntityMerger 输出的 merged_library）
+     * Thư viện thực thể đã gộp (dạng chuỗi hoá của EntityLibrary; lấy từ merged_library trong đầu ra của EntityMerger)
      */
     merged_library: Record<string, any>;
     /**
-     * 所有镜头提取结果
+     * description=Kết quả trích xuất của mọi phân cảnh
      */
     all_shot_extractions: Array<Record<string, any>>;
     /**
-     * 脚本分镜结果（可选；ScriptDivisionResult 序列化），用于章节/段落分组
+     * kết quả phân cảnh kịch bản (tùy chọn; chuỗi hóa ScriptDivisionResult), dùng để nhóm chương/đoạn
      */
     script_division?: (Record<string, any> | null);
 };

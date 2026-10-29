@@ -4,39 +4,39 @@
 /* eslint-disable */
 import type { ProviderStatus } from './ProviderStatus';
 /**
- * 更新供应商时的可选字段。
+ * Trường tùy chọn khi cập nhật nhà cung cấp.。
  */
 export type ProviderUpdate = {
     /**
-     * 供应商名称
+     * name: str | None = Field(None, description=Tên nhà cung cấp)
      */
     name?: (string | null);
     /**
-     * 文本/通用 API Base URL
+     * API Base URL cho văn bản / dùng chung
      */
     base_url?: (string | null);
     /**
-     * 图片能力 API Base URL（可选覆盖）
+     * Khả năng hình ảnh API Base URL(chép lên tùy chọn)
      */
     image_base_url?: (string | null);
     /**
-     * 视频能力 API Base URL（可选覆盖）
+     * Khả năng video API Base URL(chép lên tùy chọn)
      */
     video_base_url?: (string | null);
     /**
-     * 说明
+     * description: str | None = Field(None, description=Mô tả)
      */
     description?: (string | null);
     /**
-     * 状态：active/testing/disabled
+     * description=Trạng thái:active/testing/disabled,：active/testing/disabled
      */
     status?: (ProviderStatus | null);
     /**
-     * API Key（敏感，不在响应中回显）
+     * API Key (nhạy cảm, không hiển thị ngược trong response)
      */
     api_key?: (string | null);
     /**
-     * API Secret（敏感，不在响应中回显）
+     * API Secret (nhạy cảm, không hiển thị ngược trong response)
      */
     api_secret?: (string | null);
 };

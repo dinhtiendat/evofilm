@@ -4,31 +4,31 @@
 /* eslint-disable */
 import type { ShotVideoPromptPackRead } from './ShotVideoPromptPackRead';
 /**
- * 视频提示词预览结果。
+ * Kết quả xem trước prompt video.
  */
 export type ShotVideoPromptPreviewRead = {
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id: string;
     /**
-     * 使用的提示词模板 ID
+     * ID mẫu prompt đang sử dụng
      */
     template_id?: (string | null);
     /**
-     * 使用的提示词模板名称
+     * tên mẫu prompt đang sử dụng
      */
     template_name?: (string | null);
     /**
-     * 渲染后的提示词
+     * Prompt sau khi kết xuất
      */
     rendered_prompt: string;
     /**
-     * 渲染上下文包
+     * gói ngữ cảnh kết xuất
      */
     pack: ShotVideoPromptPackRead;
     /**
-     * 渲染时发现的非阻塞提示
+     * Thông báo không chặn phát hiện khi kết xuất
      */
     warnings?: Array<string>;
 };

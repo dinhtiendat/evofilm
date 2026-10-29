@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 项目级信息提取请求（最终输出）。
+ * Yêu cầu trích xuất thông tin cấp dự án (đầu ra cuối cùng).
  */
 export type ScriptExtractRequest = {
     /**
-     * 项目 ID
+     * project_id: str = Field(..., description=ID dự án, min_length=1) ID
      */
     project_id: string;
     /**
-     * 章节 ID
+     * chapter_id: str = Field(..., description=ID chương, min_length=1) ID
      */
     chapter_id: string;
     /**
-     * 分镜结果（ScriptDivisionResult 序列化）
+     * Kết quả chia phân cảnh (ScriptDivisionResult dạng serialized)
      */
     script_division: Record<string, any>;
     /**
-     * 一致性检查结果（可选；ScriptConsistencyCheckResult 序列化）
+     * Kết quả kiểm tra tính nhất quán (tùy chọn; ScriptConsistencyCheckResult dạng serialized)
      */
     consistency?: (Record<string, any> | null);
     /**
-     * 是否跳过后端缓存并强制重新提取
+     * refresh_cache: bool = Field(False, description=liệu bỏ qua bộ đệm phía sau và buộc trích xuất lại hay không)
      */
     refresh_cache?: boolean;
 };

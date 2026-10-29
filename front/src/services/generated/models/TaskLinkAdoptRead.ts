@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 采用状态更新结果。
+ * Kết quả cập nhật trạng thái chấp nhận.。
  */
 export type TaskLinkAdoptRead = {
     task_id: string;
@@ -12,11 +12,11 @@ export type TaskLinkAdoptRead = {
      */
     link_type: string;
     /**
-     * 项目/章节/镜头 ID
+     * ID dự án/chương/phân cảnh
      */
     entity_id: string;
     /**
-     * 是否采用（仅可正向变更为 true）
+     * liệu đã áp dụng hay không (chỉ được đổi thuận chiều sang true)
      */
     is_adopted: boolean;
 };

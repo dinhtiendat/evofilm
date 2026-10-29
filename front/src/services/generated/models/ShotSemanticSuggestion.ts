@@ -6,31 +6,31 @@ import type { CameraAngle } from './CameraAngle';
 import type { CameraMovement } from './CameraMovement';
 import type { CameraShotType } from './CameraShotType';
 /**
- * 镜头语义默认建议：用于准备阶段初始化镜头语言与动作拍点。
+ * Gợi ý ngữ nghĩa mặc định của phân cảnh: dùng để khởi tạo ngôn ngữ phân cảnh và mốc hành động ở giai đoạn chuẩn bị.
  */
 export type ShotSemanticSuggestion = {
     /**
-     * 建议景别
+     * camera_shot: Optional[CameraShotType] = Field(None, description=Gợi ý cận)
      */
     camera_shot?: (CameraShotType | null);
     /**
-     * 建议机位
+     * angle: Optional[CameraAngle] = Field(None, description=góc máy gợi ý)
      */
     angle?: (CameraAngle | null);
     /**
-     * 建议运镜
+     * movement: Optional[CameraMovement] = Field(None, description=Gợi ý chuyển động máy)
      */
     movement?: (CameraMovement | null);
     /**
-     * 建议时长（秒）
+     * thời lượng gợi ý (giây)
      */
     duration?: (number | null);
     /**
-     * 按时间顺序排列的动作拍点
+     * action_beats: List[str] = Field(default_factory=list, description=Các mốc hành động được sắp xếp theo trình tự thời gian)
      */
     action_beats?: Array<string>;
     /**
-     * 不确定项说明
+     * notes: Optional[str] = Field(None, description=Giải thích các mục không chắc chắn)
      */
     notes?: (string | null);
 };

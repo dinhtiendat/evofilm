@@ -3,15 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 剧本优化输出：仅在发现角色混淆问题时使用。
+ * Đầu ra tối ưu kịch bản: chỉ dùng khi phát hiện vấn đề nhầm lẫn nhân vật.
  */
 export type ScriptOptimizationResult = {
     /**
-     * 优化后的剧本文本
+     * optimized_script_text: str = Field(..., description=văn bản kịch bản đã tối ưu)
      */
     optimized_script_text: string;
     /**
-     * 改动摘要（只围绕 issues）
+     * tóm tắt thay đổi (chỉ xoay quanh issues)
      */
     change_summary: string;
 };

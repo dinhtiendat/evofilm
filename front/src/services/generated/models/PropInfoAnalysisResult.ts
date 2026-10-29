@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 根据原文道具描述，分析缺少的信息，并给出优化后的可生成道具描述。
+ * Dựa mô tả đạo cụ gốc, phân tích thông tin thiếu và đưa ra mô tả đạo cụ có thể tạo đã tối ưu.
  */
 export type PropInfoAnalysisResult = {
     issues: Array<string>;

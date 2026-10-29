@@ -4,17 +4,17 @@
 /* eslint-disable */
 export type Body_upload_file_api_api_v1_studio_files_upload_post = {
     /**
-     * 要上传的二进制文件
+     * file: UploadFile = File(..., description=Tệp nhị phân cần tải lên)
      */
     file: string;
     /**
-     * 可选：写入 file_usages 的项目 ID
+     * Tùy chọn: ID dự án để ghi vào file_usages
      */
     project_id?: (string | null);
     chapter_id?: (string | null);
     shot_id?: (string | null);
     /**
-     * 与 project_id 同时提供时写入 file_usages
+     * Ghi vào file_usages khi cung cấp cùng lúc với project_id
      */
     usage_kind?: (string | null);
     source_ref?: (string | null);

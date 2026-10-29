@@ -10,7 +10,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioShotCharacterLinksService {
     /**
-     * 查询镜头角色关联列表（ShotCharacterLink）
+     * Truy vấn danh sách liên kết nhân vật của phân cảnh (ShotCharacterLink)
      * @returns ApiResponse_list_ShotCharacterLinkRead__ Successful Response
      * @throws ApiError
      */
@@ -18,7 +18,7 @@ export class StudioShotCharacterLinksService {
         shotId,
     }: {
         /**
-         * 镜头 ID
+         * ID shot
          */
         shotId: string,
     }): CancelablePromise<ApiResponse_list_ShotCharacterLinkRead__> {
@@ -34,7 +34,7 @@ export class StudioShotCharacterLinksService {
         });
     }
     /**
-     * 创建/更新镜头角色关联（ShotCharacterLink）
+     * tạo/cập nhật liên kết shot-nhân vật(ShotCharacterLink)
      * @returns ApiResponse_ShotCharacterLinkRead_ Successful Response
      * @throws ApiError
      */

@@ -3,23 +3,23 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 分页信息。
+ * Thông tin phân trang.。
  */
 export type Pagination = {
     /**
-     * 当前页，从 1 开始
+     * trang hiện tại, bắt đầu từ 1
      */
     page: number;
     /**
-     * 每页条数
+     * page_size: int = Field(..., description=số dòng mỗi trang)
      */
     page_size: number;
     /**
-     * 总条数
+     * total: int = Field(..., description=tổng số dòng)
      */
     total: number;
     /**
-     * 最大页码
+     * max_page: int = Field(..., description=số trang tối đa)
      */
     max_page: number;
 };

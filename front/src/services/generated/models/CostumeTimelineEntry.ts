@@ -4,27 +4,27 @@
 /* eslint-disable */
 import type { EvidenceSpan } from './EvidenceSpan';
 /**
- * 单角色的服装演变时间线条目。
+ * Mục trục thời gian tiến hóa trang phục của một nhân vật.。
  */
 export type CostumeTimelineEntry = {
     /**
-     * 镜头序号
+     * shot_index: int = Field(..., ge=1, description=Thứ tự của phân cảnh)
      */
     shot_index: number;
     /**
-     * 可选：所属场景稳定ID（若已可推断）
+     * Tùy chọn: ID ổn định của bối cảnh sở hữu (nếu đã suy ra được)
      */
     scene_id?: (string | null);
     /**
-     * 服装/外形要点（简短）
+     * Điểm chính trang phục / ngoại hình (ngắn)
      */
     costume_note?: (string | null);
     /**
-     * 与上一条相比的变化点
+     * changes: List[str] = Field(default_factory=list, description=Điểm thay đổi so với mục trước đó)
      */
     changes?: Array<string>;
     /**
-     * 原文依据（可选）
+     * Bằng chứng từ nguyên văn (tùy chọn)
      */
     evidence?: Array<EvidenceSpan>;
 };

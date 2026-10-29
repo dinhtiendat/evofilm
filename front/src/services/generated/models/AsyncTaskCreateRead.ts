@@ -5,23 +5,23 @@
 import type { TaskStatus } from './TaskStatus';
 export type AsyncTaskCreateRead = {
     /**
-     * 任务 ID
+     * task_id: str = Field(..., description=ID tác vụ) ID
      */
     task_id: string;
     /**
-     * 任务状态
+     * status: TaskStatus = Field(..., description=Trạng thái tác vụ)
      */
     status: TaskStatus;
     /**
-     * 是否复用了当前业务实体已有的活跃任务
+     * reused: bool = Field(False, description=liệu đã tái sử dụng tác vụ đang hoạt động có sẵn của thực thể nghiệp vụ hiện tại hay chưa)
      */
     reused?: boolean;
     /**
-     * 业务关联类型
+     * relation_type: str | None = Field(None, description=loại liên kết nghiệp vụ)
      */
     relation_type?: (string | null);
     /**
-     * 业务关联实体 ID
+     * relation_entity_id: str | None = Field(None, description=thực thể liên kết nghiệp vụ ID) ID
      */
     relation_entity_id?: (string | null);
 };

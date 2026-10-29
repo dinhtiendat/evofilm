@@ -5,7 +5,7 @@
 import type { ShotFrameType } from './ShotFrameType';
 import type { ShotLinkedAssetItem } from './ShotLinkedAssetItem';
 /**
- * 镜头分镜帧提示词渲染请求体。
+ * Body yêu cầu render prompt khung hình phân cảnh.。
  */
 export type ShotFramePromptRenderRequest = {
     /**
@@ -13,11 +13,11 @@ export type ShotFramePromptRenderRequest = {
      */
     frame_type: ShotFrameType;
     /**
-     * 原始基础提示词。渲染接口要求显式传入，用于生成最终提示词。
+     * prompt nền gốc. API render yêu cầu truyền rõ, dùng để sinh prompt cuối.
      */
     prompt: string;
     /**
-     * 参考资产条目列表（可多张，顺序有效）。后端会使用 item.file_id 作为参考图；无效条目会被跳过。
+     * Danh sách mục tài nguyên tham chiếu (nhiều mục, thứ tự có hiệu lực). Backend sẽ dùng item.file_id làm ảnh tham chiếu; các mục không hợp lệ sẽ bị bỏ qua.
      */
     images?: Array<ShotLinkedAssetItem>;
 };

@@ -12,7 +12,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioShotDetailsService {
     /**
-     * 镜头细节列表（分页）
+     * Danh sách chi tiết phân cảnh (phân trang)
      * @returns ApiResponse_PaginatedData_ShotDetailRead__ Successful Response
      * @throws ApiError
      */
@@ -24,7 +24,7 @@ export class StudioShotDetailsService {
         pageSize = 10,
     }: {
         /**
-         * 按镜头过滤（id 同 shot_id）
+         * Lọc theo phân cảnh (id trùng shot_id)
          */
         shotId?: (string | null),
         order?: (string | null),
@@ -48,7 +48,7 @@ export class StudioShotDetailsService {
         });
     }
     /**
-     * 创建镜头细节
+     * Tạo chi tiết phân cảnh
      * @returns ApiResponse_ShotDetailRead_ Successful Response
      * @throws ApiError
      */
@@ -68,7 +68,7 @@ export class StudioShotDetailsService {
         });
     }
     /**
-     * 获取镜头细节
+     * Lấy chi tiết phân cảnh
      * @returns ApiResponse_ShotDetailRead_ Successful Response
      * @throws ApiError
      */
@@ -89,7 +89,7 @@ export class StudioShotDetailsService {
         });
     }
     /**
-     * 更新镜头细节
+     * Cập nhật chi tiết phân cảnh
      * @returns ApiResponse_ShotDetailRead_ Successful Response
      * @throws ApiError
      */
@@ -114,7 +114,7 @@ export class StudioShotDetailsService {
         });
     }
     /**
-     * 删除镜头细节
+     * Xóa chi tiết phân cảnh
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

@@ -3,45 +3,45 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Studio 角色草稿。
+ * Studio Bản nháp nhân vật Studio.。
  *
- * 导入 API 未传 id 时由服务端生成；分镜详情回填时可带 character_id。
+ * Import API không truyền id thì phía server sinh ra; khi ghi ngược chi tiết phân cảnh có thể kèm character_id.
  */
 export type StudioCharacterDraft = {
     /**
-     * 角色 ID（已落库时回填 character_id）
+     * ID nhân vật (nếu đã lưu CSDL thì ghi ngược character_id)
      */
     id?: (string | null);
     /**
-     * 关联的文件 ID（可空）
+     * tệp liên kết ID(để trống được)
      */
     file_id?: (string | null);
     /**
-     * 缩略图下载地址（可空）
+     * Đường dẫn tải ảnh thu nhỏ (để trống được)
      */
     thumbnail?: (string | null);
     /**
-     * 镜头内角色排序（shot_character_links.index）
+     * index: Optional[int] = Field(None, description=Thứ tự nhân vật trong phân cảnh (shot_character_links.index))（shot_character_links.index）
      */
     index?: (number | null);
     /**
-     * 角色名称（同项目内建议唯一）
+     * Tên nhân vật (khuyến nghị duy nhất trong cùng dự án)
      */
     name: string;
     /**
-     * 角色描述
+     * description: str = Field(, description=Mô tả nhân vật)
      */
     description?: string;
     /**
-     * 标签（可选）
+     * Nhãn (tùy chọn)
      */
     tags?: Array<string>;
     /**
-     * 服装名称（可选，导入时映射到 costume_id）
+     * Tên trang phục (tùy chọn, ánh xạ sang costume_id khi nhập)
      */
     costume_name?: (string | null);
     /**
-     * 角色常用道具名称列表（可选）
+     * Danh sách tên đạo cụ thường dùng của nhân vật (tùy chọn)
      */
     prop_names?: Array<string>;
 };

@@ -5,25 +5,25 @@ import type { ProjectStyleFieldOptions } from './ProjectVisualStyleAndStyleField
 
 const FALLBACK_OPTIONS: ProjectStyleFieldOptions = {
   visualStyles: [
-    { value: '现实', label: 'Thực tế' },
-    { value: '动漫', label: 'Hoạt hình' },
+    { value: 'live_action', label: 'Thực tế' },
+    { value: 'anime', label: 'Hoạt hình' },
   ],
   stylesByVisual: {
-    现实: [
-      { value: '真人都市', label: 'Người thật đô thị' },
-      { value: '真人科幻', label: 'Người thật khoa học viễn tưởng' },
-      { value: '真人古装', label: 'Người thật cổ trang' },
+    live_action: [
+      { value: 'real_people_city', label: 'Người thật đô thị' },
+      { value: 'real_people_scifi', label: 'Người thật khoa học viễn tưởng' },
+      { value: 'real_people_ancient', label: 'Người thật cổ trang' },
     ],
-    动漫: [
-      { value: '动漫科幻', label: 'Hoạt hình khoa học viễn tưởng' },
-      { value: '动漫3D', label: 'Hoạt hình 3D' },
-      { value: '国漫', label: 'Hoạt hình Trung Quốc' },
-      { value: '水墨画', label: 'Tranh thủy mặc' },
+    anime: [
+      { value: 'anime_scifi', label: 'Hoạt hình khoa học viễn tưởng' },
+      { value: 'anime_3d', label: 'Hoạt hình 3D' },
+      { value: 'guoman', label: 'Hoạt hình Trung Quốc' },
+      { value: 'ink_wash', label: 'Tranh thủy mặc' },
     ],
   },
   defaultStyleByVisual: {
-    现实: '真人都市',
-    动漫: '动漫3D',
+    live_action: 'real_people_city',
+    anime: 'anime_3d',
   },
 }
 
@@ -125,7 +125,7 @@ export function useProjectStyleOptions() {
     }
   }, [])
 
-  const defaultVisualStyle = useMemo(() => options.visualStyles[0]?.value ?? '现实', [options])
+  const defaultVisualStyle = useMemo(() => options.visualStyles[0]?.value ?? 'live_action', [options])
   const getDefaultStyle = useMemo(
     () => (visual: string) => resolveDefaultStyle(options, visual),
     [options],

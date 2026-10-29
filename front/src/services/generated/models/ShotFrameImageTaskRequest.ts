@@ -5,13 +5,13 @@
 import type { ShotFrameType } from './ShotFrameType';
 import type { ShotLinkedAssetItem } from './ShotLinkedAssetItem';
 /**
- * 镜头分镜帧图片生成请求体：只根据 `shot_id + frame_type` 定位 ShotFrameImage。
+ * Thân yêu cầu tạo ảnh khung hình phân cảnh: chỉ định vị ShotFrameImage dựa trên `shot_id + frame_type`.
  *
- * 用于替代旧接口中通过 `image_id` 直接传入 ShotFrameImage.id 的方式。
+ * Dùng để thay thế cách truyền trực tiếp ShotFrameImage.id qua `image_id` trong giao diện cũ.
  */
 export type ShotFrameImageTaskRequest = {
     /**
-     * 可选模型 ID（models.id）；不传则使用 ModelSettings.default_image_model_id；Provider 由模型关联反查
+     * Mô hình tùy chọn ID(models.id); nếu không truyền sẽ dùng ModelSettings.default_image_model_id;Provider tra ngược từ liên kết của mô hình
      */
     model_id?: (string | null);
     /**
@@ -19,19 +19,19 @@ export type ShotFrameImageTaskRequest = {
      */
     frame_type: ShotFrameType;
     /**
-     * 提示词（由前端传入，创建任务接口必填）。
+     * Prompt (do phía trước truyền vào, bắt buộc với interface tạo tác vụ).
      */
     prompt: string;
     /**
-     * 参考资产条目列表（可多张，顺序有效）。后端会使用 item.file_id 作为参考图；无效条目会被跳过。
+     * danh sách mục tài nguyên tham chiếu (nhiều ảnh, thứ tự có hiệu lực). Backend sẽ dùng item.file_id làm ảnh tham chiếu；Mục không hợp lệ sẽ bị bỏ qua.。
      */
     images?: Array<ShotLinkedAssetItem>;
     /**
-     * 目标视频画幅比例；关键帧将按该画幅生成，以提升后续视频参考稳定性
+     * tỷ lệ khung hình video đích；khung hình chính sẽ sinh theo khung hình này để tăng tính ổn định tham chiếu video sau
      */
     target_ratio: '16:9' | '4:3' | '1:1' | '3:4' | '9:16' | '21:9' | '3:2' | '2:3';
     /**
-     * 关键帧输出分辨率档位，默认 standard
+     * Hạng độ phân giải đầu ra khung hình chính, mặc định standard
      */
     resolution_profile?: ('standard' | 'high' | null);
 };

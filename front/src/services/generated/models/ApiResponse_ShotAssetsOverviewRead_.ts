@@ -5,19 +5,19 @@
 import type { ShotAssetsOverviewRead } from './ShotAssetsOverviewRead';
 export type ApiResponse_ShotAssetsOverviewRead_ = {
     /**
-     * 与 HTTP 状态码一致
+     * Khớp mã trạng thái HTTP
      */
     code?: number;
     /**
-     * 提示信息
+     * message: str = Field(success, description=Thông báo)
      */
     message?: string;
     /**
-     * 实际数据
+     * data: T | None = Field(None, description=dữ liệu thực)
      */
     data?: (ShotAssetsOverviewRead | null);
     /**
-     * 附加元信息
+     * meta: dict[str, Any] | None = Field(None, description=siêu dữ liệu đi kèm)
      */
     meta?: (Record<string, any> | null);
 };

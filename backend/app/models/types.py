@@ -6,21 +6,21 @@ from enum import Enum
 class ProjectStyle(str, Enum):
     """Chiều kích thể loại/phong cách dự án (không dùng để phân biệt live-action/anime)."""
 
-    # Người thật: đô thị, khoa học viễn tưởng, phục cổ; hoạt hình: khoa học viễn tưởng, phục cổ, 3D, hoạt hình Trung Quốc, tranh thủy mặc
-    real_people_city = "真人都市"
-    real_people_scifi = "真人科幻"
-    real_people_ancient = "真人古装"
-    anime_scifi = "动漫科幻"
-    anime_3d = "动漫3D"
-    guoman = "国漫"
-    ink_wash = "水墨画"
+    # live_action: urban, scifi, period; anime: scifi, 3D, guoman, ink-wash
+    real_people_city = "real_people_city"
+    real_people_scifi = "real_people_scifi"
+    real_people_ancient = "real_people_ancient"
+    anime_scifi = "anime_scifi"
+    anime_3d = "anime_3d"
+    guoman = "guoman"
+    ink_wash = "ink_wash"
 
 
 class ProjectVisualStyle(str, Enum):
-    """Chiều kích hình thức biểu diễn khung hình: dùng để phân biệt hiện thực/anime..."""
+    """Chiều kích hình thức biểu diễn khung hình: dùng để phân biệt live_action/anime."""
 
-    live_action = "现实"
-    anime = "动漫"
+    live_action = "live_action"
+    anime = "anime"
 
 
 class ChapterStatus(str, Enum):

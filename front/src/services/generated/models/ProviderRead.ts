@@ -4,39 +4,39 @@
 /* eslint-disable */
 import type { ProviderStatus } from './ProviderStatus';
 /**
- * 对外返回的供应商信息（不包含 api_key/api_secret）。
+ * thông tin nhà cung cấp trả ra đối ngoại (không chứa api_key/api_secret).
  */
 export type ProviderRead = {
     /**
-     * 供应商名称
+     * name: str = Field(..., description=tên nhà cung cấp)
      */
     name: string;
     /**
-     * 文本/通用 API Base URL
+     * Base URL API văn bản/thông dụng
      */
     base_url: string;
     /**
-     * 图片能力 API Base URL（可选覆盖）
+     * Khả năng hình ảnh API Base URL(chép lên tùy chọn)
      */
     image_base_url?: (string | null);
     /**
-     * 视频能力 API Base URL（可选覆盖）
+     * Khả năng video API Base URL(chép lên tùy chọn)
      */
     video_base_url?: (string | null);
     /**
-     * 说明
+     * description: str = Field(, description=Mô tả)
      */
     description?: string;
     /**
-     * 状态：active/testing/disabled
+     * description=Trạng thái:active/testing/disabled,：active/testing/disabled
      */
     status?: ProviderStatus;
     /**
-     * 创建人
+     * created_by: str = Field(, description=Người tạo)
      */
     created_by?: string;
     /**
-     * 供应商 ID
+     * id: str = Field(..., description=nhà cung cấp ID) ID
      */
     id: string;
 };

@@ -6,87 +6,87 @@ import type { ActionBeatPhaseRead } from './ActionBeatPhaseRead';
 import type { ShotPromptAssetRef } from './ShotPromptAssetRef';
 import type { ShotPromptCameraInfo } from './ShotPromptCameraInfo';
 /**
- * 视频提示词渲染前的标准上下文包。
+ * Gói ngữ cảnh chuẩn trước khi render prompt video.
  */
 export type ShotVideoPromptPackRead = {
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id: string;
     /**
-     * 镜头标题
+     * tiêu đề shot
      */
     title?: string;
     /**
-     * 剧本摘录
+     * Trích đoạn kịch bản
      */
     script_excerpt?: string;
     /**
-     * 动作/场景要点
+     * Điểm chính của hành động/bối cảnh
      */
     action_beats?: Array<string>;
     /**
-     * 动作拍点的阶段推断结果
+     * Kết quả suy luận giai đoạn của mốc hành động
      */
     action_beat_phases?: Array<ActionBeatPhaseRead>;
     /**
-     * 上一镜头摘要，用于提示词连续性约束
+     * Tóm tắt phân cảnh trước, dùng cho ràng buộc liên tục của prompt
      */
     previous_shot_summary?: string;
     /**
-     * 下一镜头目标，用于提示词连续性约束
+     * mục tiêu phân cảnh tiếp theo, dùng cho ràng buộc liên tục của prompt
      */
     next_shot_goal?: string;
     /**
-     * 当前镜头与相邻镜头的承接建议
+     * gợi ý tiếp nối giữa phân cảnh hiện tại và phân cảnh liền kề
      */
     continuity_guidance?: string;
     /**
-     * 当前镜头的构图与空间锚点建议
+     * gợi ý mỏ neo bố cục và không gian của phân cảnh hiện tại
      */
     composition_anchor?: string;
     /**
-     * 当前镜头的人物朝向、视线与左右轴线建议
+     * Gợi ý hướng nhìn, tầm mắt và trục trái-phải của nhân vật trong phân cảnh hiện tại
      */
     screen_direction_guidance?: string;
     /**
-     * 对白摘要
+     * Tóm tắt thoại
      */
     dialogue_summary?: string;
     /**
-     * 角色引用
+     * Tham chiếu nhân vật
      */
     characters?: Array<ShotPromptAssetRef>;
     /**
-     * 场景引用
+     * tham chiếu bối cảnh
      */
     scene?: (ShotPromptAssetRef | null);
     /**
-     * 道具引用
+     * Tham chiếu đạo cụ
      */
     props?: Array<ShotPromptAssetRef>;
     /**
-     * 服装引用
+     * Tham chiếu trang phục
      */
     costumes?: Array<ShotPromptAssetRef>;
     /**
-     * 镜头语言
+     * Ngôn ngữ điện ảnh
      */
     camera?: ShotPromptCameraInfo;
     /**
-     * 氛围描述
+     * Mô tả không khí
      */
     atmosphere?: string;
     /**
-     * 项目视觉风格
+     * Phong cách thị giác của dự án
      */
     visual_style?: string;
     /**
-     * 项目题材/风格
+     * thể loại/phong cách dự án
      */
     style?: string;
     /**
-     * 默认负面提示词
+     * Prompt tiêu cực mặc định
      */
     negative_prompt?: string;
 };

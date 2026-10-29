@@ -22,7 +22,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class LlmService {
     /**
-     * 列出模型供应商（分页）
+     * Liệt kê nhà cung cấp mô hình (phân trang)
      * @returns ApiResponse_PaginatedData_ProviderRead__ Successful Response
      * @throws ApiError
      */
@@ -34,23 +34,23 @@ export class LlmService {
         pageSize = 10,
     }: {
         /**
-         * 关键字，过滤 name/description
+         * Từ khóa, lọc theo name/description
          */
         q?: (string | null),
         /**
-         * 排序字段：name, created_at, updated_at
+         * Trường sắp xếp: name, created_at, updated_at
          */
         order?: (string | null),
         /**
-         * 是否倒序
+         * Sắp xếp giảm dần hay không
          */
         isDesc?: boolean,
         /**
-         * 页码
+         * Số trang
          */
         page?: number,
         /**
-         * 每页条数
+         * Số mục mỗi trang
          */
         pageSize?: number,
     }): CancelablePromise<ApiResponse_PaginatedData_ProviderRead__> {
@@ -70,7 +70,7 @@ export class LlmService {
         });
     }
     /**
-     * 创建模型供应商
+     * Tạo nhà cung cấp mô hình
      * @returns ApiResponse_ProviderRead_ Successful Response
      * @throws ApiError
      */
@@ -90,7 +90,7 @@ export class LlmService {
         });
     }
     /**
-     * 列出系统支持的供应商能力
+     * Liệt kê năng lực nhà cung cấp được hệ thống hỗ trợ
      * @returns ApiResponse_list_ProviderSupportedRead__ Successful Response
      * @throws ApiError
      */
@@ -98,7 +98,7 @@ export class LlmService {
         category,
     }: {
         /**
-         * 按模型类别过滤：text/image/video
+         * Lọc theo hạng mục mô hình: text/image/video
          */
         category?: (ModelCategoryKey | null),
     }): CancelablePromise<ApiResponse_list_ProviderSupportedRead__> {
@@ -114,7 +114,7 @@ export class LlmService {
         });
     }
     /**
-     * 获取当前默认图片模型的关键帧规格选项
+     * Lấy tùy chọn quy cách khung hình chính của mô hình hình ảnh mặc định hiện tại
      * @returns ApiResponse_ImageGenerationOptionsRead_ Successful Response
      * @throws ApiError
      */
@@ -125,7 +125,7 @@ export class LlmService {
         });
     }
     /**
-     * 获取当前默认视频模型的动态比例选项
+     * Lấy tùy chọn tỉ lệ động của mô hình video mặc định hiện tại
      * @returns ApiResponse_VideoGenerationOptionsRead_ Successful Response
      * @throws ApiError
      */
@@ -136,7 +136,7 @@ export class LlmService {
         });
     }
     /**
-     * 获取单个模型供应商
+     * Lấy một nhà cung cấp mô hình
      * @returns ApiResponse_ProviderRead_ Successful Response
      * @throws ApiError
      */
@@ -157,7 +157,7 @@ export class LlmService {
         });
     }
     /**
-     * 更新模型供应商
+     * Cập nhật nhà cung cấp mô hình
      * @returns ApiResponse_ProviderRead_ Successful Response
      * @throws ApiError
      */
@@ -182,7 +182,7 @@ export class LlmService {
         });
     }
     /**
-     * 删除模型供应商
+     * Xóa nhà cung cấp mô hình
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */
@@ -203,7 +203,7 @@ export class LlmService {
         });
     }
     /**
-     * 列出模型（分页）
+     * Liệt kê mô hình (phân trang)
      * @returns ApiResponse_PaginatedData_ModelRead__ Successful Response
      * @throws ApiError
      */
@@ -217,31 +217,31 @@ export class LlmService {
         pageSize = 10,
     }: {
         /**
-         * 按供应商过滤
+         * lọc theo nhà cung cấp
          */
         providerId?: (string | null),
         /**
-         * 按模型类别过滤
+         * Lọc theo hạng mục mô hình
          */
         category?: (ModelCategoryKey | null),
         /**
-         * 关键字，过滤 name/description
+         * Từ khóa, lọc theo name/description
          */
         q?: (string | null),
         /**
-         * 排序字段：name, category, created_at, updated_at
+         * Trường sắp xếp: name, category, created_at, updated_at
          */
         order?: (string | null),
         /**
-         * 是否倒序
+         * Sắp xếp giảm dần hay không
          */
         isDesc?: boolean,
         /**
-         * 页码
+         * Số trang
          */
         page?: number,
         /**
-         * 每页条数
+         * Số mục mỗi trang
          */
         pageSize?: number,
     }): CancelablePromise<ApiResponse_PaginatedData_ModelRead__> {
@@ -263,7 +263,7 @@ export class LlmService {
         });
     }
     /**
-     * 创建模型
+     * Tạo mô hình
      * @returns ApiResponse_ModelRead_ Successful Response
      * @throws ApiError
      */
@@ -283,7 +283,7 @@ export class LlmService {
         });
     }
     /**
-     * 获取单个模型
+     * Lấy một mô hình
      * @returns ApiResponse_ModelRead_ Successful Response
      * @throws ApiError
      */
@@ -304,7 +304,7 @@ export class LlmService {
         });
     }
     /**
-     * 更新模型
+     * Cập nhật mô hình
      * @returns ApiResponse_ModelRead_ Successful Response
      * @throws ApiError
      */
@@ -329,7 +329,7 @@ export class LlmService {
         });
     }
     /**
-     * 删除模型
+     * Xóa mô hình
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */
@@ -350,7 +350,7 @@ export class LlmService {
         });
     }
     /**
-     * 获取模型全局设置（单例）
+     * Lấy cài đặt toàn cục của mô hình (đơn lệ)
      * @returns ApiResponse_ModelSettingsRead_ Successful Response
      * @throws ApiError
      */
@@ -361,7 +361,7 @@ export class LlmService {
         });
     }
     /**
-     * 更新模型全局设置（单例）
+     * Cập nhật cài đặt toàn cục của mô hình (đơn lệ)
      * @returns ApiResponse_ModelSettingsRead_ Successful Response
      * @throws ApiError
      */

@@ -12,7 +12,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioEntitiesService {
     /**
-     * 批量检测资产名称是否存在（模糊匹配，不分页）
+     * Kiểm tra hàng loạt tên tài nguyên có tồn tại không (khớp mờ, không phân trang)
      * @returns ApiResponse_EntityNameExistenceCheckResponse_ Successful Response
      * @throws ApiError
      */
@@ -32,7 +32,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一实体列表（分页）
+     * Danh sách thực thể thống nhất (phân trang)
      * @returns ApiResponse_PaginatedData_dict_str__Any___ Successful Response
      * @throws ApiError
      */
@@ -48,15 +48,15 @@ export class StudioEntitiesService {
     }: {
         entityType: string,
         /**
-         * 关键字，过滤 name/description
+         * Từ khóa, lọc theo name/description
          */
         q?: (string | null),
         /**
-         * 题材/风格（单值）
+         * Thể loại/phong cách (một giá trị)
          */
         style?: (string | null),
         /**
-         * 画面表现形式（单值：真人/动漫）
+         * Hình thức biểu diễn khung hình (giá trị đơn: người thật/hoạt hình)
          */
         visualStyle?: (string | null),
         order?: (string | null),
@@ -85,7 +85,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一创建实体
+     * Tạo thực thể thống nhất
      * @returns ApiResponse_dict_str__Any__ Successful Response
      * @throws ApiError
      */
@@ -110,7 +110,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一获取实体
+     * Lấy thực thể thống nhất
      * @returns ApiResponse_dict_str__Any__ Successful Response
      * @throws ApiError
      */
@@ -134,7 +134,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一更新实体
+     * Cập nhật thực thể thống nhất
      * @returns ApiResponse_dict_str__Any__ Successful Response
      * @throws ApiError
      */
@@ -162,7 +162,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一删除实体
+     * Xóa thực thể thống nhất
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */
@@ -186,7 +186,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一实体图片列表（分页）
+     * Liệt kê ảnh thực thể thống nhất (phân trang)
      * @returns ApiResponse_PaginatedData_dict_str__Any___ Successful Response
      * @throws ApiError
      */
@@ -224,7 +224,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一创建实体图片
+     * Tạo ảnh thực thể thống nhất
      * @returns ApiResponse_dict_str__Any__ Successful Response
      * @throws ApiError
      */
@@ -252,7 +252,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一更新实体图片
+     * Cập nhật ảnh thực thể thống nhất
      * @returns ApiResponse_dict_str__Any__ Successful Response
      * @throws ApiError
      */
@@ -283,7 +283,7 @@ export class StudioEntitiesService {
         });
     }
     /**
-     * 统一删除实体图片
+     * Xóa ảnh thực thể thống nhất
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

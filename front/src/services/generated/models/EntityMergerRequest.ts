@@ -3,35 +3,35 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 实体合并请求。
+ * Yêu cầu gộp thực thể.。
  */
 export type EntityMergerRequest = {
     /**
-     * 项目 ID（异步任务关联可选）
+     * ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     project_id?: (string | null);
     /**
-     * 章节 ID（异步任务关联可选）
+     * ID chương (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     chapter_id?: (string | null);
     /**
-     * 所有镜头提取结果（ShotElementExtractionResult 的序列化形式）
+     * Kết quả trích xuất của tất cả phân cảnh (dạng serialize của ShotElementExtractionResult)
      */
     all_shot_extractions: Array<Record<string, any>>;
     /**
-     * 历史实体库（可选，用于增量合并）
+     * Kho thực thể lịch sử (tùy chọn, dùng cho hợp nhất tăng phân)
      */
     historical_library?: (Record<string, any> | null);
     /**
-     * 脚本分镜结果（可选；ScriptDivisionResult 序列化），用于定位与统计
+     * Kết quả phân cảnh của kịch bản (tùy chọn; serialize của ScriptDivisionResult), dùng để định vị và thống kê
      */
     script_division?: (Record<string, any> | null);
     /**
-     * 上一次合并结果（可选；EntityMergeResult 序列化），用于冲突重试合并
+     * Kết quả gộp trước (tùy chọn; EntityMergeResult đã serialize), dùng để thử lại gộp khi xung đột
      */
     previous_merge?: (Record<string, any> | null);
     /**
-     * 冲突解决建议列表（可选；用于冲突重试合并）
+     * Danh sách gợi ý giải quyết xung đột (tùy chọn; dùng cho gộp lại khi thử lại xung đột)
      */
     conflict_resolutions?: null;
 };

@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 根据原文人物描述，分析缺少的信息，并给出优化后的可生成画像描述。
+ * Dựa mô tả nhân vật gốc, phân tích thông tin thiếu và đưa ra mô tả hồ sơ có thể tạo đã tối ưu.
  */
 export type CharacterPortraitAnalysisResult = {
     issues: Array<string>;

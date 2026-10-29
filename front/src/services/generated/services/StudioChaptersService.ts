@@ -12,7 +12,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioChaptersService {
     /**
-     * 章节列表（分页）
+     * Danh sách chương (phân trang)
      * @returns ApiResponse_PaginatedData_ChapterRead__ Successful Response
      * @throws ApiError
      */
@@ -25,19 +25,19 @@ export class StudioChaptersService {
         pageSize = 10,
     }: {
         /**
-         * 按项目过滤
+         * Lọc theo dự án
          */
         projectId?: (string | null),
         /**
-         * 关键字，过滤 title/summary
+         * từ khóa, lọc title/summary
          */
         q?: (string | null),
         /**
-         * 排序字段
+         * Trường sắp xếp
          */
         order?: (string | null),
         /**
-         * 是否倒序
+         * Sắp xếp giảm dần hay không
          */
         isDesc?: boolean,
         page?: number,
@@ -60,7 +60,7 @@ export class StudioChaptersService {
         });
     }
     /**
-     * 创建章节
+     * Tạo chương
      * @returns ApiResponse_ChapterRead_ Successful Response
      * @throws ApiError
      */
@@ -80,7 +80,7 @@ export class StudioChaptersService {
         });
     }
     /**
-     * 获取章节
+     * Lấy chương
      * @returns ApiResponse_ChapterRead_ Successful Response
      * @throws ApiError
      */
@@ -101,7 +101,7 @@ export class StudioChaptersService {
         });
     }
     /**
-     * 更新章节
+     * Cập nhật chương
      * @returns ApiResponse_ChapterRead_ Successful Response
      * @throws ApiError
      */
@@ -126,7 +126,7 @@ export class StudioChaptersService {
         });
     }
     /**
-     * 删除章节
+     * Xóa chương
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

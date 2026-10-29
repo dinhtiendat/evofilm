@@ -4,39 +4,39 @@
 /* eslint-disable */
 import type { ModelCategoryKey } from './ModelCategoryKey';
 /**
- * 系统支持的供应商能力清单。
+ * Danh sách khả năng nhà cung cấp do hệ thống hỗ trợ.。
  */
 export type ProviderSupportedRead = {
     /**
-     * 供应商稳定键
+     * key: str = Field(..., description=khóa ổn định của nhà cung cấp)
      */
     key: string;
     /**
-     * 供应商展示名
+     * display_name: str = Field(..., description=Tên hiển thị của nhà cung cấp)
      */
     display_name: string;
     /**
-     * 可识别别名
+     * aliases: list[str] = Field(default_factory=list, description=Biệt danh có thể nhận diện)
      */
     aliases?: Array<string>;
     /**
-     * 支持的模型类别
+     * description=Hạng mục mô hình được hỗ trợ,
      */
     supported_categories?: Array<ModelCategoryKey>;
     /**
-     * 默认 API Base URL
+     * default_base_url: str | None = Field(None, description=API Base URL mặc định) API Base URL
      */
     default_base_url?: (string | null);
     /**
-     * 是否要求 api_key
+     * requires_api_key: bool = Field(True, description=liệu yêu cầu api_key hay không) api_key
      */
     requires_api_key?: boolean;
     /**
-     * 是否要求 api_secret
+     * requires_api_secret: bool = Field(False, description=Có yêu cầu api_secret không) api_secret
      */
     requires_api_secret?: boolean;
     /**
-     * 是否实验性供应商
+     * is_experimental: bool = Field(False, description=liệu là nhà cung cấp thử nghiệm hay không)
      */
     is_experimental?: boolean;
 };

@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 镜头提取候选类型。
+ * Kiểu ứng viên trích xuất phân cảnh.。
  */
 export type ShotCandidateType = 'character' | 'scene' | 'prop' | 'costume';

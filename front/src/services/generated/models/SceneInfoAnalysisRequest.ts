@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 场景信息缺失分析请求。
+ * Yêu cầu phân tích thiếu thông tin bối cảnh.。
  */
 export type SceneInfoAnalysisRequest = {
     /**
-     * 任务关联实体 ID（资产页恢复任务可选）
+     * ID thực thể liên kết của tác vụ (tùy chọn khi khôi phục tác vụ ở trang tài nguyên)
      */
     relation_entity_id?: (string | null);
     /**
-     * 项目 ID（异步任务关联可选）
+     * ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     project_id?: (string | null);
     /**
-     * 章节 ID（异步任务关联可选）
+     * ID chương (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     chapter_id?: (string | null);
     /**
-     * 原文场景上下文（可为空；用于提供额外背景，帮助判断缺失信息）
+     * bối cảnh bối cảnh nguyên văn (có thể rỗng; dùng để cung cấp thêm bối cảnh, hỗ trợ phán đoán thông tin thiếu)
      */
     scene_context?: (string | null);
     /**
-     * 原文场景描述
+     * scene_description: str = Field(..., description=Mô tả bối cảnh trong nguyên văn, min_length=1)
      */
     scene_description: string;
 };

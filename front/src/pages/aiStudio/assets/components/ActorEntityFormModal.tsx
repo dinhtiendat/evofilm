@@ -43,7 +43,7 @@ export function ActorEntityFormModal({
   const [formDesc, setFormDesc] = useState('')
   const [formTags, setFormTags] = useState('')
   const [formViewCount, setFormViewCount] = useState<number | null>(null)
-  const [formVisualStyle, setFormVisualStyle] = useState<'现实' | '动漫'>(defaultVisualStyle as '现实' | '动漫')
+  const [formVisualStyle, setFormVisualStyle] = useState<'live_action' | 'anime'>(defaultVisualStyle as 'live_action' | 'anime')
   const [formStyle, setFormStyle] = useState<string>(getDefaultStyle(defaultVisualStyle))
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export function ActorEntityFormModal({
       setFormDesc(editing.description ?? '')
       setFormTags((editing.tags ?? []).join(', '))
       setFormViewCount(editing.view_count ?? null)
-      const nextVisual = ((editing.visual_style as '现实' | '动漫' | undefined) ?? defaultVisualStyle) as '现实' | '动漫'
+      const nextVisual = ((editing.visual_style as 'live_action' | 'anime' | undefined) ?? defaultVisualStyle) as 'live_action' | 'anime'
       setFormVisualStyle(nextVisual)
       setFormStyle(
         (editing.style as string | undefined) ?? getDefaultStyle(nextVisual),
@@ -63,7 +63,7 @@ export function ActorEntityFormModal({
       setFormDesc('')
       setFormTags('')
       setFormViewCount(null)
-      setFormVisualStyle(defaultVisualStyle as '现实' | '动漫')
+      setFormVisualStyle(defaultVisualStyle as 'live_action' | 'anime')
       setFormStyle(getDefaultStyle(defaultVisualStyle))
     }
   }, [open, editing, defaultVisualStyle, getDefaultStyle])

@@ -3,31 +3,31 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 剧本分镜中的单镜信息：行号 + 预览文本（可选弱语义）。
+ * Thông tin một phân cảnh trong kịch bản phân cảnh: số dòng + văn bản xem trước (ngữ nghĩa yếu tùy chọn).
  */
 export type ShotDivision = {
     /**
-     * 镜头序号（章节内唯一）
+     * Số thứ tự phân cảnh (duy nhất trong chương)
      */
     index: number;
     /**
-     * 起始行号（1-based）
+     * start_line: int = Field(..., ge=1, description=số dòng bắt đầu (1-based))（1-based）
      */
     start_line: number;
     /**
-     * 结束行号（1-based）
+     * end_line: int = Field(..., ge=1, description=số dòng kết thúc (1-based))（1-based）
      */
     end_line: number;
     /**
-     * 镜头对应的剧本摘录/文本
+     * trích đoạn kịch bản/văn bản tương ứng với phân cảnh
      */
     script_excerpt: string;
     /**
-     * 镜头名称（分镜名/镜头标题）
+     * Tên phân cảnh (tên phân cảnh / tiêu đề phân cảnh)
      */
     shot_name?: string;
     /**
-     * 时间（日/夜/未知等，可选）
+     * Thời điểm trong ngày (ban ngày/ban đêm/không rõ..., tùy chọn)
      */
     time_of_day?: ('DAY' | 'NIGHT' | 'DAWN' | 'DUSK' | 'UNKNOWN' | '日' | '夜' | '黎明' | '黄昏' | '不明' | '未知' | null);
 };

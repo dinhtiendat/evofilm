@@ -5,23 +5,23 @@
 import type { DialogueLineMode } from './DialogueLineMode';
 export type ShotExtractedDialogueCandidateAcceptRequest = {
     /**
-     * 写入对白行时使用的排序；为空则使用候选排序
+     * Thứ tự dùng khi ghi dòng thoại; để trống thì dùng thứ tự ứng viên
      */
     index?: (number | null);
     /**
-     * 接受时可覆盖对白文本
+     * Khi chấp nhận có thể ghi đè văn bản thoại
      */
     text?: (string | null);
     /**
-     * 接受时可覆盖对白模式
+     * Có thể ghi đè chế độ thoại khi chấp nhận
      */
     line_mode?: (DialogueLineMode | null);
     /**
-     * 接受时可覆盖说话角色名称
+     * khi chấp nhận có thể ghi đè tên nhân vật nói
      */
     speaker_name?: (string | null);
     /**
-     * 接受时可覆盖听者角色名称
+     * khi chấp nhận có thể ghi đè tên nhân vật nghe
      */
     target_name?: (string | null);
 };

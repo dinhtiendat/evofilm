@@ -30,8 +30,8 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ScriptProcessingService {
     /**
-     * 异步将剧本分割为多个镜头
-     * 创建章节分镜提取任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * summary=Không đồng bộ tách kịch bản thành nhiều phân cảnh,
+     * Tạo tác vụ trích xuất phân cảnh chương và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -51,8 +51,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 将剧本分割为多个镜头
-     * 输入完整剧本文本，输出分镜列表（index/start_line/end_line/script_excerpt/shot_name/time_of_day）。注意：此阶段不强制稳定ID，角色以“称呼/名字”弱信息输出，稳定ID在合并阶段统一分配。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 divide-async。
+     * Tách kịch bản thành nhiều phân cảnh
+     * Nhập toàn bộ văn bản kịch bản, xuất danh sách phân cảnh (index/start_line/end_line/script_excerpt/shot_name/time_of_day).Lưu ý: giai đoạn này không ép ID ổn định, nhân vật xuất dưới dạng thông tin yếu (cách gọi/tên), ID ổn định được phân bổ thống nhất ở giai đoạn ghép.API đồng bộ hiện tại chủ yếu dùng để tương thích gọi cũ và điều phối; luồng chính của trang ưu tiên dùng divide-async.
      * @returns ApiResponse_ScriptDivisionResult_ Successful Response
      * @throws ApiError
      */
@@ -72,8 +72,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步合并多镜头的实体信息
-     * 创建实体合并任务并立即返回 task_id；当前保留为预备能力，尚无真实前端入口。
+     * Không đồng bộ gộp thông tin thực thể của nhiều phân cảnh
+     * Tạo tác vụ gộp thực thể và trả về task_id ngay; hiện giữ làm năng lực dự bị, chưa có entry frontend thực nào.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -93,8 +93,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 合并多镜头的实体信息
-     * 输入全部分镜提取结果（可选带上脚本分镜与历史实体库），输出合并后的实体库：角色库/地点库/场景库/道具库（静态画像 + 变体列表）。该步骤会统一分配稳定ID（如 char_001/loc_001/prop_001/scene_001）。当提供 previous_merge 与 conflict_resolutions 时，将进行冲突重试合并，优先消解 conflicts 并尽量保持 ID 稳定。当前接口保留为预备能力，尚无真实前端入口。
+     * summary=Gộp thông tin thực thể của nhiều phân cảnh,
+     * Nhập toàn bộ kết quả trích xuất phân cảnh (có thể kèm phân cảnh kịch bản và kho thực thể lịch sử), xuất kho thực thể đã gộp:Kho nhân vật/kho địa điểm/kho bối cảnh/kho đạo cụ (hồ sơ tĩnh + danh sách biến thể).Bước này sẽ gán ID ổn định thống nhất (như char_001/loc_001/prop_001/scene_001).Khi được cung cấp previous_merge và conflict_resolutions, sẽ thực hiện gộp lại khi thử lại xung đột, ưu tiên giải tỏa conflicts và giữ ID ổn định chừng nào có thể.Giao diện hiện tại được giữ làm năng lực dự bị, chưa có lối vào phía trước thực tế.
      * @returns ApiResponse_EntityMergeResult_ Successful Response
      * @throws ApiError
      */
@@ -114,8 +114,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步分析服装/外形变体
-     * 创建变体分析任务并立即返回 task_id；当前保留为预备能力，尚无真实前端入口。
+     * Phân tích biến thể trang phục/hình dáng không đồng bộ
+     * Tạo tác vụ phân tích biến thể và trả về task_id ngay; hiện giữ làm năng lực dự bị, chưa có entry frontend thực nào.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -135,8 +135,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 分析服装/外形变体
-     * 检测角色服装/外形变化，构建演变时间线，生成章节变体建议列表与变体建议。当前接口保留为预备能力，尚无真实前端入口。
+     * Phân tích biến thể trang phục/hình dáng
+     * Phát hiện thay đổi trang phục / ngoại hình của nhân vật, xây dựng trục thời gian biến đổi, tạo danh sách đề xuất biến thể chương và đề xuất biến thể. API hiện tại giữ làm năng lực dự bị, chưa có cổng frontend thực.
      * @returns ApiResponse_VariantAnalysisResult_ Successful Response
      * @throws ApiError
      */
@@ -156,8 +156,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步检查角色混淆一致性（基于原文）
-     * 创建一致性检查任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * Kiểm tra nhất quán nhầm lẫn nhân vật bất đồng bộ (dựa trên nguyên văn)
+     * Tạo tác vụ kiểm tra nhất quán và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -177,8 +177,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 检查角色混淆一致性（基于原文）
-     * 检测同一角色在不同段落/镜头被赋予不同身份/行为主体导致混淆，并给出修改建议。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 check-consistency-async。
+     * Kiểm tra nhất quán nhầm lẫn nhân vật (dựa trên nguyên văn)
+     * Phát hiện cùng một nhân vật bị gán thân phận / chủ thể hành vi khác nhau ở các đoạn / phân cảnh khác nhau gây nhầm lẫn, và đưa ra gợi ý chỉnh sửa. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng check-consistency-async.
      * @returns ApiResponse_ScriptConsistencyCheckResult_ Successful Response
      * @throws ApiError
      */
@@ -198,8 +198,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步分析人物画像缺失信息
-     * 创建人物画像分析任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * summary=Không đồng bộ phân tích thông tin thiếu trong chân dung nhân vật,
+     * Tạo tác vụ phân tích chân dung nhân vật và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -219,8 +219,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 分析人物画像缺失信息
-     * 根据原文人物上下文与人物描述，判断缺少哪些关键信息，并给出优化后的人物画像描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-character-portrait-async。
+     * summary=Phân tích thông tin thiếu của chân dung nhân vật,
+     * Dựa trên ngữ cảnh nhân vật trong văn bản gốc và mô tả nhân vật, xác định đang thiếu thông tin quan trọng nào và đưa ra hồ sơ nhân vật sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-character-portrait-async.
      * @returns ApiResponse_CharacterPortraitAnalysisResult_ Successful Response
      * @throws ApiError
      */
@@ -240,8 +240,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步分析道具信息缺失项
-     * 创建道具信息分析任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * summary=Phân tích mục thiếu thông tin đạo cụ không đồng bộ,
+     * Tạo tác vụ phân tích thông tin đạo cụ và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -261,8 +261,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 分析道具信息缺失项
-     * 根据原文道具上下文与道具描述，判断缺少哪些关键信息，并给出优化后的可生成道具描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-prop-info-async。
+     * summary=Phân tích mục thiếu thông tin đạo cụ,
+     * Dựa trên ngữ cảnh đạo cụ trong văn bản gốc và mô tả đạo cụ, xác định đang thiếu thông tin quan trọng nào và đưa ra mô tả đạo cụ khả năng tạo dựng sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-prop-info-async.
      * @returns ApiResponse_PropInfoAnalysisResult_ Successful Response
      * @throws ApiError
      */
@@ -282,8 +282,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步分析场景信息缺失项
-     * 创建场景信息分析任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * summary=Phân tích mục thiếu thông tin bối cảnh không đồng bộ,
+     * Tạo tác vụ phân tích thông tin bối cảnh và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -303,8 +303,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 分析场景信息缺失项
-     * 根据原文场景上下文与场景描述，判断缺少哪些关键信息，并给出优化后的可生成场景描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-scene-info-async。
+     * summary=Phân tích mục thiếu thông tin bối cảnh,
+     * Dựa trên ngữ cảnh bối cảnh trong văn bản gốc và mô tả bối cảnh, xác định đang thiếu thông tin quan trọng nào và đưa ra mô tả bối cảnh khả năng tạo dựng sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-scene-info-async.
      * @returns ApiResponse_SceneInfoAnalysisResult_ Successful Response
      * @throws ApiError
      */
@@ -324,8 +324,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步分析服装信息缺失项
-     * 创建服装信息分析任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * summary=Phân tích mục thiếu thông tin trang phục không đồng bộ,
+     * Tạo tác vụ phân tích thông tin trang phục và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -345,8 +345,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 分析服装信息缺失项
-     * 根据原文服装上下文与服装描述，判断缺少哪些关键信息，并给出优化后的可生成服装描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-costume-info-async。
+     * summary=Phân tích mục thiếu thông tin trang phục,
+     * Dựa trên ngữ cảnh trang phục trong văn bản gốc và mô tả trang phục, xác định đang thiếu thông tin quan trọng nào và đưa ra mô tả trang phục khả năng tạo dựng sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-costume-info-async.
      * @returns ApiResponse_CostumeInfoAnalysisResult_ Successful Response
      * @throws ApiError
      */
@@ -366,8 +366,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步基于一致性检查优化剧本
-     * 创建剧本优化任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * summary=Không đồng bộ tối ưu kịch bản dựa trên kiểm tra nhất quán,
+     * Tạo tác vụ tối ưu kịch bản và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -387,8 +387,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 基于一致性检查优化剧本
-     * 将一致性检查输出及原文作为输入，生成优化后的剧本（尽量少改，只改与角色混淆 issues 相关段落）。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 optimize-script-async。
+     * summary=Tối ưu kịch bản dựa trên kiểm tra tính nhất quán,
+     * Lấy đầu vào là kết quả kiểm tra tính nhất quán và văn bản gốc, sinh kịch bản sau tối ưu (càng ít sửa càng tốt, chỉ sửa các đoạn liên quan đến issues nhầm lẫn nhân vật). API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng optimize-script-async.
      * @returns ApiResponse_ScriptOptimizationResult_ Successful Response
      * @throws ApiError
      */
@@ -408,8 +408,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 智能精简剧本
-     * 在保留剧情主体并保证剧情连续的前提下精简剧本文本。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 simplify-script-async。
+     * summary=Rút gọn thông minh kịch bản,
+     * Rút gọn văn bản kịch bản trong khi giữ nguyên nội dung cốt truyện và đảm bảo tính liên tục. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng simplify-script-async.
      * @returns ApiResponse_ScriptSimplificationResult_ Successful Response
      * @throws ApiError
      */
@@ -429,8 +429,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步智能精简剧本
-     * 创建剧本精简任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * summary=Rút gọn kịch bản thông minh không đồng bộ,
+     * Tạo tác vụ rút gọn kịch bản và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -450,8 +450,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 异步项目级信息提取（最终输出）
-     * 创建项目级信息提取任务并立即返回 task_id；前端可通过任务状态接口轮询。
+     * Trích xuất thông tin cấp dự án không đồng bộ (đầu ra cuối)
+     * Tạo tác vụ trích xuất thông tin cấp dự án và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.
      * @returns ApiResponse_AsyncTaskCreateRead_ Successful Response
      * @throws ApiError
      */
@@ -471,8 +471,8 @@ export class ScriptProcessingService {
         });
     }
     /**
-     * 项目级信息提取（最终输出）
-     * 输入分镜结果（可选带一致性检查结果），输出可导入 Studio 的草稿结构（name-based，ID 由导入接口生成）。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 extract-async。
+     * Trích xuất thông tin cấp dự án (đầu ra cuối cùng)
+     * Đầu vào là kết quả phân cảnh (có thể kèm kết quả kiểm tra tính nhất quán), đầu ra là cấu trúc bản nháp có thể nhập vào Studio (dựa theo name, ID do API nhập sinh ra). API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng extract-async.
      * @returns ApiResponse_StudioScriptExtractionDraft_ Successful Response
      * @throws ApiError
      */

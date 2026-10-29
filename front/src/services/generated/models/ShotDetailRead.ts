@@ -8,71 +8,71 @@ import type { CameraShotType } from './CameraShotType';
 import type { VFXType } from './VFXType';
 export type ShotDetailRead = {
     /**
-     * 镜头 ID（与 shots.id 共享主键）
+     * ID phân cảnh (chia sẻ khóa chính với shots.id)
      */
     id: string;
     /**
-     * 景别
+     * Cận (độ rộng shot)
      */
     camera_shot: CameraShotType;
     /**
-     * 机位角度
+     * Góc máy
      */
     angle: CameraAngle;
     /**
-     * 运镜方式
+     * Chuyển động máy
      */
     movement: CameraMovement;
     /**
-     * 关联场景 ID（可空）
+     * ID bối cảnh liên kết (để trống được)
      */
     scene_id?: (string | null);
     /**
-     * 时长（秒）
+     * thời lượng(giây)
      */
     duration?: number;
     /**
-     * 分镜级视频比例覆盖；为空表示继承项目默认
+     * Ghi đè tỷ lệ video cấp phân cảnh; để trống nghĩa là kế thừa mặc định của dự án
      */
     override_video_ratio?: (string | null);
     /**
-     * 情绪标签
+     * Nhãn cảm xúc
      */
     mood_tags?: Array<string>;
     /**
-     * 氛围描述
+     * Mô tả không khí
      */
     atmosphere?: string;
     /**
-     * 是否沿用氛围
+     * Có kế thừa không khí không
      */
     follow_atmosphere?: boolean;
     /**
-     * 是否包含 BGM
+     * Có chứa BGM không
      */
     has_bgm?: boolean;
     /**
-     * 视效类型
+     * Loại hiệu ứng đặc biệt
      */
     vfx_type?: VFXType;
     /**
-     * 视效说明
+     * giải thích effect hình ảnh
      */
     vfx_note?: string;
     /**
-     * 动作拍点（按时间顺序排列）
+     * Các mốc hành động (sắp xếp theo trình tự thời gian)
      */
     action_beats?: Array<string>;
     /**
-     * 镜头分镜首帧提示词
+     * Prompt khung hình đầu của phân cảnh shot
      */
     first_frame_prompt?: string;
     /**
-     * 镜头分镜尾帧提示词
+     * Prompt khung hình cuối của phân cảnh shot
      */
     last_frame_prompt?: string;
     /**
-     * 镜头分镜关键帧提示词
+     * Prompt khung hình chính của phân cảnh shot
      */
     key_frame_prompt?: string;
 };

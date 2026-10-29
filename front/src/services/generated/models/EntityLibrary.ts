@@ -4,27 +4,27 @@
 /* eslint-disable */
 import type { EntityEntry } from './EntityEntry';
 /**
- * 合并后的实体库（脚本处理中间态）。
+ * Thư viện thực thể đã gộp (trạng thái trung gian xử lý kịch bản).
  */
 export type EntityLibrary = {
     /**
-     * 角色库
+     * characters: List[EntityEntry] = Field(default_factory=list, description=Thư viện nhân vật)
      */
     characters?: Array<EntityEntry>;
     /**
-     * 地点库
+     * locations: List[EntityEntry] = Field(default_factory=list, description=Thư viện địa điểm)
      */
     locations?: Array<EntityEntry>;
     /**
-     * 场景库
+     * scenes: List[EntityEntry] = Field(default_factory=list, description=Thư viện bối cảnh)
      */
     scenes?: Array<EntityEntry>;
     /**
-     * 道具库
+     * props: List[EntityEntry] = Field(default_factory=list, description=Thư viện đạo cụ)
      */
     props?: Array<EntityEntry>;
     /**
-     * 总实体数
+     * total_entries: int = Field(..., ge=0, description=Tổng số thực thể)
      */
     total_entries: number;
 };

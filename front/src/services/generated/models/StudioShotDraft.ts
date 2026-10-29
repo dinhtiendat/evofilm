@@ -5,47 +5,47 @@
 import type { ShotSemanticSuggestion } from './ShotSemanticSuggestion';
 import type { StudioShotDraftDialogueLine } from './StudioShotDraftDialogueLine';
 /**
- * 镜头草稿：不含 shot_id，由导入 API 生成；引用实体用 name。
+ * nháp shot:không chứa shot_id, do API import sinh；thực thể tham chiếu dùng name.
  */
 export type StudioShotDraft = {
     /**
-     * 镜头序号（章节内唯一）
+     * Số thứ tự phân cảnh (duy nhất trong chương)
      */
     index: number;
     /**
-     * 镜头标题
+     * title: str = Field(..., description=Tiêu đề phân cảnh)
      */
     title: string;
     /**
-     * 剧本摘录
+     * script_excerpt: str = Field(, description=Trích đoạn kịch bản)
      */
     script_excerpt?: string;
     /**
-     * 场景名称（可选）
+     * tên bối cảnh (tùy chọn)
      */
     scene_name?: (string | null);
     /**
-     * 本镜出现角色名称列表
+     * character_names: List[str] = Field(default_factory=list, description=Danh sách tên nhân vật xuất hiện trong phân cảnh này)
      */
     character_names?: Array<string>;
     /**
-     * 本镜关键道具名称列表
+     * prop_names: List[str] = Field(default_factory=list, description=Danh sách tên đạo cụ quan trọng của phân cảnh này)
      */
     prop_names?: Array<string>;
     /**
-     * 本镜服装名称列表
+     * costume_names: List[str] = Field(default_factory=list, description=Danh sách tên trang phục của phân cảnh này)
      */
     costume_names?: Array<string>;
     /**
-     * 对白列表
+     * dialogue_lines: List[StudioShotDraftDialogueLine] = Field(default_factory=list, description=Danh sách thoại)
      */
     dialogue_lines?: Array<StudioShotDraftDialogueLine>;
     /**
-     * 动作/场景描述
+     * Mô tả hành động/bối cảnh
      */
     actions?: Array<string>;
     /**
-     * 镜头语言默认建议与动作拍点候选
+     * description=Gợi ý mặc định ngôn ngữ phân cảnh và ứng viên mốc hành động,
      */
     semantic_suggestion?: (ShotSemanticSuggestion | null);
 };

@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 局部更新提示词模板。不含 id / is_system。
+ * Cập nhật cục bộ mẫu prompt. Không gồm id / is_system.
  */
 export type PromptTemplateUpdate = {
     /**
-     * 模板名称
+     * Tên mẫu
      */
     name?: (string | null);
     /**
-     * 模板内容
+     * Nội dung mẫu
      */
     content?: (string | null);
     /**
-     * 预览文案
+     * Mô tả xem trước
      */
     preview?: (string | null);
     /**
-     * 变量名列表（整体替换）
+     * Danh sách tên biến (thay thế toàn bộ)
      */
     variables?: (Array<string> | null);
     /**
-     * 是否为默认提示词
+     * liệu là prompt mặc định hay không
      */
     is_default?: (boolean | null);
 };

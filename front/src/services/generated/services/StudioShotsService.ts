@@ -26,7 +26,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioShotsService {
     /**
-     * 镜头列表（分页）
+     * Danh sách phân cảnh (phân trang)
      * @returns ApiResponse_PaginatedData_ShotRead__ Successful Response
      * @throws ApiError
      */
@@ -39,11 +39,11 @@ export class StudioShotsService {
         pageSize = 10,
     }: {
         /**
-         * 按章节过滤
+         * Lọc theo chương
          */
         chapterId?: (string | null),
         /**
-         * 关键字，过滤 title/script_excerpt
+         * Từ khóa, lọc title/script_excerpt
          */
         q?: (string | null),
         order?: (string | null),
@@ -68,7 +68,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 创建镜头
+     * Tạo phân cảnh
      * @returns ApiResponse_ShotRead_ Successful Response
      * @throws ApiError
      */
@@ -88,7 +88,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 按章节获取镜头运行时任务态摘要
+     * Lấy tóm tắt trạng thái tác vụ runtime của phân cảnh theo chương
      * @returns ApiResponse_list_ShotRuntimeSummaryRead__ Successful Response
      * @throws ApiError
      */
@@ -96,7 +96,7 @@ export class StudioShotsService {
         chapterId,
     }: {
         /**
-         * 章节 ID
+         * ID chương
          */
         chapterId: string,
     }): CancelablePromise<ApiResponse_list_ShotRuntimeSummaryRead__> {
@@ -112,7 +112,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 分镜详情：按镜头关联拼装 StudioScriptExtractionDraft
+     * Chi tiết phân cảnh: lắp ráp StudioScriptExtractionDraft theo phân cảnh liên kết
      * @returns ApiResponse_StudioScriptExtractionDraft_ Successful Response
      * @throws ApiError
      */
@@ -133,7 +133,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 获取镜头提取候选项
+     * Lấy ứng viên trích xuất của phân cảnh
      * @returns ApiResponse_list_ShotExtractedCandidateRead__ Successful Response
      * @throws ApiError
      */
@@ -154,7 +154,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 获取镜头提取对白候选项
+     * Lấy ứng viên thoại trích xuất của phân cảnh
      * @returns ApiResponse_list_ShotExtractedDialogueCandidateRead__ Successful Response
      * @throws ApiError
      */
@@ -175,7 +175,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 获取镜头资产总览（已关联资产 + 提取候选）
+     * Lấy tổng quan tài nguyên của phân cảnh (tài nguyên đã liên kết + ứng viên trích xuất)
      * @returns ApiResponse_ShotAssetsOverviewRead_ Successful Response
      * @throws ApiError
      */
@@ -196,7 +196,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 获取镜头准备页聚合状态
+     * Lấy trạng thái tổng hợp trang chuẩn bị của phân cảnh
      * @returns ApiResponse_ShotPreparationStateRead_ Successful Response
      * @throws ApiError
      */
@@ -217,7 +217,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 准备页关联现有实体并返回最新聚合状态
+     * Trang chuẩn bị liên kết thực thể có sẵn và trả về trạng thái tổng hợp mới nhất
      * @returns ApiResponse_ShotPreparationMutationResultRead_ Successful Response
      * @throws ApiError
      */
@@ -242,7 +242,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 预览镜头视频提示词
+     * Xem trước prompt video phân cảnh
      * @returns ApiResponse_ShotVideoPromptPreviewRead_ Successful Response
      * @throws ApiError
      */
@@ -252,7 +252,7 @@ export class StudioShotsService {
     }: {
         shotId: string,
         /**
-         * 指定视频提示词模板 ID；不传则使用默认模板
+         * Chỉ định ID mẫu prompt video; không truyền thì dùng mẫu mặc định
          */
         templateId?: (string | null),
     }): CancelablePromise<ApiResponse_ShotVideoPromptPreviewRead_> {
@@ -271,7 +271,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 获取镜头视频生成准备度
+     * Lấy độ sẵn sàng tạo video của phân cảnh
      * @returns ApiResponse_ShotVideoReadinessRead_ Successful Response
      * @throws ApiError
      */
@@ -281,7 +281,7 @@ export class StudioShotsService {
     }: {
         shotId: string,
         /**
-         * 参考模式：first/last/key/first_last/first_last_key/text_only
+         * Chế độ tham chiếu: first/last/key/first_last/first_last_key/text_only
          */
         referenceMode?: string,
     }): CancelablePromise<ApiResponse_ShotVideoReadinessRead_> {
@@ -300,7 +300,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 设置是否跳过镜头信息提取
+     * Đặt có bỏ qua trích xuất thông tin phân cảnh hay không
      * @returns ApiResponse_ShotPreparationMutationResultRead_ Successful Response
      * @throws ApiError
      */
@@ -325,7 +325,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 确认并关联镜头提取候选项
+     * Xác nhận và liên kết ứng viên trích xuất của phân cảnh
      * @returns ApiResponse_ShotPreparationMutationResultRead_ Successful Response
      * @throws ApiError
      */
@@ -350,7 +350,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 忽略镜头提取候选项
+     * Bỏ qua ứng viên trích xuất của phân cảnh
      * @returns ApiResponse_ShotPreparationMutationResultRead_ Successful Response
      * @throws ApiError
      */
@@ -371,7 +371,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 接受镜头提取对白候选项
+     * Chấp nhận ứng viên thoại trích xuất của phân cảnh
      * @returns ApiResponse_ShotPreparationMutationResultRead_ Successful Response
      * @throws ApiError
      */
@@ -396,7 +396,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 忽略镜头提取对白候选项
+     * Bỏ qua ứng viên thoại trích xuất của phân cảnh
      * @returns ApiResponse_ShotPreparationMutationResultRead_ Successful Response
      * @throws ApiError
      */
@@ -417,7 +417,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 获取镜头
+     * Lấy phân cảnh
      * @returns ApiResponse_ShotRead_ Successful Response
      * @throws ApiError
      */
@@ -438,7 +438,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 更新镜头
+     * Cập nhật phân cảnh
      * @returns ApiResponse_ShotRead_ Successful Response
      * @throws ApiError
      */
@@ -463,7 +463,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 删除镜头
+     * Xóa phân cảnh
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */
@@ -484,7 +484,7 @@ export class StudioShotsService {
         });
     }
     /**
-     * 获取镜头关联的角色/道具/场景/服装（分页）
+     * Lấy nhân vật/đạo cụ/bối cảnh/trang phục liên kết với phân cảnh (phân trang)
      * @returns ApiResponse_PaginatedData_ShotLinkedAssetItem__ Successful Response
      * @throws ApiError
      */

@@ -5,19 +5,19 @@
 import type { ShotFrameImageRead } from './ShotFrameImageRead';
 export type ApiResponse_ShotFrameImageRead_ = {
     /**
-     * 与 HTTP 状态码一致
+     * Khớp mã trạng thái HTTP
      */
     code?: number;
     /**
-     * 提示信息
+     * message: str = Field(success, description=Thông báo)
      */
     message?: string;
     /**
-     * 实际数据
+     * data: T | None = Field(None, description=dữ liệu thực)
      */
     data?: (ShotFrameImageRead | null);
     /**
-     * 附加元信息
+     * meta: dict[str, Any] | None = Field(None, description=siêu dữ liệu đi kèm)
      */
     meta?: (Record<string, any> | null);
 };

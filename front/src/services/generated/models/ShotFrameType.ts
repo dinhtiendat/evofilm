@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 镜头分镜帧类型：首帧/尾帧/关键帧。
+ * Loại khung phân cảnh của shot: khung hình đầu/khung hình cuối/khung hình chính.
  */
 export type ShotFrameType = 'first' | 'last' | 'key';

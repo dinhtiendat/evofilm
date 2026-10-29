@@ -5,40 +5,40 @@
 import type { ChapterStatus } from './ChapterStatus';
 export type ChapterRead = {
     /**
-     * 所属项目 ID
+     * project_id: str = Field(..., description=dự án thuộc ID) ID
      */
     project_id: string;
     /**
-     * 章节序号（项目内唯一）
+     * Thứ tự của chương (duy nhất trong dự án)
      */
     index: number;
     /**
-     * 章节标题
+     * title: str = Field(..., description=tiêu đề chương)
      */
     title: string;
     /**
-     * 章节摘要
+     * summary: str = Field(, description=tóm tắt chương)
      */
     summary?: string;
     /**
-     * 章节原文
+     * raw_text: str = Field(, description=nguyên văn chương)
      */
     raw_text?: string;
     /**
-     * 精简原文
+     * condensed_text: str = Field(, description=Bản nguyên văn rút gọn)
      */
     condensed_text?: string;
     /**
-     * 分镜数量
+     * storyboard_count: int = Field(0, description=Số phân cảnh)
      */
     storyboard_count?: number;
     /**
-     * 章节状态
+     * status: ChapterStatus = Field(ChapterStatus.draft, description=Trạng thái chương)
      */
     status?: ChapterStatus;
     id: string;
     /**
-     * 分镜数（shots 条数聚合）
+     * Số phân cảnh (tổng hợp số dòng shots)
      */
     shot_count?: number;
 };

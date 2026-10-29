@@ -6,19 +6,19 @@ import type { StudioAssetDraft } from './StudioAssetDraft';
 import type { StudioCharacterDraft } from './StudioCharacterDraft';
 import type { StudioShotDraft } from './StudioShotDraft';
 /**
- * 用于导入 Studio 的提取结果草稿（name-based）。
+ * Dùng để nhập bản nháp kết quả trích xuất của Studio (name-based).
  */
 export type StudioScriptExtractionDraft = {
     /**
-     * 项目 ID（必填）
+     * ID dự án (bắt buộc)
      */
     project_id: string;
     /**
-     * 章节 ID（必填，用于创建 shots/links）
+     * ID chương (bắt buộc, dùng để tạo shots/links)
      */
     chapter_id: string;
     /**
-     * 剧本文本（可为优化后版本）
+     * Văn bản kịch bản (có thể là phiên bản đã tối ưu)
      */
     script_text: string;
     characters?: Array<StudioCharacterDraft>;
@@ -26,7 +26,7 @@ export type StudioScriptExtractionDraft = {
     props?: Array<StudioAssetDraft>;
     costumes?: Array<StudioAssetDraft>;
     /**
-     * 镜头草稿列表
+     * shots: List[StudioShotDraft] = Field(default_factory=list, description=Danh sách bản nháp phân cảnh)
      */
     shots?: Array<StudioShotDraft>;
 };

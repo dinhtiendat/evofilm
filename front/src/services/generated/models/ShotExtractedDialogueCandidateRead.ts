@@ -6,59 +6,59 @@ import type { DialogueLineMode } from './DialogueLineMode';
 import type { ShotDialogueCandidateStatus } from './ShotDialogueCandidateStatus';
 export type ShotExtractedDialogueCandidateRead = {
     /**
-     * 对白候选项 ID
+     * ID ứng viên thoại
      */
     id: number;
     /**
-     * 所属镜头 ID
+     * phân cảnh thuộc ID
      */
     shot_id: string;
     /**
-     * 镜头内对白候选排序
+     * thứ tự ứng viên thoại trong shot
      */
     index: number;
     /**
-     * 提取出的对白文本
+     * văn bản thoại đã trích xuất
      */
     text: string;
     /**
-     * 对白模式
+     * chế độ thoại
      */
     line_mode: DialogueLineMode;
     /**
-     * 说话角色名称
+     * tên nhân vật nói
      */
     speaker_name?: (string | null);
     /**
-     * 听者角色名称
+     * Tên nhân vật người nghe
      */
     target_name?: (string | null);
     /**
-     * 对白候选确认状态
+     * Trạng thái xác nhận ứng viên lời thoại
      */
     candidate_status: ShotDialogueCandidateStatus;
     /**
-     * 已接受后关联的对白行 ID
+     * ID dòng thoại được liên kết sau khi chấp nhận
      */
     linked_dialog_line_id?: (number | null);
     /**
-     * 候选来源
+     * nguồn ứng viên
      */
     source: string;
     /**
-     * 候选附加信息
+     * thông tin bổ trợ cho ứng viên
      */
     payload?: Record<string, any>;
     /**
-     * 确认时间
+     * Thời điểm xác nhận
      */
     confirmed_at?: (string | null);
     /**
-     * 创建时间
+     * Thời gian tạo
      */
     created_at: string;
     /**
-     * 更新时间
+     * Thời gian cập nhật
      */
     updated_at: string;
 };

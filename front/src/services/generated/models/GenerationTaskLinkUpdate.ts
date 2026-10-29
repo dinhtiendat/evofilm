@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 更新生成任务关联请求体（不包含 is_adopted，采用状态由专用接口正向变更）。
+ * thân yêu cầu cập nhật liên kết tác vụ sinh (không chứa is_adopted, trạng thái áp dụng thay đổi một chiều bằng API riêng).
  */
 export type GenerationTaskLinkUpdate = {
     /**
-     * 生成资源类型（如 image/video/text/task_link）
+     * Loại tài nguyên tạo dựng (ví dụ image/video/text/task_link)
      */
     resource_type?: (string | null);
     /**
-     * 业务类型（如 prop/costume/scene 等）
+     * Loại nghiệp vụ (như prop/costume/scene...)
      */
     relation_type?: (string | null);
     /**
-     * 关联业务实体 ID
+     * relation_entity_id: str | None = Field(None, description=ID thực thể nghiệp vụ liên kết) ID
      */
     relation_entity_id?: (string | null);
     /**
-     * 关联产物文件 ID（files.id；适用于图片/音频/视频）
+     * ID tệp sản phẩm liên kết (files.id; áp dụng cho ảnh/âm thanh/video)
      */
     file_id?: (string | null);
     /**
-     * 关联状态：accepted=已采用、todo=待操作、rejected=未采用
+     * Trạng thái liên kết: accepted=đã áp dụng, todo=chưa thao tác, rejected=không áp dụng
      */
     status?: (string | null);
 };

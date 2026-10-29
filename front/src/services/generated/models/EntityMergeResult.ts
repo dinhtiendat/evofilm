@@ -4,23 +4,23 @@
 /* eslint-disable */
 import type { EntityLibrary } from './EntityLibrary';
 /**
- * 实体合并结果（脚本处理中间态）。
+ * Kết quả gộp thực thể (trạng thái trung gian xử lý kịch bản).
  */
 export type EntityMergeResult = {
     /**
-     * 合并后的实体库
+     * merged_library: EntityLibrary = Field(..., description=thư viện thực thể sau khi gộp)
      */
     merged_library: EntityLibrary;
     /**
-     * 合并统计信息
+     * merge_stats: Dict[str, Any] = Field(default_factory=dict, description=Thông tin thống kê gộp)
      */
     merge_stats?: Record<string, any>;
     /**
-     * 发现的冲突/待处理项
+     * Xung đột/mục đang chờ xử lý đã phát hiện
      */
     conflicts?: Array<string>;
     /**
-     * 合并说明
+     * notes: Optional[str] = Field(None, description=Mô tả gộp)
      */
     notes?: (string | null);
 };

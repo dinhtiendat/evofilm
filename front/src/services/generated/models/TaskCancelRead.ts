@@ -7,15 +7,15 @@ export type TaskCancelRead = {
     task_id: string;
     status: TaskStatus;
     /**
-     * 是否已登记取消请求
+     * cancel_requested: bool = Field(..., description=liệu yêu cầu hủy đã được đăng ký hay chưa)
      */
     cancel_requested: boolean;
     /**
-     * 请求取消时间戳
+     * cancel_requested_at_ts: float | None = Field(None, description=Định thời gian yêu cầu hủy)
      */
     cancel_requested_at_ts?: (number | null);
     /**
-     * 是否已立即取消完成
+     * effective_immediately: bool = Field(False, description=Liệu đã hoàn tất hủy lập tức chưa)
      */
     effective_immediately?: boolean;
 };

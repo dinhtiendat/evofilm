@@ -4,23 +4,23 @@
 /* eslint-disable */
 export type ShotCharacterLinkRead = {
     /**
-     * 关联行 ID
+     * ID hàng liên kết
      */
     id: number;
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id: string;
     /**
-     * 角色 ID
+     * Nhân vật ID
      */
     character_id: string;
     /**
-     * 镜头内角色排序
+     * thứ tự nhân vật trong shot
      */
     index?: number;
     /**
-     * 备注
+     * Ghi chú
      */
     note?: string;
 };

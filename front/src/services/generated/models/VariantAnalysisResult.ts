@@ -5,23 +5,23 @@
 import type { CostumeTimeline } from './CostumeTimeline';
 import type { VariantSuggestion } from './VariantSuggestion';
 /**
- * 变体分析结果。
+ * Kết quả phân tích biến thể.。
  */
 export type VariantAnalysisResult = {
     /**
-     * 各角色服装演变时间线
+     * costume_timelines: List[CostumeTimeline] = Field(default_factory=list, description=Trục thời gian biến đổi trang phục của từng nhân vật)
      */
     costume_timelines?: Array<CostumeTimeline>;
     /**
-     * 变体建议列表
+     * variant_suggestions: List[VariantSuggestion] = Field(default_factory=list, description=Danh sách gợi ý biến thể)
      */
     variant_suggestions?: Array<VariantSuggestion>;
     /**
-     * 章节变体建议
+     * chapter_variants: Dict[str, List[str]] = Field(default_factory=dict, description=Gợi ý biến thể theo chương)
      */
     chapter_variants?: Record<string, Array<string>>;
     /**
-     * 分析说明
+     * notes: Optional[str] = Field(None, description=Mô tả phân tích)
      */
     notes?: (string | null);
 };

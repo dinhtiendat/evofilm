@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 任务状态枚举。
+ * Liệt kê (enum) trạng thái tác vụ.。
  */
 export type TaskStatus = 'pending' | 'running' | 'streaming' | 'succeeded' | 'failed' | 'cancelled';

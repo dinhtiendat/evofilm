@@ -5,75 +5,75 @@
 import type { EntityVariant } from './EntityVariant';
 import type { EvidenceSpan } from './EvidenceSpan';
 /**
- * 合并后的实体条目（脚本处理中间态）。
+ * Mục thực thể sau gộp (trạng thái trung gian của xử lý kịch bản).
  */
 export type EntityEntry = {
     /**
-     * 实体稳定ID（合并阶段分配）
+     * ID ổn định của thực thể (gán ở giai đoạn gộp)
      */
     id: string;
     /**
-     * 实体名称
+     * name: str = Field(..., description=Tên thực thể)
      */
     name: string;
     /**
-     * 实体类型
+     * type: Literal[character, scene, prop, location] = Field(..., description=Loại thực thể)
      */
     type: 'character' | 'scene' | 'prop' | 'location';
     /**
-     * 归一化名称（来自文本，可选）
+     * Tên chuẩn hóa (từ văn bản, tùy chọn)
      */
     normalized_name?: (string | null);
     /**
-     * 别名/称呼（来自文本，可选）
+     * Tên khác/cách gọi (lấy từ văn bản, tùy chọn)
      */
     aliases?: Array<string>;
     /**
-     * 基础画像/描述（忠实文本，简短）
+     * Chân dung / mô tả cơ bản (trung thành văn bản, ngắn)
      */
     description?: (string | null);
     /**
-     * 合并确定度 0-1（可选）
+     * Độ chắc chắn gộp 0-1 (tùy chọn)
      */
     confidence?: (number | null);
     /**
-     * 首次出场证据（可选）
+     * Bằng chứng lần xuất hiện đầu tiên (tùy chọn)
      */
     first_appearance?: (EvidenceSpan | null);
     /**
-     * 服装/造型描述（可选，便于变体与资产关联）
+     * Mô tả trang phục/tạo hình (tùy chọn, thuận tiện cho liên kết biến thể và tài nguyên)
      */
     costume_note?: (string | null);
     /**
-     * 性格/特征词（可选）
+     * Từ tính cách / đặc điểm (tùy chọn)
      */
     traits?: Array<string>;
     /**
-     * 地点类型：房间/街道/森林/车厢等（可选）
+     * Loại địa điểm: phòng/phố/rừng/toa xe... (tùy chọn)
      */
     location_type?: (string | null);
     /**
-     * 道具类别（可选：weapon/document/vehicle/clothing/device/magic_item/other）
+     * Hạng mục đạo cụ (tùy chọn: weapon/document/vehicle/clothing/device/magic_item/other)
      */
     category?: (string | null);
     /**
-     * 拥有者角色ID（可选）
+     * ID nhân vật chủ sở hữu (tùy chọn)
      */
     owner_character_id?: (string | null);
     /**
-     * 支撑该实体画像的证据片段（可选）
+     * Đoạn dẫn chứng hỗ trợ hồ sơ thực thể này (tùy chọn)
      */
     evidence?: Array<EvidenceSpan>;
     /**
-     * 首次出现的镜头序号
+     * first_shot: Optional[int] = Field(None, description=số thứ tự phân cảnh xuất hiện lần đầu)
      */
     first_shot?: (number | null);
     /**
-     * 出现镜头列表
+     * appearances: List[int] = Field(default_factory=list, description=Danh sách phân cảnh xuất hiện)
      */
     appearances?: Array<number>;
     /**
-     * 变体列表
+     * variants: List[EntityVariant] = Field(default_factory=list, description=Danh sách biến thể)
      */
     variants?: Array<EntityVariant>;
 };

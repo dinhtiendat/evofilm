@@ -4,31 +4,31 @@
 /* eslint-disable */
 import type { EvidenceSpan } from './EvidenceSpan';
 /**
- * 变体建议。
+ * Gợi ý biến thể.。
  */
 export type VariantSuggestion = {
     /**
-     * 实体ID
+     * entity_id: str = Field(..., description=ID thực thể)ID
      */
     entity_id: string;
     /**
-     * 实体名称
+     * entity_name: str = Field(..., description=tên thực thể)
      */
     entity_name: string;
     /**
-     * 实体类型（character/scene/prop/location）
+     * entity_type: str = Field(..., description=Loại thực thể (character/scene/prop/location))（character/scene/prop/location）
      */
     entity_type: string;
     /**
-     * 变体建议说明
+     * suggestion: str = Field(..., description=Mô tả gợi ý biến thể)
      */
     suggestion: string;
     /**
-     * 涉及的镜头
+     * affected_shots: List[int] = Field(default_factory=list, description=Các phân cảnh bị ảnh hưởng)
      */
     affected_shots?: Array<number>;
     /**
-     * 原文依据（可选）
+     * Bằng chứng từ nguyên văn (tùy chọn)
      */
     evidence?: Array<EvidenceSpan>;
 };

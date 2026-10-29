@@ -57,7 +57,7 @@ export type AssetUpdate = {
   description: string
   tags: string[]
   view_count: number
-  visual_style: '现实' | '动漫'
+  visual_style: 'live_action' | 'anime'
   style?: string
 }
 
@@ -79,7 +79,7 @@ export type BaseAsset = {
   description?: string
   tags?: string[]
   view_count?: number
-  visual_style?: '现实' | '动漫'
+  visual_style?: 'live_action' | 'anime'
   style?: string
 }
 
@@ -182,7 +182,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
   const [formDesc, setFormDesc] = useState('')
   const [formTags, setFormTags] = useState('')
   const [formViewCount, setFormViewCount] = useState(1)
-  const [formVisualStyle, setFormVisualStyle] = useState<'现实' | '动漫'>(defaultVisualStyle as '现实' | '动漫')
+  const [formVisualStyle, setFormVisualStyle] = useState<'live_action' | 'anime'>(defaultVisualStyle as 'live_action' | 'anime')
   const [formStyle, setFormStyle] = useState<string>(getDefaultStyle(defaultVisualStyle))
   const [savingBase, setSavingBase] = useState(false)
 
@@ -338,7 +338,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
       setFormDesc(nextAsset.description ?? '')
       setFormTags((nextAsset.tags ?? []).join(', '))
       {
-        const nextVisual = (nextAsset.visual_style ?? defaultVisualStyle) as '现实' | '动漫'
+        const nextVisual = (nextAsset.visual_style ?? defaultVisualStyle) as 'live_action' | 'anime'
         setFormVisualStyle(nextVisual)
         setFormStyle((nextAsset.style as string | undefined) ?? getDefaultStyle(nextVisual))
       }

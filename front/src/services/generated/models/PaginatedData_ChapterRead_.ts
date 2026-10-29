@@ -6,11 +6,11 @@ import type { ChapterRead } from './ChapterRead';
 import type { Pagination } from './Pagination';
 export type PaginatedData_ChapterRead_ = {
     /**
-     * 当前页数据
+     * items: list[T] = Field(..., description=dữ liệu trang hiện tại)
      */
     items: Array<ChapterRead>;
     /**
-     * 分页信息
+     * pagination: Pagination = Field(..., description=Thông tin phân trang)
      */
     pagination: Pagination;
 };

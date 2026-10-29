@@ -3,31 +3,31 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 批量检测项目内/全局资产名称是否存在（模糊匹配）。
+ * Kiểm tra hàng loạt tên tài nguyên trong dự án/toàn cục có tồn tại không (khớp mờ).
  */
 export type EntityNameExistenceCheckRequest = {
     /**
-     * 项目 ID（必填）
+     * ID dự án (bắt buộc)
      */
     project_id: string;
     /**
-     * 镜头 ID（可选；不传则 linked_to_shot 恒为 false）
+     * ID phân cảnh (tùy chọn; không truyền thì linked_to_shot luôn là false)
      */
     shot_id?: (string | null);
     /**
-     * 角色名称列表
+     * Danh sách tên nhân vật
      */
     character_names?: Array<string>;
     /**
-     * 道具名称列表
+     * Danh sách tên đạo cụ
      */
     prop_names?: Array<string>;
     /**
-     * 场景名称列表
+     * Danh sách tên bối cảnh
      */
     scene_names?: Array<string>;
     /**
-     * 服装名称列表
+     * Danh sách tên trang phục
      */
     costume_names?: Array<string>;
 };

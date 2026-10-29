@@ -5,15 +5,15 @@
 import type { ShotPreparationMutationAction } from './ShotPreparationMutationAction';
 import type { ShotPreparationStateRead } from './ShotPreparationStateRead';
 /**
- * 准备页命令执行后的统一响应。
+ * Phản hồi thống nhất sau khi thực thi lệnh của trang chuẩn bị.
  */
 export type ShotPreparationMutationResultRead = {
     /**
-     * 本次执行的准备页动作
+     * Thao tác trang chuẩn bị được thực thi lần này
      */
     action: ShotPreparationMutationAction;
     /**
-     * 动作完成后的最新准备页聚合状态
+     * Trạng thái tổng hợp mới nhất của trang chuẩn bị sau khi thao tác hoàn tất
      */
     state: ShotPreparationStateRead;
 };

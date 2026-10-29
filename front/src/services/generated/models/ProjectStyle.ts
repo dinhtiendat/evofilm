@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 项目题材/风格维度（不用于区分真人/动漫）。
+ * Chiều kích thể loại/phong cách dự án (không dùng để phân biệt live-action/anime).
  */
-export type ProjectStyle = '真人都市' | '动漫3D';
+export type ProjectStyle = 'real_people_city' | 'real_people_scifi' | 'real_people_ancient' | 'anime_scifi' | 'anime_3d' | 'guoman' | 'ink_wash';

@@ -4,35 +4,35 @@
 /* eslint-disable */
 import type { ModelCategoryKey } from './ModelCategoryKey';
 /**
- * 创建模型请求体。
+ * Thân yêu cầu tạo mô hình.。
  */
 export type ModelCreate = {
     /**
-     * 模型名称
+     * name: str = Field(..., description=tên mô hình)
      */
     name: string;
     /**
-     * 模型类别：text/image/video
+     * category: ModelCategoryKey = Field(..., description=Hạng mục mô hình: text/image/video)：text/image/video
      */
     category: ModelCategoryKey;
     /**
-     * 所属供应商 ID
+     * provider_id: str = Field(..., description=ID nhà cung cấp sở thuộc) ID
      */
     provider_id: string;
     /**
-     * 模型参数（JSON）
+     * params: dict[str, Any] = Field(default_factory=dict, description=Tham số mô hình (JSON))（JSON）
      */
     params?: Record<string, any>;
     /**
-     * 说明
+     * description: str = Field(, description=Mô tả)
      */
     description?: string;
     /**
-     * 创建人
+     * created_by: str = Field(, description=Người tạo)
      */
     created_by?: string;
     /**
-     * 模型 ID
+     * id: str = Field(..., description=mô hình ID) ID
      */
     id: string;
 };

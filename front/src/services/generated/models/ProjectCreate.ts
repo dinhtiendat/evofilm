@@ -6,43 +6,43 @@ import type { ProjectStyle } from './ProjectStyle';
 import type { ProjectVisualStyle } from './ProjectVisualStyle';
 export type ProjectCreate = {
     /**
-     * 项目名称
+     * name: str = Field(..., description=tên dự án)
      */
     name: string;
     /**
-     * 项目简介
+     * description: str = Field(, description=giới thiệu dự án)
      */
     description?: string;
     /**
-     * 题材/风格
+     * Thể loại/phong cách
      */
     style: ProjectStyle;
     /**
-     * 画面表现形式
+     * visual_style: ProjectVisualStyle = Field(ProjectVisualStyle.live_action, description=Hình thức biểu diễn của hình ảnh)
      */
     visual_style?: ProjectVisualStyle;
     /**
-     * 随机种子
+     * seed: int = Field(0, description=Hạt giống ngẫu nhiên)
      */
     seed?: number;
     /**
-     * 是否统一风格
+     * unify_style: bool = Field(True, description=Có thống nhất phong cách không)
      */
     unify_style?: boolean;
     /**
-     * 进度百分比（0-100）
+     * progress: int = Field(0, description=Tỷ lệ tiến độ (0-100))（0-100）
      */
     progress?: number;
     /**
-     * 项目级默认视频比例；分镜未覆盖时生效
+     * Tỷ lệ video mặc định cấp dự án; áp dụng khi phân cảnh không ghi đè
      */
     default_video_ratio?: (string | null);
     /**
-     * 聚合统计（JSON）
+     * stats: dict[str, Any] = Field(default_factory=dict, description=Thống kê tổng hợp (JSON))（JSON）
      */
     stats?: Record<string, any>;
     /**
-     * 项目 ID
+     * id: str = Field(..., description=ID dự án) ID
      */
     id: string;
 };

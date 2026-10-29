@@ -13,7 +13,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioProjectsService {
     /**
-     * 获取项目风格候选项
+     * Lấy ứng viên phong cách của dự án
      * @returns ApiResponse_ProjectStyleOptionsRead_ Successful Response
      * @throws ApiError
      */
@@ -24,7 +24,7 @@ export class StudioProjectsService {
         });
     }
     /**
-     * 项目列表（分页）
+     * Danh sách dự án (phân trang)
      * @returns ApiResponse_PaginatedData_ProjectRead__ Successful Response
      * @throws ApiError
      */
@@ -36,15 +36,15 @@ export class StudioProjectsService {
         pageSize = 10,
     }: {
         /**
-         * 关键字，过滤 name/description
+         * Từ khóa, lọc theo name/description
          */
         q?: (string | null),
         /**
-         * 排序字段
+         * Trường sắp xếp
          */
         order?: (string | null),
         /**
-         * 是否倒序
+         * Sắp xếp giảm dần hay không
          */
         isDesc?: boolean,
         page?: number,
@@ -66,7 +66,7 @@ export class StudioProjectsService {
         });
     }
     /**
-     * 创建项目
+     * Tạo dự án
      * @returns ApiResponse_ProjectRead_ Successful Response
      * @throws ApiError
      */
@@ -86,7 +86,7 @@ export class StudioProjectsService {
         });
     }
     /**
-     * 获取项目
+     * Lấy dự án
      * @returns ApiResponse_ProjectRead_ Successful Response
      * @throws ApiError
      */
@@ -107,7 +107,7 @@ export class StudioProjectsService {
         });
     }
     /**
-     * 更新项目
+     * Cập nhật dự án
      * @returns ApiResponse_ProjectRead_ Successful Response
      * @throws ApiError
      */
@@ -132,7 +132,7 @@ export class StudioProjectsService {
         });
     }
     /**
-     * 删除项目
+     * Xóa dự án
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

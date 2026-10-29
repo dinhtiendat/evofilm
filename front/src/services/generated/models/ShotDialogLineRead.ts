@@ -5,39 +5,39 @@
 import type { DialogueLineMode } from './DialogueLineMode';
 export type ShotDialogLineRead = {
     /**
-     * 对话行 ID
+     * ID dòng hội thoại
      */
     id: number;
     /**
-     * 所属镜头细节 ID
+     * chi tiết phân cảnh thuộc ID
      */
     shot_detail_id: string;
     /**
-     * 行号（镜头内排序）
+     * số dòng(thứ tự trong shot)
      */
     index?: number;
     /**
-     * 台词内容
+     * Nội dung lời thoại
      */
     text: string;
     /**
-     * 对白模式
+     * Chế độ lời thoại
      */
     line_mode?: DialogueLineMode;
     /**
-     * 说话角色 ID
+     * ID nhân vật nói
      */
     speaker_character_id?: (string | null);
     /**
-     * 听者角色 ID
+     * ID nhân vật người nghe
      */
     target_character_id?: (string | null);
     /**
-     * 说话角色名称（用于回填关联；可空）
+     * Tên nhân vật nói (dùng để ghi ngược liên kết; null được)
      */
     speaker_name?: (string | null);
     /**
-     * 听者角色名称（用于回填关联；可空）
+     * Tên nhân vật người nghe (dùng để ghi ngược liên kết; null được)
      */
     target_name?: (string | null);
 };

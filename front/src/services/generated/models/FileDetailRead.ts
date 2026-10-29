@@ -5,27 +5,27 @@
 import type { FileTypeEnum } from './FileTypeEnum';
 import type { FileUsageRead } from './FileUsageRead';
 /**
- * 含 file_usages 列表（详情接口）。
+ * Chứa danh sách file_usages (giao diện chi tiết).
  */
 export type FileDetailRead = {
     /**
-     * 文件 ID
+     * ID tệp
      */
     id: string;
     /**
-     * 文件类型
+     * Loại tệp
      */
     type: FileTypeEnum;
     /**
-     * 文件名/标题
+     * tên tệp/tiêu đề
      */
     name: string;
     /**
-     * 缩略图 URL/路径
+     * Ảnh thu nhỏ URL/Đường
      */
     thumbnail?: string;
     /**
-     * 标签
+     * Nhãn
      */
     tags?: Array<string>;
     usages?: Array<FileUsageRead>;

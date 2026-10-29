@@ -5,39 +5,39 @@
 import type { FrameGuidanceDecisionRead } from './FrameGuidanceDecisionRead';
 import type { ShotFramePromptMappingRead } from './ShotFramePromptMappingRead';
 /**
- * 关键帧最终生成提示词渲染结果。
+ * Kết quả render prompt tạo cuối cùng của khung hình chính.
  */
 export type RenderedShotFramePromptRead = {
     /**
-     * 原始基础提示词（不含图片映射说明）
+     * prompt cơ sở gốc (không bao gồm diễn giải ánh xạ hình ảnh)
      */
     base_prompt: string;
     /**
-     * 最终提交给模型的提示词（含图片映射说明）
+     * Prompt cuối cùng gửi cho mô hình (kèm giải thích ánh xạ hình ảnh)
      */
     rendered_prompt: string;
     /**
-     * 最终 prompt 实际保留的 guidance 列表
+     * Danh sách guidance thực sự giữ lại trong prompt cuối cùng
      */
     selected_guidance?: Array<string>;
     /**
-     * 本次渲染中被压缩掉的 guidance 列表
+     * Danh sách guidance bị nén bớt trong lần kết xuất này
      */
     dropped_guidance?: Array<string>;
     /**
-     * 最终保留 guidance 的决策详情
+     * Chi tiết quyết định của guidance giữ lại cuối cùng
      */
     selected_guidance_details?: Array<FrameGuidanceDecisionRead>;
     /**
-     * 被压缩 guidance 的决策详情
+     * Chi tiết quyết định của guidance bị nén bớt
      */
     dropped_guidance_details?: Array<FrameGuidanceDecisionRead>;
     /**
-     * 最终参考图 file_id 列表，顺序与 mappings 一致
+     * Danh sách file_id ảnh tham chiếu cuối cùng, thứ tự khớp với mappings
      */
     images?: Array<string>;
     /**
-     * 图片与实体名称的映射关系，顺序与 images 完全一致
+     * quan hệ ánh xạ giữa ảnh và tên thực thể, thứ tự hoàn toàn nhất quán với images
      */
     mappings?: Array<ShotFramePromptMappingRead>;
 };

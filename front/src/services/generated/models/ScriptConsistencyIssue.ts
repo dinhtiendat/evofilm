@@ -4,31 +4,31 @@
 /* eslint-disable */
 import type { EvidenceSpan } from './EvidenceSpan';
 /**
- * 角色混淆类一致性问题：同一角色在不同镜头被赋予不同身份/行为主体导致混淆。
+ * vấn đề nhất quán loại nhầm lẫn nhân vật:cùng một nhân vật ở các shot khác nhau được gán thân phận/chủ thể hành động khác nhau gây nhầm lẫn.
  */
 export type ScriptConsistencyIssue = {
     /**
-     * 固定为角色混淆类问题
+     * issue_type: Literal[character_confusion] = Field(character_confusion, description=Cố định là vấn đề nhầm lẫn nhân vật)
      */
     issue_type?: string;
     /**
-     * 涉及的角色候选（名字/称呼/ID 皆可，优先用原文称呼）
+     * Ứng viên nhân vật liên quan (tên / cách gọi / ID đều được, ưu tiên dùng cách gọi trong văn bản gốc)
      */
     character_candidates?: Array<string>;
     /**
-     * 问题描述（为什么会混淆）
+     * Mô tả vấn đề (tại sao bị nhầm lẫn)
      */
     description: string;
     /**
-     * 修改建议（如何改写以消除混淆）
+     * Gợi ý sửa đổi (viết lại như thế nào để loại bỏ nhầm lẫn)
      */
     suggestion: string;
     /**
-     * 受影响的行号范围，形如 {start_line: x, end_line: y}
+     * Khoảng số dòng bị ảnh hưởng, dạng {start_line: x, end_line: y}
      */
     affected_lines?: (Record<string, number> | null);
     /**
-     * 原文依据（可选）
+     * Bằng chứng từ nguyên văn (tùy chọn)
      */
     evidence?: Array<EvidenceSpan>;
 };

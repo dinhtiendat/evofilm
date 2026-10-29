@@ -4,27 +4,27 @@
 /* eslint-disable */
 import type { ModelCategoryKey } from './ModelCategoryKey';
 /**
- * 更新模型请求体（全部可选）。
+ * Body yêu cầu cập nhật mô hình (tất cả tùy chọn).
  */
 export type ModelUpdate = {
     /**
-     * 模型名称
+     * name: str | None = Field(None, description=Tên mô hình)
      */
     name?: (string | null);
     /**
-     * 模型类别
+     * category: ModelCategoryKey | None = Field(None, description=Hạng mục mô hình)
      */
     category?: (ModelCategoryKey | null);
     /**
-     * 所属供应商 ID
+     * provider_id: str | None = Field(None, description=ID nhà cung cấp sở hữu) ID
      */
     provider_id?: (string | null);
     /**
-     * 模型参数（JSON）
+     * params: dict[str, Any] | None = Field(None, description=Tham số mô hình (JSON))（JSON）
      */
     params?: (Record<string, any> | null);
     /**
-     * 说明
+     * description: str | None = Field(None, description=Mô tả)
      */
     description?: (string | null);
 };

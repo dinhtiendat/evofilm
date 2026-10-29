@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 根据原文服装/造型描述，分析缺少的信息，并给出优化后的可生成服装描述。
+ * dựa theo mô tả trang phục/đạo cụ nguyên văn, phân tích thông tin thiếu, và đưa ra mô tả trang phục có thể sinh sau tối ưu.
  */
 export type CostumeInfoAnalysisResult = {
     issues: Array<string>;

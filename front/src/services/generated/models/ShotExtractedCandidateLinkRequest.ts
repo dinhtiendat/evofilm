@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type ShotExtractedCandidateLinkRequest = {
     /**
-     * 确认关联到的实体 ID
+     * ID thực thể đã xác nhận liên kết
      */
     linked_entity_id: string;
 };

@@ -4,19 +4,19 @@
 /* eslint-disable */
 import type { CostumeTimelineEntry } from './CostumeTimelineEntry';
 /**
- * 单角色的服装演变时间线。
+ * Trục thời gian biến đổi trang phục của một nhân vật.。
  */
 export type CostumeTimeline = {
     /**
-     * 角色稳定ID
+     * character_id: str = Field(..., description=ID ổn định của nhân vật)ID
      */
     character_id: string;
     /**
-     * 角色名称
+     * character_name: str = Field(..., description=Tên nhân vật)
      */
     character_name: string;
     /**
-     * 时间线条目
+     * timeline_entries: List[CostumeTimelineEntry] = Field(default_factory=list, description=Mục trên trục thời gian)
      */
     timeline_entries?: Array<CostumeTimelineEntry>;
 };

@@ -4,19 +4,19 @@
 /* eslint-disable */
 import type { ShotDivision } from './ShotDivision';
 /**
- * 剧本分镜结果：镜头列表（每镜起止行号+预览文本）。
+ * Kết quả phân cảnh kịch bản: danh sách phân cảnh (số dòng bắt đầu/kết thúc mỗi cảnh + văn bản xem trước).
  */
 export type ScriptDivisionResult = {
     /**
-     * 分镜列表
+     * shots: List[ShotDivision] = Field(default_factory=list, description=Danh sách phân cảnh)
      */
     shots?: Array<ShotDivision>;
     /**
-     * 总镜头数
+     * total_shots: int = Field(..., ge=0, description=Tổng số phân cảnh)
      */
     total_shots: number;
     /**
-     * 拆分说明或建议（可选）
+     * giải thích hoặc gợi ý tách (tùy chọn)
      */
     notes?: (string | null);
 };

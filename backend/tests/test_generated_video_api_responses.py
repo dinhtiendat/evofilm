@@ -74,8 +74,8 @@ def test_preview_video_generation_prompt_returns_success_envelope(client: TestCl
             "costumes": [],
             "camera": {"camera_shot": "MS", "angle": "EYE_LEVEL", "movement": "STATIC", "duration": 4},
             "atmosphere": "Căng thẳng",
-            "visual_style": "现实",
-            "style": "真人都市",
+            "visual_style": "live_action",
+            "style": "real_people_city",
             "negative_prompt": "",
         }
 

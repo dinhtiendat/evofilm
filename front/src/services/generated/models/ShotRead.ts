@@ -6,47 +6,47 @@ import type { ShotExtractionSummaryRead } from './ShotExtractionSummaryRead';
 import type { ShotStatus } from './ShotStatus';
 export type ShotRead = {
     /**
-     * 镜头 ID
+     * ID shot
      */
     id: string;
     /**
-     * 所属章节 ID
+     * ID chương sở thuộc
      */
     chapter_id: string;
     /**
-     * 镜头序号（章节内唯一）
+     * Thứ tự của phân cảnh (duy nhất trong chương)
      */
     index: number;
     /**
-     * 镜头标题
+     * Tiêu đề phân cảnh
      */
     title: string;
     /**
-     * 缩略图 URL/路径
+     * Ảnh thu nhỏ URL/Đường
      */
     thumbnail?: string;
     /**
-     * 镜头状态
+     * trạng thái phân cảnh
      */
     status?: ShotStatus;
     /**
-     * 是否明确跳过信息提取
+     * liệu bỏ qua trích xuất thông tin hay không
      */
     skip_extraction?: boolean;
     /**
-     * 剧本摘录
+     * Trích đoạn kịch bản
      */
     script_excerpt?: string;
     /**
-     * 已生成视频关联的文件 ID（files.id，type=video）
+     * ID tệp liên kết video đã sinh(files.id, type=video)
      */
     generated_video_file_id?: (string | null);
     /**
-     * 最近一次完成信息提取的时间
+     * Thời điểm gần nhất hoàn tất trích xuất thông tin
      */
     last_extracted_at?: (string | null);
     /**
-     * 镜头提取状态摘要
+     * Tóm tắt trạng thái trích xuất phân cảnh
      */
     extraction: ShotExtractionSummaryRead;
 };

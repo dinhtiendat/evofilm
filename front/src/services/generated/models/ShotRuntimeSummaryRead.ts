@@ -4,27 +4,27 @@
 /* eslint-disable */
 export type ShotRuntimeSummaryRead = {
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id: string;
     /**
-     * 是否存在进行中的关联任务
+     * liệu có tác vụ liên kết đang thực hiện hay không
      */
     has_active_tasks: boolean;
     /**
-     * 是否存在进行中的视频任务
+     * Có tồn tại tác vụ video đang chạy không
      */
     has_active_video_tasks: boolean;
     /**
-     * 是否存在进行中的提示词任务
+     * Có tồn tại tác vụ prompt đang chạy không
      */
     has_active_prompt_tasks: boolean;
     /**
-     * 是否存在进行中的分镜帧图片任务
+     * Có tồn tại tác vụ ảnh khung phân cảnh đang chạy không
      */
     has_active_frame_tasks: boolean;
     /**
-     * 进行中的唯一任务数
+     * Số tác vụ duy nhất đang chạy
      */
     active_task_count: number;
 };

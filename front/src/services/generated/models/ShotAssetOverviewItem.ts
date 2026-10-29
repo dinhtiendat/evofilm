@@ -4,55 +4,55 @@
 /* eslint-disable */
 import type { ShotCandidateStatus } from './ShotCandidateStatus';
 /**
- * 分镜资产总览项：统一返回已关联资产与提取候选的合并视图。
+ * Mục tổng quan tài nguyên phân cảnh: thống nhất trả về view hợp nhất của tài nguyên đã liên kết và ứng viên trích xuất.
  */
 export type ShotAssetOverviewItem = {
     /**
-     * 合并键：type:name
+     * Khóa gộp: type:name
      */
     key: string;
     /**
-     * 实体类型：character/prop/scene/costume
+     * Loại thực thể: character/prop/scene/costume
      */
     type: 'character' | 'prop' | 'scene' | 'costume';
     /**
-     * 资产名称
+     * Tên tài nguyên
      */
     name: string;
     /**
-     * 候选描述（来自 extraction payload）
+     * Mô tả ứng viên (lấy từ payload trích xuất)
      */
     description?: (string | null);
     /**
-     * 缩略图
+     * Ảnh thu nhỏ
      */
     thumbnail?: (string | null);
     /**
-     * 缩略图或参考图文件 ID
+     * ID tệp ảnh thu nhỏ hoặc ảnh tham chiếu
      */
     file_id?: (string | null);
     /**
-     * 来源：linked/candidate/both
+     * Nguồn: linked/candidate/both
      */
     source: 'linked' | 'candidate' | 'both';
     /**
-     * 候选项 ID
+     * ID ứng viên
      */
     candidate_id?: (number | null);
     /**
-     * 候选确认状态
+     * Trạng thái xác nhận ứng viên
      */
     candidate_status?: (ShotCandidateStatus | null);
     /**
-     * 当前已关联实体 ID
+     * ID thực thể đã liên kết hiện tại
      */
     linked_entity_id?: (string | null);
     /**
-     * 当前已关联实体的 image 行 ID
+     * ID dòng image của thực thể đã liên kết hiện tại
      */
     linked_image_id?: (number | null);
     /**
-     * 当前是否已关联到镜头
+     * Hiện tại đã được liên kết tới phân cảnh chưa
      */
     is_linked: boolean;
 };

@@ -6,11 +6,11 @@ import type { Pagination } from './Pagination';
 import type { TaskListItemRead } from './TaskListItemRead';
 export type PaginatedData_TaskListItemRead_ = {
     /**
-     * 当前页数据
+     * items: list[T] = Field(..., description=dữ liệu trang hiện tại)
      */
     items: Array<TaskListItemRead>;
     /**
-     * 分页信息
+     * pagination: Pagination = Field(..., description=Thông tin phân trang)
      */
     pagination: Pagination;
 };

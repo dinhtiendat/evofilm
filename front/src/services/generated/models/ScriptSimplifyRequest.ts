@@ -3,19 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 智能精简剧本请求。
+ * Yêu cầu rút gọn thông minh kịch bản.。
  */
 export type ScriptSimplifyRequest = {
     /**
-     * 项目 ID（异步任务关联可选）
+     * ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     project_id?: (string | null);
     /**
-     * 章节 ID（异步任务关联可选）
+     * ID chương (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     chapter_id?: (string | null);
     /**
-     * 原文剧本文本
+     * script_text: str = Field(..., description=Văn bản kịch bản gốc, min_length=1)
      */
     script_text: string;
 };

@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 用于提示词渲染的镜头资产引用。
+ * Tham chiếu tài nguyên của phân cảnh dùng cho render prompt.
  */
 export type ShotPromptAssetRef = {
     /**
-     * 资产类型
+     * Loại tài nguyên
      */
     type: 'character' | 'prop' | 'scene' | 'costume';
     /**
-     * 资产名称
+     * Tên tài nguyên
      */
     name: string;
     /**
-     * 资产描述或提取候选描述
+     * Mô tả tài nguyên hoặc mô tả ứng viên trích xuất
      */
     description?: string;
     /**
-     * 可作为参考图的文件 ID
+     * ID tệp có thể dùng làm ảnh tham chiếu
      */
     file_id?: (string | null);
     /**
-     * 缩略图
+     * Ảnh thu nhỏ
      */
     thumbnail?: (string | null);
 };

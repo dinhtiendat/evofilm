@@ -6,11 +6,11 @@ import type { Pagination } from './Pagination';
 import type { ProjectRead } from './ProjectRead';
 export type PaginatedData_ProjectRead_ = {
     /**
-     * 当前页数据
+     * items: list[T] = Field(..., description=dữ liệu trang hiện tại)
      */
     items: Array<ProjectRead>;
     /**
-     * 分页信息
+     * pagination: Pagination = Field(..., description=Thông tin phân trang)
      */
     pagination: Pagination;
 };

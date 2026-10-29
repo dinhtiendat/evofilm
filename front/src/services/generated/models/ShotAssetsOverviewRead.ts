@@ -7,23 +7,23 @@ import type { ShotAssetsOverviewSummary } from './ShotAssetsOverviewSummary';
 import type { ShotStatus } from './ShotStatus';
 export type ShotAssetsOverviewRead = {
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id: string;
     /**
-     * 是否明确跳过提取
+     * Có rõ ràng bỏ qua trích xuất không
      */
     skip_extraction: boolean;
     /**
-     * 镜头流程状态
+     * Trạng thái quy trình của phân cảnh
      */
     status: ShotStatus;
     /**
-     * 总览统计
+     * Thống kê tổng quan
      */
     summary: ShotAssetsOverviewSummary;
     /**
-     * 资产总览项
+     * Mục tổng quan tài nguyên
      */
     items?: Array<ShotAssetOverviewItem>;
 };

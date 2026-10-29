@@ -4,19 +4,19 @@
 /* eslint-disable */
 import type { PromptCategory } from './PromptCategory';
 /**
- * 提示词类别选项（枚举值 + 中文标签 + 简介）。
+ * Tùy chọn hạng mục prompt (giá trị enum + nhãn tiếng Trung + mô tả ngắn).
  */
 export type PromptCategoryOptionRead = {
     /**
-     * 类别枚举值
+     * Giá trị mã hạng mục
      */
     value: PromptCategory;
     /**
-     * 中文名称
+     * tên tiếng Việt
      */
     label: string;
     /**
-     * 类别简介
+     * giới thiệu hạng mục
      */
     description?: string;
 };

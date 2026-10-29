@@ -8,7 +8,7 @@ export type ProjectUpdate = {
     name?: (string | null);
     description?: (string | null);
     /**
-     * 题材/风格
+     * Thể loại / phong cách
      */
     style?: (ProjectStyle | null);
     visual_style?: (ProjectVisualStyle | null);

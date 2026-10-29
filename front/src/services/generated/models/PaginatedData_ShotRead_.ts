@@ -6,11 +6,11 @@ import type { Pagination } from './Pagination';
 import type { ShotRead } from './ShotRead';
 export type PaginatedData_ShotRead_ = {
     /**
-     * 当前页数据
+     * items: list[T] = Field(..., description=dữ liệu trang hiện tại)
      */
     items: Array<ShotRead>;
     /**
-     * 分页信息
+     * pagination: Pagination = Field(..., description=Thông tin phân trang)
      */
     pagination: Pagination;
 };

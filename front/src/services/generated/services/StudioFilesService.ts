@@ -14,7 +14,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioFilesService {
     /**
-     * 文件列表（分页）
+     * Danh sách tệp (phân trang)
      * @returns ApiResponse_PaginatedData_FileRead__ Successful Response
      * @throws ApiError
      */
@@ -29,7 +29,7 @@ export class StudioFilesService {
         shotTitle,
     }: {
         /**
-         * 关键字，过滤 name
+         * từ khóa, lọc name
          */
         q?: (string | null),
         order?: (string | null),
@@ -37,15 +37,15 @@ export class StudioFilesService {
         page?: number,
         pageSize?: number,
         /**
-         * 按 file_usages 限定项目；提供后仅返回该项目下有关联记录的文件
+         * Giới hạn dự án theo file_usages; khi truyền chỉ trả về tệp có bản ghi liên kết trong dự án đó
          */
         projectId?: (string | null),
         /**
-         * 章节标题（精确匹配，与 project_id 联用）
+         * Tiêu đề chương (khớp chính xác, dùng cùng project_id)
          */
         chapterTitle?: (string | null),
         /**
-         * 镜头标题（精确匹配，与 project_id 联用）
+         * Tiêu đề phân cảnh (khớp chính xác, dùng cùng project_id)
          */
         shotTitle?: (string | null),
     }): CancelablePromise<ApiResponse_PaginatedData_FileRead__> {
@@ -68,7 +68,7 @@ export class StudioFilesService {
         });
     }
     /**
-     * 上传文件并创建 FileItem 记录
+     * Tải tệp lên và tạo bản ghi FileItem
      * @returns ApiResponse_FileRead_ Successful Response
      * @throws ApiError
      */
@@ -93,7 +93,7 @@ export class StudioFilesService {
         });
     }
     /**
-     * 下载文件二进制内容
+     * summary=Tải xuống nội dung nhị phân của tệp,
      * @returns any Successful Response
      * @throws ApiError
      */
@@ -114,7 +114,7 @@ export class StudioFilesService {
         });
     }
     /**
-     * 获取对象存储详情（head_object）
+     * summary=Lấy chi tiết object storage (head_object),（head_object）
      * @returns ApiResponse_dict_ Successful Response
      * @throws ApiError
      */
@@ -135,7 +135,7 @@ export class StudioFilesService {
         });
     }
     /**
-     * 获取文件详情（元信息 + file_usages）
+     * Lấy chi tiết tệp (siêu dữ liệu + file_usages)
      * @returns ApiResponse_FileDetailRead_ Successful Response
      * @throws ApiError
      */
@@ -156,7 +156,7 @@ export class StudioFilesService {
         });
     }
     /**
-     * 更新文件元信息
+     * summary=Cập nhật siêu dữ liệu tệp,
      * @returns ApiResponse_FileRead_ Successful Response
      * @throws ApiError
      */
@@ -181,7 +181,7 @@ export class StudioFilesService {
         });
     }
     /**
-     * 删除文件（记录 + 存储对象）
+     * Xóa tệp (bản ghi + đối tượng lưu trữ)
      * @returns ApiResponse_NoneType_ Successful Response
      * @throws ApiError
      */

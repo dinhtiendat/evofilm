@@ -6,11 +6,11 @@ import type { Pagination } from './Pagination';
 import type { PromptTemplateRead } from './PromptTemplateRead';
 export type PaginatedData_PromptTemplateRead_ = {
     /**
-     * 当前页数据
+     * items: list[T] = Field(..., description=dữ liệu trang hiện tại)
      */
     items: Array<PromptTemplateRead>;
     /**
-     * 分页信息
+     * pagination: Pagination = Field(..., description=Thông tin phân trang)
      */
     pagination: Pagination;
 };

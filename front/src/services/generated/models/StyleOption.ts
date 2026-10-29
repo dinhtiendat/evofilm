@@ -3,15 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 通用下拉选项。
+ * Lựa chọn danh sách thả dùng chung.。
  */
 export type StyleOption = {
     /**
-     * 选项值
+     * value: str = Field(..., description=giá trị lựa chọn)
      */
     value: string;
     /**
-     * 选项展示文案
+     * label: str = Field(..., description=câu chữ hiển thị lựa chọn)
      */
     label: string;
 };

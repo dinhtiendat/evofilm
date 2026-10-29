@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { EntityNameExistenceItem } from './EntityNameExistenceItem';
 /**
- * 批量存在性检测结果（按资产类型分组）。
+ * Kết quả kiểm tra tồn tại hàng loạt (nhóm theo loại tài nguyên).
  */
 export type EntityNameExistenceCheckResponse = {
     characters?: Array<EntityNameExistenceItem>;

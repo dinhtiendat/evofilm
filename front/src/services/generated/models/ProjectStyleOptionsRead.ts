@@ -4,19 +4,19 @@
 /* eslint-disable */
 import type { StyleOption } from './StyleOption';
 /**
- * 项目风格候选项。
+ * Ứng viên phong cách dự án.。
  */
 export type ProjectStyleOptionsRead = {
     /**
-     * 视觉风格可选项
+     * visual_styles: list[StyleOption] = Field(default_factory=list, description=Các lựa chọn phong cách thị giác)
      */
     visual_styles?: Array<StyleOption>;
     /**
-     * 按视觉风格分组的视频风格选项
+     * description=Tùy chọn phong cách video được nhóm theo phong cách trực quan,
      */
     styles_by_visual_style?: Record<string, Array<StyleOption>>;
     /**
-     * 各视觉风格默认视频风格
+     * description=Phong cách video mặc định cho từng phong cách trực quan,
      */
     default_style_by_visual_style?: Record<string, string>;
 };

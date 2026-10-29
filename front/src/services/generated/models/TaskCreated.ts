@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type TaskCreated = {
     /**
-     * 任务 ID
+     * task_id: str = Field(..., description=ID tác vụ) ID
      */
     task_id: string;
 };

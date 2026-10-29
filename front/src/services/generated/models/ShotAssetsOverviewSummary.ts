@@ -4,19 +4,19 @@
 /* eslint-disable */
 export type ShotAssetsOverviewSummary = {
     /**
-     * 已关联项数量
+     * Số mục đã liên kết
      */
     linked_count: number;
     /**
-     * 待确认候选数量
+     * Số lượng ứng viên chờ xác nhận
      */
     pending_count: number;
     /**
-     * 已忽略候选数量
+     * Số lượng ứng viên đã bỏ qua
      */
     ignored_count: number;
     /**
-     * 总项数（含 ignored）
+     * Tổng số mục (gồm cả ignored)
      */
     total_count: number;
 };

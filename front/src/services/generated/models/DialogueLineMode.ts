@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 对白模式（与 `app.schemas.skills.common.DialogueLineMode` 对齐，存英文 code）。
+ * Chế độ thoại (đồng bộ với `app.schemas.skills.common.DialogueLineMode`, lưu code tiếng Anh).
  */
 export type DialogueLineMode = 'DIALOGUE' | 'VOICE_OVER' | 'OFF_SCREEN' | 'PHONE';

@@ -4,47 +4,47 @@
 /* eslint-disable */
 import type { PromptCategory } from './PromptCategory';
 /**
- * 读取提示词模板（含全部字段）。
+ * Đọc mẫu prompt (đủ mọi trường).
  */
 export type PromptTemplateRead = {
     /**
-     * 模板 ID
+     * ID mẫu
      */
     id: string;
     /**
-     * 模板类别
+     * Danh mục mẫu
      */
     category: PromptCategory;
     /**
-     * 模板名称
+     * Tên mẫu
      */
     name: string;
     /**
-     * 预览文案
+     * câu chữ preview
      */
     preview: string;
     /**
-     * 模板内容
+     * Nội dung mẫu
      */
     content: string;
     /**
-     * 变量名列表
+     * Danh sách tên biến
      */
     variables: Array<string>;
     /**
-     * 是否为默认提示词
+     * Có phải là prompt mặc định
      */
     is_default: boolean;
     /**
-     * 是否为系统预置
+     * Có phải do hệ thống cài đặt sẵn không
      */
     is_system: boolean;
     /**
-     * 创建时间
+     * Thời gian tạo
      */
     created_at: string;
     /**
-     * 最后更新时间
+     * Thời gian cập nhật cuối
      */
     updated_at: string;
 };

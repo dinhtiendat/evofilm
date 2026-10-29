@@ -3,19 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 一致性检查请求（角色混淆）。
+ * Yêu cầu kiểm tra tính nhất quán (nhầm lẫn nhân vật).
  */
 export type ScriptConsistencyCheckRequest = {
     /**
-     * 项目 ID（异步任务关联可选）
+     * ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     project_id?: (string | null);
     /**
-     * 章节 ID（异步任务关联可选）
+     * ID chương (tùy chọn: liên kết tác vụ không đồng bộ)
      */
     chapter_id?: (string | null);
     /**
-     * 完整剧本文本
+     * script_text: str = Field(..., description=Văn bản kịch bản đầy đủ, min_length=1)
      */
     script_text: string;
 };

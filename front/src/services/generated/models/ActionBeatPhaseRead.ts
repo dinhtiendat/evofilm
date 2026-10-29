@@ -3,15 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 动作拍点的轻量阶段推断结果。
+ * Kết quả suy luận giai đoạn nhẹ của mốc hành động.
  */
 export type ActionBeatPhaseRead = {
     /**
-     * 动作拍点原文
+     * nguyên văn mốc hành động
      */
     text: string;
     /**
-     * 推断阶段：触发 / 峰值 / 收束
+     * Giai đoạn suy luận: kích hoạt / đỉnh / khép lại
      */
     phase: 'trigger' | 'peak' | 'aftermath';
 };

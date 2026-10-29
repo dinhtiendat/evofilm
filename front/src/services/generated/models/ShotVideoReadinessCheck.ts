@@ -3,19 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 单项视频生成准备度检查结果。
+ * Kết quả kiểm tra một mục độ sẵn sàng tạo video.
  */
 export type ShotVideoReadinessCheck = {
     /**
-     * 检查项 key
+     * key mục kiểm tra
      */
     key: string;
     /**
-     * 是否通过
+     * có đạt không
      */
     ok: boolean;
     /**
-     * 面向前端展示的说明
+     * Mô tả hiển thị cho phía trước
      */
     message: string;
 };

@@ -4,31 +4,31 @@
 /* eslint-disable */
 import type { PromptCategory } from './PromptCategory';
 /**
- * 创建提示词模板。id 由后端自动生成；is_system 不可由客户端设置。
+ * tạo mẫu prompt. id do phía sau tự động sinh；is_system không do client đặt.
  */
 export type PromptTemplateCreate = {
     /**
-     * 模板类别
+     * Danh mục mẫu
      */
     category: PromptCategory;
     /**
-     * 模板名称
+     * Tên mẫu
      */
     name: string;
     /**
-     * 模板内容
+     * Nội dung mẫu
      */
     content: string;
     /**
-     * 预览文案
+     * câu chữ preview
      */
     preview?: string;
     /**
-     * 变量名列表
+     * Danh sách tên biến
      */
     variables?: Array<string>;
     /**
-     * 是否为默认提示词
+     * Có phải là prompt mặc định
      */
     is_default?: boolean;
 };

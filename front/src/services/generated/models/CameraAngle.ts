@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 机位角度（与 `app.schemas.skills.common.CameraAngle` 对齐，存英文 code）。
+ * Góc máy (đồng bộ với `app.schemas.skills.common.CameraAngle`, lưu mã tiếng Anh).
  */
 export type CameraAngle = 'EYE_LEVEL' | 'HIGH_ANGLE' | 'LOW_ANGLE' | 'BIRD_EYE' | 'DUTCH' | 'OVER_SHOULDER';

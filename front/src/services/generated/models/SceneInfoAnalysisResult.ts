@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 根据原文场景描述，分析缺少的信息，并给出优化后的可生成场景描述。
+ * Dựa mô tả bối cảnh gốc, phân tích thông tin thiếu và đưa ra mô tả bối cảnh có thể tạo đã tối ưu.
  */
 export type SceneInfoAnalysisResult = {
     issues: Array<string>;

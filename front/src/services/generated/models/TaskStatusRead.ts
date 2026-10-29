@@ -8,23 +8,23 @@ export type TaskStatusRead = {
     status: TaskStatus;
     progress: number;
     /**
-     * 是否已请求取消
+     * cancel_requested: bool = Field(False, description=Đã yêu cầu hủy chưa)
      */
     cancel_requested?: boolean;
     /**
-     * 请求取消时间戳
+     * cancel_requested_at_ts: float | None = Field(None, description=Định thời gian yêu cầu hủy)
      */
     cancel_requested_at_ts?: (number | null);
     /**
-     * 任务开始执行时间戳
+     * started_at_ts: float | None = Field(None, description=Định thời gian bắt đầu thực thi tác vụ)
      */
     started_at_ts?: (number | null);
     /**
-     * 任务结束时间戳
+     * finished_at_ts: float | None = Field(None, description=Định thời gian kết thúc tác vụ)
      */
     finished_at_ts?: (number | null);
     /**
-     * 任务累计执行耗时（毫秒）
+     * Tổng thời gian thực thi tác vụ ( mili giây)
      */
     elapsed_ms?: (number | null);
 };

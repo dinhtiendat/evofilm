@@ -3,31 +3,31 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 单个名称的存在性结果。
+ * Kết quả tồn tại của một tên.
  */
 export type EntityNameExistenceItem = {
     /**
-     * 输入名称（原样回传）
+     * tên đầu vào (trả nguyên như vậy)
      */
     name: string;
     /**
-     * 数据库中是否存在（模糊命中）
+     * Có tồn tại trong cơ sở dữ liệu không (trùng khớp mơ hồ)
      */
     exists: boolean;
     /**
-     * 是否已关联到该项目（角色等同于 exists）
+     * Đã liên kết tới dự án này chưa (đối với nhân vật tương đương với exists)
      */
     linked_to_project: boolean;
     /**
-     * 是否已关联到请求中的 shot（未传 shot_id 时为 false）
+     * Có liên kết với shot trong yêu cầu không (false nếu chưa truyền shot_id)
      */
     linked_to_shot?: boolean;
     /**
-     * 命中的资产 ID（如 prop_id/scene_id/costume_id/character_id）
+     * ID tài nguyên khớp (ví dụ prop_id/scene_id/costume_id/character_id)
      */
     asset_id?: (string | null);
     /**
-     * 若已关联到项目，对应 Project*Link 的 id；否则为空
+     * Nếu đã liên kết tới dự án, là id tương ứng của Project*Link; nếu không thì để trống
      */
     link_id?: (number | null);
 };

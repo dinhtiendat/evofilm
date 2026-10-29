@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 全局日志级别。
+ * Cấp nhật ký toàn cục.。
  */
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';

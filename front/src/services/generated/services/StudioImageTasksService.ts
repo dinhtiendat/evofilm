@@ -13,8 +13,8 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class StudioImageTasksService {
     /**
-     * 演员图片生成（任务版）
-     * 为指定演员创建图片生成任务，并通过 `GenerationTaskLink` 关联。
+     * Tạo ảnh diễn viên (phiên bản tác vụ)
+     * tạo tác vụ sinh ảnh cho diễn viên được chỉ định, và liên kết qua `GenerationTaskLink`.
      * @returns ApiResponse_TaskCreated_ Successful Response
      * @throws ApiError
      */
@@ -39,7 +39,7 @@ export class StudioImageTasksService {
         });
     }
     /**
-     * 演员图片提示词渲染
+     * summary=Render prompt ảnh diễn viên,
      * @returns ApiResponse_RenderedPromptResponse_ Successful Response
      * @throws ApiError
      */
@@ -64,12 +64,12 @@ export class StudioImageTasksService {
         });
     }
     /**
-     * 道具/场景/服装图片生成（任务版）
-     * 为道具/场景/服装创建图片生成任务。
+     * Tạo hình ảnh đạo cụ/bối cảnh/trang phục (phiên bản tác vụ)
+     * Tạo tác vụ tạo ảnh cho đạo cụ/bối cảnh/trang phục.
      *
      * - asset_type: prop / scene / costume
-     * - path 参数 asset_id 为对应资产 ID
-     * - body.image_id 必须为该资产下对应图片表记录的 ID（PropImage/SceneImage/CostumeImage）
+     * - Tham số path asset_id là ID tài nguyên tương ứng
+     * - body.image_id - body.image_id phải là ID của bản ghi tương ứng trong bảng hình ảnh dưới tài nguyên (PropImage/SceneImage/CostumeImage) ID（PropImage/SceneImage/CostumeImage）
      * @returns ApiResponse_TaskCreated_ Successful Response
      * @throws ApiError
      */
@@ -97,7 +97,7 @@ export class StudioImageTasksService {
         });
     }
     /**
-     * 道具/场景/服装图片提示词渲染
+     * Kết xuất prompt ảnh đạo cụ/bối cảnh/trang phục
      * @returns ApiResponse_RenderedPromptResponse_ Successful Response
      * @throws ApiError
      */
@@ -125,11 +125,11 @@ export class StudioImageTasksService {
         });
     }
     /**
-     * 角色图片生成（任务版）
-     * 为角色创建图片生成任务（对应 CharacterImage 业务）。
+     * Tạo ảnh nhân vật (phiên bản tác vụ)
+     * Tạo tác vụ tạo ảnh cho nhân vật (tương ứng nghiệp vụ CharacterImage)."
      *
-     * - path 参数 character_id 为 Character.id
-     * - body.image_id 必须为该角色下的 CharacterImage.id
+     * - tham số path character_id là Character.id
+     * - body.image_id - body.image_id phải là CharacterImage.id dưới nhân vật này CharacterImage.id
      * @returns ApiResponse_TaskCreated_ Successful Response
      * @throws ApiError
      */
@@ -154,7 +154,7 @@ export class StudioImageTasksService {
         });
     }
     /**
-     * 角色图片提示词渲染
+     * summary=Render prompt ảnh nhân vật,
      * @returns ApiResponse_RenderedPromptResponse_ Successful Response
      * @throws ApiError
      */
@@ -179,8 +179,8 @@ export class StudioImageTasksService {
         });
     }
     /**
-     * 镜头分镜帧图片生成（任务版）
-     * 为镜头分镜帧图片生成任务（基于 `shot_id + frame_type` 自动定位数据）。
+     * Tạo ảnh khung phân cảnh của phân cảnh (phiên bản tác vụ)
+     * Tạo tác vụ cho ảnh khung hình phân cảnh (tự định vị dữ liệu dựa trên `shot_id + frame_type`).
      * @returns ApiResponse_TaskCreated_ Successful Response
      * @throws ApiError
      */
@@ -205,7 +205,7 @@ export class StudioImageTasksService {
         });
     }
     /**
-     * 镜头分镜帧提示词渲染
+     * summary=Render prompt khung hình phân cảnh,
      * @returns ApiResponse_RenderedShotFramePromptRead_ Successful Response
      * @throws ApiError
      */

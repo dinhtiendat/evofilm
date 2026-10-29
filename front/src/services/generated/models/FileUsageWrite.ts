@@ -3,27 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 写入 file_usages 的关联信息（与 FileItem 一并提交）。
+ * thông tin liên kết ghi vào file_usages (submit cùng với FileItem).
  */
 export type FileUsageWrite = {
     /**
-     * 项目 ID
+     * ID dự án
      */
     project_id: string;
     /**
-     * 章节 ID
+     * ID chương
      */
     chapter_id?: (string | null);
     /**
-     * 镜头 ID
+     * ID phân cảnh
      */
     shot_id?: (string | null);
     /**
-     * 用途：shot_frame / generated_video / character_image / asset_image / upload / api 等
+     * Mục đích: shot_frame / generated_video / character_image / asset_image / upload / api v.v.
      */
     usage_kind: string;
     /**
-     * 幂等键（可选）
+     * Chìa idempotent (tùy chọn)
      */
     source_ref?: (string | null);
 };

@@ -5,31 +5,31 @@
 import type { ShotFrameType } from './ShotFrameType';
 export type ShotFrameImageRead = {
     /**
-     * 图片行 ID
+     * dòng hình ảnh ID
      */
     id: number;
     /**
-     * 所属镜头细节 ID
+     * chi tiết phân cảnh thuộc ID
      */
     shot_detail_id: string;
     /**
-     * 帧类型：first/last/key
+     * Loại khung hình: first/last/key
      */
     frame_type: ShotFrameType;
     /**
-     * 关联的 FileItem ID（可为空，允许先创建占位）
+     * ID FileItem liên kết (có thể để trống, cho phép tạo giữ chỗ trước)
      */
     file_id?: (string | null);
     /**
-     * 宽(px)
+     * Rộng(px)
      */
     width?: (number | null);
     /**
-     * 高(px)
+     * Cao(px)
      */
     height?: (number | null);
     /**
-     * 格式
+     * Định dạng
      */
     format?: string;
 };

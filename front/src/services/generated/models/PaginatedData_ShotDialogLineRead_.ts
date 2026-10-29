@@ -6,11 +6,11 @@ import type { Pagination } from './Pagination';
 import type { ShotDialogLineRead } from './ShotDialogLineRead';
 export type PaginatedData_ShotDialogLineRead_ = {
     /**
-     * 当前页数据
+     * items: list[T] = Field(..., description=dữ liệu trang hiện tại)
      */
     items: Array<ShotDialogLineRead>;
     /**
-     * 分页信息
+     * pagination: Pagination = Field(..., description=Thông tin phân trang)
      */
     pagination: Pagination;
 };

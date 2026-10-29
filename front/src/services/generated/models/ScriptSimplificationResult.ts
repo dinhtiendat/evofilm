@@ -3,15 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * 剧本精简输出：在保留剧情主体与连续性的前提下压缩篇幅。
+ * Đầu ra tinh giản kịch bản: rút ngắn dung lượng trong khi giữ vững cốt truyện chủ đạo và tính liên tục.
  */
 export type ScriptSimplificationResult = {
     /**
-     * 精简后的剧本文本
+     * simplified_script_text: str = Field(..., description=văn bản kịch bản đã rút gọn)
      */
     simplified_script_text: string;
     /**
-     * 精简策略摘要（说明删改原则）
+     * Tóm tắt chiến lược thu gọn (giải thích nguyên tắc lược bỏ/sửa đổi)
      */
     simplification_summary: string;
 };
