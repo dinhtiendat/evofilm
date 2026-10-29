@@ -17,7 +17,7 @@ async def resolve_reference_file_ids_and_names_from_linked_items(
     *,
     items: list[ShotLinkedAssetItem],
 ) -> tuple[list[str], list[str]]:
-    """将关联资产条目解析为参考图 file_id 列表（顺序有效）。"""
+    """Phân tích mục tài nguyên liên kết thành danh sách file_id ảnh tham chiếu (thứ tự có hiệu lực)."""
     file_ids: list[str] = []
     names: list[str] = []
     for item in items or []:
@@ -35,7 +35,7 @@ async def resolve_reference_image_refs_by_file_ids(
     *,
     file_ids: list[str],
 ) -> list[dict[str, str]]:
-    """将 file_id 列表解析为图片参考（data url）。顺序与入参一致。"""
+    """giải danh sách file_id thành ảnh tham chiếu (data url). Thứ tự nhất quán với tham số vào."""
     out: list[dict[str, str]] = []
     for fid in file_ids or []:
         file_id = (fid or "").strip()
@@ -89,7 +89,7 @@ async def pick_front_ref_file_id(
     parent_id: str,
     preferred_quality_level: object | None,
 ) -> str | None:
-    """按旧语义挑选 front 参考图的 file_id（不下载文件）。"""
+    """Chọn file_id ảnh tham chiếu front theo ngữ nghĩa cũ (không tải tệp)."""
     parent_field = getattr(image_model, parent_field_name)
     stmt = (
         select(image_model)
@@ -123,7 +123,7 @@ async def pick_ordered_ref_file_ids(
     parent_id: str,
     view_angles: tuple[AssetViewAngle, ...],
 ) -> list[str]:
-    """按旧语义按角度顺序挑选参考图 file_id（不下载文件）。"""
+    """Chọn file_id ảnh tham chiếu theo thứ tự góc theo ngữ nghĩa cũ (không tải tệp)."""
     parent_field = getattr(image_model, parent_field_name)
     stmt = (
         select(image_model)

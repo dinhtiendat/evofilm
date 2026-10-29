@@ -12,5 +12,5 @@ def test_async_session_maker_proxy_survives_runtime_reset() -> None:
         assert before_proxy_id == after_proxy_id
         assert session.__class__.__name__ == "AsyncSession"
     finally:
-        # 这里只验证代理和重绑定行为，不实际打开连接。
+        # Ở đây chỉ kiểm chứng hành vi proxy và gắn lại, không thực sự mở kết nối.
         session.sync_session.close()

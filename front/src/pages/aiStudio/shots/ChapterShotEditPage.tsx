@@ -85,35 +85,35 @@ function getExtractionStateMeta(
   if (state === 'skipped') {
     return {
       tone: 'green',
-      title: '当前镜头已标记为无需提取',
-      description: '系统会直接按“提取确认已完成”处理。如需恢复正式提取流程，请使用上方维护动作。',
+      title: 'Phân cảnh hiện tại đã được đánh dấu là không cần trích xuất',
+      description: 'Hệ thống sẽ xử lý như "hoàn tất xác nhận trích xuất". Nếu cần khôi phục luồng trích xuất chính thức, vui lòng dùng thao tác bảo trì phía trên.',
     }
   }
   if (state === 'not_extracted') {
     return {
       tone: 'gold',
-      title: '当前镜头还没有执行过信息提取',
-      description: '点击“提取并刷新候选”后，系统会同时提取资产和对白候选。',
+      title: 'Phân cảnh hiện tại chưa thực hiện trích xuất thông tin',
+      description: 'sau khi bấm "trích xuất và làm mới ứng viên", hệ thống sẽ đồng thời trích xuất ứng viên tài nguyên và thoại.',
     }
   }
   if (state === 'extracted_empty') {
     return {
       tone: 'blue',
-      title: '当前镜头已完成提取，但没有识别到候选',
-      description: '这说明系统已经跑过提取流程，只是当前没有识别到资产或对白候选。',
+      title: 'Phân cảnh hiện tại đã hoàn tất trích xuất, nhưng chưa nhận diện được ứng viên nào',
+      description: 'điều này cho thấy hệ thống đã chạy qua luồng trích xuất, chỉ là hiện chưa nhận ra ứng viên tài nguyên hay thoại.',
     }
   }
   if (state === 'extracted_resolved') {
     return {
       tone: 'green',
-      title: '当前镜头的提取结果已确认完成',
-      description: '资产和对白候选都已处理完成，可以继续进入后续生成流程。',
+      title: 'Kết quả trích xuất của phân cảnh hiện tại đã xác nhận xong',
+      description: 'ứng viên tài nguyên và thoại đều đã xử lý xong, có thể tiếp tục vào luồng sinh sau.',
     }
   }
   return {
     tone: 'gold',
-    title: '当前镜头仍有提取结果待确认',
-    description: `还有 ${pendingConfirmCount} 项待处理，建议先完成资产和对白确认。`,
+    title: 'Phân cảnh hiện tại vẫn còn kết quả trích xuất chờ xác nhận',
+    description: `Còn ${pendingConfirmCount} mục chờ xử lý, nên hoàn tất xác nhận tài nguyên và thoại trước.`,
   }
 }
 
@@ -128,18 +128,18 @@ function getExtractionListStatus(shot: ShotRead): {
 } {
   const state = getShotExtractionSummary(shot).state
   if (state === 'skipped') {
-    return { text: '已跳过', background: '#e0f2fe', color: '#075985' }
+    return { text: 'Đã bỏ qua', background: '#e0f2fe', color: '#075985' }
   }
   if (state === 'not_extracted') {
-    return { text: '未提取', background: '#fef3c7', color: '#92400e' }
+    return { text: 'Chưa trích xuất', background: '#fef3c7', color: '#92400e' }
   }
   if (state === 'extracted_empty') {
-    return { text: '已提取无结果', background: '#dbeafe', color: '#1d4ed8' }
+    return { text: 'Đã trích xuất, không có kết quả', background: '#dbeafe', color: '#1d4ed8' }
   }
   if (state === 'extracted_resolved' || shot.status === 'ready') {
-    return { text: '确认已完成', background: '#dbeafe', color: '#1d4ed8' }
+    return { text: 'Đã xác nhận', background: '#dbeafe', color: '#1d4ed8' }
   }
-  return { text: '待确认', background: '#fef3c7', color: '#92400e' }
+  return { text: 'Chờ xác nhận', background: '#fef3c7', color: '#92400e' }
 }
 
 function isPendingExtractionConfirmation(shot: ShotRead): boolean {
@@ -158,21 +158,21 @@ function getShotPreparationIssueSummary(shot: ShotRead): {
   const basicReady = !!shot.title?.trim() && !!shot.script_excerpt?.trim()
   const extractionState = getShotExtractionSummary(shot).state
   if (!basicReady) {
-    return { text: '基础待补', tone: 'gold' }
+    return { text: 'Cơ bản còn thiếu', tone: 'gold' }
   }
   if (extractionState === 'not_extracted') {
-    return { text: '待执行提取', tone: 'gold' }
+    return { text: 'Chờ thực thi trích xuất', tone: 'gold' }
   }
   if (extractionState === 'extracted_pending') {
-    return { text: '待确认候选', tone: 'gold' }
+    return { text: 'Ứng viên chờ xác nhận', tone: 'gold' }
   }
   if (extractionState === 'extracted_empty') {
-    return { text: '已提取无结果', tone: 'blue' }
+    return { text: 'Đã trích xuất không có kết quả', tone: 'blue' }
   }
   if (extractionState === 'skipped') {
-    return { text: '已跳过提取', tone: 'blue' }
+    return { text: 'Đã bỏ qua trích xuất', tone: 'blue' }
   }
-  return { text: '准备完成', tone: 'green' }
+  return { text: 'Chuẩn bị xong', tone: 'green' }
 }
 
 function overviewTypeToAssetKind(kind: ShotAssetOverviewItem['type']): AssetKind {
@@ -263,9 +263,9 @@ export function ChapterShotEditPage() {
   )
   const shotListFilterOptions = useMemo<Array<{ label: string; value: ShotListFilter }>>(
     () => [
-      { label: `全部 ${shotListFilterCounts.all}`, value: 'all' },
-      { label: `未提取 ${shotListFilterCounts.not_extracted}`, value: 'not_extracted' },
-      { label: `待确认 ${shotListFilterCounts.pending}`, value: 'pending' },
+      { label: `Tất cả ${shotListFilterCounts.all}`, value: 'all' },
+      { label: `Chưa trích xuất ${shotListFilterCounts.not_extracted}`, value: 'not_extracted' },
+      { label: `Chờ xác nhận ${shotListFilterCounts.pending}`, value: 'pending' },
     ],
     [shotListFilterCounts.all, shotListFilterCounts.not_extracted, shotListFilterCounts.pending],
   )
@@ -364,12 +364,12 @@ export function ChapterShotEditPage() {
       const s = preparationState?.shot ?? null
 
       if (!s) {
-        message.error('分镜不存在')
+        message.error('Phân cảnh không tồn tại')
         navigate(getChapterShotsPath(projectId, chapterId), { replace: true })
         return
       }
       if (s.chapter_id !== chapterId) {
-        message.error('分镜不属于当前章节')
+        message.error('Phân cảnh không thuộc chương hiện tại')
         navigate(getChapterShotsPath(projectId, chapterId), { replace: true })
         return
       }
@@ -386,7 +386,7 @@ export function ChapterShotEditPage() {
         (preparationState?.dialogue_candidates ?? []).filter((item) => item.candidate_status === 'pending'),
       )
     } catch {
-      message.error('加载失败')
+      message.error('Tải thất bại')
       navigate(getChapterShotsPath(projectId, chapterId), { replace: true })
     } finally {
       setDialogLoading(false)
@@ -434,7 +434,7 @@ export function ChapterShotEditPage() {
         return data
       } catch {
         if (!options?.silent) {
-          message.error('准备状态加载失败')
+          message.error('Nạp trạng thái chuẩn bị thất bại')
         }
         return null
       } finally {
@@ -479,7 +479,7 @@ export function ChapterShotEditPage() {
             requestBody: patch,
           })
         } catch {
-          message.error('对白保存失败')
+          message.error('Lưu lời thoại thất bại')
         }
       }, 1000)
       dialogDebounceTimersRef.current.set(lineId, timer)
@@ -505,9 +505,9 @@ export function ChapterShotEditPage() {
       try {
         await StudioShotDialogLinesService.deleteShotDialogLineApiV1StudioShotDialogLinesLineIdDelete({ lineId })
         setSavedDialogLines((prev) => prev.filter((l) => l.id !== lineId))
-        message.success('已删除')
+        message.success('Đã xóa')
       } catch {
-        message.error('删除失败')
+        message.error('Xóa thất bại')
       } finally {
         setDialogDeletingIds((m) => ({ ...m, [lineId]: false }))
       }
@@ -523,7 +523,7 @@ export function ChapterShotEditPage() {
     async (line: ShotExtractedDialogueCandidateRead, options?: { silent?: boolean }): Promise<ShotPreparationStateRead | null> => {
       const text = (line.text ?? '').trim()
       if (!text) {
-        if (!options?.silent) message.warning('请先填写对白内容')
+        if (!options?.silent) message.warning('vui lòng điền nội dung thoại trước')
         return null
       }
       const res = await StudioShotsService.acceptExtractedDialogueCandidateApiV1StudioShotsExtractedDialogueCandidatesCandidateIdAcceptPatch({
@@ -550,10 +550,10 @@ export function ChapterShotEditPage() {
         const created = await acceptExtractedDialogLine(line)
         if (created) {
           applyPreparationState(created)
-          message.success('已接受')
+          message.success('Đã chấp nhận')
         }
       } catch {
-        message.error('接受失败')
+        message.error('Chấp nhận thất bại')
       } finally {
         setDialogAddingKeys((m) => ({ ...m, [loadingKey]: false }))
       }
@@ -575,7 +575,7 @@ export function ChapterShotEditPage() {
             lastState = accepted
           }
         } catch {
-          // 逐条容错，最后统一反馈。
+          // Dung sai từng mục, cuối cùng phản hồi thống nhất.
         }
       }
       if (lastState) {
@@ -584,11 +584,11 @@ export function ChapterShotEditPage() {
         await loadPreparationState({ silent: true })
       }
       if (acceptedCount === extractedDialogLines.length) {
-        message.success(`已接受 ${acceptedCount} 条对白`)
+        message.success(`đã chấp nhận ${acceptedCount} thoại`)
       } else if (acceptedCount > 0) {
-        message.warning(`已接受 ${acceptedCount} 条，对剩余 ${extractedDialogLines.length - acceptedCount} 条请逐条检查`)
+        message.warning(`Đã chấp nhận ${acceptedCount} mục, ${extractedDialogLines.length - acceptedCount} mục còn lại vui lòng kiểm tra từng dòng`)
       } else {
-        message.error('批量接受失败')
+        message.error('Chấp nhận hàng loạt thất bại')
       }
     } finally {
       setBatchDialogAdding(false)
@@ -613,10 +613,10 @@ export function ChapterShotEditPage() {
         } else if (!nextState) {
           await loadPreparationState({ silent: true })
         }
-        if (!options?.silent) message.success('已忽略')
+        if (!options?.silent) message.success('đã bỏ qua')
         return nextState
       } catch {
-        if (!options?.silent) message.error('忽略失败')
+        if (!options?.silent) message.error('bỏ qua thất bại')
         throw new Error('ignore failed')
       } finally {
         setDialogAddingKeys((m) => ({ ...m, [loadingKey]: false }))
@@ -637,7 +637,7 @@ export function ChapterShotEditPage() {
           ignoredCount += 1
           if (ignored) lastState = ignored
         } catch {
-          // 逐条容错，最后统一反馈。
+          // Dung sai từng mục, cuối cùng phản hồi thống nhất.
         }
       }
       if (lastState) {
@@ -646,11 +646,11 @@ export function ChapterShotEditPage() {
         await loadPreparationState({ silent: true })
       }
       if (ignoredCount === extractedDialogLines.length) {
-        message.success(`已忽略 ${ignoredCount} 条对白`)
+        message.success(`đã bỏ qua ${ignoredCount} thoại`)
       } else if (ignoredCount > 0) {
-        message.warning(`已忽略 ${ignoredCount} 条，对剩余 ${extractedDialogLines.length - ignoredCount} 条请逐条检查`)
+        message.warning(`Đã bỏ qua ${ignoredCount} mục, ${extractedDialogLines.length - ignoredCount} mục còn lại vui lòng kiểm tra từng dòng`)
       } else {
-        message.error('批量忽略失败')
+        message.error('Bỏ qua hàng loạt thất bại')
       }
     } finally {
       setBatchDialogAdding(false)
@@ -712,7 +712,7 @@ export function ChapterShotEditPage() {
     }
   }, [chapterId, loadPreparationState, projectId, shotId])
 
-  // 切换分镜时：清理对白防抖，准备状态由 loadPage 统一加载
+  // Khi chuyển phân cảnh: dọn debounce thoại, trạng thái chuẩn bị được loadPage tải thống nhất
   useEffect(() => {
     clearDialogDebounceTimers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -722,7 +722,7 @@ export function ChapterShotEditPage() {
 
   const saveShot = useCallback(async () => {
     if (!shot || !title.trim()) {
-      message.warning('请填写标题')
+      message.warning('Vui lòng điền tiêu đề')
       return
     }
     setSaving(true)
@@ -758,10 +758,10 @@ export function ChapterShotEditPage() {
       if (next) {
         setShot(next)
         setShots((prev) => prev.map((x) => (x.id === next.id ? next : x)))
-        message.success('已保存基础信息与镜头语言')
+        message.success('Đã lưu thông tin cơ bản và ngôn ngữ phân cảnh')
       }
     } catch {
-      message.error('保存失败')
+      message.error('Lưu thất bại')
     } finally {
       setSaving(false)
       setSemanticSaving(false)
@@ -799,9 +799,9 @@ export function ChapterShotEditPage() {
         } else {
           await loadPreparationState({ silent: true })
         }
-        message.success(skip ? '已标记为无需提取' : '已恢复提取确认流程')
+        message.success(skip ? 'đã đánh dấu không cần trích xuất' : 'đã khôi phục luồng xác nhận trích xuất')
       } catch {
-        message.error(skip ? '标记无需提取失败' : '恢复提取失败')
+        message.error(skip ? 'đánh dấu không cần trích xuất thất bại' : 'khôi phục trích xuất thất bại')
       } finally {
         setSkipExtractionUpdating(false)
       }
@@ -847,10 +847,10 @@ export function ChapterShotEditPage() {
         trackTaskData: trackExtractTaskData,
         startedMessage: extractTaskCopy.startedMessage,
         reusedMessage: extractTaskCopy.reusedMessage,
-        fallbackErrorMessage: '提取失败',
+        fallbackErrorMessage: 'Trích xuất thất bại',
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setExtractingAssets(false)
       extractInFlightRef.current = false
@@ -872,7 +872,7 @@ export function ChapterShotEditPage() {
       .sort((a, b) => a.index - b.index)
 
     if (actionableShots.length === 0) {
-      message.info('当前选中的镜头都已标记为无需提取，如需调整请先恢复提取')
+      message.info('các shot đang chọn đều đã đánh dấu không cần trích xuất, nếu muốn điều chỉnh vui lòng khôi phục trích xuất trước')
       return
     }
 
@@ -901,12 +901,12 @@ export function ChapterShotEditPage() {
             } as any,
           }),
         trackTaskData: trackExtractTaskData,
-        startedMessage: actionableShots.length > 1 ? `已开始提取 ${actionableShots.length} 条镜头` : extractTaskCopy.startedMessage,
+        startedMessage: actionableShots.length > 1 ? `Đã bắt đầu trích xuất ${actionableShots.length} phân cảnh` : extractTaskCopy.startedMessage,
         reusedMessage: extractTaskCopy.reusedMessage,
-        fallbackErrorMessage: '批量提取失败',
+        fallbackErrorMessage: 'Trích xuất hàng loạt thất bại',
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setBatchExtractingAssets(false)
       extractInFlightRef.current = false
@@ -918,14 +918,14 @@ export function ChapterShotEditPage() {
     try {
       await executeTaskCancel({
         taskId: extractTask.taskId,
-        reason: '用户在分镜编辑页取消提取任务',
+        reason: 'Người dùng hủy tác vụ trích xuất tại trang chỉnh sửa phân cảnh',
         applyCancelData: applyExtractCancelData,
         cancelledImmediatelyMessage: extractTaskCopy.cancelledImmediatelyMessage,
         cancelRequestedMessage: extractTaskCopy.cancelRequestedMessage,
-        fallbackErrorMessage: '取消提取任务失败',
+        fallbackErrorMessage: 'Hủy tác vụ trích xuất thất bại',
       })
     } catch {
-      // executeTaskCancel 已统一处理错误提示
+      // executeTaskCancel đã xử lý thống nhất thông báo lỗi
     }
   }, [applyExtractCancelData, extractTask])
 
@@ -933,7 +933,7 @@ export function ChapterShotEditPage() {
     task: extractTask,
     settledTask: extractSettledTask,
     title: extractTaskCopy.title,
-    sourceLabel: shot?.title ? `镜头：${shot.title}` : '分镜编辑页',
+    sourceLabel: shot?.title ? `Phân cảnh: ${shot.title}` : 'Trang chỉnh sửa phân cảnh',
     runningDescription: extractTaskCopy.runningDescription,
     cancellingDescription: extractTaskCopy.cancellingDescription,
     successDescription: extractTaskCopy.successDescription,
@@ -1009,7 +1009,7 @@ export function ChapterShotEditPage() {
           linked_entity_id: linkingItem.asset_id,
         },
       })
-      message.success('已关联')
+      message.success('Đã liên kết')
       if (res.data?.state) {
         applyPreparationState(res.data.state)
       } else {
@@ -1017,7 +1017,7 @@ export function ChapterShotEditPage() {
       }
       setLinkingOpen(false)
     } catch {
-      message.error('关联失败')
+      message.error('Liên kết thất bại')
     } finally {
       setLinkingActionLoading(false)
     }
@@ -1049,15 +1049,15 @@ export function ChapterShotEditPage() {
                 : data?.characters
         const item = (bucket?.[0] as EntityNameExistenceItem | undefined) ?? null
         if (!item) {
-          message.error('existence-check 返回为空')
+          message.error('existence-check trả về rỗng')
           return
         }
 
         if (!item.exists) {
           Modal.confirm({
-            title: '当前无可关联资产，是否新建？',
-            okText: '新建',
-            cancelText: '取消',
+            title: 'Hiện không có tài nguyên để liên kết, có tạo mới không?',
+            okText: 'Tạo mới',
+            cancelText: 'Hủy',
             onOk: () => {
               pendingExternalAssetCreateRef.current = true
               const open = (url: string) => window.open(url, '_blank', 'noopener,noreferrer')
@@ -1087,17 +1087,17 @@ export function ChapterShotEditPage() {
         }
 
         if (item.exists && !item.linked_to_project) {
-          await openLinkingModal(asset.kind, name, item, '在资产库中存在同名资产，可关联')
+          await openLinkingModal(asset.kind, name, item, 'Trong thư viện tài nguyên tồn tại tài nguyên trùng tên, có thể liên kết')
           return
         }
         if (item.exists && item.linked_to_project && !item.linked_to_shot) {
-          await openLinkingModal(asset.kind, name, item, '项目中存在同名资产，可关联')
+          await openLinkingModal(asset.kind, name, item, 'Trong dự án tồn tại tài nguyên trùng tên, có thể liên kết')
           return
         }
 
-        message.info('该资产已关联到当前镜头')
+        message.info('Tài nguyên này đã được liên kết vào phân cảnh hiện tại')
       } catch {
-        message.error('existence-check 调用失败')
+        message.error('Gọi existence-check thất bại')
       }
     },
     [openLinkingModal, chapterId, projectId, projectStyle, projectVisualStyle, shotId],
@@ -1117,9 +1117,9 @@ export function ChapterShotEditPage() {
         } else {
           await loadPreparationState({ silent: true })
         }
-        message.success('已忽略该候选项')
+        message.success('Đã bỏ qua ứng viên này')
       } catch {
-        message.error('忽略失败')
+        message.error('Bỏ qua thất bại')
       } finally {
         setCandidateActionIds((prev) => ({ ...prev, [asset.candidateId!]: false }))
       }
@@ -1171,7 +1171,7 @@ export function ChapterShotEditPage() {
           return next
         })
       } catch {
-        // 静默：避免频繁 toast
+        // Im lặng: tránh toast liên tục
       } finally {
         existenceInFlightRef.current[kind] = false
       }
@@ -1210,75 +1210,75 @@ export function ChapterShotEditPage() {
   const goToStudio = () => navigate(getChapterStudioPath(projectId, chapterId), {
     state: { focusShotId: shotId, selectedShotIds: shotId ? [shotId] : [] },
   })
-  const nextStepTitle = statusReady ? '下一步：进入分镜工作室继续生成' : '下一步：先完成镜头准备，再进入工作室'
+  const nextStepTitle = statusReady ? 'Bước tiếp theo: vào studio phân cảnh để tiếp tục tạo' : 'Bước tiếp theo: hoàn tất chuẩn bị phân cảnh trước, rồi vào studio'
   const nextStepDescription = statusReady
-    ? '当前镜头的信息提取确认已经完成，接下来更适合去分镜工作室继续关键帧、参考图、视频提示词和视频生成。'
+    ? 'Xác nhận trích xuất thông tin của phân cảnh hiện tại đã hoàn tất, tiếp theo nên đến studio phân cảnh để tiếp tục khung hình chính, ảnh tham chiếu, prompt video và tạo video.'
     : actionBeatsReady
-      ? '当前镜头仍有提取候选、对白或镜头基础信息待确认。先在这里完成准备，准备完成后再进入分镜工作室继续生成。'
-      : '当前镜头的动作拍点还没有确认。建议先补齐动作序列，再进入工作室继续关键帧和视频生成。'
+      ? 'Phân cảnh hiện tại vẫn còn ứng viên trích xuất, thoại hoặc thông tin cơ bản phân cảnh đang chờ xác nhận. Hãy hoàn tất chuẩn bị ở đây trước, sau đó mới vào studio phân cảnh để tiếp tục tạo.'
+      : 'mốc hành động của shot hiện tại chưa được xác nhận. Đề xuất hoàn thiện trình tự hành động trước, rồi vào studio tiếp tục sinh khung hình chính và video.'
 
   const checklistItems = [
     {
       key: 'script',
-      label: '标题、摘录与镜头语言',
+      label: 'Tiêu đề, trích đoạn và ngôn ngữ điện ảnh',
       tone: basicInfoReady ? 'success' : 'warning',
-      text: basicInfoReady ? '已确认基础信息与镜头语言' : '请先补齐标题、剧本摘录和镜头语言',
+      text: basicInfoReady ? 'Đã xác nhận thông tin cơ bản và ngôn ngữ điện ảnh' : 'Vui lòng bổ sung tiêu đề, trích đoạn kịch bản và ngôn ngữ điện ảnh trước',
     },
     {
       key: 'action_beats',
-      label: '动作拍点',
+      label: 'Mốc hành động',
       tone: actionBeatsReady ? 'success' : 'warning',
       text: actionBeatsReady
-        ? `已确认 ${actionBeatsCount} 条动作拍点`
-        : '请先确认当前镜头的动作变化序列',
+        ? `Đã xác nhận ${actionBeatsCount} mốc hành động`
+        : 'Vui lòng xác nhận trước trình tự thay đổi hành động của phân cảnh hiện tại',
     },
     {
       key: 'assets',
-      label: '资产',
+      label: 'Tài nguyên',
       tone: assetsReady ? 'success' : shotAssetsOverview ? 'warning' : 'default',
       text: assetsReady
         ? extractionSummary.state === 'skipped'
-          ? '已跳过资产提取'
+          ? 'Đã bỏ qua trích xuất tài nguyên'
           : extractionSummary.state === 'extracted_empty'
-            ? '已提取无候选'
+            ? 'Đã trích xuất, không có ứng viên'
             : linkedAssetCount > 0
-              ? '已完成资产确认'
-              : '已完成资产确认'
+              ? 'Đã xác nhận xong tài nguyên'
+              : 'Đã xác nhận xong tài nguyên'
         : extractionSummary.state === 'not_extracted'
-          ? '未提取'
+          ? 'Chưa trích xuất'
           : extractionSummary.state === 'extracted_empty'
-            ? '已提取无候选'
+            ? 'Đã trích xuất, không có ứng viên'
             : shotAssetsOverview
-              ? `待处理 ${pendingAssetCount}`
-              : '待处理',
+              ? `Chờ xử lý ${pendingAssetCount}`
+              : 'Chờ xử lý',
     },
     {
       key: 'dialogs',
-      label: '对白',
+      label: 'Th đoởi thoại',
       tone: dialogsReady ? 'success' : extractedDialogLines.length > 0 ? 'warning' : 'default',
       text: dialogsReady
         ? extractionSummary.state === 'skipped'
-          ? '已跳过对白提取'
+          ? 'Đã bỏ qua trích xuất thoại'
           : extractionSummary.state === 'extracted_empty'
-            ? '已提取无候选'
+            ? 'Đã trích xuất, không có ứng viên'
             : savedDialogLines.length > 0
-              ? '已完成对白确认'
-              : '已完成对白确认'
+              ? 'Đã xác nhận xong thoại'
+              : 'Đã xác nhận xong thoại'
         : extractionSummary.state === 'not_extracted'
-          ? '未提取'
+          ? 'Chưa trích xuất'
           : extractionSummary.state === 'extracted_empty'
-            ? '已提取无候选'
+            ? 'Đã trích xuất, không có ứng viên'
             : extractedDialogLines.length > 0
-              ? `待处理 ${extractedDialogLines.length}`
-              : '待处理',
+              ? `Chờ xử lý ${extractedDialogLines.length}`
+              : 'Chờ xử lý',
     },
     {
       key: 'shoot',
-      label: '拍摄准备',
+      label: 'Chuẩn bị quay',
       tone: statusReady ? 'success' : 'default',
       text: statusReady
-        ? '已具备进入视频生成流程的前置条件'
-        : '请先完成信息提取确认',
+        ? 'Đã đủ điều kiện tiền đề để vào luồng tạo video'
+        : 'Vui lòng hoàn thành xác nhận trích xuất thông tin trước',
     },
   ] as const
 
@@ -1317,7 +1317,7 @@ export function ChapterShotEditPage() {
             className="inline-block h-2 w-2 rounded-full"
             style={{ background: basicInfoReady ? '#22c55e' : '#f59e0b' }}
           />
-          <span>1 基础信息</span>
+          <span>1 Thông tin cơ bản</span>
         </div>
       ),
       children: (
@@ -1349,7 +1349,7 @@ export function ChapterShotEditPage() {
             className="inline-block h-2 w-2 rounded-full"
             style={{ background: confirmReady ? '#22c55e' : '#f59e0b' }}
           />
-          <span>2 提取确认</span>
+          <span>2 Xác nhận trích xuất</span>
           {pendingConfirmCount > 0 ? <Badge count={pendingConfirmCount} size="small" /> : null}
         </div>
       ),
@@ -1357,9 +1357,9 @@ export function ChapterShotEditPage() {
         <div className="rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 space-y-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-sm font-medium text-slate-900">提取确认工作区</div>
+              <div className="text-sm font-medium text-slate-900">Khu làm việc trích xuất & xác nhận</div>
               <div className="text-[11px] text-slate-500 mt-1">
-                这里集中处理系统提取出的资产和对白候选，确认完成后当前镜头才能真正进入生成阶段。
+                ở đây tập trung xử lý ứng viên tài nguyên và thoại do hệ thống trích xuất, sau khi xác nhận xong shot hiện tại mới thực sự vào giai đoạn sinh.
               </div>
               <div
                 className="mt-3 rounded-lg border px-3 py-2 text-xs"
@@ -1396,7 +1396,7 @@ export function ChapterShotEditPage() {
                 disabled={extractTaskActive}
                 onClick={() => void extractAssets()}
               >
-                提取并刷新候选
+                Trích xuất và làm mới ứng viên
               </Button>
               {extractTask ? (
                 <Button
@@ -1406,7 +1406,7 @@ export function ChapterShotEditPage() {
                   disabled={extractTask.cancelRequested}
                   onClick={() => void cancelExtractTask()}
                 >
-                  {extractTask.cancelRequested ? '正在取消' : '取消提取'}
+                  {extractTask.cancelRequested ? 'đang hủy' : 'hủy trích xuất'}
                 </Button>
               ) : null}
               {shot?.skip_extraction ? (
@@ -1415,14 +1415,14 @@ export function ChapterShotEditPage() {
                   loading={skipExtractionUpdating}
                   onClick={() => void updateSkipExtraction(false)}
                 >
-                  恢复提取
+                  Khôi phục trích xuất
                 </Button>
               ) : (
                 <Popconfirm
-                  title="确认标记为无需提取？"
-                  description="标记后当前镜头会直接按“提取确认已完成”处理。"
-                  okText="确认"
-                  cancelText="取消"
+                  title="Xác nhận đánh dấu là không cần trích xuất?"
+                  description="Sau khi đánh dấu, phân cảnh hiện tại sẽ được xử lý trực tiếp theo 'xác nhận trích xuất đã hoàn thành'."
+                  okText="Xác nhận"
+                  cancelText="Hủy"
                   onConfirm={() => void updateSkipExtraction(true)}
                   okButtonProps={{ danger: true, loading: skipExtractionUpdating }}
                   cancelButtonProps={{ disabled: skipExtractionUpdating }}
@@ -1432,7 +1432,7 @@ export function ChapterShotEditPage() {
                     danger
                     loading={skipExtractionUpdating}
                   >
-                    无需提取
+                    Không cần trích xuất
                   </Button>
                 </Popconfirm>
               )}
@@ -1490,7 +1490,7 @@ export function ChapterShotEditPage() {
           to={getChapterShotsPath(projectId, chapterId)}
           className="text-gray-600 hover:text-blue-600 flex items-center gap-1"
         >
-          <ArrowLeftOutlined /> 返回分镜列表
+          <ArrowLeftOutlined /> Quay lại danh sách phân cảnh
         </Link>
         <Divider type="vertical" />
 
@@ -1500,14 +1500,14 @@ export function ChapterShotEditPage() {
             className="truncate block"
             style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
           >
-            {chapterIndex !== null ? `第${chapterIndex}章 · ${chapterTitle || '未命名'}` : chapterTitle || '章节'}
+            {chapterIndex !== null ? `Tập${chapterIndex}chương · ${chapterTitle || 'Chưa đặt tên'}` : chapterTitle || 'chương'}
           </Typography.Text>
           <Typography.Text
             type="secondary"
             className="text-xs truncate block"
             style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
           >
-            分镜准备与信息确认
+            Chuẩn bị phân cảnh và xác nhận thông tin
           </Typography.Text>
         </div>
       </Header>
@@ -1522,7 +1522,7 @@ export function ChapterShotEditPage() {
         }}
       >
         <Card
-          title="分镜准备"
+          title="Chuẩn bị phân cảnh"
           style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
           bodyStyle={{
             padding: 12,
@@ -1538,7 +1538,7 @@ export function ChapterShotEditPage() {
               <Spin size="large" />
             </div>
           ) : !shot ? (
-            <Empty description="无法加载分镜" />
+            <Empty description="Không thể tải phân cảnh" />
           ) : (
             <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 12, overflow: 'hidden' }}>
               <Card
@@ -1546,21 +1546,21 @@ export function ChapterShotEditPage() {
                 title={
                   <div className="flex min-w-0 items-center justify-between gap-2">
                     <Space size={8} className="min-w-0 overflow-hidden">
-                      <span className="font-medium shrink-0">{`镜头（${shotsSorted.length}）`}</span>
+                      <span className="font-medium shrink-0">{`Phân cảnh (${shotsSorted.length})`}</span>
                       {!multiSelectActive ? (
                         <Space size={4} className="min-w-0 text-[11px] text-slate-500">
                           <ReloadOutlined className="shrink-0" />
-                          <span className="truncate" title="Command/Ctrl + 点击多选">
-                            Command/Ctrl + 点击多选
+                          <span className="truncate" title="Command/Ctrl + click chọn nhiều">
+                            Command/Ctrl + nhấn để chọn nhiều
                           </span>
                         </Space>
                       ) : (
-                        <span className="text-xs font-normal text-slate-500 shrink-0">{`已选 ${selectedShotIds.length} 条`}</span>
+                        <span className="text-xs font-normal text-slate-500 shrink-0">{`Đã chọn ${selectedShotIds.length} mục`}</span>
                       )}
                     </Space>
                     {multiSelectActive ? (
                       <Space size={6} className="shrink-0">
-                        <Tooltip title="批量提取并刷新">
+                        <Tooltip title="Trích xuất hàng loạt và làm mới">
                           <Button
                             size="small"
                             type="primary"
@@ -1571,7 +1571,7 @@ export function ChapterShotEditPage() {
                             onClick={() => void batchExtractAssets()}
                           />
                         </Tooltip>
-                        <Tooltip title="清空选择">
+                        <Tooltip title="Xóa bỏ chọn">
                           <Button
                             size="small"
                             shape="circle"
@@ -1613,16 +1613,16 @@ export function ChapterShotEditPage() {
                     >
                       {nextActionableShot
                         ? !currentShotActionable && nextActionableShot.id !== shotId
-                          ? `继续处理下一个待处理镜头：#${nextActionableShot.index}`
-                          : `下一个待处理：#${nextActionableShot.index}`
-                        : '当前没有待处理镜头'}
+                          ? `tiếp tục xử lý shot chờ tiếp theo:#${nextActionableShot.index}`
+                          : `Mục tiếp theo chờ xử lý: #${nextActionableShot.index}`
+                        : 'Hiện không có phân cảnh cần xử lý'}
                     </Button>
                   </div>
                 </div>
                 <List
                   size="small"
                   dataSource={filteredShots}
-                  locale={{ emptyText: <Empty description="暂无镜头" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                  locale={{ emptyText: <Empty description="Chưa có phân cảnh" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                   renderItem={(item) => {
                     const active = item.id === shotId
                     const selected = selectedShotIds.includes(item.id)
@@ -1666,7 +1666,7 @@ export function ChapterShotEditPage() {
                         <div className="min-w-0">
                           <div className="flex items-center justify-between gap-2">
                             <div className="font-medium truncate">
-                              #{item.index} · {item.title?.trim() ? item.title : '未命名镜头'}
+                              #{item.index} · {item.title?.trim() ? item.title : 'Phân cảnh không tên'}
                             </div>
                             <div className="flex shrink-0 items-center gap-1">
                               {active && itemCompleted ? (
@@ -1677,7 +1677,7 @@ export function ChapterShotEditPage() {
                                     color: '#166534',
                                   }}
                                 >
-                                  当前已完成
+                                  Hiện đã hoàn thành
                                 </span>
                               ) : null}
                               <span
@@ -1710,7 +1710,7 @@ export function ChapterShotEditPage() {
                                 color: itemBasicReady ? '#166534' : '#92400e',
                               }}
                             >
-                              {itemBasicReady ? '基础已完成' : '基础待补'}
+                              {itemBasicReady ? 'Cơ bản đã xong' : 'Cơ bản còn thiếu'}
                             </span>
                             <span
                               className="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium"
@@ -1733,7 +1733,7 @@ export function ChapterShotEditPage() {
                 size="small"
                 title={
                   <div className="space-y-3 min-w-0">
-                    <div className="font-medium">{`镜头 #${shot.index} 详情`}</div>
+                    <div className="font-medium">{`Chi tiết phân cảnh #${shot.index}`}</div>
                     <ChapterShotPreparationGuide
                       statusReady={statusReady}
                       checklistItems={checklistItems}
@@ -1766,12 +1766,12 @@ export function ChapterShotEditPage() {
       </Content>
 
       <Modal
-        title="关联资产"
+        title="Liên kết tài nguyên"
         open={linkingOpen}
         onCancel={() => setLinkingOpen(false)}
         footer={[
           <Button key="cancel" onClick={() => setLinkingOpen(false)} disabled={linkingActionLoading}>
-            取消
+            Hủy
           </Button>,
           <Button
             key="link"
@@ -1780,7 +1780,7 @@ export function ChapterShotEditPage() {
             disabled={!linkingItem?.asset_id}
             onClick={() => void doLink()}
           >
-            关联
+            liên kết
           </Button>,
         ]}
         width={520}
@@ -1791,7 +1791,7 @@ export function ChapterShotEditPage() {
             title={<div className="truncate">{linkingName || '—'}</div>}
             imageAlt={linkingName || 'asset'}
             imageUrl={linkingThumb}
-            placeholder={linkingLoading ? <Spin /> : '暂无图片'}
+            placeholder={linkingLoading ? <Spin /> : 'chưa có ảnh'}
             enablePreview
             hoverable={false}
             size="small"

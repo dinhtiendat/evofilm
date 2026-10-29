@@ -22,50 +22,50 @@ from app.models.types import (
 
 
 class Shot(Base,TimestampMixin):
-    """镜头表（基础信息）。
+    """Bảng phân cảnh (thông tin cơ bản).
 
-    说明：
-    - 目前未混入 `TimestampMixin`，避免在高频生成/更新流程中引入额外写放大；如需要审计可再补。
-    - 细节放在 `ShotDetail` 以保持主表字段稳定。
+    Giải thích:：
+    - Hiện chưa trộn `TimestampMixin`, tránh tạo thêm ghi-phong-toa trong luồng tạo/cập nhật tần suất cao; nếu cần audit có thể bổ sung sau.
+    - Chi tiết đặt trong `ShotDetail` để giữ các trường bảng chính ổn định.
     """
 
     __tablename__ = "shots"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="镜头 ID")
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="id: Mapped[str] = mapped_column(String(64), primary_key=True, comment=ID phân cảnh) ID")
     chapter_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("chapters.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属章节 ID",
+        comment="comment=ID chương sở thuộc, ID",
     )
-    index: Mapped[int] = mapped_column(Integer, nullable=False, comment="镜头序号（章节内唯一）")
-    title: Mapped[str] = mapped_column(String(255), nullable=False, comment="镜头标题")
-    thumbnail: Mapped[str] = mapped_column(String(1024), nullable=False, default="", comment="缩略图 URL/路径")
+    index: Mapped[int] = mapped_column(Integer, nullable=False, comment="Số thứ tự phân cảnh (duy nhất trong chương)")
+    title: Mapped[str] = mapped_column(String(255), nullable=False, comment="title: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tiêu đề phân cảnh)")
+    thumbnail: Mapped[str] = mapped_column(String(1024), nullable=False, default="", comment="Ảnh thu nhỏ URL/Đường")
     status: Mapped[ShotStatus] = mapped_column(
         String(32),
         nullable=False,
         default=ShotStatus.pending,
-        comment="镜头状态",
+        comment="comment=Trạng thái phân cảnh,",
     )
     skip_extraction: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
         default=False,
-        comment="是否明确跳过信息提取；为 true 时可直接进入 ready 判定",
+        comment="có bỏ qua rõ ràng trích xuất thông tin không；true thì có thể vào thẳng phán đoán ready",
     )
     last_extracted_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
-        comment="最近一次完成信息提取的时间；用于区分未提取与提取结果为空",
+        comment="Thời gian hoàn thành trích xuất thông tin gần nhất; dùng để phân biệt chưa trích xuất với kết quả trích xuất rỗng",
     )
-    script_excerpt: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="剧本摘录")
+    script_excerpt: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="script_excerpt: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Trích đoạn kịch bản)")
     generated_video_file_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="已生成视频关联的文件 ID（FileItem，type=video）",
+        comment="comment=ID tệp liên kết video đã sinh(FileItem, type=video), ID（FileItem，type=video）",
     )
 
     chapter: Mapped["Chapter"] = relationship(back_populates="shots")
@@ -129,91 +129,91 @@ class Shot(Base,TimestampMixin):
 
 
 class ShotDetail(Base,TimestampMixin):
-    """镜头细节（1:1）。
+    """Chi tiết phân cảnh (1:1).（1:1）。
 
-    设计点：
-    - 与 `Shot` 共享主键，确保一条镜头最多一份细节，且删除镜头时细节级联删除。
-    - `mood_tags` 用 JSON 存 list[str]，与前端 mock 对齐。
+    Điểm thiết kế:：
+    - dùng chung khóa chính với `Shot`, đảm bảo một shot tối đa một bản chi tiết, và xóa shot thì chi tiết bị xóa liên kết.
+    - `mood_tags` lưu list[str] dạng JSON, đồng bộ với mock phía trước.
 
-    应用层保证：
-    - `scene_id` 所指场景应与镜头所属项目一致或为全局场景，避免跨项目引用。
+    Đảm bảo ở tầng ứng dụng:：
+    - bối cảnh mà `scene_id` trỏ nên nhất quán với dự án của shot hoặc là bối cảnh toàn cục, tránh tham chiếu chéo dự án.
     """
 
     __tablename__ = "shot_details"
 
-    # 与 Shot 共享主键（1:1）：用外键作为主键，强制一对一。
+    # Chia sẻ khóa chính với Shot (1:1): dùng khóa ngoại làm khóa chính, buộc một-đối-một.
     id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("shots.id", ondelete="CASCADE"),
         primary_key=True,
-        comment="镜头 ID（与 shots.id 共享主键）",
+        comment="ID phân cảnh (chia sẻ khóa chính với shots.id)",
     )
     camera_shot: Mapped[CameraShotType] = mapped_column(
         String(16),
         nullable=False,
-        comment="景别（存 code：ECU/CU/MCU/MS/MLS/LS/ELS；展示可用 schemas.SHOT_TYPE_ZH）",
+        comment="Độ rộng phân cảnh (lưu code: ECU/CU/MCU/MS/MLS/LS/ELS; hiển thị có thể dùng schemas.SHOT_TYPE_ZH)",
     )
     angle: Mapped[CameraAngle] = mapped_column(
         String(16),
         nullable=False,
-        comment="机位角度（存 code：EYE_LEVEL/HIGH_ANGLE/...；展示可用 schemas.CAMERA_ANGLE_ZH）",
+        comment="Góc máy (lưu code: EYE_LEVEL/HIGH_ANGLE/...; khi hiển thị có thể dùng schemas.CAMERA_ANGLE_ZH)",
     )
     movement: Mapped[CameraMovement] = mapped_column(
         String(16),
         nullable=False,
-        comment="运镜方式（存 code：STATIC/PAN/...；展示可用 schemas.CAMERA_MOVEMENT_ZH）",
+        comment="Cách chuyển động máy (lưu code: STATIC/PAN/...; hiển thị có thể dùng schemas.CAMERA_MOVEMENT_ZH)",
     )
     scene_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("scenes.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="关联场景 ID（可空）；应用层需保证与镜头所属项目一致或全局",
+        comment="ID bối cảnh liên kết(để trống được)；tầng ứng dụng phải đảm bảo nhất quán với dự án của shot hoặc toàn cục",
     )
-    duration: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="时长（秒）；镜头唯一时长来源")
+    duration: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="Thời lượng (giây); nguồn thời lượng duy nhất của phân cảnh")
     override_video_ratio: Mapped[str | None] = mapped_column(
         String(16),
         nullable=True,
         default=None,
-        comment="分镜级视频比例覆盖（为空表示继承项目默认）",
+        comment="Ghi đè tỉ lệ video cấp phân cảnh (để trống nghĩa là kế thừa mặc định của dự án)",
     )
-    mood_tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="情绪标签（JSON 数组）")
-    atmosphere: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="氛围描述")
-    follow_atmosphere: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, comment="是否沿用氛围")
-    has_bgm: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, comment="是否包含 BGM")
+    mood_tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="Nhãn cảm xúc (mảng JSON)")
+    atmosphere: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="atmosphere: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả không khí)")
+    follow_atmosphere: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, comment="follow_atmosphere: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, comment=Có tiếp tục dùng không khí không)")
+    has_bgm: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, comment="has_bgm: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, comment=Có chứa nhạc nền (BGM) không) BGM")
     vfx_type: Mapped[VFXType] = mapped_column(
         String(32),
         nullable=False,
         default=VFXType.none,
-        comment="视效类型（存 code；展示可用 schemas.VFX_TYPE_ZH）",
+        comment="loại VFX (lưu code；hiển thị có thể dùng schemas.VFX_TYPE_ZH)",
     )
-    vfx_note: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="视效说明（简短可执行）")
+    vfx_note: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="Ghi chú hiệu ứng đặc biệt (ngắn, khả thi)")
     description: Mapped[str] = mapped_column(
         Text,
         nullable=False,
         default="",
-        comment="分镜整体描述（用于提示词补充）",
+        comment="Mô tả tổng thể của phân cảnh (dùng để bổ sung prompt)",
     )
     action_beats: Mapped[list[str]] = mapped_column(
         JSON,
         nullable=False,
         default=list,
-        comment="镜头动作拍点（按时间顺序排列，用于关键帧与视频生成）",
+        comment="Mốc hành động của phân cảnh (sắp theo thứ tự thời gian, dùng cho khung hình chính và tạo video)",
     )
     prompt_template_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("prompt_templates.id", ondelete="SET NULL"),
         nullable=True,
-        comment="分镜提示词模板 ID（可选）",
+        comment="ID mẫu prompt phân cảnh (tùy chọn)",
     )
     first_frame_prompt: Mapped[str] = mapped_column(
-        Text, nullable=False, default="", comment="镜头分镜首帧提示词",
+        Text, nullable=False, default="", comment="Text, nullable=False, default=, comment=Prompt khung hình đầu của phân cảnh,",
     )
     last_frame_prompt: Mapped[str] = mapped_column(
-        Text, nullable=False, default="", comment="镜头分镜尾帧提示词",
+        Text, nullable=False, default="", comment="Text, nullable=False, default=, comment=Prompt khung hình cuối của phân cảnh,",
     )
     key_frame_prompt: Mapped[str] = mapped_column(
-        Text, nullable=False, default="", comment="镜头分镜关键帧提示词",
+        Text, nullable=False, default="", comment="Text, nullable=False, default=, comment=Prompt khung hình chính của phân cảnh,",
     )
 
     shot: Mapped["Shot"] = relationship(back_populates="detail")
@@ -241,38 +241,38 @@ class ShotDetail(Base,TimestampMixin):
 
 
 class ShotFrameImage(Base, TimestampMixin):
-    """镜头分镜帧图片（首帧/尾帧/关键帧）。每镜头每类型一条记录，通过 file_id 关联 files 表。
+    """Ảnh khung hình phân cảnh (khung hình đầu/khung hình cuối/khung hình chính). Mỗi phân cảnh mỗi loại một bản ghi, liên kết bảng files qua file_id.
 
-    应用层保证：
-    - 同一 shot_detail_id + frame_type 至多一条记录（表唯一约束）。
+    Đảm bảo ở tầng ứng dụng:：
+    - cùng một shot_detail_id + frame_type tối đa một bản ghi (ràng buộc duy nhất của bảng).
     """
 
     __tablename__ = "shot_frame_images"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="图片行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment=ID hàng ảnh) ID")
     shot_detail_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("shot_details.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属镜头细节 ID",
+        comment="comment=ID chi tiết phân cảnh sở hữu, ID",
     )
     frame_type: Mapped[ShotFrameType] = mapped_column(
         String(16),
         nullable=False,
         index=True,
-        comment="帧类型：first/last/key",
+        comment="comment=Loại khung hình: first/last/key,：first/last/key",
     )
     file_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
-        comment="关联的文件 ID（FileItem）",
+        comment="comment=ID tệp liên kết (FileItem), ID（FileItem）",
     )
-    width: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="宽（px）")
-    height: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="高（px）")
-    format: Mapped[str] = mapped_column(String(32), nullable=False, default="png", comment="格式")
+    width: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="width: Mapped[int | None] = mapped_column(Integer, nullable=True, comment=Rộng (px))（px）")
+    height: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="height: Mapped[int | None] = mapped_column(Integer, nullable=True, comment=Cao (px))（px）")
+    format: Mapped[str] = mapped_column(String(32), nullable=False, default="png", comment="format: Mapped[str] = mapped_column(String(32), nullable=False, default=png, comment=Định dạng)")
 
     shot_detail: Mapped["ShotDetail"] = relationship(back_populates="frame_images")
 
@@ -282,60 +282,60 @@ class ShotFrameImage(Base, TimestampMixin):
 
 
 class ShotDialogLine(Base,TimestampMixin):
-    """镜头对话行。
+    """Dòng thoại phân cảnh.。
 
-    设计点：
-    - 前端 mock 里 `dialog` 为数组，这里拆表以支持排序、检索与后续对齐字幕/配音等能力。
-    - `shot_detail_id + index` 唯一，保证行号稳定。
+    Điểm thiết kế:：
+    - Trong mock phía trước, `dialog` là mảng, ở đây tách bảng để hỗ trợ sắp xếp, tìm kiếm và các năng lực tương ứng với phụ đề/thuyết minh sau này.
+    - `shot_detail_id + index` duy nhất, đảm bảo số dòng ổn định.
 
-    应用层保证：
-    - `speaker_character_id` / `target_character_id` 所指角色应与该镜头所属章节/项目一致，避免跨项目引用。
+    Đảm bảo ở tầng ứng dụng:：
+    - `speaker_character_id` / `target_character_id` trỏ đến nhân vật nên thống nhất với chương/dự án mà phân cảnh đó thuộc về, tránh tham chiếu xuyên dự án.
     """
 
     __tablename__ = "shot_dialog_lines"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="对话行自增 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment=ID tự tăng của dòng hội thoại) ID")
     shot_detail_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("shot_details.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属镜头细节 ID",
+        comment="comment=ID chi tiết phân cảnh sở hữu, ID",
     )
-    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="行号（镜头内排序）")
-    text: Mapped[str] = mapped_column(Text, nullable=False, comment="台词内容")
+    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="Số thứ tự (thứ tự trong phân cảnh)")
+    text: Mapped[str] = mapped_column(Text, nullable=False, comment="text: Mapped[str] = mapped_column(Text, nullable=False, comment=Nội dung lời thoại)")
     line_mode: Mapped[DialogueLineMode] = mapped_column(
         String(16),
         nullable=False,
         default=DialogueLineMode.dialogue,
-        comment="对白模式（DIALOGUE/VOICE_OVER/OFF_SCREEN/PHONE；对齐 schemas.DIALOGUE_LINE_MODE_ZH）",
+        comment="Chế độ lời thoại (DIALOGUE/VOICE_OVER/OFF_SCREEN/PHONE; thống nhất với schemas.DIALOGUE_LINE_MODE_ZH)",
     )
     speaker_character_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("characters.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="说话角色 ID；应用层需保证与镜头所属项目一致",
+        comment="ID nhân vật nói; tầng ứng dụng phải đảm bảo khớp với dự án mà phân cảnh thuộc vào",
     )
     target_character_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("characters.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="听者角色 ID；应用层需保证与镜头所属项目一致",
+        comment="ID nhân vật nghe; tầng ứng dụng phải đảm bảo khớp với dự án mà phân cảnh thuộc vào",
     )
 
     speaker_name: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
         index=True,
-        comment="说话角色名称（用于从提取结果回填角色关联；可空）",
+        comment="Tên nhân vật nói (dùng để điền ngược liên kết nhân vật từ kết quả trích xuất; có thể để trống)",
     )
     target_name: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
         index=True,
-        comment="听者角色名称（用于从提取结果回填角色关联；可空）",
+        comment="Tên nhân vật nghe (dùng để điền ngược liên kết nhân vật từ kết quả trích xuất; có thể để trống)",
     )
 
     shot_detail: Mapped["ShotDetail"] = relationship(back_populates="dialog_lines")
@@ -348,31 +348,31 @@ class ShotDialogLine(Base,TimestampMixin):
 
 
 class ShotCharacterLink(Base,TimestampMixin):
-    """镜头引用角色（多对多）。
+    """Phân cảnh tham chiếu nhân vật (nhiều-đến-nhiều).
 
-    应用层保证：
-    - 所引用角色应与镜头所属项目一致（角色表本身归属项目，写入时校验可避免跨项目引用）。
+    Đảm bảo ở tầng ứng dụng:：
+    - nhân vật được tham chiếu nên nhất quán với dự án của shot (bảng nhân vật tự thuộc về dự án, xác thực khi ghi có thể tránh tham chiếu chéo dự án).
     """
 
     __tablename__ = "shot_character_links"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="关联行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment=ID hàng liên kết) ID")
     shot_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("shots.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="镜头 ID",
+        comment="comment=ID phân cảnh, ID",
     )
     character_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("characters.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="角色 ID",
+        comment="comment=ID nhân vật, ID",
     )
-    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="镜头内角色排序")
-    note: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="备注（可选）")
+    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment=Thứ tự nhân vật trong phân cảnh)")
+    note: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="Ghi chú (tùy chọn)")
 
     shot: Mapped["Shot"] = relationship(back_populates="character_links")
     character: Mapped["Character"] = relationship(back_populates="shot_links")
@@ -384,60 +384,60 @@ class ShotCharacterLink(Base,TimestampMixin):
 
 
 class ShotExtractedCandidate(Base, TimestampMixin):
-    """镜头提取候选项。
+    """Ứng viên trích xuất phân cảnh.。
 
-    用于记录一条镜头经“信息提取”后得到的候选资产及其确认状态：
-    - pending：待处理
-    - linked：已关联到真实实体
-    - ignored：已明确忽略
+    Dùng để ghi lại tài nguyên ứng viên thu được sau “trích xuất thông tin” của một phân cảnh cùng trạng thái xác nhận:
+    - pending：- pending: Chờ xử lý
+    - linked：- linked: đã liên kết với thực thể thật
+    - ignored：- ignored: Đã rõ bỏ qua
     """
 
     __tablename__ = "shot_extracted_candidates"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="候选项自增 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment=ID tự tăng của mục ứng viên) ID")
     shot_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("shots.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属镜头 ID",
+        comment="comment=ID phân cảnh sở hữu, ID",
     )
     candidate_type: Mapped[ShotCandidateType] = mapped_column(
         String(32),
         nullable=False,
         index=True,
-        comment="候选类型：character/scene/prop/costume",
+        comment="comment=loại ứng viên:character/scene/prop/costume,：character/scene/prop/costume",
     )
-    candidate_name: Mapped[str] = mapped_column(String(255), nullable=False, comment="候选名称")
+    candidate_name: Mapped[str] = mapped_column(String(255), nullable=False, comment="candidate_name: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tên ứng viên)")
     candidate_status: Mapped[ShotCandidateStatus] = mapped_column(
         String(32),
         nullable=False,
         default=ShotCandidateStatus.pending,
         index=True,
-        comment="候选确认状态：pending/linked/ignored",
+        comment="comment=Trạng thái xác nhận ứng viên: pending/linked/ignored,：pending/linked/ignored",
     )
     linked_entity_id: Mapped[str | None] = mapped_column(
         String(64),
         nullable=True,
         index=True,
-        comment="已关联时对应的目标实体 ID",
+        comment="comment=ID thực thể đích tương ứng khi đã liên kết, ID",
     )
     source: Mapped[str] = mapped_column(
         String(32),
         nullable=False,
         default="extraction",
-        comment="候选来源，当前固定为 extraction",
+        comment="nguồn ứng viên, hiện cố định là extraction",
     )
     payload: Mapped[dict] = mapped_column(
         JSON,
         nullable=False,
         default=dict,
-        comment="保留提取附加信息，如 description/thumbnail/file_id/confidence 等",
+        comment="Giữ thông tin trích xuất đi kèm, như description/thumbnail/file_id/confidence, v.v.",
     )
     confirmed_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
-        comment="候选项被确认（关联/忽略）时间",
+        comment="Thời điểm ứng viên được xác nhận (liên kết/bỏ qua)",
     )
 
     shot: Mapped["Shot"] = relationship(back_populates="extracted_candidates")
@@ -449,74 +449,74 @@ class ShotExtractedCandidate(Base, TimestampMixin):
 
 
 class ShotExtractedDialogueCandidate(Base, TimestampMixin):
-    """镜头对白提取候选项。
+    """Ứng viên trích xuất thoại phân cảnh.。
 
-    与资产候选分表存储，避免把对白确认流和实体关联流混在一起：
-    - pending：待确认
-    - accepted：已接受并写入 ShotDialogLine
-    - ignored：已明确忽略
+    Lưu tách bảng với ứng viên tài nguyên, tránh trộn lẫn luồng xác nhận thoại và luồng liên kết thực thể:
+    - pending：- pending: Chờ xác nhận
+    - accepted：- accepted: đã chấp nhận và ghi vào ShotDialogLine ShotDialogLine
+    - ignored：- ignored: Đã rõ bỏ qua
     """
 
     __tablename__ = "shot_extracted_dialogue_candidates"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="对白候选自增 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment=ID tự tăng của ứng viên thoại) ID")
     shot_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("shots.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属镜头 ID",
+        comment="comment=ID phân cảnh sở hữu, ID",
     )
-    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="镜头内对白候选排序")
-    text: Mapped[str] = mapped_column(Text, nullable=False, comment="提取出的对白文本")
+    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment=Thứ tự ứng viên thoại trong phân cảnh)")
+    text: Mapped[str] = mapped_column(Text, nullable=False, comment="text: Mapped[str] = mapped_column(Text, nullable=False, comment=Văn bản lời thoại đã trích xuất)")
     line_mode: Mapped[DialogueLineMode] = mapped_column(
         String(16),
         nullable=False,
         default=DialogueLineMode.dialogue,
-        comment="对白模式（DIALOGUE/VOICE_OVER/OFF_SCREEN/PHONE）",
+        comment="comment=Chế độ thoại (DIALOGUE/VOICE_OVER/OFF_SCREEN/PHONE),（DIALOGUE/VOICE_OVER/OFF_SCREEN/PHONE）",
     )
     speaker_name: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
         index=True,
-        comment="说话角色名称（可空）",
+        comment="Tên nhân vật nói (để trống được)\","
     )
     target_name: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
         index=True,
-        comment="听者角色名称（可空）",
+        comment="Tên nhân vật nghe (để trống được)",
     )
     candidate_status: Mapped[ShotDialogueCandidateStatus] = mapped_column(
         String(32),
         nullable=False,
         default=ShotDialogueCandidateStatus.pending,
         index=True,
-        comment="对白候选确认状态：pending/accepted/ignored",
+        comment="comment=trạng thái xác nhận ứng viên thoại:pending/accepted/ignored,：pending/accepted/ignored",
     )
     linked_dialog_line_id: Mapped[int | None] = mapped_column(
         Integer,
         ForeignKey("shot_dialog_lines.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="已接受时写入的对白行 ID",
+        comment="comment=ID dòng lời thoại được ghi khi đã chấp nhận, ID",
     )
     source: Mapped[str] = mapped_column(
         String(32),
         nullable=False,
         default="extraction",
-        comment="候选来源，当前固定为 extraction",
+        comment="nguồn ứng viên, hiện cố định là extraction",
     )
     payload: Mapped[dict] = mapped_column(
         JSON,
         nullable=False,
         default=dict,
-        comment="保留提取附加信息，便于后续扩展",
+        comment="Giữ thông tin trích xuất kèm theo, thuận tiện cho mở rộng sau",
     )
     confirmed_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
-        comment="对白候选被确认（接受/忽略）时间",
+        comment="Thời điểm ứng viên lời thoại được xác nhận (chấp nhận/bỏ qua)",
     )
 
     shot: Mapped["Shot"] = relationship(back_populates="extracted_dialogue_candidates")

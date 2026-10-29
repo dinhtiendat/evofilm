@@ -1,4 +1,4 @@
-"""图片生成能力约束与参数校验辅助。"""
+"""Ràng buộc khả năng tạo ảnh và phụ trợ xác thực tham số."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ DEFAULT_VIDEO_REFERENCE_RATIO_SIZE_MAP: dict[str, dict[str, str]] = {
 
 @dataclass(frozen=True, slots=True)
 class ImageModelCapability:
-    """供应商/模型图片能力约束。"""
+    """Ràng buộc khả năng tạo ảnh của nhà cung cấp/mô hình."""
 
     supports_seed: bool = True
     supports_watermark: bool = True
@@ -39,7 +39,7 @@ def register_image_model_capability(
     model_prefix: str,
     capability: ImageModelCapability,
 ) -> None:
-    """兼容入口：注册模型能力覆盖（按前缀匹配，大小写不敏感）。"""
+    """Điểm vào tương thích: đăng ký lớp phủ khả năng mô hình (khớp theo tiền tố, không phân biệt hoa thường)."""
     if provider == "openai":
         from app.core.integrations.openai.image_capabilities import register_openai_image_capability
 
@@ -51,7 +51,7 @@ def register_image_model_capability(
 
 
 def clear_image_model_capability_overrides(*, provider: ProviderKey | None = None) -> None:
-    """兼容入口：清空能力覆盖；供测试或重置场景使用。"""
+    """Điểm vào tương thích: dọn sạch lớp phủ khả năng; dùng cho kiểm thử hoặc đặt lại bối cảnh."""
     from app.core.integrations.openai.image_capabilities import clear_openai_image_capability_overrides
     from app.core.integrations.volcengine.image_capabilities import clear_volcengine_image_capability_overrides
 
@@ -84,11 +84,11 @@ def resolve_image_size(
     resolution_profile: str | None,
     requested_size: str | None,
 ) -> str | None:
-    """解析图片最终 size。
+    """Phân tích size cuối của hình ảnh.
 
-    普通图片任务优先保留显式传入的 requested_size；
-    视频参考帧场景则优先根据 target_ratio + resolution_profile 从 capability 推导，
-    以保证关键帧与目标视频画幅保持一致。
+    Tác vụ hình ảnh thông thường ưu tiên giữ requested_size được truyền tường minh;
+    Trường hợp khung hình tham chiếu video thì ưu tiên suy ra từ capability theo target_ratio + resolution_profile,
+    Để đảm bảo khung hình chính và tỷ lệ khung hình video mục tiêu nhất quán.
     """
     if purpose != "video_reference":
         return requested_size

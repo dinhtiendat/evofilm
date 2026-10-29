@@ -137,7 +137,7 @@ export const useTaskUiStore = create<TaskUiState>((set, get) => ({
     try {
       const res = await FilmService.cancelTaskApiV1FilmTasksTaskIdCancelPost({
         taskId,
-        requestBody: { reason: '用户在任务中心取消任务' },
+        requestBody: { reason: 'Người dùng hủy tác vụ trong trung tâm tác vụ' },
       })
       const data = res.data
       set((state) => {
@@ -164,9 +164,9 @@ export const useTaskUiStore = create<TaskUiState>((set, get) => ({
           optimisticItems: nextOptimisticItems,
         }
       })
-      message.success(data?.effective_immediately ? '任务已取消' : '已发送取消请求')
+      message.success(data?.effective_immediately ? 'Đã hủy tác vụ' : 'Đã gửi yêu cầu hủy')
     } catch {
-      message.error('取消任务失败')
+      message.error('Hủy tác vụ thất bại')
     }
   },
   setOpen: (open) => set(() => ({ open })),

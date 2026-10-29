@@ -1,9 +1,9 @@
-"""Celery 应用实例。
+"""Thực thể ứng dụng Celery.
 
-最小落地原则：
-- 仅把 Celery 当作执行层与 broker 客户端；
-- 任务状态/结果真相仍然回写 GenerationTask；
-- 第一阶段不依赖 Celery result backend。
+Nguyên tắc triển khai tối thiểu:
+- Chỉ dùng Celery như tầng thực thi và client broker;
+- Trạng thái/kết quả thực của tác vụ vẫn ghi ngược vào GenerationTask;
+- Giai đoạn một không phụ thuộc result backend của Celery.
 """
 
 from celery import Celery
@@ -31,6 +31,6 @@ celery_app.conf.update(
 
 @worker_process_init.connect
 def _reset_async_db_runtime(**_: object) -> None:
-    """Celery prefork 子进程启动后，重建 async DB 运行时。"""
+    """sau tiến trình con Celery prefork khởi động, khôi phục runtime DB không đồng bộ."""
 
     reset_db_runtime()

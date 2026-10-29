@@ -7,8 +7,8 @@ import type {
 } from '../../../../services/generated'
 
 function dialogTitle(speaker?: string | null, target?: string | null) {
-  const s = (speaker ?? '').trim() || '未知'
-  const t = (target ?? '').trim() || '未知'
+  const s = (speaker ?? '').trim() || 'Không rõ'
+  const t = (target ?? '').trim() || 'Không rõ'
   return `${s} → ${t}`
 }
 
@@ -48,27 +48,27 @@ export function ChapterShotDialogueConfirmation({
   const pendingCount = extractedDialogLines.length
   const dialogueStatus = (() => {
     if (extraction.state === 'skipped') {
-      return { text: '已跳过', tone: 'blue' as const }
+      return { text: 'đã bỏ qua', tone: 'blue' as const }
     }
     if (extraction.state === 'not_extracted') {
-      return { text: '未提取', tone: 'gold' as const }
+      return { text: 'chưa trích xuất', tone: 'gold' as const }
     }
     if ((extraction.dialogue_candidate_total ?? 0) === 0 && extraction.state === 'extracted_empty') {
-      return { text: '已提取无候选', tone: 'default' as const }
+      return { text: 'Đã trích xuất, không có ứng viên', tone: 'default' as const }
     }
     if (pendingCount > 0) {
-      return { text: `待处理 ${pendingCount}`, tone: 'gold' as const }
+      return { text: `Chờ xử lý ${pendingCount}`, tone: 'gold' as const }
     }
-    return { text: '已完成', tone: 'green' as const }
+    return { text: 'hoàn tất', tone: 'green' as const }
   })()
   const emptyStateText =
     extraction.state === 'skipped'
-      ? '当前镜头已标记为无需提取，对白候选已按完成处理'
+      ? 'Phân cảnh hiện tại đã được đánh dấu không cần trích xuất, ứng viên lời thoại đã được xử lý như hoàn tất'
       : extraction.state === 'not_extracted'
-        ? '当前还没有执行提取，先在上方点击“提取并刷新候选”'
+        ? 'Trích xuất chưa được thực hiện, trước tiên nhấn “Trích xuất và làm mới ứng viên” ở phía trên'
         : extraction.state === 'extracted_empty'
-          ? '已执行提取，但当前没有识别到对白候选'
-          : '当前没有待确认对白；如果需要，也可以直接补录最终对白'
+          ? 'Đã chạy trích xuất, nhưng hiện chưa nhận diện được ứng viên thoại'
+          : 'Hiện không có thoại nào chờ xác nhận; nếu cần, có thể trực tiếp bổ sung thoại cuối cùng'
 
   return (
     <div className="space-y-3 rounded-xl border border-slate-200 bg-white/80 px-4 py-4">
@@ -78,7 +78,7 @@ export function ChapterShotDialogueConfirmation({
             <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-900 px-1.5 text-[11px] font-semibold text-white">
               2.2
             </span>
-            <div className="text-sm font-medium text-slate-900">对白确认</div>
+            <div className="text-sm font-medium text-slate-900">Xác nhận thoại</div>
             <span
               className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium"
               style={{
@@ -103,16 +103,16 @@ export function ChapterShotDialogueConfirmation({
               {dialogueStatus.text}
             </span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">这里处理系统提取出的对白候选，并确认最终对白内容。</div>
+          <div className="text-[11px] text-slate-500 mt-1">Xử lý tại đây các ứng viên lời thoại do hệ thống trích xuất và xác nhận nội dung lời thoại cuối cùng.</div>
         </div>
         <div className="flex items-center gap-2">
           {extractedDialogLines.length > 0 ? (
             <>
               <Button size="small" loading={batchDialogAdding} onClick={onAcceptAll}>
-                全部接受
+                Chấp nhận tất cả
               </Button>
               <Button size="small" disabled={batchDialogAdding} onClick={onIgnoreAll}>
-                全部忽略
+                Bỏ qua tất cả
               </Button>
             </>
           ) : null}
@@ -134,7 +134,7 @@ export function ChapterShotDialogueConfirmation({
               .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
               .map((l) => (
                 <div key={l.id} className="flex items-start gap-2">
-                  <Tooltip title="已保存">
+                  <Tooltip title="Đã lưu">
                     <span className="mt-1 text-gray-500">
                       <SmileOutlined />
                     </span>
@@ -154,7 +154,7 @@ export function ChapterShotDialogueConfirmation({
                     value={l.text ?? ''}
                     onChange={(e) => onUpdateSavedDialogText(l.id, e.target.value)}
                     autoSize={{ minRows: 1, maxRows: 4 }}
-                    placeholder="对白内容"
+                    placeholder="Nội dung thoại"
                   />
                 </div>
               ))}
@@ -165,7 +165,7 @@ export function ChapterShotDialogueConfirmation({
           <div className="space-y-2">
             {extractedDialogLines.map((l) => (
               <div key={l.id} className="flex items-start gap-2">
-                <Tooltip title="新提取">
+                <Tooltip title="Trích xuất mới">
                   <span className="mt-1 text-red-600">
                     <FireOutlined />
                   </span>
@@ -192,7 +192,7 @@ export function ChapterShotDialogueConfirmation({
                   value={l.text ?? ''}
                   onChange={(e) => onUpdateExtractedDialogText(l.id, e.target.value)}
                   autoSize={{ minRows: 1, maxRows: 4 }}
-                  placeholder="对白内容"
+                  placeholder="Nội dung thoại"
                 />
               </div>
             ))}

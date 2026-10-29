@@ -1,36 +1,36 @@
 ---
-title: "工作流"
+title: "Quy trình"
 weight: 2
-description: "理解从剧本到导出的核心生产链路。"
+description: "Hiểu đường sản xuất cốt lõi từ kịch bản đến xuất."
 ---
 
-Jellyfish 的核心目标是把 AI 短剧生产拆成可控、可回放、可复用的工作流：
+mục tiêu cốt lõi của Jellyfish là tách sản xuất short drama AI thành workflow có thể kiểm soát, phát lại và tái sử dụng:
 
-1. 输入原始剧本或章节文本。
-2. 进行文本优化、拆分与结构化处理。
-3. 提取角色、场景、道具等实体。
-4. 生成并编辑分镜。
-5. 绑定资产、补充提示词并触发图片或视频任务。
-6. 进入时间线或后期流程，最终导出内容。
+1. Nhập kịch bản gốc hoặc văn bản chương.
+2. Tối ưu, tách và xử lý cấu trúc hóa văn bản.
+3. Trích xuất các thực thể như nhân vật, bối cảnh, đạo cụ.
+4. Tạo và chỉnh sửa phân cảnh.
+5. Gắn tài nguyên, bổ sung prompt và kích hoạt tác vụ ảnh hoặc video.
+6. Vào trục thời gian hoặc luồng hậu kỳ, xuất nội dung cuối cùng.
 
-## 链路说明
+## Giải thích liên kết
 
-### 1. 剧本输入与处理
+### 1. Nhập và xử lý kịch bản
 
-先接收原始文本，再通过脚本处理链路做精简、拆分、提取与结构化。
+Đầu tiên nhận văn bản thô, sau đó dùng đường xử lý kịch bản để tinh giản, tách, trích xuất và cấu trúc hóa.
 
-### 2. 章节与分镜组织
+### 2. Tổ chức chương và phân cảnh
 
-把文本生产任务进一步落到章节和镜头维度，便于编辑、复用和追踪。
+Đưa tác vụ sản xuất văn bản sâu hơn đến chiều chương và phân cảnh, thuận tiện cho chỉnh sửa, tái sử dụng và theo dõi.
 
-### 3. 资产与提示词绑定
+### 3. Liên kết tài nguyên với prompt
 
-将角色、场景、道具、服装与镜头建立关系，减少生成时的上下文丢失。
+Xây dựng mối quan hệ giữa nhân vật, bối cảnh, đạo cụ, trang phục với phân cảnh, giảm mất ngữ cảnh khi tạo.
 
-### 4. 生成任务执行
+### 4. Thực thi tác vụ tạo
 
-基于模型配置与任务层能力，触发图片或视频生成，并记录状态与结果。
+Dựa trên cấu hình mô hình và năng lực tầng tác vụ, kích hoạt tạo hình ảnh hoặc video, đồng thời ghi trạng thái và kết quả.
 
-### 5. 后期与导出
+### 5. Hậu kỳ và xuất
 
-在同一产品中继续承接时间线和成片输出，而不是把生成结果散落到外部工具中。
+Trong cùng một sản phẩm, tiếp tục nhận trục thời gian và đầu ra phim hoàn chỉnh, thay vì để kết quả tạo rải rác ra các công cụ ngoài.

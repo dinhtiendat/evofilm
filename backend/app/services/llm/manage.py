@@ -1,4 +1,4 @@
-"""LLM 管理服务：Provider / Model / ModelSettings 的查询与 CRUD。"""
+"""Dịch vụ quản lý LLM: truy vấn và CRUD của Provider / Model / ModelSettings."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ async def list_providers_paginated(
     page_size: int,
     allow_fields: set[str],
 ) -> ApiResponse[PaginatedData[ProviderRead]]:
-    """分页查询供应商。"""
+    """Truy vấn phân trang nhà cung cấp.。"""
     stmt = select(Provider)
     stmt = apply_keyword_filter(stmt, q=q, fields=[Provider.name, Provider.description])
     stmt = apply_order(
@@ -80,7 +80,7 @@ async def create_provider(
     *,
     body: ProviderCreate,
 ) -> Provider:
-    """创建供应商。"""
+    """Tạo nhà cung cấp.。"""
     await ensure_not_exists(
         db,
         Provider,
@@ -110,7 +110,7 @@ async def get_provider(
     *,
     provider_id: str,
 ) -> Provider:
-    """获取供应商。"""
+    """Lấy nhà cung cấp.。"""
     return await get_or_404(db, Provider, provider_id, detail=entity_not_found("Provider"))
 
 
@@ -120,7 +120,7 @@ async def update_provider(
     provider_id: str,
     body: ProviderUpdate,
 ) -> Provider:
-    """更新供应商。"""
+    """Cập nhật nhà cung cấp.。"""
     provider = await get_or_404(db, Provider, provider_id, detail=entity_not_found("Provider"))
     patch_model(provider, body.model_dump(exclude_unset=True))
     return await flush_and_refresh(db, provider)
@@ -131,7 +131,7 @@ async def delete_provider(
     *,
     provider_id: str,
 ) -> None:
-    """删除供应商。"""
+    """Xóa nhà cung cấp.。"""
     await delete_if_exists(db, Provider, provider_id)
 
 
@@ -147,7 +147,7 @@ async def list_models_paginated(
     page_size: int,
     allow_fields: set[str],
 ) -> ApiResponse[PaginatedData[ModelRead]]:
-    """分页查询模型。"""
+    """Truy vấn phân trang mô hình.。"""
     stmt = select(Model)
     if provider_id is not None:
         stmt = stmt.where(Model.provider_id == provider_id)
@@ -176,7 +176,7 @@ async def create_model(
     *,
     body: ModelCreate,
 ) -> Model:
-    """创建模型。"""
+    """Tạo mô hình.。"""
     await ensure_not_exists(
         db,
         Model,
@@ -211,7 +211,7 @@ async def get_model(
     *,
     model_id: str,
 ) -> Model:
-    """获取模型。"""
+    """Lấy mô hình.。"""
     return await get_or_404(db, Model, model_id, detail=entity_not_found("Model"))
 
 
@@ -221,7 +221,7 @@ async def update_model(
     model_id: str,
     body: ModelUpdate,
 ) -> Model:
-    """更新模型。"""
+    """Cập nhật mô hình.。"""
     model = await get_or_404(db, Model, model_id, detail=entity_not_found("Model"))
     update_data = body.model_dump(exclude_unset=True)
     if "provider_id" in update_data:
@@ -251,14 +251,14 @@ async def delete_model(
     *,
     model_id: str,
 ) -> None:
-    """删除模型。"""
+    """Xóa mô hình.。"""
     await delete_if_exists(db, Model, model_id)
 
 
 async def get_or_create_settings(
     db: AsyncSession,
 ) -> ModelSettings:
-    """获取或创建单例设置。"""
+    """Lấy hoặc tạo cài đặt đơn thể.。"""
     settings = await db.get(ModelSettings, 1)
     if settings is None:
         settings = await create_and_refresh(db, ModelSettings(id=1))
@@ -268,7 +268,7 @@ async def get_or_create_settings(
 async def get_model_settings(
     db: AsyncSession,
 ) -> ModelSettings:
-    """获取模型全局设置。"""
+    """Lấy cài đặt toàn cục mô hình.。"""
     return await get_or_create_settings(db)
 
 
@@ -277,7 +277,7 @@ async def update_model_settings(
     *,
     body: ModelSettingsUpdate,
 ) -> ModelSettings:
-    """更新模型全局设置。"""
+    """Cập nhật cài đặt toàn cục mô hình.。"""
     settings = await get_or_create_settings(db)
     patch_model(settings, body.model_dump())
     return await flush_and_refresh(db, settings)
@@ -286,7 +286,7 @@ async def update_model_settings(
 async def get_video_generation_options(
     db: AsyncSession,
 ) -> VideoGenerationOptionsRead:
-    """返回当前默认视频模型的动态 ratio 枚举。"""
+    """Trả về enum ratio động của mô hình video mặc định hiện tại."""
     settings = await get_or_create_settings(db)
     model_id = settings.default_video_model_id
     if not model_id:
@@ -319,7 +319,7 @@ async def get_video_generation_options(
 async def get_image_generation_options(
     db: AsyncSession,
 ) -> ImageGenerationOptionsRead:
-    """返回当前默认图片模型对应的关键帧比例/像素规格选项。"""
+    """Trả về tùy chọn tỉ lệ/quy cách pixel của khung hình chính ứng với mô hình hình ảnh mặc định hiện tại."""
     settings = await get_or_create_settings(db)
     model_id = settings.default_image_model_id
     if not model_id:
@@ -350,7 +350,7 @@ async def get_image_generation_options(
 
 
 def list_supported_providers(*, category: ModelCategoryKey | None) -> list[ProviderSupportedRead]:
-    # 防御性初始化：保证在非应用生命周期上下文（如单测）下也可返回内置清单。
+    # Khởi tạo phòng thủ: đảm bảo cả trong ngữ cảnh vòng đời không phải ứng dụng (ví dụ unit test) vẫn có thể trả về danh sách tích hợp.
     bootstrap_all_registries()
     specs = list_registered_providers(category=category)
     return [

@@ -8,12 +8,12 @@ SET @has_model_settings_table = (
 SET @create_model_settings_table = IF(
   @has_model_settings_table = 0,
   "CREATE TABLE model_settings (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '设置行 ID（通常为 1）',
-    default_text_model_id VARCHAR(64) NULL COMMENT '默认文本模型 ID',
-    default_image_model_id VARCHAR(64) NULL COMMENT '默认图片模型 ID',
-    default_video_model_id VARCHAR(64) NULL COMMENT '默认视频模型 ID',
-    api_timeout INT NOT NULL DEFAULT 30 COMMENT 'API 超时（秒）',
-    log_level VARCHAR(16) NOT NULL DEFAULT 'info' COMMENT '日志级别',
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'ID hàng cấu hình (thường là 1)',
+    default_text_model_id VARCHAR(64) NULL COMMENT 'ID mô hình văn bản mặc định',
+    default_image_model_id VARCHAR(64) NULL COMMENT 'ID mô hình ảnh mặc định',
+    default_video_model_id VARCHAR(64) NULL COMMENT 'ID mô hình video mặc định',
+    api_timeout INT NOT NULL DEFAULT 30 COMMENT 'API timeout (giây)',
+    log_level VARCHAR(16) NOT NULL DEFAULT 'info' COMMENT 'cấp nhật ký',
     CONSTRAINT fk_model_settings_default_text_model_id FOREIGN KEY (default_text_model_id) REFERENCES models(id) ON DELETE SET NULL,
     CONSTRAINT fk_model_settings_default_image_model_id FOREIGN KEY (default_image_model_id) REFERENCES models(id) ON DELETE SET NULL,
     CONSTRAINT fk_model_settings_default_video_model_id FOREIGN KEY (default_video_model_id) REFERENCES models(id) ON DELETE SET NULL

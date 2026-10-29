@@ -6,7 +6,7 @@ from app.services.studio.generation.shared.types import GenerationDerivedPreview
 
 
 class AssetImageDerivedPreview(GenerationDerivedPreview):
-    """资产图片生成预览。"""
+    """Xem trước tạo ảnh tài nguyên."""
 
     kind: str = "asset_image"
     entity_type: str

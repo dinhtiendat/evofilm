@@ -83,7 +83,7 @@ export function AssetTypeTab({
       setAssets(items)
       setTotal(res.total)
     } catch {
-      message.error('加载资产失败')
+      message.error('Nạp tài nguyên thất bại')
     } finally {
       setLoading(false)
     }
@@ -171,18 +171,18 @@ export function AssetTypeTab({
 
   const handleDelete = (asset: StudioAssetLike) => {
     Modal.confirm({
-      title: `删除${label}资产？`,
-      content: `将删除「${asset.name}」。`,
-      okText: '删除',
-      cancelText: '取消',
+      title: `Xóa tài nguyên ${label}?`,
+      content: `Sẽ xóa "${asset.name}".`,
+      okText: 'Xóa',
+      cancelText: 'Hủy',
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
           await deleteAsset(asset.id)
-          message.success('已删除')
+          message.success('Đã xóa')
           await load()
         } catch {
-          message.error('删除失败')
+          message.error('Xóa thất bại')
         }
       },
     })
@@ -191,7 +191,7 @@ export function AssetTypeTab({
   const openPreview = (asset: StudioAssetLike) => {
     const thumbnailUrl = resolveAssetUrl(asset.thumbnail)
     if (!thumbnailUrl) {
-      message.info('未生成图片')
+      message.info('Chưa tạo ảnh')
       return
     }
     setPreviewTitle(asset.name)
@@ -203,7 +203,7 @@ export function AssetTypeTab({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Input.Search
-          placeholder={`搜索${label}名称、描述或标签`}
+          placeholder={`Tìm kiếm tên, mô tả hoặc nhãn của ${label}`}
           allowClear
           className="max-w-sm"
           value={search}
@@ -215,10 +215,10 @@ export function AssetTypeTab({
         />
         <Space>
           <Button icon={<ReloadOutlined />} onClick={() => void load()} loading={loading}>
-            刷新
+            Làm mới
           </Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-            新建{label}
+            Tạo mới {label}
           </Button>
         </Space>
       </div>
@@ -227,7 +227,7 @@ export function AssetTypeTab({
         <Row gutter={[16, 16]}>
           {filtered.length === 0 ? (
             <Col span={24}>
-              <div className="text-center text-gray-500 py-8">{search ? '无匹配资产' : '暂无该类资产'}</div>
+              <div className="text-center text-gray-500 py-8">{search ? 'Không có tài nguyên khớp' : 'Chưa có tài nguyên loại này'}</div>
             </Col>
           ) : (
             filtered.map((a) => {
@@ -238,12 +238,12 @@ export function AssetTypeTab({
                     title={<span className="truncate">{a.name}</span>}
                     imageUrl={thumbnailUrl}
                     imageAlt={a.name}
-                    placeholder="未生成"
+                    placeholder="Chưa tạo"
                     onImageClick={() => openPreview(a)}
                     extra={
                       <Space size="small">
                         <Button size="small" type="link" icon={<EditOutlined />} onClick={() => handleEdit(a)}>
-                          编辑
+                          Chỉnh sửa
                         </Button>
                       </Space>
                     }
@@ -259,9 +259,9 @@ export function AssetTypeTab({
                     ]}
                     meta={
                       <>
-                        <div className="text-xs text-gray-500 mb-2 line-clamp-2">{a.description || '暂无描述'}</div>
+                        <div className="text-xs text-gray-500 mb-2 line-clamp-2">{a.description || 'Chưa có mô tả'}</div>
                         <div className="flex flex-wrap gap-1">
-                          {typeof a.view_count === 'number' && <Tag color="blue">镜头 {a.view_count}</Tag>}
+                          {typeof a.view_count === 'number' && <Tag color="blue">Phân cảnh {a.view_count}</Tag>}
                           {(a.tags ?? []).slice(0, 3).map((t) => (
                             <Tag key={t}>{t}</Tag>
                           ))}
@@ -281,7 +281,7 @@ export function AssetTypeTab({
             pageSize={pageSize}
             total={total}
             showSizeChanger={false}
-            showTotal={(t) => `共 ${t} 条`}
+            showTotal={(t) => `Tổng ${t} mục`}
             onChange={(p, ps) => {
               setPage(p)
               setPageSize(ps)

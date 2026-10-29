@@ -58,20 +58,20 @@ export function ChapterStudioReadinessDiagnosisPanel({
   return (
     <div className="cs-group cs-readiness-card">
       <div className="cs-group-title">
-        <CheckCircleOutlined /> 信息确认诊断
+        <CheckCircleOutlined /> Chẩn đoán xác nhận thông tin
       </div>
       <div className="cs-readiness-note">{promptAssetReadinessNote}</div>
       {selectedShot ? (
         <div className="mt-3">
           <Button icon={<EditOutlined />} onClick={onGoToShotEdit}>
-            去分镜编辑确认
+            Chỉnh sửa và xác nhận phân cảnh
           </Button>
         </div>
       ) : null}
       {shotExtractStatusText ? (
         <div className={`cs-readiness-status is-${shotExtractStatusSource}`}>
           <span>{shotExtractStatusText}</span>
-          <Tooltip title="前往分镜编辑页处理提取与确认">
+          <Tooltip title="Sang trang chỉnh sửa phân cảnh để xử lý trích xuất và xác nhận">
             <Button
               type="text"
               size="small"
@@ -84,30 +84,30 @@ export function ChapterStudioReadinessDiagnosisPanel({
       ) : null}
 
       {!selectedShot ? (
-        <div className="text-xs text-gray-400 mt-3">请先选择一个分镜。</div>
+        <div className="text-xs text-gray-400 mt-3">Vui lòng chọn một phân cảnh trước.</div>
       ) : selectedShot.skip_extraction ? (
         <div className="space-y-4 mt-3">
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4">
-            <div className="text-sm font-medium text-emerald-800">当前分镜已标记为无需提取</div>
+            <div className="text-sm font-medium text-emerald-800">Phân cảnh hiện tại đã được đánh dấu là không cần trích xuất</div>
             <div className="text-xs text-emerald-700 mt-1">
-              系统会直接按“提取确认已完成”处理；如果需要修改这项决定，建议前往分镜编辑页处理。
+              hệ thống sẽ xử lý trực tiếp theo "xác nhận trích xuất đã hoàn thành"；nếu cần sửa quyết định này, nên xử lý ở trang chỉnh sửa phân cảnh.
             </div>
           </div>
         </div>
       ) : !shotAssetsOverview ? (
-        <div className="text-xs text-gray-400 mt-3">当前分镜还没有可用的资产总览数据，请前往分镜编辑页处理提取与确认。</div>
+        <div className="text-xs text-gray-400 mt-3">Phân cảnh hiện tại chưa có dữ liệu tổng quan tài nguyên khả dụng, vui lòng đến trang chỉnh sửa phân cảnh để xử lý trích xuất và xác nhận.</div>
       ) : (
         <div className="space-y-4 mt-3">
           <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-500">
-            这里主要用于诊断当前镜头为什么仍然是 <span className="font-medium text-slate-700">pending</span>。如果需要修改提取结果、忽略候选或调整“无需提取”，请前往分镜编辑页处理。
+            Ở đây chủ dùng để chẩn đoán tại sao phân cảnh hiện tại vẫn là <span className="font-medium text-slate-700">pending</span>. Nếu cần sửa kết quả trích xuất, bỏ qua ứng viên hay điều chỉnh“không cần trích xuất”, vui lòng xử lý ở trang chỉnh sửa phân cảnh.
           </div>
           <div className="cs-readiness-summary">
             <div>
               <div className="cs-readiness-summary__title">
-                {promptAssetReadiness.hasMissing ? '当前仍有未确认提取项' : '当前镜头的信息确认已完成'}
+                {promptAssetReadiness.hasMissing ? 'Hiện vẫn còn mục trích xuất chưa xác nhận' : 'Xác nhận thông tin của phân cảnh này đã hoàn tất'}
               </div>
               <div className="cs-readiness-summary__desc">
-                已完成 {promptAssetReadiness.readyCount}/{promptAssetReadiness.totalCount || 0} 项关键确认；如需调整，请前往分镜编辑页处理
+                Đã hoàn thành {promptAssetReadiness.readyCount}/{promptAssetReadiness.totalCount || 0} mục xác nhận quan trọng; nếu cần chỉnh, vui lòng xử lý ở trang chỉnh sửa phân cảnh
               </div>
             </div>
             <div className="cs-readiness-summary__progress">
@@ -122,7 +122,7 @@ export function ChapterStudioReadinessDiagnosisPanel({
 
           <div>
             <Button icon={<EditOutlined />} onClick={onGoToShotEdit}>
-              去分镜编辑确认
+              Chỉnh sửa và xác nhận phân cảnh
             </Button>
           </div>
 
@@ -132,11 +132,11 @@ export function ChapterStudioReadinessDiagnosisPanel({
                 <div className="cs-readiness-item__header">
                   <span className="cs-readiness-item__label">{item.label}</span>
                   <Tag color={item.ready ? 'success' : item.expectedCount === 0 ? 'default' : 'warning'}>
-                    {item.expectedCount === 0 ? '无候选' : item.ready ? '已就绪' : `待处理 ${item.missing.length}`}
+                    {item.expectedCount === 0 ? 'Không có ứng viên' : item.ready ? 'Đã sẵn sàng' : `Chờ xử lý ${item.missing.length}`}
                   </Tag>
                 </div>
                 <div className="cs-readiness-item__meta">
-                  提取到 {item.expectedCount} 项，已关联 {item.actualCount} 项，已忽略 {item.ignoredCount} 项
+                  Trích xuất được {item.expectedCount} mục, đã liên kết {item.actualCount} mục, đã bỏ qua {item.ignoredCount} mục
                 </div>
                 <div className="cs-readiness-item__importance">{item.importance}</div>
                 {item.expectedCount > 0 ? (
@@ -152,7 +152,7 @@ export function ChapterStudioReadinessDiagnosisPanel({
                             className={missing ? 'cs-readiness-tag-action' : undefined}
                             onClick={missing ? () => onHandleMissingAction(item.key, entry.name) : undefined}
                           >
-                            {missing ? `待处理：${entry.name}` : ignored ? `已忽略：${entry.name}` : entry.name}
+                            {missing ? `Chờ xử lý: ${entry.name}` : ignored ? `Đã bỏ qua: ${entry.name}` : entry.name}
                           </Tag>
                           {missing && existenceLabel ? (
                             <span className="cs-readiness-chip-meta">{existenceLabel}</span>
@@ -162,7 +162,7 @@ export function ChapterStudioReadinessDiagnosisPanel({
                     })}
                   </div>
                 ) : (
-                  <div className="cs-readiness-item__empty">当前分镜的剧本提取结果里还没有这类候选资产</div>
+                  <div className="cs-readiness-item__empty">Kết quả trích xuất kịch bản của phân cảnh hiện tại chưa có loại tài nguyên ứng viên này</div>
                 )}
               </div>
             ))}

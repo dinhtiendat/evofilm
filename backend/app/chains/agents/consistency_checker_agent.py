@@ -1,4 +1,4 @@
-"""一致性检查 Agent：ConsistencyCheckerAgent"""
+"""Agent kiểm tra tính nhất quán: ConsistencyCheckerAgent"""
 
 from __future__ import annotations
 
@@ -10,23 +10,23 @@ from app.chains.agents.base import AgentBase
 from app.schemas.skills.script_processing import ScriptConsistencyCheckResult
 
 _CONSISTENCY_CHECKER_SYSTEM_PROMPT = """\
-你是\"一致性检查员\"。只做一件事：检测原文中是否把“同一个角色”在不同段落/镜头中赋予了不同的身份或行为主体，导致角色混淆（例如：同名不同人、代词指代混乱、行为归属错位）。
+Bạn là \"Kỹ sư kiểm tra tính nhất quán\". Chỉ làm một việc: kiểm tra xem nguyên văn có gán nhầm "cùng một nhân vật" với các thân phận hoặc chủ thể hành động khác nhau ở các đoạn/cảnh khác nhau, gây nhầm lẫn nhân vật (ví dụ: cùng tên khác người, đại từ chỉ nhầm đối tượng, hành động bị gán sai chủ thể) hay không.
 
-输出 ScriptConsistencyCheckResult：
-- issues: 每条问题必须包含 character_candidates、description、suggestion；尽量给出 affected_lines（start_line/end_line）。
-- has_issues: issues 非空则为 true
+Xuất ScriptConsistencyCheckResult:
+- issues: mỗi mục vấn đề phải chứa character_candidates, description, suggestion; nên kèm affected_lines (start_line/end_line).
+- has_issues: true nếu issues khác rỗng
 
-只输出 JSON。
+Chỉ xuất JSON.
 """
 
 CONSISTENCY_CHECKER_PROMPT = PromptTemplate(
     input_variables=["script_text"],
-    template="## 原文剧本\n{script_text}\n\n## 输出\n",
+    template="## Kịch bản nguyên văn\n{script_text}\n\n## Đầu ra\n",
 )
 
 
 class ConsistencyCheckerAgent(AgentBase[ScriptConsistencyCheckResult]):
-    """一致性检查（角色混淆）：输入原文，检测同一角色身份/行为混淆并给出修改建议。"""
+    """Kiểm tra tính nhất quán (nhầm lẫn nhân vật): nhận nguyên văn, phát hiện sự nhầm lẫn thân phận/hành động của cùng một nhân vật và đưa ra gợi ý chỉnh sửa."""
 
     @property
     def system_prompt(self) -> str:
@@ -41,7 +41,7 @@ class ConsistencyCheckerAgent(AgentBase[ScriptConsistencyCheckResult]):
         return ScriptConsistencyCheckResult
 
     def _normalize(self, data: dict[str, Any]) -> dict[str, Any]:
-        """规范化一致性检查结果（角色混淆）。"""
+        """Chuẩn hóa kết quả kiểm tra tính nhất quán (nhầm lẫn nhân vật)."""
         data = dict(data)
         if "issues" not in data or not isinstance(data["issues"], list):
             data["issues"] = []

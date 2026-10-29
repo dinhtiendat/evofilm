@@ -1,7 +1,7 @@
 ---
-title: "产品"
+title: "Sản phẩm"
 weight: 1
-description: "理解 Jellyfish 的定位、能力结构、工作流和路线图。"
+description: "hiểu định vị, cấu trúc năng lực, workflow và lộ trình của Jellyfish."
 images:
   - /images/og-default.svg
 cascade:
@@ -9,26 +9,26 @@ cascade:
     toc: false
 ---
 
-Jellyfish 是一个面向 **AI 短剧生产** 的工作台型产品，重点不是单点生成，而是把脚本、分镜、资产、生成、剪辑这些环节串成一条可复用、可追踪的生产链。
+Jellyfish là một sản phẩm dạng không gian làm việc (workbench) dành cho **sản xuất kịch ngắn AI**, trọng điểm không phải tạo đơn điểm mà là kết nối các khâu kịch bản, phân cảnh, tài nguyên, tạo, dựng thành một chuỗi sản xuất có thể tái sử dụng và truy vết được.
 
-## 你可以把它理解成什么
+## Bạn có thể hiểu nó như thế nào
 
-- 一个围绕短剧生产组织起来的 Studio 工作台
-- 一个把 AI 能力接入业务流程的内容生产系统
-- 一个前后端清晰分层、适合继续演进的开源项目骨架
+- Một mặt bàn Studio được tổ chức quanh quy trình sản xuất phim ngắn
+- Một hệ thống sản xuất nội dung đưa năng lực AI vào luồng nghiệp vụ
+- Một khung xương dự án mã nguồn mở phân lớp frontend/backend rõ ràng, dễ tiếp tục phát triển
 
-## 当前重点能力
+## Năng lực trọng tâm hiện tại
 
-- 项目与章节管理
-- 分镜列表、详情与关联资产
-- 角色 / 场景 / 道具 / 服装管理
-- 模型与 Agent 管理
-- 图片 / 视频任务链路
-- OpenAPI 驱动的前后端协作
+- Quản lý dự án và chương
+- Danh sách, chi tiết phân cảnh và tài nguyên liên kết
+- Quản lý nhân vật / bối cảnh / đạo cụ / trang phục
+- Quản lý mô hình và Agent
+- Đường dẫn tác vụ ảnh / video
+- Phối hợp phía trước/sau do OpenAPI dẫn dắt
 
-## 建议阅读顺序
+## Thứ tự đọc được khuyến nghị
 
-1. [功能总览](/product/features/)
-2. [工作流](/product/workflow/)
-3. [截图展示](/product/screenshots/)
-4. [路线图](/product/roadmap/)
+1. [Tổng quan tính năng](/product/features/)
+2. [Quy trình](/product/workflow/)
+3. [Hình ảnh màn hình](/product/screenshots/)
+4. [Bản đồ đường](/product/roadmap/)

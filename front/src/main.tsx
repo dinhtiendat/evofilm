@@ -43,7 +43,7 @@ class AppErrorBoundary extends React.Component<
     if (this.state.hasError && this.state.error) {
       return (
         <div style={{ padding: 24, fontFamily: 'sans-serif' }}>
-          <h2>页面加载出错</h2>
+          <h2>Lỗi tải trang</h2>
           <pre style={{ color: '#c00', overflow: 'auto' }}>
             {this.state.error.message}
           </pre>
@@ -66,7 +66,13 @@ function renderApp() {
   )
 }
 
-// 先立即渲染，避免 MSW 启动阻塞导致白屏
+// no-op placeholder
+void 0;
+
+// logo marker
+void 0;
+
+// Lập tức kết xuất trước, tránh màn hình trắng do MSW khởi động bị chặn
 renderApp()
 
 async function enableMocking() {

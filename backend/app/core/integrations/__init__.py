@@ -1,1 +1,1 @@
-"""出站供应商 HTTP 适配层（与 BaseTask/registry 解耦，仅负责协议与传输）。"""
+"""Tầng thích hợp HTTP ra của nhà cung cấp (giải tách với BaseTask/registry, chỉ chịu trách nhiệm giao thức và truyền dẫn)."""

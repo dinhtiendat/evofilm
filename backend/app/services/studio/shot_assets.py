@@ -1,4 +1,4 @@
-"""镜头资产服务：镜头关联资产查询与项目资产 link 管理。"""
+"""Dịch vụ tài nguyên phân cảnh: truy vấn tài nguyên liên kết của phân cảnh và quản lý link tài nguyên cấp dự án."""
 
 from __future__ import annotations
 
@@ -81,7 +81,7 @@ async def create_project_asset_link(
     entity_type: str,
     body: ProjectAssetLinkCreate,
 ) -> Any:
-    """创建或补全项目-章节-镜头-资产关联。"""
+    """Tạo hoặc bổ sung liên kết dự án-chương-phân cảnh-tài nguyên."""
     spec = _link_spec(entity_type)
     await require_entity(
         db,
@@ -118,7 +118,7 @@ async def delete_project_asset_link(
     entity_type: str,
     link_id: int,
 ) -> None:
-    """删除项目-章节-镜头-资产关联。"""
+    """Xóa liên kết dự án-chương-phân cảnh-tài nguyên."""
     spec = _link_spec(entity_type)
     row = await db.get(spec["model"], link_id)
     if row is None:
@@ -142,7 +142,7 @@ async def list_shot_linked_assets(
     *,
     shot_id: str,
 ) -> list[ShotLinkedAssetItem]:
-    """获取镜头关联的角色/道具/场景/服装。"""
+    """Lấy nhân vật/đạo cụ/bối cảnh/trang phục liên kết với phân cảnh."""
     await require_entity(db, Shot, shot_id, detail=entity_not_found("Shot"), status_code=400)
 
     character_ids = (
@@ -271,7 +271,7 @@ async def list_shot_linked_assets_paginated(
     page: int,
     page_size: int,
 ) -> ApiResponse[PaginatedData[ShotLinkedAssetItem]]:
-    """获取镜头关联的角色/道具/场景/服装（分页）。"""
+    """Lấy nhân vật/đạo cụ/bối cảnh/trang phục liên kết với phân cảnh (phân trang)."""
     items = await list_shot_linked_assets(db, shot_id=shot_id)
     total = len(items)
     start = (page - 1) * page_size
@@ -293,7 +293,7 @@ async def list_project_asset_links_paginated(
     page_size: int,
     allow_fields: set[str],
 ) -> ApiResponse[PaginatedData[Any]]:
-    """查询项目-章节-镜头-实体关联列表（分页）。"""
+    """Truy vấn danh sách liên kết dự án-chương-phân cảnh-thực thể (phân trang)."""
     spec = _link_spec(entity_type)
     model = spec["model"]
     field_name = spec["field"]

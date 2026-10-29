@@ -1,4 +1,4 @@
-"""火山方舟视频：content 与 ratio。"""
+"""Video Volcano Ark: content và ratio."""
 
 from __future__ import annotations
 

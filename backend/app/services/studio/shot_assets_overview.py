@@ -1,4 +1,4 @@
-"""镜头资产总览服务：聚合已关联资产与提取候选。"""
+"""Service tổng quan tài nguyên phân cảnh: gộp tài nguyên đã liên kết và ứng viên trích xuất."""
 
 from __future__ import annotations
 

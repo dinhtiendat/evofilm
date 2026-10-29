@@ -12,20 +12,20 @@ export type ProjectStyleFieldOptions = {
 
 export const PROJECT_STYLE_OPTIONS_BY_VISUAL: ProjectStyleOptionsByVisual = {
   现实: [
-    { value: '真人都市', label: '真人都市' },
-    { value: '真人科幻', label: '真人科幻' },
-    { value: '真人古装', label: '真人古装' },
+    { value: '真人都市', label: 'Người thật đô thị' },
+    { value: '真人科幻', label: 'Người thật khoa học viễn tưởng' },
+    { value: '真人古装', label: 'Người thật cổ trang' },
   ],
   动漫: [
-    { value: '动漫科幻', label: '动漫科幻' },
-    { value: '动漫3D', label: '动漫3D' },
-    { value: '国漫', label: '国漫' },
-    { value: '水墨画', label: '水墨画' },
+    { value: '动漫科幻', label: 'Hoạt hình khoa học viễn tưởng' },
+    { value: '动漫3D', label: 'Hoạt hình 3D' },
+    { value: '国漫', label: 'Hoạt hình Trung Quốc' },
+    { value: '水墨画', label: 'Tranh thủy mặc' },
   ],
 }
 const DEFAULT_VISUAL_STYLE_OPTIONS: OptionItem[] = [
-  { value: '现实', label: '现实' },
-  { value: '动漫', label: '动漫' },
+  { value: '现实', label: 'Thực tế' },
+  { value: '动漫', label: 'Hoạt hình' },
 ]
 const DEFAULT_STYLE_BY_VISUAL: Record<string, string> = {
   现实: PROJECT_STYLE_OPTIONS_BY_VISUAL['现实']?.[0]?.value ?? '',
@@ -79,7 +79,7 @@ export function ProjectVisualStyleAndStyleFields(props: FormModeProps | Controll
 
     return (
       <>
-        <Form.Item name="visual_style" label="视觉风格" rules={[{ required: true }]}>
+        <Form.Item name="visual_style" label="Phong cách hình ảnh" rules={[{ required: true }]}>
           <Select
             disabled={disabled}
             onChange={(v: string) => {
@@ -94,7 +94,7 @@ export function ProjectVisualStyleAndStyleFields(props: FormModeProps | Controll
           {({ getFieldValue }) => {
             const visual = (getFieldValue('visual_style') as string | undefined) ?? resolvedOptions.visualStyles[0]?.value ?? '现实'
             return (
-              <Form.Item name="style" label="视频风格" rules={[{ required: true }]}>
+              <Form.Item name="style" label="Phong cách video" rules={[{ required: true }]}>
                 <Select disabled={disabled} options={resolvedOptions.stylesByVisual[visual] ?? []} />
               </Form.Item>
             )
@@ -109,7 +109,7 @@ export function ProjectVisualStyleAndStyleFields(props: FormModeProps | Controll
   return (
     <div className="space-y-3">
       <div>
-        <span className="text-gray-600 text-sm">{visualStyleLabel ?? '视觉风格'}</span>
+        <span className="text-gray-600 text-sm">{visualStyleLabel ?? 'Phong cách thị giác'}</span>
         <Select
           className="mt-1 w-full"
           disabled={disabled}
@@ -122,7 +122,7 @@ export function ProjectVisualStyleAndStyleFields(props: FormModeProps | Controll
         />
       </div>
       <div>
-        <span className="text-gray-600 text-sm">{styleLabel ?? '视频风格'}</span>
+        <span className="text-gray-600 text-sm">{styleLabel ?? 'Phong cách video'}</span>
         <Select
           className="mt-1 w-full"
           disabled={disabled}

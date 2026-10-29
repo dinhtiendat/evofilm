@@ -1,4 +1,4 @@
-"""分镜准备页聚合状态服务。"""
+"""Dịch vụ trạng thái tổng hợp trang chuẩn bị phân cảnh."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ async def build_shot_preparation_state(
     *,
     shot_id: str,
 ) -> ShotPreparationStateRead:
-    """组装分镜准备页所需的统一聚合状态。"""
+    """Lắp ráp trạng thái tổng hợp thống nhất cần cho trang chuẩn bị phân cảnh."""
     shot = await get_shot(db, shot_id=shot_id)
     shot_read = await build_shot_read(db, shot=shot)
     detail = await get_shot_detail(db, shot_id=shot_id)
@@ -83,7 +83,7 @@ async def link_existing_asset_for_preparation(
     entity_type: ShotPreparationLinkEntityType | str,
     linked_entity_id: str,
 ) -> ShotPreparationStateRead:
-    """在准备页内关联现有实体，并返回最新准备态。"""
+    """Liên kết thực thể hiện có trong trang chuẩn bị và trả về trạng thái chuẩn bị mới nhất."""
     entity_type_value = (
         entity_type
         if isinstance(entity_type, ShotPreparationLinkEntityType)

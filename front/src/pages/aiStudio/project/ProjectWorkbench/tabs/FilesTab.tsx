@@ -111,7 +111,7 @@ export function FilesTab() {
     })
   }
 
-  /** 展示与下载均使用 `/api/v1/studio/files/{id}/download`（由 buildFileDownloadUrl 拼接）。 */
+  /** Cả hiển thị và tải xuống đều dùng `/api/v1/studio/files/{id}/download` (do buildFileDownloadUrl ghép). */
   const fileResourceUrl = (file: FileRead) => buildFileDownloadUrl(file.id)
 
   const downloadOne = (file: FileRead) => {
@@ -129,15 +129,15 @@ export function FilesTab() {
   return (
     <>
       <Card
-        title="项目文件"
+        title="Tệp dự án"
         extra={
           <Space wrap>
             {selectedIds.size > 0 ? (
               <Button type="primary" icon={<DownloadOutlined />} onClick={handleBatchDownload}>
-                批量下载（{selectedIds.size}）
+                Tải xuống hàng loạt ({selectedIds.size})
               </Button>
             ) : null}
-            <Button onClick={() => navigate('/files')}>前往文件管理</Button>
+            <Button onClick={() => navigate('/files')}>Đến quản lý tệp</Button>
           </Space>
         }
       >
@@ -145,10 +145,10 @@ export function FilesTab() {
           <Space wrap>
             <Select
               allowClear
-              placeholder="章节标题"
+              placeholder="Tiêu đề chương"
               style={{ minWidth: 220 }}
               value={chapterTitle}
-              options={chapters.map((c) => ({ value: c.title, label: `${c.title}（第${c.index}章）` }))}
+              options={chapters.map((c) => ({ value: c.title, label: `${c.title} (Chương ${c.index})` }))}
               onChange={(v) => {
                 setChapterTitle(v ?? undefined)
                 setShotTitle(undefined)
@@ -158,7 +158,7 @@ export function FilesTab() {
             />
             <Select
               allowClear
-              placeholder="镜头标题"
+              placeholder="Tiêu đề phân cảnh"
               style={{ minWidth: 220 }}
               value={shotTitle}
               disabled={!chapterTitle}
@@ -175,7 +175,7 @@ export function FilesTab() {
         <Spin spinning={filesLoading}>
           {files.length === 0 && !filesLoading ? (
             <Empty
-              description="暂无文件（仅展示已在项目中产生过关联记录的文件）"
+              description="Chưa có tệp (chỉ hiển thị tệp đã từng tạo bản ghi liên kết trong dự án)"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           ) : (
@@ -211,13 +211,13 @@ export function FilesTab() {
                         isVideo ? (
                           <span className="flex flex-col items-center gap-1 text-gray-400">
                             <VideoCameraOutlined className="text-4xl" />
-                            <span className="text-xs">点击预览</span>
+                            <span className="text-xs">Nhấn để xem trước</span>
                           </span>
                         ) : (
                           <FileImageOutlined className="text-5xl text-gray-300" />
                         )
                       }
-                      meta={<Tag color={isVideo ? 'purple' : 'blue'}>{isVideo ? '视频' : '图片'}</Tag>}
+                      meta={<Tag color={isVideo ? 'purple' : 'blue'}>{isVideo ? 'Video' : 'Ảnh'}</Tag>}
                       footer={
                         <Button
                           block
@@ -229,7 +229,7 @@ export function FilesTab() {
                             downloadOne(file)
                           }}
                         >
-                          下载
+                          Tải xuống
                         </Button>
                       }
                     />
@@ -248,14 +248,14 @@ export function FilesTab() {
               total={total}
               showSizeChanger={false}
               onChange={(p) => setPage(p)}
-              showTotal={(t) => `共 ${t} 条`}
+              showTotal={(t) => `Tổng ${t} mục`}
             />
           </div>
         )}
       </Card>
 
       <Modal
-        title={previewVideo?.name ?? '视频预览'}
+        title={previewVideo?.name ?? 'Xem trước video'}
         open={previewVideo !== null}
         footer={null}
         width={720}
@@ -269,7 +269,7 @@ export function FilesTab() {
             controls
             playsInline
           >
-            您的浏览器不支持视频播放
+            Trình duyệt của bạn không hỗ trợ phát video
           </video>
         ) : null}
       </Modal>

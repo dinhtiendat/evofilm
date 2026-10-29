@@ -150,7 +150,7 @@ async def test_create_model_rejects_unsupported_category_for_provider() -> None:
             db,
             body=ProviderCreate(
                 id="p-bailian",
-                name="阿里百炼",
+                name="Alibaba BAILIAN",
                 base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
                 api_key="k",
             ),
@@ -188,7 +188,7 @@ async def test_update_model_rejects_switch_to_unsupported_provider_category_comb
             db,
             body=ProviderCreate(
                 id="p-bailian",
-                name="阿里百炼",
+                name="Alibaba BAILIAN",
                 base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
                 api_key="k",
             ),
@@ -222,7 +222,7 @@ async def test_get_image_generation_options_uses_default_image_model_capability(
             db,
             body=ProviderCreate(
                 id="p-volc",
-                name="火山引擎",
+                name="Volcano Engine",
                 base_url="https://ark.cn-beijing.volces.com/api/v3",
                 api_key="k",
             ),

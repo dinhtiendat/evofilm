@@ -1,190 +1,190 @@
-# 项目完成总结
+# Tóm tắt hoàn thành dự án
 
-## ✅ 项目已成功创建
+## ✅ Dự án đã được tạo thành công
 
-你现在已经拥有一个完整的、生产级别的前端脚手架项目 **Jellyfish**。
+Bạn hiện đã có một dự án khung front cấp sản xuất hoàn chỉnh **Jellyfish**.
 
-## 📦 已安装的技术栈
+## 📦 Bộ công nghệ đã cài
 
-### 核心框架
-- ✅ **Vite 5.0.8** - 极速构建工具
-- ✅ **React 18.2.0** - UI 框架
-- ✅ **TypeScript 5.2.2** - 类型安全
+### Khung lõi
+- ✅ **Vite 5.0.8** - Công cụ build cực nhanh
+- ✅ **React 18.2.0** - Framework UI
+- ✅ **TypeScript 5.2.2** - An toàn kiểu
 
-### 样式框架
-- ✅ **Tailwind CSS 3.3.6** - 实用工具优先 CSS 框架
-- ✅ **PostCSS 8.4.32** - CSS 处理工具
-- ✅ **Autoprefixer 10.4.16** - 自动前缀处理
+### Khung kiểu dáng
+- ✅ **Tailwind CSS 3.3.6** - khung CSS utility-first
+- ✅ **PostCSS 8.4.32** - Công cụ xử lý CSS
+- ✅ **Autoprefixer 10.4.16** - Xử lý tiền tố tự động
 
-### 组件库
-- ✅ **Ant Design 5.10.0** - 企业级 UI 组件库
-- ✅ **Ant Design Icons 5.2.6** - 图标库
+### Thư viện thành phần
+- ✅ **Ant Design 5.10.0** - Thư viện component UI cấp doanh nghiệp
+- ✅ **Ant Design Icons 5.2.6** - Thư viện icon
 
-### 开发工具
-- ✅ **ESLint 8.54.0** - 代码检查工具
-- ✅ **@typescript-eslint** - TypeScript 支持
-- ✅ **Prettier** - 代码格式化（配置文件已准备）
+### Công cụ phát triển
+- ✅ **ESLint 8.54.0** - Công cụ kiểm tra mã
+- ✅ **@typescript-eslint** - hỗ trợ TypeScript
+- ✅ **Prettier** - Định dạng mã (đã chuẩn bị tệp cấu hình)
 
-## 📁 项目结构
+## 📁 Cấu trúc dự án
 
 ```
 jellyfish/
 ├── src/
 │   ├── components/
-│   │   ├── CustomButton.tsx      # 自定义按钮组件示例
-│   │   ├── CustomCard.tsx        # 自定义卡片组件示例
-│   │   └── index.ts             # 组件导出
-│   ├── App.tsx                   # 主应用组件（包含完整示例）
-│   ├── App.css                   # 应用样式
-│   ├── main.tsx                  # 应用入口
-│   └── index.css                 # 全局样式
-├── index.html                    # HTML 模板
-├── vite.config.ts               # Vite 配置
-├── tsconfig.json                # TypeScript 配置
-├── tailwind.config.js           # Tailwind CSS 配置
-├── postcss.config.js            # PostCSS 配置
-├── .eslintrc.json               # ESLint 配置
-├── .prettierrc                  # Prettier 配置
-├── package.json                 # 项目依赖
-├── README.md                    # 项目说明
-├── GETTING_STARTED.md           # 快速开始指南
-└── .gitignore                   # Git 忽略文件
+│   │   ├── CustomButton.tsx      # ví dụ component nút tùy chỉnh
+│   │   ├── CustomCard.tsx        # ví dụ component card tùy chỉnh
+│   │   └── index.ts             # Xuất component
+│   ├── App.tsx                   # Thành phần ứng dụng chính (chứa đầy đủ ví dụ)
+│   ├── App.css                   # Style ứng dụng
+│   ├── main.tsx                  # Cổng vào ứng dụng
+│   └── index.css                 # Style toàn cục
+├── index.html                    # template HTML
+├── vite.config.ts               # cấu hình Vite
+├── tsconfig.json                # cấu hình TypeScript
+├── tailwind.config.js           # Cấu hình Tailwind CSS
+├── postcss.config.js            # cấu hình PostCSS
+├── .eslintrc.json               # cấu hình ESLint
+├── .prettierrc                  # cấu hình Prettier
+├── package.json                 # Phụ thuộc dự án
+├── README.md                    # Mô tả dự án
+├── GETTING_STARTED.md           # hướng dẫn khởi động nhanh
+└── .gitignore                   # tệp bỏ qua của Git
 ```
 
-## 🚀 快速开始
+## 🚀 Bắt đầu nhanh
 
-### 1. 安装依赖
+### 1. Cài đặt phụ thuộc
 
 ```bash
 cd /Users/extreme/Projects/github.com/jellyfish
 npm install
 ```
 
-### 2. 启动开发服务器
+### 2. Khởi động máy chủ phát triển
 
 ```bash
 npm run dev
 ```
 
-浏览器将自动打开 `http://localhost:5173`
+Trình duyệt sẽ tự mở `http://localhost:5173`
 
-### 3. 构建生产版本
+### 3. Dựng phiên bản production
 
 ```bash
 npm run build
 ```
 
-### 4. 代码检查
+### 4. Kiểm tra mã
 
 ```bash
 npm run lint
 ```
 
-## ✨ 项目特点
+## ✨ Đặc điểm dự án
 
-### 1. 开发体验优秀
-- ⚡ **极速启动** - Vite 冷启动时间 < 500ms
-- 🔄 **HMR 热更新** - 修改保存即时反应
-- 💡 **智能提示** - TypeScript 完整类型支持
+### 1. Trải nghiệm phát triển tốt
+- ⚡ **Khởi động cực nhanh** - Thời gian khởi động lạnh của Vite < 500ms
+- 🔄 **Cập nhật nóng HMR** - Hiệu chỉnh lưu là phản hồi ngay
+- 💡 **Gợi ý thông minh** - Hỗ trợ kiểu TypeScript đầy đủ
 
-### 2. 样式方案完备
-- 🎨 **Tailwind CSS** - 快速构建现代化 UI
-- 🎭 **Ant Design** - 企业级组件库
-- ⚙️ **兼容配置** - 已禁用 Tailwind preflight 以避免冲突
+### 2. Phương án kiểu dáng đầy đủ
+- 🎨 **Tailwind CSS** - Xây dựng UI hiện đại nhanh
+- 🎭 **Ant Design** - Thư viện component cấp doanh nghiệp
+- ⚙️ **cấu hình tương thích** - đã tắt Tailwind preflight để tránh xung đột
 
-### 3. 代码质量保障
-- ✔️ **ESLint** - 代码规范检查
-- 📝 **Prettier** - 代码格式化
-- 🔒 **TypeScript** - 类型安全检查
+### 3. Đảm bảo chất lượng mã nguồn
+- ✔️ **ESLint** - Kiểm tra quy tắc mã nguồn
+- 📝 **Prettier** - Định dạng mã nguồn
+- 🔒 **TypeScript** - Kiểm tra an toàn kiểu
 
-### 4. 生产就绪
-- 📦 **优化的构建** - Rollup 最小化打包
-- 🔍 **源码映射** - 开发环境启用 sourcemap
-- 🚀 **性能优化** - 代码分割和懒加载准备
+### 4. Sẵn sàng production
+- 📦 **Tối ưu hóa build** - Gom gói tối thiểu bằng Rollup
+- 🔍 **Ánh xạ mã nguồn** - Bật sourcemap trong môi trường phát triển
+- 🚀 **Tối ưu hiệu suất** - Chuẩn bị tách mã và tải chậm
 
-## 🎯 包含的示例代码
+## 🎯 Mã ví dụ đi kèm
 
-### App.tsx 示例包含
+### Ví dụ App.tsx bao gồm
 
-1. **计数器演示** - React State 使用示例
-2. **功能卡片** - Tailwind CSS + Ant Design Card 组件
-3. **数据表格** - Ant Design Table 组件和数据操作
-4. **交互操作** - Button、Popconfirm、Message 等组件
-5. **响应式设计** - 响应式网格布局
+1. **Minh họa bộ đếm** - Ví dụ dùng React State
+2. **thẻ tính năng** - component Tailwind CSS + Ant Design Card
+3. **Bảng dữ liệu** - Component Ant Design Table và thao tác dữ liệu
+4. **thao tác tương tác** - các component như Button, Popconfirm, Message
+5. **Thiết kế phản hồi** - Bố cục lưới phản hồi
 
-### 自定义组件示例
+### Ví dụ component tùy chỉnh
 
-1. **CustomButton** - 支持多种样式的按钮组件
-2. **CustomCard** - 可扩展的卡片组件
+1. **CustomButton** - Thành phần nút hỗ trợ nhiều kiểu
+2. **CustomCard** - Thành phần thẻ mở rộng được
 
-## 📚 文档
+## 📚 tài liệu
 
-- **README.md** - 项目概览和基本说明
-- **GETTING_STARTED.md** - 详细的快速开始指南和开发规范
+- **README.md** - Tổng quan và mô tả cơ bản về dự án
+- **GETTING_STARTED.md** - hướng dẫn khởi động nhanh và quy chuẩn phát triển chi tiết
 
-## 🔧 可用的 npm 脚本
+## 🔧 Script npm có sẵn
 
-| 命令 | 说明 |
+| Lệnh | Giải thích |
 |------|------|
-| `npm run dev` | 启动开发服务器（带 HMR） |
-| `npm run build` | 构建生产版本 |
-| `npm run lint` | 运行 ESLint 检查 |
-| `npm run preview` | 预览生产版本 |
+| `npm run dev` | Khởi động máy chủ phát triển (có HMR) |
+| `npm run build` | Build phiên bản production |
+| `npm run lint` | Chạy kiểm tra ESLint |
+| `npm run preview` | Xem trước phiên bản production |
 
-## 🎨 下一步建议
+## 🎨 Gợi ý bước tiếp theo
 
-1. **修改项目信息**
-   - 更新 `package.json` 中的 name、description、author 等字段
-   - 自定义 `index.html` 中的 title 和 meta 标签
+1. **Sửa thông tin dự án**
+   - Cập nhật các trường name, description, author trong `package.json`
+   - Tùy chỉnh title và thẻ meta trong `index.html` riêng
 
-2. **创建你的组件**
-   - 在 `src/components/` 目录下创建你的 React 组件
-   - 在 `index.ts` 中导出以便使用
+2. **Tạo component của bạn**
+   - Tạo component React của bạn trong thư mục `src/components/`
+   - Xuất trong `index.ts` để tiện dùng
 
-3. **配置 API**
-   - 在 `.env.example` 基础上创建 `.env` 文件
-   - 配置你的 API 端点和其他环境变量
+3. **Cấu hình API**
+   - Tạo tệp `.env` trên cơ sở `.env.example`
+   - Cấu hình điểm cuối API và các biến môi trường khác
 
-4. **自定义样式**
-   - 在 `tailwind.config.js` 中扩展主题
-   - 在 `src/index.css` 中添加全局样式
+4. **Kiểu tùy chỉnh**
+   - Mở rộng theme trong `tailwind.config.js`
+   - Thêm kiểu toàn cục trong `src/index.css`
 
-5. **版本控制**
-   - 使用 `git init` 初始化 Git 仓库
-   - 根据需要添加 GitHub 远程仓库
+5. **Kiểm soát phiên bản**
+   - Dùng `git init` để khởi tạo kho Git
+   - Thêm kho GitHub từ xa khi cần
 
-## 📝 注意事项
+## 📝 Lưu ý
 
-1. **依赖更新** - 定期运行 `npm update` 保持依赖最新
-2. **浏览器支持** - 项目构建目标是 ES2020，需要现代浏览器
-3. **环境变量** - 所有环境变量必须以 `VITE_` 前缀开头
-4. **样式冲突** - Tailwind preflight 已禁用以保证与 Ant Design 兼容
+1. **Cập nhật phụ thuộc** - Chạy định kỳ `npm update` để giữ phụ thuộc mới nhất
+2. **Hỗ trợ trình duyệt** - Mục tiêu build của dự án là ES2020, cần trình duyệt hiện đại
+3. **Biến môi trường** - Tất cả biến môi trường phải bắt đầu bằng tiền tố `VITE_`
+4. **Xung đột phong cách** - preflight của Tailwind đã vô hiệu hóa để đảm bảo tương thích với Ant Design
 
-## 🆘 常见问题
+## 🆘 Câu hỏi thường gặp
 
-**Q: 如何添加新的 npm 包?**
+**H: Cách thêm gói npm mới?**
 A: `npm install package-name`
 
-**Q: 如何修改 Ant Design 主题?**
-A: 可以使用 Ant Design 的 ConfigProvider 组件或自定义 CSS 变量
+**H: Cách chỉnh chủ đề Ant Design?**
+A: có thể dùng component ConfigProvider của Ant Design hoặc biến CSS tùy chỉnh
 
-**Q: 如何处理 API 请求?**
-A: 推荐使用 axios 或 fetch API，在 `src/services/` 目录下统一管理 API 调用
+**H: Xử lý yêu cầu API như thế nào?**
+A: Khuyến nghị dùng axios hoặc fetch API, quản lý thống nhất các API call trong thư mục `src/services/`
 
-**Q: 项目是否支持 SSR?**
-A: 当前配置是 CSR（客户端渲染），如需 SSR 可考虑使用 Next.js
+**H: Dự án có hỗ trợ SSR không?**
+A: Cấu hình hiện tại là CSR (render phía client), nếu cần SSR có thể cân nhắc dùng Next.js
 
-## 📖 相关资源链接
+## 📖 Link tài nguyên liên quan
 
-- [Vite 官方文档](https://vitejs.dev)
-- [React 官方文档](https://react.dev)
-- [TypeScript 官方文档](https://www.typescriptlang.org)
-- [Tailwind CSS 文档](https://tailwindcss.com)
-- [Ant Design 文档](https://ant.design)
+- [Vite tài liệu chính thức](https://vitejs.dev)
+- [React tài liệu chính thức](https://react.dev)
+- [TypeScript tài liệu chính thức](https://www.typescriptlang.org)
+- [Tailwind CSS tài liệu](https://tailwindcss.com)
+- [Ant Design tài liệu](https://ant.design)
 
 ---
 
-**祝你编码愉快！** 🎉
+**Chúc bạn lập trình vui vẻ!** 🎉
 
-如有任何问题，欢迎参考相关官方文档或联系技术支持。
+Nếu có bất kỳ vấn đề nào, vui lòng tham khảo tài liệu chính thức liên quan hoặc liên hệ hỗ trợ kỹ thuật.
 

@@ -1,9 +1,9 @@
-"""Worker 执行模板。
+"""Mẫu thực thi Worker.
 
-职责边界：
-- 统一 Celery worker 内部的任务生命周期；
-- 不负责 API 入参、任务创建、任务关联；
-- 只负责：读取任务 → 执行 → 写 result / status / error → apply。
+Ranh giới trách nhiệm:
+- Thống nhất vòng đời tác vụ bên trong Celery worker;
+- Không phụ trách tham số API, tạo tác vụ, liên kết tác vụ;
+- Chỉ chịu trách nhiệm: đọc tác vụ → thực thi → ghi result / status / error → apply.
 """
 
 from __future__ import annotations
@@ -191,14 +191,14 @@ class AbstractWorkerTaskExecutor(ABC):
 
 
 class AbstractAsyncDelegatingExecutor(AbstractWorkerTaskExecutor):
-    """给 async 业务任务的 Celery 执行桥。
+    """Cầu thực thi Celery cho tác vụ nghiệp vụ async.
 
-    适用于图片生成、视频生成、分镜帧提示词这类仍以内置 async service 为主的任务。
-    它只负责：
-    - 每个任务执行前重建 async DB runtime；
-    - 从 GenerationTask.payload 读取 run_args；
-    - 在独立 event loop 中执行 async runner；
-    - 执行后主动释放 async engine。
+    phù hợp với các tác vụ vẫn chủ yếu dùng async service tích hợp như sinh ảnh, sinh video, prompt khung phân cảnh.
+    Nó chỉ chịu trách nhiệm:
+    - Xây dựng lại async DB runtime trước mỗi lần thực thi tác vụ;
+    - Đọc run_args từ GenerationTask.payload;
+    - Thực thi async runner trong event loop độc lập;
+    - Sau khi chạy, chủ động giải phóng async engine.
     """
 
     def __init__(
@@ -285,5 +285,5 @@ class AbstractAsyncDelegatingExecutor(AbstractWorkerTaskExecutor):
             db.commit()
             return True
 
-    def execute(self, ctx: WorkerTaskContext, run_args: dict[str, Any]) -> Any:  # pragma: no cover - async 桥不会走这里
+    def execute(self, ctx: WorkerTaskContext, run_args: dict[str, Any]) -> Any:  # pragma: no cover - cầu nối async không qua đây
         raise NotImplementedError

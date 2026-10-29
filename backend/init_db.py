@@ -4,7 +4,7 @@ from app.core.db import init_db, close_db
 
 
 async def _main() -> None:
-    """初始化数据库，创建所有表。"""
+    """Khởi tạo cơ sở dữ liệu, tạo tất cả bảng."""
     await init_db()
     await close_db()
 

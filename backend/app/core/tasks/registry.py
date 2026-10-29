@@ -1,4 +1,4 @@
-"""任务执行器注册中心：按 task_kind + provider_key 分派。"""
+"""trung tâm đăng ký executor tác vụ:điều phối theo task_kind + provider_key."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def _norm(value: str) -> str:
 
 
 def register_task_adapter(task_kind: str, provider_key: str, factory: TaskFactory) -> None:
-    """注册任务执行器；相同 key+factory 重复注册视为幂等。"""
+    """Đăng ký executor tác vụ; đăng ký lặp key+factory giống nhau coi là idempotent."""
 
     tk = _norm(task_kind)
     pk = _norm(provider_key)
@@ -33,7 +33,7 @@ def register_task_adapter(task_kind: str, provider_key: str, factory: TaskFactor
 
 
 def resolve_task_adapter(task_kind: str, provider_key: str) -> TaskFactory:
-    """解析任务执行器；未注册时抛出清晰错误。"""
+    """Phân tích trình thực thi tác vụ; chưa đăng ký thì ném lỗi rõ ràng."""
 
     key = (_norm(task_kind), _norm(provider_key))
     with _LOCK:
@@ -44,7 +44,7 @@ def resolve_task_adapter(task_kind: str, provider_key: str) -> TaskFactory:
 
 
 def list_registered_task_adapters(task_kind: str | None = None) -> list[tuple[str, str]]:
-    """返回已注册适配器列表（用于诊断/测试）。"""
+    """Trả về danh sách adapter đã đăng ký (dùng cho chẩn đoán/thử nghiệm)."""
 
     tk = _norm(task_kind) if task_kind else None
     with _LOCK:

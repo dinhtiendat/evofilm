@@ -1,4 +1,4 @@
-"""image_tasks 接口响应壳测试。"""
+"""image_tasks Kiểm tra vỏ phản hồi API của image_tasks.。"""
 
 from __future__ import annotations
 
@@ -67,7 +67,7 @@ def test_render_actor_image_prompt_returns_success_envelope(client: TestClient, 
     db = _DummyDB()
 
     class _Base:
-        prompt = "基础演员提示词"
+        prompt = "Prompt diễn viên cơ bản"
         default_images = ["file-1", "file-2"]
         entity_type = "actor"
         entity_id = "actor-1"
@@ -75,7 +75,7 @@ def test_render_actor_image_prompt_returns_success_envelope(client: TestClient, 
         relation_entity_id = "1"
 
     class _Derived:
-        prompt = "渲染后的演员提示词"
+        prompt = "Prompt diễn viên sau render"
         images = ["file-1", "file-2"]
 
     async def _fake_build_base(*_args, **_kwargs):
@@ -99,7 +99,7 @@ def test_render_actor_image_prompt_returns_success_envelope(client: TestClient, 
     body = response.json()
     assert body["code"] == 200
     assert body["message"] == "success"
-    assert body["data"]["prompt"] == "渲染后的演员提示词"
+    assert body["data"]["prompt"] == "Prompt diễn viên sau render"
     assert body["data"]["images"] == ["file-1", "file-2"]
 
 
@@ -127,11 +127,11 @@ def test_render_shot_frame_prompt_returns_success_envelope_when_prompt_given(cli
     db = _DummyDB()
     async def _fake_load_frame_render_guidance(**_kwargs):
         return {
-            "director_command_summary": "必须：锁定主角视线方向",
-            "continuity_guidance": "当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局",
-            "frame_specific_guidance": "首帧只表现惊响出现后的最初僵直反应，人物尚未完成捂耳和下蹲动作",
-            "composition_anchor": "以温室门框和人物站位作为空间锚点，保持环境与人物同时可读",
-            "screen_direction_guidance": "保持陆远与环境入口的视线方向稳定，避免无故翻转朝向",
+            "director_command_summary": "Bắt buộc: Khóa chặt hướng nhìn của nhân vật chính",
+            "continuity_guidance": "Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, đừng như một cảnh hoàn toàn mới mở đầu lại",
+            "frame_specific_guidance": "Khung hình đầu chỉ thể hiện phản ứng đơ cứng ban đầu sau khi tiếng động bất ngờ xuất hiện, nhân vật chưa hoàn thành động tác che tai và cúi",
+            "composition_anchor": "Lấy khung cửa nhà kính và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng lúc đọc được",
+            "screen_direction_guidance": "Giữ phương hướng nhìn từ Lục Viễn đến lối vào môi trường ổn định, tránh đảo hướng nhìn không lý do",
         }
 
     monkeypatch.setattr(route, "_load_frame_render_guidance", _fake_load_frame_render_guidance)
@@ -141,10 +141,10 @@ def test_render_shot_frame_prompt_returns_success_envelope_when_prompt_given(cli
             "/api/v1/studio/image-tasks/shot/shot-1/frame-render-prompt",
             json={
                 "frame_type": "first",
-                "prompt": "生成一个紧张的首帧画面",
+                "prompt": "Tạo khung hình đầu căng thẳng",
                 "images": [
-                    {"type": "character", "id": "char-1", "name": "陆远", "file_id": "file-1"},
-                    {"type": "scene", "id": "scene-1", "name": "温室", "file_id": "file-2"},
+                    {"type": "character", "id": "char-1", "name": "Lục Viễn", "file_id": "file-1"},
+                    {"type": "scene", "id": "scene-1", "name": "Nhà kính", "file_id": "file-2"},
                 ],
             },
         )
@@ -155,33 +155,33 @@ def test_render_shot_frame_prompt_returns_success_envelope_when_prompt_given(cli
     body = response.json()
     assert body["code"] == 200
     assert body["message"] == "success"
-    assert body["data"]["base_prompt"] == "生成一个紧张的首帧画面"
+    assert body["data"]["base_prompt"] == "Tạo khung hình đầu căng thẳng"
     assert body["data"]["selected_guidance"] == [
-        "高优先级导演指令：必须：锁定主角视线方向",
-        "当前帧职责：首帧只表现惊响出现后的最初僵直反应，人物尚未完成捂耳和下蹲动作",
-        "连续性要求：当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局",
+        "Chỉ đạo đạo diễn ưu tiên cao: Bắt buộc: Khóa chặt hướng nhìn của nhân vật chính",
+        "Trách nhiệm khung hình hiện tại: Khung hình đầu chỉ thể hiện phản ứng đơ cứng ban đầu sau khi tiếng động bất ngờ xuất hiện, nhân vật chưa hoàn thành động tác che tai và cúi",
+        "Yêu cầu tính liên tục: Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, đừng như một cảnh hoàn toàn mới mở đầu lại",
     ]
     assert body["data"]["dropped_guidance"] == [
-        "构图锚点：以温室门框和人物站位作为空间锚点，保持环境与人物同时可读",
-        "朝向与视线：保持陆远与环境入口的视线方向稳定，避免无故翻转朝向",
+        "Mỏ neo bố cục: Lấy khung cửa nhà kính và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng lúc đọc được",
+        "Hướng và ánh nhìn: Giữ phương hướng nhìn từ Lục Viễn đến lối vào môi trường ổn định, tránh đảo hướng nhìn không lý do",
     ]
-    assert body["data"]["selected_guidance_details"][1]["reason_tag"] == "首帧保时序"
-    assert body["data"]["selected_guidance_details"][1]["reason"] == "当前是首帧，系统优先保留触发瞬间与未完成态约束，避免画面直接跳到后续完成动作。"
-    assert body["data"]["dropped_guidance_details"][0]["reason_tag"] == "首帧降构图"
-    assert body["data"]["dropped_guidance_details"][1]["reason_tag"] == "首帧降轴线"
+    assert body["data"]["selected_guidance_details"][1]["reason_tag"] == "Khung hình đầu giữ thứ tự thời gian"
+    assert body["data"]["selected_guidance_details"][1]["reason"] == "hiện là khung hình đầu, hệ thống ưu tiên giữ ràng buộc khoảnh khắc kích hoạt và trạng thái chưa hoàn thành, tránh khung nhảy thẳng vào hành động hoàn tất sau."
+    assert body["data"]["dropped_guidance_details"][0]["reason_tag"] == "Khung hình đầu giáng bố cục"
+    assert body["data"]["dropped_guidance_details"][1]["reason_tag"] == "Khung hình đầu hạ trục kịch"
     assert body["data"]["images"] == ["file-1", "file-2"]
     assert body["data"]["mappings"] == [
-        {"token": "图1", "type": "character", "id": "char-1", "name": "陆远", "file_id": "file-1"},
-        {"token": "图2", "type": "scene", "id": "scene-1", "name": "温室", "file_id": "file-2"},
+        {"token": "图1", "type": "character", "id": "char-1", "name": "Lục Viễn", "file_id": "file-1"},
+        {"token": "图2", "type": "scene", "id": "scene-1", "name": "Nhà kính", "file_id": "file-2"},
     ]
-    assert "高优先级导演指令：必须：锁定主角视线方向" in body["data"]["rendered_prompt"]
-    assert "当前帧职责：首帧只表现惊响出现后的最初僵直反应，人物尚未完成捂耳和下蹲动作" in body["data"]["rendered_prompt"]
-    assert "连续性要求：当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局" in body["data"]["rendered_prompt"]
-    assert "构图锚点：以温室门框和人物站位作为空间锚点，保持环境与人物同时可读" not in body["data"]["rendered_prompt"]
-    assert "朝向与视线：保持陆远与环境入口的视线方向稳定，避免无故翻转朝向" not in body["data"]["rendered_prompt"]
-    assert "图1: 陆远" in body["data"]["rendered_prompt"]
-    assert "图2: 温室" in body["data"]["rendered_prompt"]
-    assert "生成一个紧张的首帧画面" in body["data"]["rendered_prompt"]
+    assert "Chỉ đạo đạo diễn ưu tiên cao: Bắt buộc: Khóa chặt hướng nhìn của nhân vật chính" in body["data"]["rendered_prompt"]
+    assert "Trách nhiệm khung hình hiện tại: Khung hình đầu chỉ thể hiện phản ứng đơ cứng ban đầu sau khi tiếng động bất ngờ xuất hiện, nhân vật chưa hoàn thành động tác che tai và cúi" in body["data"]["rendered_prompt"]
+    assert "Yêu cầu tính liên tục: Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, đừng như một cảnh hoàn toàn mới mở đầu lại" in body["data"]["rendered_prompt"]
+    assert "Mỏ neo bố cục: Lấy khung cửa nhà kính và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng lúc đọc được" not in body["data"]["rendered_prompt"]
+    assert "Hướng và ánh nhìn: Giữ phương hướng nhìn từ Lục Viễn đến lối vào môi trường ổn định, tránh đảo hướng nhìn không lý do" not in body["data"]["rendered_prompt"]
+    assert "图1: Lục Viễn" in body["data"]["rendered_prompt"]
+    assert "图2: Nhà kính" in body["data"]["rendered_prompt"]
+    assert "Tạo khung hình đầu căng thẳng" in body["data"]["rendered_prompt"]
 
 
 def test_render_shot_frame_prompt_requires_prompt(client: TestClient) -> None:
@@ -216,31 +216,31 @@ def test_create_shot_frame_image_task_renders_prompt_before_submit(client: TestC
 
     async def _fake_load_frame_render_guidance(**_kwargs):
         return {
-            "director_command_summary": "必须：锁定主角视线方向",
-            "continuity_guidance": "当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局",
-            "frame_specific_guidance": "首帧只表现惊响出现后的最初僵直反应，人物尚未完成捂耳和下蹲动作",
-            "composition_anchor": "以温室门框和人物站位作为空间锚点，保持环境与人物同时可读",
-            "screen_direction_guidance": "保持陆远与环境入口的视线方向稳定，避免无故翻转朝向",
+            "director_command_summary": "Bắt buộc: Khóa chặt hướng nhìn của nhân vật chính",
+            "continuity_guidance": "Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, đừng như một cảnh hoàn toàn mới mở đầu lại",
+            "frame_specific_guidance": "Khung hình đầu chỉ thể hiện phản ứng đơ cứng ban đầu sau khi tiếng động bất ngờ xuất hiện, nhân vật chưa hoàn thành động tác che tai và cúi",
+            "composition_anchor": "Lấy khung cửa nhà kính và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng lúc đọc được",
+            "screen_direction_guidance": "Giữ phương hướng nhìn từ Lục Viễn đến lối vào môi trường ổn định, tránh đảo hướng nhìn không lý do",
         }
 
     async def _fake_create_image_task_and_link(*_args, **kwargs):
-        assert kwargs["prompt"].startswith("## 图片内容说明")
-        assert "高优先级导演指令：必须：锁定主角视线方向" in kwargs["prompt"]
-        assert "当前帧职责：首帧只表现惊响出现后的最初僵直反应，人物尚未完成捂耳和下蹲动作" in kwargs["prompt"]
-        assert "连续性要求：当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局" in kwargs["prompt"]
-        assert "构图锚点：以温室门框和人物站位作为空间锚点，保持环境与人物同时可读" not in kwargs["prompt"]
-        assert "朝向与视线：保持陆远与环境入口的视线方向稳定，避免无故翻转朝向" not in kwargs["prompt"]
-        assert "图1: 陆远" in kwargs["prompt"]
+        assert kwargs["prompt"].startswith("## Diễn giải nội dung hình ảnh")
+        assert "Chỉ đạo đạo diễn ưu tiên cao: Bắt buộc: Khóa chặt hướng nhìn của nhân vật chính" in kwargs["prompt"]
+        assert "Trách nhiệm khung hình hiện tại: Khung hình đầu chỉ thể hiện phản ứng đơ cứng ban đầu sau khi tiếng động bất ngờ xuất hiện, nhân vật chưa hoàn thành động tác che tai và cúi" in kwargs["prompt"]
+        assert "Yêu cầu tính liên tục: Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, đừng như một cảnh hoàn toàn mới mở đầu lại" in kwargs["prompt"]
+        assert "Mỏ neo bố cục: Lấy khung cửa nhà kính và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng lúc đọc được" not in kwargs["prompt"]
+        assert "Hướng và ánh nhìn: Giữ phương hướng nhìn từ Lục Viễn đến lối vào môi trường ổn định, tránh đảo hướng nhìn không lý do" not in kwargs["prompt"]
+        assert "图1: Lục Viễn" in kwargs["prompt"]
         assert kwargs["images"] == [{"image_url": "data:image/png;base64,abc"}]
         assert kwargs["target_ratio"] == "9:16"
         assert kwargs["resolution_profile"] == "standard"
         assert kwargs["purpose"] == "video_reference"
         assert kwargs["render_context"]["images"] == ["file-1"]
         assert kwargs["render_context"]["mappings"][0]["token"] == "图1"
-        assert kwargs["render_context"]["selected_guidance"][0] == "高优先级导演指令：必须：锁定主角视线方向"
-        assert kwargs["render_context"]["selected_guidance_details"][1]["reason_tag"] == "首帧保时序"
-        assert kwargs["render_context"]["dropped_guidance_details"][0]["reason_tag"] == "首帧降构图"
-        assert kwargs["render_context"]["dropped_guidance_details"][1]["reason_tag"] == "首帧降轴线"
+        assert kwargs["render_context"]["selected_guidance"][0] == "Chỉ đạo đạo diễn ưu tiên cao: Bắt buộc: Khóa chặt hướng nhìn của nhân vật chính"
+        assert kwargs["render_context"]["selected_guidance_details"][1]["reason_tag"] == "Khung hình đầu giữ thứ tự thời gian"
+        assert kwargs["render_context"]["dropped_guidance_details"][0]["reason_tag"] == "Khung hình đầu giáng bố cục"
+        assert kwargs["render_context"]["dropped_guidance_details"][1]["reason_tag"] == "Khung hình đầu hạ trục kịch"
         return "task-1"
 
     monkeypatch.setattr(route, "_resolve_reference_image_refs_by_file_ids_service", _fake_resolve_image_refs)
@@ -252,11 +252,11 @@ def test_create_shot_frame_image_task_renders_prompt_before_submit(client: TestC
             "/api/v1/studio/image-tasks/shot/shot-1/frame-image-tasks",
             json={
                 "frame_type": "first",
-                "prompt": "陆远站在温室里",
+                "prompt": "Lục Viễn đứng trong nhà kính,",
                 "target_ratio": "9:16",
                 "resolution_profile": "standard",
                 "images": [
-                    {"type": "character", "id": "char-1", "name": "陆远", "file_id": "file-1"},
+                    {"type": "character", "id": "char-1", "name": "Lục Viễn", "file_id": "file-1"},
                 ],
             },
         )
@@ -344,31 +344,31 @@ def test_run_image_generation_task_persists_render_context(monkeypatch) -> None:
                 "relation_entity_id": "1",
                 "render_context": {
                     "images": ["file-1"],
-                    "mappings": [{"token": "图1", "name": "陆远", "file_id": "file-1"}],
-                    "selected_guidance": ["高优先级导演指令：必须：锁定主角视线方向"],
-                    "dropped_guidance": ["朝向与视线：保持陆远与环境入口的视线方向稳定，避免无故翻转朝向"],
+                    "mappings": [{"token": "图1", "name": "Lục Viễn", "file_id": "file-1"}],
+                    "selected_guidance": ["lệnh đạo diễn ưu tiên cao:bắt buộc:khóa hướng nhìn của nhân vật chính"],
+                    "dropped_guidance": ["Hướng nhìn và ánh mắt: giữ ổn định hướng nhìn của Lục Viễn với lối vào môi trường, tránh lật hướng vô cớ"],
                     "selected_guidance_details": [
                         {
-                            "text": "高优先级导演指令：必须：锁定主角视线方向",
+                            "text": "Chỉ đạo đạo diễn ưu tiên cao: bắt buộc: khóa hướng nhìn của nhân vật chính",
                             "category": "summary",
-                            "reason_tag": "导演主指令",
-                            "reason": "导演主指令始终属于最高优先级约束，因此会优先保留。",
+                            "reason_tag": "Lệnh chính của đạo diễn",
+                            "reason": "Chỉ thị đạo diễn chính luôn là ràng buộc có độ ưu tiên cao nhất, nên sẽ được ưu tiên giữ lại.",
                         }
                     ],
                     "dropped_guidance_details": [
                         {
-                            "text": "朝向与视线：保持陆远与环境入口的视线方向稳定，避免无故翻转朝向",
+                            "text": "Hướng và ánh nhìn: giữ hướng nhìn giữa Lục Viễn và lối vào môi trường ổn định, tránh xoay hướng vô cớ",
                             "category": "screen",
-                            "reason_tag": "首帧降轴线",
-                            "reason": "当前是首帧，系统更优先保空间建立与站位关系，因此将朝向与视线 guidance 降为次级。",
+                            "reason_tag": "Giảm trục kịch ở khung hình đầu",
+                            "reason": "Hiện đang ở khung hình đầu, hệ thống ưu tiên bảo toàn thiết lập không gian và quan hệ vị trí đứng, nên hạ guidance hướng nhìn xuống mức thứ yếu.",
                         }
                     ],
                 },
-                "input": {"prompt": "## 图片内容说明\n图1: 陆远", "model": "gpt-image-1"},
+                "input": {"prompt": "## Diễn giải nội dung hình ảnh\n图1: Lục Viễn", "model": "gpt-image-1"},
             },
         )
     )
 
     assert calls["result_payload"]["render_context"]["images"] == ["file-1"]
-    assert calls["result_payload"]["render_context"]["selected_guidance_details"][0]["reason_tag"] == "导演主指令"
-    assert calls["result_payload"]["render_context"]["dropped_guidance_details"][0]["reason_tag"] == "首帧降轴线"
+    assert calls["result_payload"]["render_context"]["selected_guidance_details"][0]["reason_tag"] == "Lệnh chính của đạo diễn"
+    assert calls["result_payload"]["render_context"]["dropped_guidance_details"][0]["reason_tag"] == "Giảm trục kịch ở khung hình đầu"

@@ -52,7 +52,7 @@ function notifyShotAssetCreatedAndLinked(payload: {
       window.location.origin,
     )
   } catch {
-    // 跨窗口通知失败不阻塞创建成功。
+    // Thông báo chéo cửa sổ thất bại không chặn tạo thành công.
   }
 }
 
@@ -158,7 +158,7 @@ export function StudioAssetTypeFormModal({
 
   const handleOk = async () => {
     if (!formName.trim()) {
-      message.warning('请输入资产名称')
+      message.warning('Vui lòng nhập tên tài nguyên')
       return Promise.reject(new Error('validation'))
     }
 
@@ -175,7 +175,7 @@ export function StudioAssetTypeFormModal({
           style: formStyle,
         })
         const normalizedNext = normalizeStudioAsset(next)
-        message.success('已保存')
+        message.success('Đã lưu')
         onCancel()
         await onSaved({ type: 'update', id: editing.id, asset: normalizedNext })
       } else {
@@ -199,40 +199,40 @@ export function StudioAssetTypeFormModal({
           assetId: created.id,
           assetName: formName.trim(),
         })
-        message.success('已创建')
+        message.success('Đã tạo')
         onCancel()
         await onSaved({ type: 'create' })
       }
     } catch {
-      message.error('保存失败')
+      message.error('Lưu thất bại')
       return Promise.reject(new Error('api'))
     }
   }
 
   return (
     <Modal
-      title={editing ? `编辑${label}` : `新建${label}`}
+      title={editing ? `chỉnh sửa${label}` : `tạo mới${label}`}
       open={open}
       onCancel={onCancel}
       onOk={handleOk}
-      okText="保存"
+      okText="Lưu"
       width={560}
     >
       <div className="space-y-3">
         <div>
-          <span className="text-gray-600 text-sm">名称</span>
+          <span className="text-gray-600 text-sm">Tên</span>
           <Input value={formName} onChange={(e) => setFormName(e.target.value)} className="mt-1" />
         </div>
         <div>
-          <span className="text-gray-600 text-sm">描述</span>
+          <span className="text-gray-600 text-sm">Mô tả</span>
           <Input.TextArea value={formDesc} onChange={(e) => setFormDesc(e.target.value)} rows={4} className="mt-1" />
         </div>
         <div>
-          <span className="text-gray-600 text-sm">标签（逗号分隔）</span>
+          <span className="text-gray-600 text-sm">Nhãn (phân cách bằng dấu phẩy)</span>
           <Input value={formTags} onChange={(e) => setFormTags(e.target.value)} className="mt-1" />
         </div>
         <div>
-          <span className="text-gray-600 text-sm">镜头数</span>
+          <span className="text-gray-600 text-sm">Số phân cảnh</span>
           <InputNumber
             min={0}
             max={4}
@@ -240,7 +240,7 @@ export function StudioAssetTypeFormModal({
             value={formViewCount}
             onChange={(v) => setFormViewCount(v ?? null)}
             className="mt-1 w-full"
-            placeholder="例如 4（最大 4）"
+            placeholder="Ví dụ 4 (tối đa 4)"
           />
         </div>
         <div>

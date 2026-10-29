@@ -1,4 +1,4 @@
-"""影视技能 API：实体抽取、分镜抽取。"""
+"""API kỹ năng video: trích xuất thực thể, trích xuất phân cảnh."""
 
 from __future__ import annotations
 

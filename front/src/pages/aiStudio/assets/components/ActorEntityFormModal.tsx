@@ -71,7 +71,7 @@ export function ActorEntityFormModal({
   const handleOk = async () => {
     const name = formName.trim()
     if (!name) {
-      message.warning('请输入名称')
+      message.warning('Vui lòng nhập tên')
       return Promise.reject(new Error('validation'))
     }
     try {
@@ -89,7 +89,7 @@ export function ActorEntityFormModal({
           ...(linkProjectId && linkChapterId ? { chapter_id: linkChapterId } : {}),
           ...(linkProjectId && linkShotId ? { shot_id: linkShotId } : {}),
         })
-        message.success('创建成功')
+        message.success('Đã tạo thành công')
         onCancel()
         await onSuccess({ created: created.data })
       } else {
@@ -101,43 +101,43 @@ export function ActorEntityFormModal({
           visual_style: formVisualStyle,
           style: formStyle,
         })
-        message.success('更新成功')
+        message.success('Cập nhật thành công')
         onCancel()
         await onSuccess()
       }
     } catch {
-      message.error(editing ? '更新失败' : '创建失败')
+      message.error(editing ? 'Cập nhật thất bại' : 'Tạo mới thất bại')
       return Promise.reject(new Error('api'))
     }
   }
 
   return (
     <Modal
-      title={editing ? '编辑演员' : '新建演员'}
+      title={editing ? 'Chỉnh sửa diễn viên' : 'Tạo mới diễn viên'}
       open={open}
       onCancel={onCancel}
       onOk={handleOk}
-      okText={editing ? '保存' : '创建'}
+      okText={editing ? 'Lưu' : 'Tạo'}
     >
       <div className="space-y-3">
         <div>
-          <div className="text-sm text-gray-600 mb-1">名称</div>
+          <div className="text-sm text-gray-600 mb-1">Tên</div>
           <Input value={formName} onChange={(e) => setFormName(e.target.value)} />
         </div>
         <div>
-          <div className="text-sm text-gray-600 mb-1">描述</div>
+          <div className="text-sm text-gray-600 mb-1">Mô tả</div>
           <Input.TextArea rows={3} value={formDesc} onChange={(e) => setFormDesc(e.target.value)} />
         </div>
         <div>
-          <div className="text-sm text-gray-600 mb-1">标签（逗号分隔）</div>
+          <div className="text-sm text-gray-600 mb-1">Nhãn (phân cách bằng dấu phẩy)</div>
           <Input value={formTags} onChange={(e) => setFormTags(e.target.value)} />
         </div>
         <div>
-          <div className="text-sm text-gray-600 mb-1">视角数（可选）</div>
+          <div className="text-sm text-gray-600 mb-1">Số góc nhìn (tùy chọn)</div>
           <InputNumber className="w-full" min={1} max={4} value={formViewCount} onChange={(v) => setFormViewCount(v ?? null)} />
         </div>
         <div>
-          <div className="text-sm text-gray-600 mb-1">视觉风格</div>
+          <div className="text-sm text-gray-600 mb-1">Phong cách thị giác</div>
           <ProjectVisualStyleAndStyleFields
             visual_style={formVisualStyle}
             style={formStyle}

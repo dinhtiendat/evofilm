@@ -70,8 +70,8 @@ type RoleItem = {
 type SceneItem = {
   id: string
   name: string
-  indoorOutdoor: '室内' | '室外' | '未知'
-  time: '白天' | '夜晚' | '未知'
+  indoorOutdoor: 'trong nhà' | 'ngoài trời' | 'chưa rõ'
+  time: 'Ban ngày' | 'Ban đêm' | 'Không rõ'
   keywords: string[]
 }
 
@@ -96,7 +96,7 @@ type ExtractResults = {
   props: PropItem[]
 }
 
-// TODO: 后续接入“章节草稿/版本历史/智能精简”等接口后，可移除当前页面的 Mock 逻辑与预置数据。
+// TODO: sau khi tích hợp các API "bản nháp chương/lịch sử phiên bản/giản lược thông minh", có thể gỡ logic Mock và dữ liệu định sẵn của trang hiện tại.
 
 type EntityKind = 'roles' | 'scenes' | 'props'
 
@@ -111,55 +111,55 @@ function entitiesStorageKey(projectId: string) {
 }
 
 function extractMock(text: string): ExtractResults {
-  const baseRoles = ['小雨', '阿川', '房东']
-  const baseScenes = ['十平米出租屋', '城郊老旧小区走廊', '窗边']
-  const baseProps = ['欠条', '风扇', '手机', '钥匙']
+  const baseRoles = ['Tiểu Vũ', 'A Xuyên', 'Chủ nhà']
+  const baseScenes = ['căn cho thuê 10m vuông', 'hành lang khu chung cư cũ ven đô', 'cạnh cửa sổ']
+  const baseProps = ['mậu nợ', 'quạt', 'điện thoại', 'chìa khóa']
   const hasText = text.trim().length > 0
 
   const storyboards: StoryboardSuggestion[] = (hasText ? Array.from({ length: 8 }) : []).map((_, i) => ({
     id: `sb-${i + 1}`,
     index: i + 1,
     title:
-      i === 2 ? '两人对峙' :
-        i === 5 ? '门口停顿' :
-          `段落推进 · ${i + 1}`,
+      i === 2 ? 'Hai người đối đầu' :
+        i === 5 ? 'Dừng lại trước cửa' :
+          `Đẩy đoạn · ${i + 1}`,
     preview:
-      i === 0 ? '夜色下的老旧小区，路灯昏黄，情绪压着。' :
-        i === 1 ? '出租屋内风扇吱呀作响，欠条摊在桌上。' :
-          i === 2 ? '沉默持续，目光交锋，谁也不肯先开口。' :
-            '对话推进，情绪起伏，动作带出关系变化。',
-    paragraphRange: `第${i * 2 + 1}–${i * 2 + 2}段`,
-    duration: i % 3 === 0 ? '8–12秒' : '5–9秒',
-    actions: i % 2 === 0 ? ['沉默', '转身'] : ['质问', '停顿'],
-    roles: i % 2 === 0 ? ['小雨', '阿川'] : ['小雨'],
-    scenes: i % 3 === 0 ? ['十平米出租屋'] : ['城郊老旧小区走廊'],
-    props: i % 2 === 0 ? ['欠条'] : ['手机'],
+      i === 0 ? 'Khu nhà cũ dưới ánh đêm, đèn đường vàng úa, cảm xúc đè nén.' :
+        i === 1 ? 'Trong phòng thuê, chiếc quạt kêu ọ ọ, tờ nợ trải trên bàn.' :
+          i === 2 ? 'Im lặng kéo dài, ánh mắt đối đầu, ai cũng không chịu mở lời trước.' :
+            'Th thoại đẩy mạch truyện, cảm xúc lên xuống, hành động kéo theo thay đổi quan hệ.',
+    paragraphRange: `đoạn ${i * 2 + 1}–${i * 2 + 2}`,
+    duration: i % 3 === 0 ? '8–12 giây' : '5–9 giây',
+    actions: i % 2 === 0 ? ['Lặng lẽ', 'Quay người'] : ['Chất vấn', 'Trì hoãn'],
+    roles: i % 2 === 0 ? ['Tiểu Vũ', 'A Xuyên'] : ['Tiểu Vũ'],
+    scenes: i % 3 === 0 ? ['căn cho thuê 10m vuông'] : ['hành lang khu chung cư cũ ven đô'],
+    props: i % 2 === 0 ? ['Giấy nợ'] : ['Điện thoại'],
     isTransition: i === 5,
   }))
 
   const roles: RoleItem[] = (hasText ? baseRoles : []).map((name, i) => ({
     id: `r-${i + 1}`,
     name,
-    aliases: name === '小雨' ? ['小雨儿'] : [],
-    firstSeen: `第${i + 1}段`,
-    description: name === '小雨' ? '25岁互联网运营，疲惫但眼神坚定。' : '情绪克制，话少但带刺。',
-    primary: name !== '房东',
+    aliases: name === 'Tiểu Vũ' ? ['Tiểu Vũ'] : [],
+    firstSeen: `Đoạn ${i + 1}`,
+    description: name === 'Xiao Vũ' ? 'Chuyên viên vận hành Internet 25 tuổi, mệt mỏi nhưng ánh mắt kiên định.' : 'Cảm xúc kìm chế, ít nói nhưng sắc lạnh.',
+    primary: name !== 'Chủ nhà',
   }))
 
   const scenes: SceneItem[] = (hasText ? baseScenes : []).map((name, i) => ({
     id: `s-${i + 1}`,
     name,
-    indoorOutdoor: i === 0 ? '室内' : i === 1 ? '室外' : '未知',
-    time: i === 1 ? '夜晚' : '未知',
-    keywords: i === 0 ? ['狭窄', '顶灯冷白'] : ['昏黄路灯', '潮湿'],
+    indoorOutdoor: i === 0 ? 'trong nhà' : i === 1 ? 'ngoài trời' : 'chưa rõ',
+    time: i === 1 ? 'Ban đêm' : 'Ban ngày',
+    keywords: i === 0 ? ['Hẹp', 'Đèn trần lạnh trắng'] : ['Đèn đường vàng úa', 'Đông'],
   }))
 
   const props: PropItem[] = (hasText ? baseProps : []).map((name, i) => ({
     id: `p-${i + 1}`,
     name,
-    owner: name === '手机' ? '小雨' : undefined,
+    owner: name === 'Điện thoại' ? 'Tiểu Vũ' : undefined,
     count: 1 + (i % 3),
-    key: name === '欠条',
+    key: name === 'Ghi nợ',
   }))
 
   return { storyboards, roles, scenes, props }
@@ -242,7 +242,7 @@ const ChapterPrep: React.FC = () => {
     navigate(`/projects/${projectId}?tab=chapters`)
   }
 
-  // 预留：后续在 step 编辑区可展示字数/段落数
+  // Lưu chỗ: sau này có thể hiển thị số chữ/số đoạn trong vùng chỉnh sửa step
 
   useEffect(() => {
     if (!chapterId) return
@@ -269,7 +269,7 @@ const ChapterPrep: React.FC = () => {
   }, [chapterId])
 
   useEffect(() => {
-    // 将提取结果映射为各 step 的可编辑草稿（尽量保留用户编辑/生成状态）
+    // Ánh xạ kết quả trích xuất thành bản nháp có thể chỉnh sửa của từng step (giữ tối đa trạng thái chỉnh sửa/tạo của người dùng)
     setSceneDrafts((prev) => {
       const prevMap = new Map(prev.map((x) => [x.id, x]))
       return results.scenes.map((s) => ({ ...s, ...(prevMap.get(s.id) ?? {}) }))
@@ -314,11 +314,11 @@ const ChapterPrep: React.FC = () => {
     }
   }, [projectId, existingEntities])
 
-  // TODO: 后续可在此接入“章节草稿/版本历史”接口，替换掉当前预置数据与本地状态实现。
+  // TODO: sau này có thể nối API "bản nháp chương/lịch sử phiên bản" tại đây, thay thế dữ liệu sẵn và trạng thái local hiện tại.
 
   const runExtract = async (kind: 'all' | ExtractKind) => {
     if (!rawText.trim()) {
-      message.warning('请先粘贴或输入原文')
+      message.warning('Vui lòng dán hoặc nhập nguyên văn trước')
       return
     }
     setExtracting(true)
@@ -340,9 +340,9 @@ const ChapterPrep: React.FC = () => {
             return prev
         }
       })
-      message.success('提取完成（Mock）')
+      message.success('Hoàn tất trích xuất (Mock)')
 
-      // 打开提取回显浮窗
+      // Mở hộp nổi hồi chiếu trích xuất
       if (kind === 'roles' || kind === 'scenes' || kind === 'props') {
         setExtractReviewTab(kind)
       } else {
@@ -366,7 +366,7 @@ const ChapterPrep: React.FC = () => {
   const addSelectedEntities = (kind: EntityKind) => {
     const selected = selectedEntityKeys[kind]
     if (selected.length === 0) {
-      message.info('请先选择要添加的内容')
+      message.info('Vui lòng chọn nội dung cần thêm')
       return
     }
     const duplicates = selected.filter((name) => existingSet[kind].has(name))
@@ -374,7 +374,7 @@ const ChapterPrep: React.FC = () => {
 
     const doAdd = () => {
       if (uniques.length === 0) {
-        message.info('所选内容均已存在，无需添加')
+        message.info('Nội dung đã chọn đều tồn tại, không cần thêm')
         return
       }
       setExistingEntities((prev) => ({
@@ -382,15 +382,15 @@ const ChapterPrep: React.FC = () => {
         [kind]: Array.from(new Set([...(prev[kind] as string[]), ...uniques])),
       }))
       setSelectedEntityKeys((prev) => ({ ...prev, [kind]: [] }))
-      message.success(`已添加 ${uniques.length} 项`)
+      message.success(`đã thêm ${uniques.length} mục`)
     }
 
     if (duplicates.length > 0) {
       Modal.confirm({
-        title: '存在重复内容',
-        content: `你选择的内容中有 ${duplicates.length} 项已存在，将自动跳过重复项，是否继续添加其余内容？`,
-        okText: '继续添加',
-        cancelText: '取消',
+        title: 'Tồn tại nội dung trùng lặp',
+        content: `Nội dung bạn chọn có ${duplicates.length} mục đã tồn tại, hệ thống sẽ tự động bỏ qua các mục trùng lặp, có tiếp tục thêm nội dung còn lại không？`,
+        okText: 'Tiếp tục thêm',
+        cancelText: 'Hủy',
         onOk: doAdd,
       })
       return
@@ -445,7 +445,7 @@ const ChapterPrep: React.FC = () => {
     }
     setEditEntityOpen(false)
     setEditEntityId(null)
-    message.success('已保存（Mock）')
+    message.success('Đã lưu (Mock)')
   }
 
   const openAddEntity = (kind: 'scene' | 'prop' | 'role') => {
@@ -457,7 +457,7 @@ const ChapterPrep: React.FC = () => {
 
   const addEntity = () => {
     if (!addEntityName.trim()) {
-      message.warning('请输入名称')
+      message.warning('Vui lòng nhập tên')
       return
     }
     const id = `${addEntityKind}-${Date.now()}`
@@ -467,8 +467,8 @@ const ChapterPrep: React.FC = () => {
         {
           id,
           name: addEntityName.trim(),
-          indoorOutdoor: '未知' as const,
-          time: '未知' as const,
+          indoorOutdoor: 'chưa rõ' as const,
+          time: 'Không rõ' as const,
           keywords: [] as string[],
           description: addEntityDesc,
         },
@@ -492,7 +492,7 @@ const ChapterPrep: React.FC = () => {
       ])
     }
     setAddEntityOpen(false)
-    message.success('已添加（Mock）')
+    message.success('Đã thêm (Mock)')
   }
 
   const openPickFromAssets = (kind: 'scene' | 'prop' | 'role') => {
@@ -503,7 +503,7 @@ const ChapterPrep: React.FC = () => {
 
   const confirmPickFromAssets = () => {
     if (pickFromAssetsSelected.length === 0) {
-      message.info('请先选择要添加的内容')
+      message.info('Vui lòng chọn nội dung cần thêm')
       return
     }
     if (pickFromAssetsKind === 'scene') {
@@ -512,10 +512,10 @@ const ChapterPrep: React.FC = () => {
         ...pickFromAssetsSelected.map((name) => ({
           id: `asset-scene-${name}`,
           name,
-          indoorOutdoor: '未知' as const,
-          time: '未知' as const,
+          indoorOutdoor: 'chưa rõ' as const,
+          time: 'Không rõ' as const,
           keywords: [] as string[],
-          description: '来自资产库（Mock）',
+          description: 'Từ thư viện tài nguyên (Mock)',
         })),
       ])
     } else if (pickFromAssetsKind === 'prop') {
@@ -526,7 +526,7 @@ const ChapterPrep: React.FC = () => {
           name,
           count: 1,
           key: false,
-          description: '来自资产库（Mock）',
+          description: 'Từ thư viện tài nguyên (Mock)',
         })),
       ])
     } else {
@@ -537,13 +537,13 @@ const ChapterPrep: React.FC = () => {
           name,
           aliases: [],
           firstSeen: '',
-          description: '来自资产库（Mock）',
+          description: 'Từ thư viện tài nguyên (Mock)',
           primary: true,
         })),
       ])
     }
     setPickFromAssetsOpen(false)
-    message.success('已从资产库添加（Mock）')
+    message.success('Đã thêm từ kho tài nguyên (Mock)')
   }
 
   const generateImages = (kind: 'scene' | 'prop' | 'role') => {
@@ -553,20 +553,20 @@ const ChapterPrep: React.FC = () => {
       setSceneDrafts((prev) =>
         prev.map((x) => (selectedSceneIds.includes(x.id) ? { ...x, imageUrl: url } : x)),
       )
-      message.success('已生成场景图片（Mock）')
+      message.success('Đã tạo hình ảnh bối cảnh (Mock)')
       return
     }
     if (kind === 'prop') {
       setPropDrafts((prev) =>
         prev.map((x) => (selectedPropIds.includes(x.id) ? { ...x, imageUrl: url } : x)),
       )
-      message.success('已生成道具图片（Mock）')
+      message.success('Đã tạo hình ảnh đạo cụ (Mock)')
       return
     }
     setRoleDrafts((prev) =>
       prev.map((x) => (selectedRoleIds.includes(x.id) ? { ...x, imageUrl: url } : x)),
     )
-    message.success('已生成角色图片（Mock）')
+    message.success('Đã tạo hình ảnh nhân vật (Mock)')
   }
 
   const openEditStoryboard = (sb: StoryboardDraft) => {
@@ -579,7 +579,7 @@ const ChapterPrep: React.FC = () => {
     setStoryboardDrafts((prev) => prev.map((x) => (x.id === editingStoryboard.id ? editingStoryboard : x)))
     setEditStoryboardOpen(false)
     setEditingStoryboard(null)
-    message.success('已保存分镜（Mock）')
+    message.success('Đã lưu phân cảnh (Mock)')
   }
 
   const currentItemsCount = useMemo(() => {
@@ -628,7 +628,7 @@ const ChapterPrep: React.FC = () => {
           to={projectId ? `/projects/${projectId}?tab=chapters` : '/projects'}
           className="text-gray-600 hover:text-blue-600 flex items-center gap-1"
         >
-          <ArrowLeftOutlined /> 返回章节列表
+          <ArrowLeftOutlined /> Quay lại danh sách chương
         </Link>
         <Divider type="vertical" />
 
@@ -651,14 +651,14 @@ const ChapterPrep: React.FC = () => {
           ) : (
             <div
               className="font-medium text-gray-900 truncate cursor-pointer"
-              title="双击编辑标题"
+              title="Nhấp đúp để sửa tiêu đề"
               onDoubleClick={() => setTitleEditing(true)}
             >
-              {chapter ? `第${chapter.index}章 · ${titleValue || chapter.title}` : '章节编辑'}
+              {chapter ? `Chương ${chapter.index} · ${titleValue || chapter.title}` : 'Chỉnh sửa chương'}
             </div>
           )}
           <div className="text-xs text-gray-500 flex items-center gap-1">
-            <CheckCircleOutlined /> 已加载
+            <CheckCircleOutlined /> Đã nạp
           </div>
         </div>
       </Header>
@@ -679,26 +679,26 @@ const ChapterPrep: React.FC = () => {
               onChange={setActiveStep}
               className="flex-1 min-w-[520px]"
               items={[
-                { title: '智能提取' },
-                { title: '场景生成' },
-                { title: '道具生成' },
-                { title: '角色生成' },
-                { title: '分镜预览' },
+                { title: 'Trích xuất thông minh' },
+                { title: 'Tạo bối cảnh' },
+                { title: 'Tạo đạo cụ' },
+                { title: 'Tạo nhân vật' },
+                { title: 'Xem trước phân cảnh' },
               ]}
             />
             <Space>
               {activeStep > 0 && (
                 <Button onClick={() => setActiveStep((s) => Math.max(0, s - 1))}>
-                  上一步：{['智能提取', '场景生成', '道具生成', '角色生成', '分镜预览'][activeStep - 1]}
+                  Bước trước: {['Trích xuất thông minh', 'Tạo bối cảnh', 'Tạo đạo cụ', 'Tạo nhân vật', 'Xem trước phân cảnh'][activeStep - 1]}
                 </Button>
               )}
               {activeStep < 4 ? (
                 <Button type="primary" onClick={() => setActiveStep((s) => Math.min(4, s + 1))}>
-                  下一步：{['智能提取', '场景生成', '道具生成', '角色生成', '分镜预览'][activeStep + 1]}
+                  Bước tiếp: {['Trích xuất thông minh', 'Tạo bối cảnh', 'Tạo đạo cụ', 'Tạo nhân vật', 'Xem trước phân cảnh'][activeStep + 1]}
                 </Button>
               ) : (
                 <Button type="primary" onClick={handleFinishPrep}>
-                  准备结束
+                  Chuẩn bị kết thúc
                 </Button>
               )}
             </Space>
@@ -711,38 +711,38 @@ const ChapterPrep: React.FC = () => {
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <Space>
                   <Button icon={<FileTextOutlined />} onClick={() => setEditorModalOpen(true)}>
-                    编辑原文
+                    Chỉnh sửa nguyên văn
                   </Button>
                   <Button type="primary" loading={extracting} icon={<ThunderboltOutlined />} onClick={() => void runExtract('all')}>
-                    一键提取全部
+                    Trích xuất tất cả bằng một nút
                   </Button>
                   <span className="text-xs text-gray-500">
-                    {currentItemsCount.roles + currentItemsCount.scenes + currentItemsCount.props > 0 ? '已提取，可重新提取' : '尚未提取'}
+                    {currentItemsCount.roles + currentItemsCount.scenes + currentItemsCount.props > 0 ? 'Đã trích xuất, có thể trích xuất lại' : 'Chưa trích xuất'}
                   </span>
                 </Space>
               </div>
             </Card>
 
-            {/* 左导航 + 右详情 */}
+            {/* Điều hướng trái + chi tiết phải */}
             <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 12, overflow: 'hidden' }}>
-              {/* 左侧导航 */}
+              {/* Điều hướng bên trái */}
               <Card
                 style={{ width: 340, minWidth: 280, maxWidth: 420, height: '100%', overflow: 'hidden', flexShrink: 0 }}
                 bodyStyle={{ padding: 12, height: '100%', minHeight: 0, overflow: 'auto' }}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="font-medium">提取结果导航</div>
-                  <Badge status={extracting ? 'processing' : 'success'} text={extracting ? '提取中…' : '就绪'} />
+                  <div className="font-medium">điều hướng kết quả trích xuất</div>
+                  <Badge status={extracting ? 'processing' : 'success'} text={extracting ? 'Đang trích xuất…' : 'Sẵn sàng'} />
                 </div>
                 <Collapse
                   defaultActiveKey={['storyboards']}
                   items={[
                     {
                       key: 'storyboards',
-                      label: `原文分镜建议（${currentItemsCount.storyboards}）`,
+                      label: `Gợi ý phân cảnh nguyên văn (${currentItemsCount.storyboards})`,
                       extra: (
                         <Space size="small">
-                          <Tooltip title="重新提取">
+                          <Tooltip title="Trích xuất lại">
                             <Button size="small" type="text" icon={<ReloadOutlined />} onClick={() => void runExtract('storyboards')} />
                           </Tooltip>
                         </Space>
@@ -753,7 +753,7 @@ const ChapterPrep: React.FC = () => {
                         <List
                           size="small"
                           dataSource={results.storyboards}
-                          locale={{ emptyText: <Empty description="暂无分镜建议" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                          locale={{ emptyText: <Empty description="Chưa có gợi ý phân cảnh" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                           renderItem={(it) => (
                             <List.Item
                               onClick={() => {
@@ -780,14 +780,14 @@ const ChapterPrep: React.FC = () => {
                     },
                     {
                       key: 'roles',
-                      label: `角色（${currentItemsCount.roles}）`,
+                      label: `Nhân vật (${currentItemsCount.roles})`,
                       children: extracting ? (
                         <Skeleton active paragraph={{ rows: 3 }} />
                       ) : (
                         <List
                           size="small"
                           dataSource={results.roles}
-                          locale={{ emptyText: <Empty description="暂无角色" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                          locale={{ emptyText: <Empty description="Chưa có nhân vật" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                           renderItem={(it) => (
                             <List.Item
                               onClick={() => {
@@ -812,14 +812,14 @@ const ChapterPrep: React.FC = () => {
                     },
                     {
                       key: 'scenes',
-                      label: `场景（${currentItemsCount.scenes}）`,
+                      label: `bối cảnh(${currentItemsCount.scenes})`,
                       children: extracting ? (
                         <Skeleton active paragraph={{ rows: 3 }} />
                       ) : (
                         <List
                           size="small"
                           dataSource={results.scenes}
-                          locale={{ emptyText: <Empty description="暂无场景" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                          locale={{ emptyText: <Empty description="Chưa có bối cảnh" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                           renderItem={(it) => (
                             <List.Item
                               onClick={() => {
@@ -844,14 +844,14 @@ const ChapterPrep: React.FC = () => {
                     },
                     {
                       key: 'props',
-                      label: `道具（${currentItemsCount.props}）`,
+                      label: `Đạo cụ (${currentItemsCount.props})`,
                       children: extracting ? (
                         <Skeleton active paragraph={{ rows: 3 }} />
                       ) : (
                         <List
                           size="small"
                           dataSource={results.props}
-                          locale={{ emptyText: <Empty description="暂无道具" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                          locale={{ emptyText: <Empty description="Chưa có đạo cụ" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                           renderItem={(it) => (
                             <List.Item
                               onClick={() => {
@@ -867,7 +867,7 @@ const ChapterPrep: React.FC = () => {
                             >
                               <div className="min-w-0">
                                 <div className="text-sm font-medium truncate">{it.name}</div>
-                                <div className="text-xs text-gray-500 truncate">出现 {it.count} 次{it.key ? ' · 关键道具' : ''}</div>
+                                <div className="text-xs text-gray-500 truncate">Xuất hiện {it.count} lần{it.key ? ' · Đạo cụ chính' : ''}</div>
                               </div>
                             </List.Item>
                           )}
@@ -878,59 +878,59 @@ const ChapterPrep: React.FC = () => {
                 />
               </Card>
 
-              {/* 右侧详情 */}
+              {/* Chi tiết bên phải */}
               <Card style={{ flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }} bodyStyle={{ padding: 12, height: '100%', minHeight: 0, overflow: 'auto' }}>
                 {selectedKind === 'storyboards' && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="font-medium">分镜建议</div>
+                      <div className="font-medium">Gợi ý phân cảnh</div>
                       <Space>
-                        <Button icon={<MergeCellsOutlined />}>批量操作（Mock）</Button>
-                        <Button icon={<PlayCircleOutlined />}>预览（Mock）</Button>
+                        <Button icon={<MergeCellsOutlined />}>Thao tác theo lô (Mock)</Button>
+                        <Button icon={<PlayCircleOutlined />}>Xem trước（Mock）</Button>
                       </Space>
                     </div>
                     {selectedStoryboard ? (
                       <Card size="small">
                         <div className="text-base font-semibold">
                           {String(selectedStoryboard.index).padStart(2, '0')} · {selectedStoryboard.title}
-                          {selectedStoryboard.isTransition && <Tag color="purple" className="ml-2">转场点</Tag>}
+                          {selectedStoryboard.isTransition && <Tag color="purple" className="ml-2">Điểm chuyển cảnh</Tag>}
                         </div>
                         <Divider />
                         <div className="grid grid-cols-2 gap-3 text-sm">
-                          <div><span className="text-gray-500">原文段落：</span>{selectedStoryboard.paragraphRange}</div>
-                          <div><span className="text-gray-500">建议时长：</span>{selectedStoryboard.duration}</div>
-                          <div><span className="text-gray-500">关键动作：</span>{selectedStoryboard.actions.join('、')}</div>
-                          <div><span className="text-gray-500">涉及角色：</span>{selectedStoryboard.roles.join('、')}</div>
-                          <div><span className="text-gray-500">涉及场景：</span>{selectedStoryboard.scenes.join('、')}</div>
-                          <div><span className="text-gray-500">涉及道具：</span>{selectedStoryboard.props.join('、')}</div>
+                          <div><span className="text-gray-500">Đoạn văn bản gốc:</span>{selectedStoryboard.paragraphRange}</div>
+                          <div><span className="text-gray-500">Thời lượng đề xuất：</span>{selectedStoryboard.duration}</div>
+                          <div><span className="text-gray-500">Hành động chính:</span>{selectedStoryboard.actions.join('、')}</div>
+                          <div><span className="text-gray-500">Nhân vật liên quan:</span>{selectedStoryboard.roles.join('、')}</div>
+                          <div><span className="text-gray-500">Bối cảnh liên quan:</span>{selectedStoryboard.scenes.join('、')}</div>
+                          <div><span className="text-gray-500">Đạo cụ liên quan:</span>{selectedStoryboard.props.join('、')}</div>
                         </div>
                         <Divider />
                         <Space wrap>
-                          <Button icon={<EditOutlined />}>编辑标题（Mock）</Button>
-                          <Button icon={<MergeCellsOutlined />}>合并到上一条（Mock）</Button>
-                          <Button icon={<DeleteOutlined />} danger>删除（Mock）</Button>
-                          <Button icon={<VideoCameraOutlined />}>标记为转场（Mock）</Button>
+                          <Button icon={<EditOutlined />}>Chỉnh sửa tiêu đề (Mock)</Button>
+                          <Button icon={<MergeCellsOutlined />}>Gộp vào mục trước (Mock)</Button>
+                          <Button icon={<DeleteOutlined />} danger>Xóa (Mock)</Button>
+                          <Button icon={<VideoCameraOutlined />}>Đánh dấu là chuyển cảnh (Mock)</Button>
                         </Space>
                       </Card>
                     ) : (
-                      <Empty description="请从左侧选择一条分镜建议" />
+                      <Empty description="Hãy chọn một gợi ý phân cảnh từ thanh bên trái" />
                     )}
                   </div>
                 )}
 
                 {selectedKind === 'roles' && (
                   <div className="space-y-3">
-                    <div className="font-medium">角色</div>
+                    <div className="font-medium">Nhân vật</div>
                     {selectedRole ? (
                       <Card size="small">
                         <div className="flex items-center justify-between">
                           <div className="text-base font-semibold">{selectedRole.name}</div>
                           <Space>
-                            <span className="text-sm text-gray-500">主要角色</span>
+                            <span className="text-sm text-gray-500">Nhân vật chính</span>
                             <Switch checked={selectedRole.primary} />
                           </Space>
                         </div>
-                        <div className="text-sm text-gray-500 mt-1">首次出现：{selectedRole.firstSeen}</div>
+                        <div className="text-sm text-gray-500 mt-1">Xuất hiện lần đầu: {selectedRole.firstSeen}</div>
                         <Divider />
                         <div className="text-sm">{selectedRole.description}</div>
                         <div className="mt-2">
@@ -940,20 +940,20 @@ const ChapterPrep: React.FC = () => {
                         </div>
                         <Divider />
                         <Space wrap>
-                          <Button>关联资产库角色（Mock）</Button>
-                          <Button type="primary">创建新角色资产（Mock）</Button>
-                          <Button danger icon={<DeleteOutlined />}>删除（Mock）</Button>
+                          <Button>Liên kết nhân vật từ kho tài nguyên (Mock)</Button>
+                          <Button type="primary">tạo tài nguyên nhân vật mới(Mock)</Button>
+                          <Button danger icon={<DeleteOutlined />}>Xóa (Mock)</Button>
                         </Space>
                       </Card>
                     ) : (
-                      <Empty description="请从左侧选择一个角色" />
+                      <Empty description="Hãy chọn một nhân vật từ thanh bên trái" />
                     )}
                   </div>
                 )}
 
                 {selectedKind === 'scenes' && (
                   <div className="space-y-3">
-                    <div className="font-medium">场景</div>
+                    <div className="font-medium">Bối cảnh</div>
                     {selectedScene ? (
                       <Card size="small">
                         <div className="text-base font-semibold">{selectedScene.name}</div>
@@ -964,36 +964,36 @@ const ChapterPrep: React.FC = () => {
                         </div>
                         <Divider />
                         <Space wrap>
-                          <Button>关联资产库场景（Mock）</Button>
-                          <Button type="primary">创建新场景资产（Mock）</Button>
-                          <Button danger icon={<DeleteOutlined />}>删除（Mock）</Button>
+                          <Button>Liên kết bối cảnh từ kho tài nguyên (Mock)</Button>
+                          <Button type="primary">tạo tài nguyên bối cảnh mới(Mock)</Button>
+                          <Button danger icon={<DeleteOutlined />}>Xóa (Mock)</Button>
                         </Space>
                       </Card>
                     ) : (
-                      <Empty description="请从左侧选择一个场景" />
+                      <Empty description="Hãy chọn một bối cảnh từ thanh bên trái" />
                     )}
                   </div>
                 )}
 
                 {selectedKind === 'props' && (
                   <div className="space-y-3">
-                    <div className="font-medium">道具</div>
+                    <div className="font-medium">Đạo cụ</div>
                     {selectedProp ? (
                       <Card size="small">
                         <div className="flex items-center gap-2">
                           <div className="text-base font-semibold">{selectedProp.name}</div>
-                          {selectedProp.key && <Tag color="gold">关键道具</Tag>}
+                          {selectedProp.key && <Tag color="gold">Đạo cụ chính</Tag>}
                         </div>
-                        <div className="text-sm text-gray-500 mt-1">出现次数：{selectedProp.count}</div>
+                        <div className="text-sm text-gray-500 mt-1">Số lần xuất hiện: {selectedProp.count}</div>
                         <Divider />
                         <Space wrap>
-                          <Button>关联资产库道具（Mock）</Button>
-                          <Button type="primary">创建新道具资产（Mock）</Button>
-                          <Button danger icon={<DeleteOutlined />}>删除（Mock）</Button>
+                          <Button>Liên kết đạo cụ từ kho tài nguyên (Mock)</Button>
+                          <Button type="primary">tạo tài nguyên đạo cụ mới(Mock)</Button>
+                          <Button danger icon={<DeleteOutlined />}>Xóa (Mock)</Button>
                         </Space>
                       </Card>
                     ) : (
-                      <Empty description="请从左侧选择一个道具" />
+                      <Empty description="Hãy chọn một đạo cụ từ thanh bên trái" />
                     )}
                   </div>
                 )}
@@ -1003,17 +1003,17 @@ const ChapterPrep: React.FC = () => {
         )}
 
         {activeStep === 1 && (
-          <Card title="场景生成" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
+          <Card title="Tạo bối cảnh" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
             <div className="flex items-center justify-between mb-3">
               <Space>
                 <Button type="primary" disabled={selectedSceneIds.length === 0} onClick={() => generateImages('scene')}>
-                  批量生成图片（Mock）
+                  Tạo hàng loạt ảnh (Mock)
                 </Button>
-                <span className="text-xs text-gray-500">已选 {selectedSceneIds.length} 项</span>
+                <span className="text-xs text-gray-500">Đã chọn {selectedSceneIds.length} mục</span>
               </Space>
               <Space>
-                <Button onClick={() => openAddEntity('scene')}>手动添加</Button>
-                <Button onClick={() => openPickFromAssets('scene')}>从资产库添加</Button>
+                <Button onClick={() => openAddEntity('scene')}>Thêm thủ công</Button>
+                <Button onClick={() => openPickFromAssets('scene')}>Thêm từ thư viện tài nguyên</Button>
               </Space>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -1036,13 +1036,13 @@ const ChapterPrep: React.FC = () => {
                   }
                   extra={
                     <Button size="small" type="link" icon={<EditOutlined />} onClick={() => openEditEntity('scene', s.id)}>
-                      编辑
+                      Chỉnh sửa
                     </Button>
                   }
                 >
-                  <div className="text-xs text-gray-500 mb-2 line-clamp-2">{s.description || '暂无描述'}</div>
+                  <div className="text-xs text-gray-500 mb-2 line-clamp-2">{s.description || 'Chưa có mô tả'}</div>
                   <div className="h-32 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 text-sm">
-                    {s.imageUrl ? '已生成（Mock）' : '未生成'}
+                    {s.imageUrl ? 'Đã tạo (Mock)' : 'Chưa tạo'}
                   </div>
                 </Card>
               ))}
@@ -1051,17 +1051,17 @@ const ChapterPrep: React.FC = () => {
         )}
 
         {activeStep === 2 && (
-          <Card title="道具生成" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
+          <Card title="Tạo đạo cụ" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
             <div className="flex items-center justify-between mb-3">
               <Space>
                 <Button type="primary" disabled={selectedPropIds.length === 0} onClick={() => generateImages('prop')}>
-                  批量生成图片（Mock）
+                  Tạo hàng loạt ảnh (Mock)
                 </Button>
-                <span className="text-xs text-gray-500">已选 {selectedPropIds.length} 项</span>
+                <span className="text-xs text-gray-500">Đã chọn {selectedPropIds.length} mục</span>
               </Space>
               <Space>
-                <Button onClick={() => openAddEntity('prop')}>手动添加</Button>
-                <Button onClick={() => openPickFromAssets('prop')}>从资产库添加</Button>
+                <Button onClick={() => openAddEntity('prop')}>Thêm thủ công</Button>
+                <Button onClick={() => openPickFromAssets('prop')}>Thêm từ thư viện tài nguyên</Button>
               </Space>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -1084,13 +1084,13 @@ const ChapterPrep: React.FC = () => {
                   }
                   extra={
                     <Button size="small" type="link" icon={<EditOutlined />} onClick={() => openEditEntity('prop', p.id)}>
-                      编辑
+                      Chỉnh sửa
                     </Button>
                   }
                 >
-                  <div className="text-xs text-gray-500 mb-2 line-clamp-2">{p.description || '暂无描述'}</div>
+                  <div className="text-xs text-gray-500 mb-2 line-clamp-2">{p.description || 'Chưa có mô tả'}</div>
                   <div className="h-32 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 text-sm">
-                    {p.imageUrl ? '已生成（Mock）' : '未生成'}
+                    {p.imageUrl ? 'Đã tạo (Mock)' : 'Chưa tạo'}
                   </div>
                 </Card>
               ))}
@@ -1099,17 +1099,17 @@ const ChapterPrep: React.FC = () => {
         )}
 
         {activeStep === 3 && (
-          <Card title="角色生成" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
+          <Card title="Tạo nhân vật" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
             <div className="flex items-center justify-between mb-3">
               <Space>
                 <Button type="primary" disabled={selectedRoleIds.length === 0} onClick={() => generateImages('role')}>
-                  批量生成图片（Mock）
+                  Tạo hàng loạt ảnh (Mock)
                 </Button>
-                <span className="text-xs text-gray-500">已选 {selectedRoleIds.length} 项</span>
+                <span className="text-xs text-gray-500">Đã chọn {selectedRoleIds.length} mục</span>
               </Space>
               <Space>
-                <Button onClick={() => openAddEntity('role')}>手动添加</Button>
-                <Button onClick={() => openPickFromAssets('role')}>从资产库添加</Button>
+                <Button onClick={() => openAddEntity('role')}>Thêm thủ công</Button>
+                <Button onClick={() => openPickFromAssets('role')}>Thêm từ thư viện tài nguyên</Button>
               </Space>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -1132,13 +1132,13 @@ const ChapterPrep: React.FC = () => {
                   }
                   extra={
                     <Button size="small" type="link" icon={<EditOutlined />} onClick={() => openEditEntity('role', r.id)}>
-                      编辑
+                      Chỉnh sửa
                     </Button>
                   }
                 >
-                  <div className="text-xs text-gray-500 mb-2 line-clamp-2">{r.description || '暂无描述'}</div>
+                  <div className="text-xs text-gray-500 mb-2 line-clamp-2">{r.description || 'Chưa có mô tả'}</div>
                   <div className="h-32 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 text-sm">
-                    {r.imageUrl ? '已生成（Mock）' : '未生成'}
+                    {r.imageUrl ? 'Đã tạo (Mock)' : 'Chưa tạo'}
                   </div>
                 </Card>
               ))}
@@ -1147,24 +1147,24 @@ const ChapterPrep: React.FC = () => {
         )}
 
         {activeStep === 4 && (
-          <Card title="分镜预览" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
+          <Card title="Xem trước phân cảnh" style={{ flex: 1, minHeight: 0, overflow: 'auto' }} bodyStyle={{ padding: 12 }}>
             <Table<StoryboardDraft>
               rowKey="id"
               dataSource={storyboardDrafts}
               pagination={{ pageSize: 10 }}
               size="small"
               columns={[
-                { title: '序号', dataIndex: 'index', key: 'index', width: 80 },
-                { title: '标题', dataIndex: 'title', key: 'title', ellipsis: true },
-                { title: '预览', dataIndex: 'preview', key: 'preview', ellipsis: true },
-                { title: '段落', dataIndex: 'paragraphRange', key: 'paragraphRange', width: 120 },
+                { title: 'Số thứ tự', dataIndex: 'index', key: 'index', width: 80 },
+                { title: 'Tiêu đề', dataIndex: 'title', key: 'title', ellipsis: true },
+                { title: 'Xem trước', dataIndex: 'preview', key: 'preview', ellipsis: true },
+                { title: 'Đoạn', dataIndex: 'paragraphRange', key: 'paragraphRange', width: 120 },
                 {
-                  title: '操作',
+                  title: 'Thao tác',
                   key: 'action',
                   width: 90,
                   render: (_, record) => (
                     <Button type="link" size="small" onClick={() => openEditStoryboard(record)}>
-                      编辑
+                      Chỉnh sửa
                     </Button>
                   ),
                 },
@@ -1175,23 +1175,23 @@ const ChapterPrep: React.FC = () => {
       </Content>
 
       <Modal
-        title="编辑信息"
+        title="Chỉnh sửa thông tin"
         open={editEntityOpen}
         onCancel={() => {
           setEditEntityOpen(false)
           setEditEntityId(null)
         }}
         onOk={saveEditEntity}
-        okText="保存"
+        okText="Lưu"
         width={560}
       >
         <div className="space-y-3">
           <div>
-            <span className="text-gray-600 text-sm">名称</span>
+            <span className="text-gray-600 text-sm">Tên</span>
             <Input value={editEntityName} onChange={(e) => setEditEntityName(e.target.value)} className="mt-1" />
           </div>
           <div>
-            <span className="text-gray-600 text-sm">描述</span>
+            <span className="text-gray-600 text-sm">Mô tả</span>
             <Input.TextArea
               value={editEntityDesc}
               onChange={(e) => setEditEntityDesc(e.target.value)}
@@ -1203,20 +1203,20 @@ const ChapterPrep: React.FC = () => {
       </Modal>
 
       <Modal
-        title="手动添加"
+        title="Thêm thủ công"
         open={addEntityOpen}
         onCancel={() => setAddEntityOpen(false)}
         onOk={addEntity}
-        okText="添加"
+        okText="Thêm"
         width={560}
       >
         <div className="space-y-3">
           <div>
-            <span className="text-gray-600 text-sm">名称</span>
+            <span className="text-gray-600 text-sm">Tên</span>
             <Input value={addEntityName} onChange={(e) => setAddEntityName(e.target.value)} className="mt-1" />
           </div>
           <div>
-            <span className="text-gray-600 text-sm">描述</span>
+            <span className="text-gray-600 text-sm">Mô tả</span>
             <Input.TextArea
               value={addEntityDesc}
               onChange={(e) => setAddEntityDesc(e.target.value)}
@@ -1228,14 +1228,14 @@ const ChapterPrep: React.FC = () => {
       </Modal>
 
       <Modal
-        title="从资产库添加（Mock）"
+        title="Thêm từ thư viện tài nguyên (Mock)"
         open={pickFromAssetsOpen}
         onCancel={() => setPickFromAssetsOpen(false)}
         onOk={confirmPickFromAssets}
-        okText="添加所选"
+        okText="Thêm mục đã chọn"
         width={560}
       >
-        <div className="text-xs text-gray-500 mb-2">当前数据来自本地“已存在集合”的 Mock。</div>
+        <div className="text-xs text-gray-500 mb-2">Dữ liệu hiện tại đến từ Mock "bộ đã tồn tại" cục bộ.</div>
         <Checkbox.Group
           value={pickFromAssetsSelected}
           onChange={(vals) => setPickFromAssetsSelected(vals as string[])}
@@ -1259,23 +1259,23 @@ const ChapterPrep: React.FC = () => {
           : pickFromAssetsKind === 'prop'
             ? existingEntities.props
             : existingEntities.roles
-        ).length === 0) && <Empty description="资产库暂无内容（Mock）" image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+        ).length === 0) && <Empty description="Thư viện tài nguyên trống (Mock)" image={Empty.PRESENTED_IMAGE_SIMPLE} />}
       </Modal>
 
       <Modal
-        title={editingStoryboard ? `编辑分镜：${editingStoryboard.title}` : '编辑分镜'}
+        title={editingStoryboard ? `Chỉnh sửa phân cảnh: ${editingStoryboard.title}` : 'Chỉnh sửa phân cảnh'}
         open={editStoryboardOpen}
         onCancel={() => {
           setEditStoryboardOpen(false)
           setEditingStoryboard(null)
         }}
         onOk={saveStoryboard}
-        okText="保存"
+        okText="Lưu"
         width={640}
       >
         <div className="space-y-3">
           <div>
-            <span className="text-gray-600 text-sm">标题</span>
+            <span className="text-gray-600 text-sm">tiêu đề</span>
             <Input
               value={editingStoryboard?.title ?? ''}
               onChange={(e) =>
@@ -1285,7 +1285,7 @@ const ChapterPrep: React.FC = () => {
             />
           </div>
           <div>
-            <span className="text-gray-600 text-sm">预览</span>
+            <span className="text-gray-600 text-sm">xem trước</span>
             <Input.TextArea
               value={editingStoryboard?.preview ?? ''}
               onChange={(e) =>
@@ -1296,7 +1296,7 @@ const ChapterPrep: React.FC = () => {
             />
           </div>
           <div>
-            <span className="text-gray-600 text-sm">段落范围</span>
+            <span className="text-gray-600 text-sm">Phạm vi đoạn</span>
             <Input
               value={editingStoryboard?.paragraphRange ?? ''}
               onChange={(e) =>
@@ -1318,15 +1318,15 @@ const ChapterPrep: React.FC = () => {
         }}
       />
 
-      {/* 提取结果回显浮窗 */}
+      {/* Cửa sổ nổi hồi diễn kết quả trích xuất */}
       <Modal
-        title="提取结果"
+        title="Kết quả trích xuất"
         open={extractReviewOpen}
         onCancel={() => setExtractReviewOpen(false)}
         width={860}
         footer={
           <Space>
-            <Button onClick={() => setExtractReviewOpen(false)}>关闭</Button>
+            <Button onClick={() => setExtractReviewOpen(false)}>Đóng</Button>
           </Space>
         }
         styles={{ body: { maxHeight: '70vh', overflow: 'auto' } }}
@@ -1337,17 +1337,17 @@ const ChapterPrep: React.FC = () => {
           items={[
             {
               key: 'roles',
-              label: `角色（${results.roles.length}）`,
+              label: `Nhân vật (${results.roles.length})`,
               children: (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500">勾选后可添加到“已存在”集合（本地 Mock）。</div>
+                    <div className="text-xs text-gray-500">Sau khi tích chọn có thể thêm vào nhóm “Đã tồn tại” (Mock cục bộ).</div>
                     <Space size="small">
                       <Button size="small" onClick={() => toggleSelectAllNew('roles')}>
-                        全选新项
+                        Chọn hết mục mới
                       </Button>
                       <Button size="small" type="primary" onClick={() => addSelectedEntities('roles')}>
-                        添加所选
+                        Thêm mục đã chọn
                       </Button>
                     </Space>
                   </div>
@@ -1358,7 +1358,7 @@ const ChapterPrep: React.FC = () => {
                   >
                     <List
                       dataSource={results.roles}
-                      locale={{ emptyText: <Empty description="暂无角色" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                      locale={{ emptyText: <Empty description="Chưa có nhân vật" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                       renderItem={(it) => {
                         const existed = existingSet.roles.has(it.name)
                         return (
@@ -1367,10 +1367,10 @@ const ChapterPrep: React.FC = () => {
                               <Checkbox value={it.name}>
                                 <span className="font-medium">{it.name}</span>
                                 {it.aliases?.length ? (
-                                  <span className="text-xs text-gray-500 ml-2">别名：{it.aliases.join('、')}</span>
+                                  <span className="text-xs text-gray-500 ml-2">Tên khác: {it.aliases.join('、')}</span>
                                 ) : null}
                               </Checkbox>
-                              {existed ? <Tag color="default">已存在</Tag> : <Tag color="green">新</Tag>}
+                              {existed ? <Tag color="default">Đã tồn tại</Tag> : <Tag color="green">Mới</Tag>}
                             </div>
                           </List.Item>
                         )
@@ -1382,17 +1382,17 @@ const ChapterPrep: React.FC = () => {
             },
             {
               key: 'scenes',
-              label: `场景（${results.scenes.length}）`,
+              label: `Bối cảnh (${results.scenes.length})`,
               children: (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500">勾选后可添加到“已存在”集合（本地 Mock）。</div>
+                    <div className="text-xs text-gray-500">Sau khi tích chọn có thể thêm vào nhóm “Đã tồn tại” (Mock cục bộ).</div>
                     <Space size="small">
                       <Button size="small" onClick={() => toggleSelectAllNew('scenes')}>
-                        全选新项
+                        Chọn hết mục mới
                       </Button>
                       <Button size="small" type="primary" onClick={() => addSelectedEntities('scenes')}>
-                        添加所选
+                        Thêm mục đã chọn
                       </Button>
                     </Space>
                   </div>
@@ -1403,7 +1403,7 @@ const ChapterPrep: React.FC = () => {
                   >
                     <List
                       dataSource={results.scenes}
-                      locale={{ emptyText: <Empty description="暂无场景" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                      locale={{ emptyText: <Empty description="Chưa có bối cảnh" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                       renderItem={(it) => {
                         const existed = existingSet.scenes.has(it.name)
                         return (
@@ -1415,7 +1415,7 @@ const ChapterPrep: React.FC = () => {
                                   {it.indoorOutdoor} · {it.time}
                                 </span>
                               </Checkbox>
-                              {existed ? <Tag color="default">已存在</Tag> : <Tag color="green">新</Tag>}
+                              {existed ? <Tag color="default">Đã tồn tại</Tag> : <Tag color="green">Mới</Tag>}
                             </div>
                           </List.Item>
                         )
@@ -1427,17 +1427,17 @@ const ChapterPrep: React.FC = () => {
             },
             {
               key: 'props',
-              label: `道具（${results.props.length}）`,
+              label: `Đạo cụ (${results.props.length})`,
               children: (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500">勾选后可添加到“已存在”集合（本地 Mock）。</div>
+                    <div className="text-xs text-gray-500">Sau khi tích chọn có thể thêm vào nhóm “Đã tồn tại” (Mock cục bộ).</div>
                     <Space size="small">
                       <Button size="small" onClick={() => toggleSelectAllNew('props')}>
-                        全选新项
+                        Chọn hết mục mới
                       </Button>
                       <Button size="small" type="primary" onClick={() => addSelectedEntities('props')}>
-                        添加所选
+                        Thêm mục đã chọn
                       </Button>
                     </Space>
                   </div>
@@ -1448,7 +1448,7 @@ const ChapterPrep: React.FC = () => {
                   >
                     <List
                       dataSource={results.props}
-                      locale={{ emptyText: <Empty description="暂无道具" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                      locale={{ emptyText: <Empty description="Chưa có đạo cụ" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                       renderItem={(it) => {
                         const existed = existingSet.props.has(it.name)
                         return (
@@ -1457,10 +1457,10 @@ const ChapterPrep: React.FC = () => {
                               <Checkbox value={it.name}>
                                 <span className="font-medium">{it.name}</span>
                                 <span className="text-xs text-gray-500 ml-2">
-                                  出现 {it.count} 次{it.key ? ' · 关键道具' : ''}
+                                  Xuất hiện {it.count} lần{it.key ? ' · Đạo cụ chính' : ''}
                                 </span>
                               </Checkbox>
-                              {existed ? <Tag color="default">已存在</Tag> : <Tag color="green">新</Tag>}
+                              {existed ? <Tag color="default">Đã tồn tại</Tag> : <Tag color="green">Mới</Tag>}
                             </div>
                           </List.Item>
                         )

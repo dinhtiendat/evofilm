@@ -119,8 +119,8 @@ import './chapterStudio.separation.css'
 const { Sider, Content } = Layout
 const { TextArea } = Input
 
-const FRAME_FILE_TAG_ADOPT = '采用'
-const FRAME_FILE_TAG_ABANDON = '废弃'
+const FRAME_FILE_TAG_ADOPT = 'áp dụng'
+const FRAME_FILE_TAG_ABANDON = 'Loại bỏ'
 
 type ShotFramePromptDebugContext = Record<string, unknown>
 type ShotFramePromptQualityChecks = {
@@ -151,7 +151,7 @@ function normalizeFrameExclusiveTags(tags: string[]): string[] {
   const rest = cleaned.filter((t) => t !== FRAME_FILE_TAG_ADOPT && t !== FRAME_FILE_TAG_ABANDON)
   if (hasAdopt && !hasAbandon) return [FRAME_FILE_TAG_ADOPT, ...rest]
   if (!hasAdopt && hasAbandon) return [FRAME_FILE_TAG_ABANDON, ...rest]
-  // 两者都没有或同时存在：同时存在时默认保留“采用”
+  // Cả hai đều không có hoặc đồng thời tồn tại: khi đồng thời tồn tại thì mặc định giữ “chấp nhận”
   if (hasAdopt && hasAbandon) return [FRAME_FILE_TAG_ADOPT, ...rest]
   return rest
 }
@@ -182,8 +182,8 @@ function buildKeyframeGuidanceSummary(items: string[]): string[] {
 
 function stripDirectiveLevelPrefix(item: string): string {
   const text = String(item || '').trim()
-  if (text.startsWith('必须：')) return text.slice(3).trim()
-  if (text.startsWith('优先：')) return text.slice(3).trim()
+  if (text.startsWith('Bắt buộc：')) return text.slice(3).trim()
+  if (text.startsWith('Ưu tiên：')) return text.slice(3).trim()
   return text
 }
 
@@ -196,10 +196,10 @@ function parseDirectorCommandSummary(summary: string): Array<{
     .map((item) => item.trim())
     .filter(Boolean)
     .map((item) => {
-      if (item.startsWith('必须：')) {
+      if (item.startsWith('Bắt buộc:')) {
         return { level: 'must' as const, text: item.slice(3).trim() }
       }
-      if (item.startsWith('优先：')) {
+      if (item.startsWith('Ưu tiên:')) {
         return { level: 'prefer' as const, text: item.slice(3).trim() }
       }
       return { level: 'prefer' as const, text: item }
@@ -225,9 +225,9 @@ function buildActionBeatPhaseTags(summary: string): Array<{ text: string; phaseL
     .map((item) => item.trim())
     .filter(Boolean)
     .map((item) => {
-      const matched = item.match(/^\d+\.\s*(触发|峰值|收束)\s*·\s*(.+)$/)
+      const matched = item.match(/^\d+\.\s*(kích hoạt|đỉnh|khép lại)\s*·\s*(.+)$/)
       if (!matched) {
-        return { phaseLabel: '阶段', text: item }
+        return { phaseLabel: 'Giai đoạn', text: item }
       }
       return {
         phaseLabel: matched[1],
@@ -288,7 +288,7 @@ function sleep(ms: number) {
 }
 
 function getResolutionProfileLabel(profile: KeyframeResolutionProfile): string {
-  return profile === 'high' ? '高清（3K）' : '标准（2K）'
+  return profile === 'high' ? 'cao (3K)' : 'chuẩn (2K)'
 }
 
 function resolveKeyframePixelSize(
@@ -318,35 +318,35 @@ function getKeyframeRenderStatusMeta(state: GenerationDraftState) {
   if (renderState === 'clean') {
     return {
       color: 'green' as const,
-      label: '已同步',
-      description: '当前最终提示词已与基础提示词和参考图顺序保持一致。',
+      label: 'Đã đồng bộ',
+      description: 'prompt cuối hiện tại đã giữ nhất quán với prompt nền và thứ tự ảnh tham chiếu.',
     }
   }
   if (renderState === 'syncing') {
     return {
       color: 'blue' as const,
-      label: '同步中',
-      description: '正在根据当前基础提示词和参考图顺序更新最终提示词…',
+      label: 'Đang đồng bộ',
+      description: 'đang cập nhật prompt cuối dựa trên prompt nền và thứ tự ảnh tham chiếu hiện tại…',
     }
   }
   if (renderState === 'error') {
     return {
       color: 'red' as const,
-      label: '同步失败',
-      description: '自动更新失败，请重试。若问题持续存在，请检查基础提示词和参考图。',
+      label: 'Đồng bộ thất bại',
+      description: 'cập nhật tự động thất bại, vui lòng thử lại. Nếu vấn đề vẫn tiếp diễn, vui lòng kiểm tra prompt nền và ảnh tham chiếu.',
     }
   }
   if (renderState === 'idle') {
     return {
       color: 'default' as const,
-      label: '待生成',
-      description: '请先输入基础提示词，系统会自动生成最终提示词。',
+      label: 'Chờ tạo',
+      description: 'Vui lòng nhập prompt cơ bản trước, hệ thống sẽ tự sinh prompt cuối cùng.'
     }
   }
   return {
     color: 'gold' as const,
-    label: '待同步',
-    description: '基础提示词或参考图顺序已变化，最终提示词正在等待更新。',
+    label: 'Chờ đồng bộ',
+    description: 'prompt nền hoặc thứ tự ảnh tham chiếu đã thay đổi, prompt cuối đang chờ cập nhật.',
   }
 }
 
@@ -410,36 +410,36 @@ function toUIChapter(c: ChapterRead): Chapter {
 }
 
 const CAMERA_SHOT_OPTIONS: { value: CameraShotType; label: string }[] = [
-  { value: 'ECU', label: '极特写' },
-  { value: 'CU', label: '特写' },
-  { value: 'MCU', label: '中近景' },
-  { value: 'MS', label: '中景' },
-  { value: 'MLS', label: '中远景' },
-  { value: 'LS', label: '远景' },
-  { value: 'ELS', label: '大全景' },
+  { value: 'ECU', label: 'Cận cực lớn' },
+  { value: 'CU', label: 'Cận cảnh' },
+  { value: 'MCU', label: 'Cảnh trung gần' },
+  { value: 'MS', label: 'Cảnh trung' },
+  { value: 'MLS', label: 'Cảnh trung xa' },
+  { value: 'LS', label: 'Cảnh xa' },
+  { value: 'ELS', label: 'Toàn cảnh lớn' },
 ]
 
 const CAMERA_ANGLE_OPTIONS: { value: CameraAngle; label: string }[] = [
-  { value: 'EYE_LEVEL', label: '平视' },
-  { value: 'HIGH_ANGLE', label: '俯视' },
-  { value: 'LOW_ANGLE', label: '仰视' },
-  { value: 'BIRD_EYE', label: '鸟瞰' },
-  { value: 'DUTCH', label: '倾斜' },
-  { value: 'OVER_SHOULDER', label: '越肩' },
+  { value: 'EYE_LEVEL', label: 'Ngang tầm mắt' },
+  { value: 'HIGH_ANGLE', label: 'Góc cao' },
+  { value: 'LOW_ANGLE', label: 'Góc thấp' },
+  { value: 'BIRD_EYE', label: 'Góc nhìn từ trên cao' },
+  { value: 'DUTCH', label: 'nghiêng' },
+  { value: 'OVER_SHOULDER', label: 'Vượt vai' },
 ]
 
 const CAMERA_MOVEMENT_OPTIONS: { value: CameraMovement; label: string }[] = [
-  { value: 'STATIC', label: '固定' },
-  { value: 'PAN', label: '摇镜' },
-  { value: 'TILT', label: '俯仰' },
-  { value: 'DOLLY_IN', label: '推进' },
-  { value: 'DOLLY_OUT', label: '拉出' },
-  { value: 'TRACK', label: '跟拍' },
-  { value: 'CRANE', label: '升降' },
-  { value: 'HANDHELD', label: '手持' },
-  { value: 'STEADICAM', label: '稳定器' },
-  { value: 'ZOOM_IN', label: '变焦推' },
-  { value: 'ZOOM_OUT', label: '变焦拉' },
+  { value: 'STATIC', label: 'cố định' },
+  { value: 'PAN', label: 'quay ngang' },
+  { value: 'TILT', label: 'Xoay trục dọc' },
+  { value: 'DOLLY_IN', label: 'Tiến về phía trước' },
+  { value: 'DOLLY_OUT', label: 'Kéo ra' },
+  { value: 'TRACK', label: 'Quay theo' },
+  { value: 'CRANE', label: 'nâng hạ' },
+  { value: 'HANDHELD', label: 'Tay cầm' },
+  { value: 'STEADICAM', label: 'Máy steadicam' },
+  { value: 'ZOOM_IN', label: 'Zoom tiến' },
+  { value: 'ZOOM_OUT', label: 'Zoom kéo xa' },
 ]
 
 function useLocalStoragePrefs() {
@@ -647,7 +647,7 @@ const ChapterStudio: React.FC = () => {
           ]),
         ),
       )
-      // 给分镜补充一些“工作台态”的展示字段（后续可由后端返回）
+      // Bổ sung một số trường hiển thị “trạng thái đài làm việc” cho phân cảnh (sau này có thể do backend trả về)
       const enriched: StudioShot[] = arr
         .slice()
         .sort((a, b) => a.index - b.index)
@@ -688,7 +688,7 @@ const ChapterStudio: React.FC = () => {
         setSelectedShotId((firstUnfinished ?? firstVisible ?? enriched[0])?.id ?? null)
       }
     } catch {
-      message.error('加载分镜失败')
+      message.error('Tải phân cảnh thất bại')
     } finally {
       setLoadingShots(false)
     }
@@ -705,9 +705,9 @@ const ChapterStudio: React.FC = () => {
         requestBody: { title },
       } as any)
       if (res.data) patchShotInList(shotId, res.data as any)
-      message.success('标题已保存')
+      message.success('Đã lưu tiêu đề')
     } catch {
-      message.error('保存标题失败')
+      message.error('Lưu tiêu đề thất bại')
     }
   }
 
@@ -718,9 +718,9 @@ const ChapterStudio: React.FC = () => {
         requestBody: { script_excerpt },
       } as any)
       if (res.data) patchShotInList(shotId, res.data as any)
-      message.success('备注已保存')
+      message.success('Đã lưu ghi chú')
     } catch {
-      message.error('保存备注失败')
+      message.error('Lưu ghi chú thất bại')
     }
   }
 
@@ -728,9 +728,9 @@ const ChapterStudio: React.FC = () => {
     try {
       await StudioShotsService.deleteShotApiV1StudioShotsShotIdDelete({ shotId })
       await loadShots()
-      message.success('已删除')
+      message.success('Đã xóa')
     } catch {
-      message.error('删除失败')
+      message.error('Xóa thất bại')
     }
   }
 
@@ -758,7 +758,7 @@ const ChapterStudio: React.FC = () => {
       }
       setProjectDefaultVideoRatio(nextDefaultRatio)
     } catch {
-      // 章节信息仅用于标题展示，失败不阻断工作台
+      // Thông tin chương chỉ dùng để hiển thị tiêu đề, thất bại không chặn bàn làm việc
       setChapter(null)
       setProjectDefaultVideoRatio('')
     }
@@ -879,7 +879,7 @@ const ChapterStudio: React.FC = () => {
       })
       .catch(() => {
         if (reqSeq !== shotCandidatesRequestSeqRef.current) return
-        message.error('加载分镜详情失败')
+        message.error('Nạp chi tiết phân cảnh thất bại')
       })
       .finally(() => {
         if (reqSeq !== shotCandidatesRequestSeqRef.current) return
@@ -888,7 +888,7 @@ const ChapterStudio: React.FC = () => {
   }, [selectedShotId])
 
   useEffect(() => {
-    // 选中分镜时同步多选的“主选中项”
+    // Đồng bộ "mục chọn chính" của chế độ chọn nhiều khi chọn phân cảnh
     if (!selectedShotId) return
     if (selectedShotIds.includes(selectedShotId)) return
     setSelectedShotIds([selectedShotId])
@@ -913,7 +913,7 @@ const ChapterStudio: React.FC = () => {
   const currentPreviewVideoUrl = currentPreviewVideoFileId ? buildFileDownloadUrl(currentPreviewVideoFileId) ?? '' : ''
 
   useEffect(() => {
-    // 切换分镜时：主预览区视频跟随分镜（清空手动选择的预览视频）
+    // Khi đổi phân cảnh: video vùng preview chính bám theo phân cảnh (xóa video preview đã chọn thủ công)
     setPreviewVideoFileId(null)
   }, [selectedShotId])
 
@@ -941,7 +941,7 @@ const ChapterStudio: React.FC = () => {
       })
       setFrameImages((res.data?.items ?? []) as ShotFrameImageRead[])
     } catch {
-      message.error('刷新关键帧类型失败')
+      message.error('Làm mới loại khung hình chính thất bại')
     }
   }, [selectedShotId])
 
@@ -1030,7 +1030,7 @@ const ChapterStudio: React.FC = () => {
     async (skip: boolean) => {
       const targetShots = selectedShots.filter((shot) => Boolean(shot.skip_extraction) !== skip)
       if (targetShots.length === 0) {
-        message.info(skip ? '所选分镜已全部标记为无需提取' : '所选分镜已全部恢复提取')
+        message.info(skip ? 'Tất cả phân cảnh được chọn đã được đánh dấu không cần trích xuất' : 'Tất cả phân cảnh được chọn đã được khôi phục trích xuất')
         return
       }
       setBatchSkipExtractionUpdating(true)
@@ -1059,11 +1059,11 @@ const ChapterStudio: React.FC = () => {
         }
         message.success(
           skip
-            ? `已批量标记 ${targetShots.length} 条分镜为无需提取`
-            : `已批量恢复 ${targetShots.length} 条分镜的提取确认流程`,
+            ? `Đã đánh dấu hàng loạt ${targetShots.length} phân cảnh không cần trích xuất`
+            : `đã khôi phục hàng loạt luồng xác nhận trích xuất của ${targetShots.length} phân cảnh`,
         )
       } catch {
-        message.error(skip ? '批量标记无需提取失败' : '批量恢复提取失败')
+        message.error(skip ? 'đánh dấu hàng loạt không cần trích xuất thất bại' : 'khôi phục trích xuất hàng loạt thất bại')
       } finally {
         setBatchSkipExtractionUpdating(false)
       }
@@ -1073,7 +1073,7 @@ const ChapterStudio: React.FC = () => {
 
   const fetchBatchVideoReadiness = useCallback(async () => {
     if (selectedShots.length === 0) {
-      message.info('请先选择要检查的视频分镜')
+      message.info('Vui lòng chọn phân cảnh video cần kiểm tra trước')
       return [] as Array<{ shot: StudioShot; readiness: ShotVideoReadinessRead | null; error?: string }>
     }
     return Promise.all(
@@ -1094,7 +1094,7 @@ const ChapterStudio: React.FC = () => {
             return {
               shot,
               readiness: null,
-              error: '视频准备度检查失败，请稍后重试',
+              error: 'Kiểm tra độ sẵn sàng tạo video thất bại, vui lòng thử lại sau',
             }
           }
         }),
@@ -1203,7 +1203,7 @@ const ChapterStudio: React.FC = () => {
       await refreshPromptAssetLinks(selectedShotId)
       await loadShotCandidateItems(selectedShotId)
     } catch {
-      message.error('更新道具失败')
+      message.error('Cập nhật đạo cụ thất bại')
     } finally {
       setPromptAssetsUpdating(false)
     }
@@ -1226,7 +1226,7 @@ const ChapterStudio: React.FC = () => {
       await refreshPromptAssetLinks(selectedShotId)
       await loadShotCandidateItems(selectedShotId)
     } catch {
-      message.error('更新服装失败')
+      message.error('Cập nhật trang phục thất bại')
     } finally {
       setPromptAssetsUpdating(false)
     }
@@ -1253,7 +1253,7 @@ const ChapterStudio: React.FC = () => {
       await loadShotCandidateItems(selectedShotId)
       patchShotDetailLocal({ scene_id: nextSceneId || null })
     } catch {
-      message.error('更新场景失败')
+      message.error('Cập nhật bối cảnh thất bại')
     } finally {
       setPromptAssetsUpdating(false)
     }
@@ -1268,7 +1268,7 @@ const ChapterStudio: React.FC = () => {
       .map((x) => x.character_id)
     const removed = current.filter((id) => !next.includes(id))
     if (removed.length > 0) {
-      message.warning('当前接口暂不支持移除已关联角色，仅会新增或重排')
+      message.warning('API hiện tại chưa hỗ trợ gỡ nhân vật đã liên kết, chỉ thêm hoặc sắp xếp lại')
     }
     if (next.length === 0) return
     setPromptAssetsUpdating(true)
@@ -1284,7 +1284,7 @@ const ChapterStudio: React.FC = () => {
       setShotCharacterLinks((refreshed.data ?? []) as ShotCharacterLinkRead[])
       await loadShotCandidateItems(selectedShotId)
     } catch {
-      message.error('更新角色失败')
+      message.error('Cập nhật nhân vật thất bại')
     } finally {
       setPromptAssetsUpdating(false)
     }
@@ -1298,7 +1298,7 @@ const ChapterStudio: React.FC = () => {
       frameImages.find((x) => x.frame_type === 'key') ||
       frameImages[0]
     if (!target) {
-      message.warning('请先添加一张分镜帧图（frame image）')
+      message.warning('vui lòng thêm một ảnh khung phân cảnh (frame image) trước')
       return
     }
     const prompt =
@@ -1308,7 +1308,7 @@ const ChapterStudio: React.FC = () => {
           ? shotDetail?.last_frame_prompt
           : shotDetail?.key_frame_prompt) ?? ''
     if (!prompt.trim()) {
-      message.warning('请先生成或填写提示词')
+      message.warning('Vui lòng tạo hoặc nhập prompt trước')
       return
     }
     setGenerating(true)
@@ -1347,7 +1347,7 @@ const ChapterStudio: React.FC = () => {
         .filter(Boolean)
       const targetRatio = resolveShotVideoRatio(shotDetail)
       if (!targetRatio) {
-        message.warning('请先设置视频比例')
+        message.warning('Vui lòng đặt tỷ lệ video trước')
         return
       }
       await StudioImageTasksService.createShotFrameImageGenerationTaskApiV1StudioImageTasksShotShotIdFrameImageTasksPost({
@@ -1361,9 +1361,9 @@ const ChapterStudio: React.FC = () => {
           resolution_profile: keyframeResolutionProfile,
         } as any,
       })
-      message.success('已创建生成任务')
+      message.success('Đã tạo tác vụ sinh')
     } catch {
-      message.error('创建生成任务失败')
+      message.error('Tạo tác vụ sinh thất bại')
     } finally {
       setGenerating(false)
     }
@@ -1426,7 +1426,7 @@ const ChapterStudio: React.FC = () => {
           requestBody: { tags: normalized } as any,
         })
       } catch {
-        message.error('更新标签失败')
+        message.error('Cập nhật nhãn thất bại')
       } finally {
         setFrameFileTagsLoading(false)
       }
@@ -1434,12 +1434,12 @@ const ChapterStudio: React.FC = () => {
     [currentFrameFileId],
   )
 
-  // 选中分镜后若开启自动展开属性面板：默认展开（尤其是未就绪分镜）
+  // Sau khi chọn phân cảnh, nếu bật tự động mở panel thuộc tính: mặc định ở trạng thái mở (đặc biệt với phân cảnh chưa sẵn sàng)
   useEffect(() => {
     if (!selectedShot) return
     if (!prefs.autoOpenInspector) return
     if (prefs.inspectorOpen) return
-    // “若无视频则自动展开”：这里用 status !== ready 作为近似判定
+    // "tự động mở khi chưa có video": ở đây dùng status !== ready làm phán đoán gần đúng
     if (selectedShot.status !== 'ready') {
       setPrefs((p) => ({ ...p, inspectorOpen: true }))
     }
@@ -1471,13 +1471,13 @@ const ChapterStudio: React.FC = () => {
       }
     } catch {
       if (seq !== cameraPatchSeqRef.current) return
-      message.error('镜头语言更新失败')
+      message.error('Cập nhật ngôn ngữ phân cảnh thất bại')
     } finally {
       if (seq === cameraPatchSeqRef.current) setCameraUpdating(false)
     }
   }
 
-  // 自动保存（防抖）：shotDetail 变更后 PATCH 到后端
+  // Lưu tự động (debounce): shotDetail đổi thì PATCH lên backend
   useEffect(() => {
     if (!selectedShotId || !shotDetail) return
     if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current)
@@ -1490,7 +1490,7 @@ const ChapterStudio: React.FC = () => {
         if (prev?.[key] !== next[key]) patch[key] = next[key] ?? null
       }
       assignIfChanged('scene_id')
-      // 镜头语言字段（camera_shot/angle/movement/duration）走即时更新，不在此处防抖提交
+      // Các trường ngôn ngữ điện ảnh (camera_shot/angle/movement/duration) cập nhật tức thì, không debounce-gửi ở đây
       // array / object fields
       if (JSON.stringify(prev?.mood_tags ?? null) !== JSON.stringify(next.mood_tags ?? null)) patch.mood_tags = next.mood_tags ?? null
       assignIfChanged('atmosphere')
@@ -1524,7 +1524,7 @@ const ChapterStudio: React.FC = () => {
           }
         })
         .catch(() => {
-          message.error('自动保存失败')
+          message.error('Tự động lưu thất bại')
         })
         .finally(() => {
           setSaving(false)
@@ -1537,7 +1537,7 @@ const ChapterStudio: React.FC = () => {
     }
   }, [selectedShotId, shotDetail])
 
-  // 播放器：同步时间与状态
+  // Trình phát: đồng bộ thời gian và trạng thái
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
@@ -1574,11 +1574,11 @@ const ChapterStudio: React.FC = () => {
     if (!v || !currentPreviewVideoUrl) return
     v.load()
     void v.play().catch(() => {
-      // 浏览器策略可能阻止自动播放，保留静默失败
+      // Chính sách trình duyệt có thể chặn phát tự động, giữ sự thất bại im lặng
     })
   }, [currentPreviewVideoUrl])
 
-  // 快捷键：←/→ 切换分镜，Space 播放暂停，P/Ctrl+I 面板，H 隐藏，M 合并，Ctrl/Cmd+Enter 保存并生成
+  // Phím tắt: ←/→ chuyển phân cảnh, Space phát/tạm dừng, P/Ctrl+I bảng, H ẩn, M gộp, Ctrl/Cmd+Enter lưu và tạo
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (isTypingTarget(e.target)) return
@@ -1625,16 +1625,16 @@ const ChapterStudio: React.FC = () => {
       if (key === 'm') {
         e.preventDefault()
         if (selectedShotIds.length < 2) {
-          message.info('请先多选至少 2 个分镜再合并')
+          message.info('Vui lòng chọn nhiều ít nhất 2 phân cảnh trước khi hợp nhất')
           return
         }
         Modal.confirm({
-          title: `合并 ${selectedShotIds.length} 个分镜？`,
-          content: '将它们合并为一个新的分镜（Mock 行为）。',
-          okText: '合并',
-          cancelText: '取消',
+          title: `Gộp ${selectedShotIds.length} phân cảnh?`,
+          content: 'Gộp chúng thành một phân cảnh mới (hành vi Mock).',
+          okText: 'Gộp',
+          cancelText: 'Hủy',
           onOk: () => {
-            message.success('已合并（Mock）')
+            message.success('Đã hợp nhất (Mock)')
           },
         })
       }
@@ -1646,7 +1646,7 @@ const ChapterStudio: React.FC = () => {
   const statusTag = (status: ShotStatus | undefined) => {
     const s = status ?? 'pending'
     const map = { pending: 'default', generating: 'processing', ready: 'success' } as const
-    const text = { pending: '待确认', generating: '生成中', ready: '已就绪' } as const
+    const text = { pending: 'Chờ xác nhận', generating: 'Đang tạo', ready: 'Đã sẵn sàng' } as const
     return <Tag color={map[s]}>{text[s]}</Tag>
   }
 
@@ -1663,8 +1663,8 @@ const ChapterStudio: React.FC = () => {
     const isPendingConfirm = !shot.hidden && shot.status === 'pending'
     const hasProblem = Boolean(shot.hasProblem)
     const missing: string[] = []
-    if (isPendingConfirm) missing.push('待确认')
-    if (isGenerating) missing.push('生成中')
+    if (isPendingConfirm) missing.push('chờ xác nhận')
+    if (isGenerating) missing.push('Đang tạo')
     return {
       isReady,
       isGenerating,
@@ -1684,24 +1684,24 @@ const ChapterStudio: React.FC = () => {
   const getShotPrimaryHint = useCallback(
     (shot: StudioShot) => {
       const flags = getShotReadinessFlags(shot)
-      if (flags.hasProblem) return '存在待处理问题'
+      if (flags.hasProblem) return 'Có vấn đề chờ xử lý'
       if (flags.isGenerating) {
         const runtime = shotRuntimeMap[shot.id]
-        return `镜头相关任务进行中（${runtime?.active_task_count ?? 1}）`
+        return `Có tác vụ liên quan phân cảnh đang chạy（${runtime?.active_task_count ?? 1}）`
       }
       if (flags.isPendingConfirm) {
         return shot.skip_extraction
-          ? '已标记无需提取，等待系统完成流程状态同步'
-          : '请先完成信息提取确认'
+          ? 'Đã đánh dấu không cần trích xuất, chờ hệ thống hoàn tất đồng bộ trạng thái quy trình'
+          : 'Vui lòng hoàn thành xác nhận trích xuất thông tin trước'
       }
-      return '镜头已具备视频生成前置条件'
+      return 'Phân cảnh đã có điều kiện tiền đề tạo video'
     },
     [getShotReadinessFlags, shotRuntimeMap],
   )
 
   const chapterTitle = useMemo(() => {
-    if (!chapter) return '章节生成工作台'
-    return `第${chapter.index}章 · ${chapter.title.replace(/^第\d+[集章：:\s]*/g, '').trim() || chapter.title}`
+    if (!chapter) return 'Đài làm việc tạo cấp chương'
+    return `Chương ${chapter.index} · ${chapter.title.replace(/^第\d+[集章：:\s]*/g, '').trim() || chapter.title}`
   }, [chapter])
 
   const filteredShots = useMemo(() => {
@@ -1790,7 +1790,7 @@ const ChapterStudio: React.FC = () => {
       const replaced = ordered.map((s) => (matchesFilter(s, filter) ? (movedQueue.shift() as StudioShot) : s))
       const next = replaced.map((s, idx) => ({ ...s, index: idx + 1 }))
 
-      // 后台同步排序（不阻塞 UI）
+      // Sắp xếp đồng bộ nền (không chặn UI)
       const beforeMap = new Map(prev.map((s) => [s.id, s.index]))
       void (async () => {
         try {
@@ -1804,7 +1804,7 @@ const ChapterStudio: React.FC = () => {
             ),
           )
         } catch {
-          message.error('同步排序失败')
+          message.error('Đồng bộ sắp xếp thất bại')
         }
       })()
 
@@ -1836,7 +1836,7 @@ const ChapterStudio: React.FC = () => {
     if (st.type === 'left') {
       pendingResizeRef.current = { leftWidth: clamp(st.startLeft + dx, minLeft, maxLeft) }
     } else {
-      // right：推挤/覆盖都复用 width 偏好
+      // Bên phải: cả đẩy/chồng đều tái sử dụng tùy chọn width
       pendingResizeRef.current = { rightWidth: clamp(st.startRight - dx, minRight, maxRight) }
     }
 
@@ -1868,47 +1868,47 @@ const ChapterStudio: React.FC = () => {
     {
       key: 'copy',
       icon: <LinkOutlined />,
-      label: '复制分镜',
-      onClick: () => message.success('已复制（Mock）'),
+      label: 'Sao chép phân cảnh',
+      onClick: () => message.success('đã copy(Mock)'),
     },
     {
       key: 'insert_after',
       icon: <VideoCameraAddOutlined />,
-      label: '在后插入新分镜',
-      onClick: () => message.success('已插入（Mock）'),
+      label: 'Chèn phân cảnh mới ở phía sau',
+      onClick: () => message.success('đã chèn(Mock)'),
     },
     {
       key: 'transition',
       icon: <ScissorOutlined />,
-      label: '设为转场点',
-      onClick: () => message.success('已设置（Mock）'),
+      label: 'Đặt làm điểm chuyển cảnh',
+      onClick: () => message.success('đã đặt(Mock)'),
     },
     { type: 'divider' as const },
     {
       key: 'toggle_hide',
       icon: shot.hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />,
-      label: shot.hidden ? '取消隐藏' : '隐藏',
+      label: shot.hidden ? 'Bỏ ẩn' : 'Ẩn',
       onClick: () => toggleHiddenShots([shot.id]),
     },
     {
       key: 'delete',
       icon: <DeleteOutlined />,
       danger: true,
-      label: '删除',
+      label: 'Xóa',
       onClick: () =>
         Modal.confirm({
-          title: '删除分镜？',
-          content: '此操作不可撤销。',
-          okText: '删除',
+          title: 'Xóa phân cảnh?',
+          content: 'Thao tác này không thể thu hồi.',
+          okText: 'Xóa',
           okButtonProps: { danger: true },
-          cancelText: '取消',
+          cancelText: 'Hủy',
           onOk: async () => {
             try {
               await StudioShotsService.deleteShotApiV1StudioShotsShotIdDelete({ shotId: shot.id })
               await loadShots()
-              message.success('已删除')
+              message.success('Đã xóa')
             } catch {
-              message.error('删除失败')
+              message.error('Xóa thất bại')
             }
           },
         }),
@@ -1919,42 +1919,42 @@ const ChapterStudio: React.FC = () => {
     {
       key: 'merge',
       icon: <MergeCellsOutlined />,
-      label: '合并',
+      label: 'Gộp',
       disabled: selectedShotIds.length < 2,
       onClick: () => {
         if (selectedShotIds.length < 2) return
         Modal.confirm({
-          title: `合并 ${selectedShotIds.length} 个分镜？`,
-          okText: '合并',
-          cancelText: '取消',
-          onOk: () => message.success('已合并（Mock）'),
+          title: `Gộp ${selectedShotIds.length} phân cảnh?`,
+          okText: 'Gộp',
+          cancelText: 'Hủy',
+          onOk: () => message.success('đã ghép(Mock)'),
         })
       },
     },
     {
       key: 'hide',
       icon: <EyeInvisibleOutlined />,
-      label: '隐藏',
+      label: 'Ẩn',
       onClick: () => toggleHiddenShots(selectedShotIds),
     },
     {
       key: 'delete',
       icon: <DeleteOutlined />,
       danger: true,
-      label: '删除',
+      label: 'Xóa',
       onClick: () =>
         Modal.confirm({
-          title: `删除 ${selectedShotIds.length} 个分镜？`,
-          okText: '删除',
+          title: `xóa ${selectedShotIds.length} phân cảnh?`,
+          okText: 'Xóa',
           okButtonProps: { danger: true },
-          cancelText: '取消',
+          cancelText: 'Hủy',
           onOk: async () => {
             try {
               await Promise.all(selectedShotIds.map((id) => StudioShotsService.deleteShotApiV1StudioShotsShotIdDelete({ shotId: id })))
               await loadShots()
-              message.success('已删除')
+              message.success('Đã xóa')
             } catch {
-              message.error('删除失败')
+              message.error('Xóa thất bại')
             }
           },
         }),
@@ -1964,14 +1964,14 @@ const ChapterStudio: React.FC = () => {
       key: 'skip-extraction',
       icon: <StopOutlined />,
       danger: true,
-      label: '维护：标记无需提取',
+      label: 'Bảo trì: đánh dấu không cần trích xuất',
       onClick: () =>
         Modal.confirm({
-          title: `确认以维护方式将 ${selectedShotIds.length} 个分镜标记为无需提取？`,
-          content: '这属于准备阶段的维护性调整。标记后这些分镜会直接按“提取确认已完成”处理。',
-          okText: '确认',
+          title: `Xác nhận đánh dấu ${selectedShotIds.length} phân cảnh không cần trích xuất theo cách bảo trì?`,
+          content: 'điều này thuộc chỉnh sửa bảo trì ở giai đoạn chuẩn bị. Sau khi đánh dấu, các phân cảnh này sẽ được xử lý theo "xác nhận trích xuất đã hoàn thành".',
+          okText: 'Xác nhận',
           okButtonProps: { danger: true, loading: batchSkipExtractionUpdating },
-          cancelText: '取消',
+          cancelText: 'Hủy',
           cancelButtonProps: { disabled: batchSkipExtractionUpdating },
           onOk: () => batchUpdateSkipExtraction(true),
         }),
@@ -1979,7 +1979,7 @@ const ChapterStudio: React.FC = () => {
     {
       key: 'restore-extraction',
       icon: <UndoOutlined />,
-      label: '维护：恢复提取',
+      label: 'Bảo trì: khôi phục trích xuất',
       disabled: batchSkipExtractionUpdating,
       onClick: () => batchUpdateSkipExtraction(false),
     },
@@ -1987,13 +1987,13 @@ const ChapterStudio: React.FC = () => {
     {
       key: 'generate',
       icon: <ThunderboltOutlined />,
-      label: '批量生成',
+      label: 'Tạo hàng loạt',
       onClick: () => {
         if (selectedShotIds.length === 0) return
         Modal.confirm({
-          title: `批量生成 ${selectedShotIds.length} 个分镜？`,
-          okText: '开始',
-          cancelText: '取消',
+          title: `sinh hàng loạt ${selectedShotIds.length} phân cảnh?`,
+          okText: 'Bắt đầu',
+          cancelText: 'Hủy',
           onOk: async () => {
             setGenerating(true)
             try {
@@ -2007,18 +2007,18 @@ const ChapterStudio: React.FC = () => {
               }
 
               if (readyShots.length === 0) {
-                message.warning('当前选中的分镜都未通过视频准备度检查，已为你展开检查结果')
+                message.warning('phân cảnh đang chọn đều chưa qua kiểm tra độ sẵn sàng tạo video, đã mở kết quả kiểm tra cho bạn')
                 return
               }
 
               if (blockedShots.length > 0) {
-                message.warning(`其中 ${blockedShots.length} 条未通过检查，已自动跳过，仅继续生成 ${readyShots.length} 条`)
+                message.warning(`Trong đó ${blockedShots.length} mục không vượt qua kiểm tra, đã tự động bỏ qua, chỉ tiếp tục tạo ${readyShots.length} mục`)
               }
 
               await runBatchGenerate(readyShots.map((item) => item.shot.id))
-              message.success('已创建批量生成任务')
+              message.success('Đã tạo tác vụ tạo hàng loạt')
             } catch {
-              message.error('批量生成失败')
+              message.error('Tạo hàng loạt thất bại')
             } finally {
               setGenerating(false)
             }
@@ -2036,15 +2036,15 @@ const ChapterStudio: React.FC = () => {
       icon: <AppstoreOutlined />,
       label: (
         <div className="flex items-center justify-between gap-3">
-          <span>属性面板模式</span>
+          <span>Chế độ bảng thuộc tính</span>
           <Select
             size="small"
             value={prefs.inspectorMode}
             style={{ width: 120 }}
             onChange={(v) => setPrefs((p) => ({ ...p, inspectorMode: v }))}
             options={[
-              { value: 'push', label: '推挤模式' },
-              { value: 'overlay', label: '覆盖模式' },
+              { value: 'push', label: 'Chế độ đẩy' },
+              { value: 'overlay', label: 'Chế độ ghi đè' },
             ]}
           />
         </div>
@@ -2055,7 +2055,7 @@ const ChapterStudio: React.FC = () => {
       icon: <SettingOutlined />,
       label: (
         <div className="flex items-center justify-between gap-3">
-          <span>选中分镜自动展开</span>
+          <span>Chọn phân cảnh tự động mở rộng</span>
           <Switch
             size="small"
             checked={prefs.autoOpenInspector}
@@ -2087,7 +2087,7 @@ const ChapterStudio: React.FC = () => {
 
   return (
     <div className={['cs-studio w-full h-full min-h-0 flex flex-col', isResizing ? 'cs-resizing' : ''].join(' ')} ref={containerRef}>
-      {/* 顶部工具栏（常驻） */}
+      {/* Thanh công cụ trên (cố định) */}
       <div
         className="cs-topbar flex items-center gap-4 px-4 py-3"
         style={{
@@ -2100,7 +2100,7 @@ const ChapterStudio: React.FC = () => {
               to={`/projects/${projectId}?tab=chapters`}
               className="text-sm text-gray-600 hover:text-blue-600 flex items-center gap-1 shrink-0"
             >
-              <ArrowLeftOutlined /> 返回
+              <ArrowLeftOutlined /> Quay lại
             </Link>
           )}
           <Divider type="vertical" />
@@ -2109,11 +2109,11 @@ const ChapterStudio: React.FC = () => {
             <div className="text-xs text-gray-500">
               {saving ? (
                 <span className="inline-flex items-center gap-1">
-                  <ClockCircleOutlined /> 自动保存中…
+                  <ClockCircleOutlined /> Đang tự động lưu…
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1">
-                  <CheckCircleOutlined /> 已保存
+                  <CheckCircleOutlined /> Đã lưu
                 </span>
               )}
             </div>
@@ -2124,11 +2124,11 @@ const ChapterStudio: React.FC = () => {
 
         <div className="flex items-center gap-2 shrink-0">
           <Dropdown menu={{ items: toolbarSettingsItems }} trigger={['click']}>
-            <Tooltip title="工作台设置">
+            <Tooltip title="Cài đặt bàn làm việc">
               <Button size="small" icon={<SettingOutlined />} />
             </Tooltip>
           </Dropdown>
-          <Tooltip title={prefs.inspectorOpen ? '收起属性面板（P / Ctrl/Cmd+I）' : '展开属性面板（P / Ctrl/Cmd+I）'}>
+          <Tooltip title={prefs.inspectorOpen ? 'Thu gọn bảng thuộc tính (P / Ctrl/Cmd+I)' : 'Mở bảng thuộc tính (P / Ctrl/Cmd+I)'}>
             <Button
               size="small"
               icon={prefs.inspectorOpen ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
@@ -2138,7 +2138,7 @@ const ChapterStudio: React.FC = () => {
         </div>
       </div>
 
-      {/* 三栏动态布局 */}
+      {/* Bố cục ba cột động */}
       <Layout
         className="flex-1 min-h-0"
         style={{
@@ -2150,7 +2150,7 @@ const ChapterStudio: React.FC = () => {
         onPointerUp={endResize}
         onPointerCancel={endResize}
       >
-        {/* 左侧：分镜列表 */}
+        {/* Trái: danh sách phân cảnh */}
         <Sider
           width={prefs.leftWidth}
           collapsedWidth={0}
@@ -2161,7 +2161,7 @@ const ChapterStudio: React.FC = () => {
         >
           <div className="cs-group m-3 mb-2 flex flex-col gap-2 min-w-0">
             <div className="cs-group-title mb-0 flex items-center gap-2 shrink-0">
-              <FileTextOutlined /> 分镜列表
+              <FileTextOutlined /> Danh sách phân cảnh
             </div>
             <div className="overflow-x-auto min-w-0 -mx-1 px-1">
               <Segmented
@@ -2169,12 +2169,12 @@ const ChapterStudio: React.FC = () => {
                 value={filter}
                 onChange={(v) => setFilter(v as ShotFilter)}
                 options={[
-                  { label: `全部 ${shotFilterCounts.all}`, value: 'all' },
-                  { label: `待确认 ${shotFilterCounts.pendingConfirm}`, value: 'pendingConfirm' },
-                  { label: `生成中 ${shotFilterCounts.generating}`, value: 'generating' },
-                  { label: `已就绪 ${shotFilterCounts.ready}`, value: 'ready' },
-                  { label: `隐藏 ${shotFilterCounts.hidden}`, value: 'hidden' },
-                  { label: `有问题 ${shotFilterCounts.problem}`, value: 'problem' },
+                  { label: `Tất cả ${shotFilterCounts.all}`, value: 'all' },
+                  { label: `Chờ xác nhận ${shotFilterCounts.pendingConfirm}`, value: 'pendingConfirm' },
+                  { label: `Đang tạo ${shotFilterCounts.generating}`, value: 'generating' },
+                  { label: `Sẵn sàng ${shotFilterCounts.ready}`, value: 'ready' },
+                  { label: `Ẩn ${shotFilterCounts.hidden}`, value: 'hidden' },
+                  { label: `Có vấn đề ${shotFilterCounts.problem}`, value: 'problem' },
                 ]}
               />
             </div>
@@ -2194,14 +2194,14 @@ const ChapterStudio: React.FC = () => {
           {!multiToolbarVisible && selectedShotIds.length === 1 && (
             <div className="cs-group m-3 mt-0 mb-2">
               <div className="rounded-lg border border-solid border-gray-200 bg-white/80 px-3 py-2 text-xs text-gray-600">
-                已选 1 项，继续按 <span className="font-medium text-gray-700">Command/Ctrl + 点击</span> 可加入多选
+                Đã chọn 1 mục, tiếp tục nhấn <span className="font-medium text-gray-700">Command/Ctrl + chuột</span> để thêm vào chọn nhiều
               </div>
             </div>
           )}
 
           <div className="cs-left-scroll px-3 pb-3">
             {loadingShots ? (
-              <div className="text-gray-500 text-center py-4">加载中...</div>
+              <div className="text-gray-500 text-center py-4">Đang tải...</div>
             ) : (
               <div>
                 {filteredShots.map((s, i) => {
@@ -2251,9 +2251,9 @@ const ChapterStudio: React.FC = () => {
                       <Tooltip
                         title={
                           selectedShotIds.length === 0
-                            ? 'Command/Ctrl + 点击可多选'
+                            ? 'Command/Ctrl + nhấn để chọn nhiều'
                             : selectedShotIds.length === 1 && !isSelected
-                              ? '继续按 Command/Ctrl 点击可加入多选'
+                              ? 'Tiếp tục nhấn Command/Ctrl rồi nhấp để thêm vào chọn nhiều'
                               : undefined
                         }
                         placement="right"
@@ -2298,7 +2298,7 @@ const ChapterStudio: React.FC = () => {
                                         void StudioShotsService.updateShotApiV1StudioShotsShotIdPatch({
                                           shotId: s.id,
                                           requestBody: { title: nextTitle },
-                                        }).catch(() => message.error('保存标题失败'))
+                                        }).catch(() => message.error('Lưu tiêu đề thất bại'))
                                       }
                                       setEditingTitleId(null)
                                     }}
@@ -2312,7 +2312,7 @@ const ChapterStudio: React.FC = () => {
                                     }}
                                   />
                                 ) : (
-                                  <div className="font-medium text-sm truncate" title="双击编辑标题">
+                                  <div className="font-medium text-sm truncate" title="Nhấp đúp để chỉnh sửa tiêu đề">
                                     {s.title}
                                   </div>
                                 )}
@@ -2340,21 +2340,21 @@ const ChapterStudio: React.FC = () => {
                               </div>
                               <div className="mt-1 flex flex-wrap gap-1 items-center">
                                 {readiness.isReady ? (
-                                  <Tag className="m-0" color="success">已就绪</Tag>
+                                  <Tag className="m-0" color="success">sẵn sàng</Tag>
                                 ) : readiness.isGenerating ? (
-                                  <Tag className="m-0" color="processing">生成中</Tag>
+                                  <Tag className="m-0" color="processing">đang sinh</Tag>
                                 ) : (
-                                  <Tag className="m-0" color="gold">待确认</Tag>
+                                  <Tag className="m-0" color="gold">chờ xác nhận</Tag>
                                 )}
                                 {s.skip_extraction && (
                                   <Tag className="m-0" color="cyan">
-                                    无需提取
+                                    Không cần trích xuất
                                   </Tag>
                                 )}
-                                {s.hasMusic && <Tag icon={<SoundOutlined />} className="m-0" color="default">音乐</Tag>}
+                                {s.hasMusic && <Tag icon={<SoundOutlined />} className="m-0" color="default">Nhạc</Tag>}
                                 {statusTag(s.status)}
-                                {s.hidden && <Tag icon={<EyeInvisibleOutlined />} className="m-0">隐藏</Tag>}
-                                {s.hasProblem && <Tag color="error" className="m-0">有问题</Tag>}
+                                {s.hidden && <Tag icon={<EyeInvisibleOutlined />} className="m-0">Ẩn</Tag>}
+                                {s.hasProblem && <Tag color="error" className="m-0">Có vấn đề</Tag>}
                               </div>
                             </div>
                             </div>
@@ -2369,7 +2369,7 @@ const ChapterStudio: React.FC = () => {
           </div>
         </Sider>
 
-        {/* 左侧拖拽条 */}
+        {/* Thanh kéo trái */}
         <div
           role="separator"
           className="cs-sep h-full"
@@ -2380,18 +2380,18 @@ const ChapterStudio: React.FC = () => {
             flexShrink: 0,
           }}
           onPointerDown={(e) => beginResize('left', e)}
-          title="拖拽调整左侧宽度"
+          title="Kéo thả để điều chỉnh độ rộng bên trái"
         />
 
-        {/* 中央：主预览区 */}
+        {/* Giữa: vùng xem trước chính */}
         <Content className="cs-main min-w-0 min-h-0 flex flex-col" style={{ padding: 16, position: 'relative', overflow: 'hidden' }}>
           <Card
             title={
               <div className="flex items-center gap-3 min-w-0">
-                <span className="font-medium">主预览区</span>
+                <span className="font-medium">vùng preview chính</span>
                 {selectedShot && (
                   <span className="text-xs text-gray-500 truncate">
-                    当前分镜：{String(selectedShot.index).padStart(2, '0')} · {selectedShot.title}
+                    Phân cảnh hiện tại: {String(selectedShot.index).padStart(2, '0')} · {selectedShot.title}
                   </span>
                 )}
               </div>
@@ -2399,14 +2399,14 @@ const ChapterStudio: React.FC = () => {
             extra={
               <Space size="small">
                 {showPreviewMinimizeButton && (
-                  <Tooltip title="最小化预览（占位）">
-                    <Button size="small" icon={<DoubleRightOutlined />} onClick={() => message.info('最小化预览（Mock）')} />
+                  <Tooltip title="Xem trước thu nhỏ (giữ chỗ)">
+                    <Button size="small" icon={<DoubleRightOutlined />} onClick={() => message.info('Thu nhỏ bản xem trước (Mock)')} />
                   </Tooltip>
                 )}
-                <Tooltip title="截取当前帧（Mock）">
-                  <Button size="small" icon={<ScissorOutlined />} onClick={() => message.success('已截取当前帧（Mock）')} />
+                <Tooltip title="Chụp khung hình hiện tại (Mock)">
+                  <Button size="small" icon={<ScissorOutlined />} onClick={() => message.success('Đã cắt khung hình hiện tại (Mock)')} />
                 </Tooltip>
-                <Tooltip title={currentPreviewVideoFileId ? '下载当前预览视频' : '暂无可下载视频'}>
+                <Tooltip title={currentPreviewVideoFileId ? 'Tải xuống video xem trước hiện tại' : 'Tạm chưa có video để tải'}>
                   <Button
                     size="small"
                     icon={<DownloadOutlined />}
@@ -2429,10 +2429,10 @@ const ChapterStudio: React.FC = () => {
                   value={frameTab}
                   onChange={(v) => setFrameTab(v as typeof frameTab)}
                   options={[
-                    { label: '首帧', value: 'head' },
-                    { label: '关键帧列表', value: 'keyframes' },
-                    { label: '尾帧', value: 'tail' },
-                    { label: '参考对比', value: 'compare' },
+                    { label: 'Khung hình đầu', value: 'head' },
+                    { label: 'Danh sách khung hình chính', value: 'keyframes' },
+                    { label: 'Khung hình cuối', value: 'tail' },
+                    { label: 'Đối chiếu tham khảo', value: 'compare' },
                   ]}
                 />
               ) : (
@@ -2446,7 +2446,7 @@ const ChapterStudio: React.FC = () => {
                   onChange={(v) => setPlaybackRate(v)}
                   options={[0.5, 1, 1.25, 1.5, 2].map((v) => ({ label: `${v}x`, value: v }))}
                 />
-                <Tooltip title="循环当前分镜">
+                <Tooltip title="Lặp phân cảnh hiện tại">
                   <Switch size="small" checked={loopCurrent} onChange={setLoopCurrent} />
                 </Tooltip>
                 <Space size={4} className="max-w-[320px]">
@@ -2462,14 +2462,14 @@ const ChapterStudio: React.FC = () => {
                       else void updateCurrentFrameFileTags([v, ...base])
                     }}
                   >
-                    <Radio.Button value={FRAME_FILE_TAG_ADOPT}>采用</Radio.Button>
-                    <Radio.Button value={FRAME_FILE_TAG_ABANDON}>废弃</Radio.Button>
+                    <Radio.Button value={FRAME_FILE_TAG_ADOPT}>Áp dụng</Radio.Button>
+                    <Radio.Button value={FRAME_FILE_TAG_ABANDON}>Bỏ</Radio.Button>
                   </Radio.Group>
                   <Select
                     mode="tags"
                     size="small"
                     style={{ minWidth: 160, maxWidth: 220 }}
-                    placeholder="自定义标签"
+                    placeholder="Nhãn tùy chỉnh"
                     disabled={!currentFrameFileId || frameFileTagsLoading}
                     loading={frameFileTagsLoading}
                     value={currentFrameFileTags.filter((t) => t !== FRAME_FILE_TAG_ADOPT && t !== FRAME_FILE_TAG_ABANDON)}
@@ -2481,9 +2481,9 @@ const ChapterStudio: React.FC = () => {
                     }}
                   />
                 </Space>
-                <Tooltip title="当前镜头数据">
+                <Tooltip title="Dữ liệu phân cảnh hiện tại">
                   <Tag className="m-0">
-                    帧图 {frameImages.length} · 关联 {sceneLinks.length + actorImageLinks.length + propLinks.length + costumeLinks.length}
+                    Ảnh khung hình {frameImages.length} · Liên kết {sceneLinks.length + actorImageLinks.length + propLinks.length + costumeLinks.length}
                   </Tag>
                 </Tooltip>
               </Space>
@@ -2493,7 +2493,7 @@ const ChapterStudio: React.FC = () => {
               <div className="relative">
                 <div className="cs-player-shell">
                   <div className="aspect-video bg-black rounded overflow-hidden flex items-center justify-center">
-                  {/* Mock：没有真实视频源时仍可展示播放器结构 */}
+                  {/* Mock: vẫn hiển thị được cấu trúc trình phát khi chưa có nguồn video thật */}
                   <video
                     ref={videoRef}
                     className="w-full h-full object-contain"
@@ -2505,26 +2505,26 @@ const ChapterStudio: React.FC = () => {
                   />
                   {!selectedShot && (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                      请选择分镜
+                      Vui lòng chọn phân cảnh
                     </div>
                   )}
                   {selectedShot && !currentPreviewVideoUrl && selectedShot.status !== 'ready' && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Badge
                         status={shotRuntimeMap[selectedShot.id]?.has_active_tasks ? 'processing' : 'default'}
-                        text={shotRuntimeMap[selectedShot.id]?.has_active_tasks ? '生成中…' : '未生成'}
+                        text={shotRuntimeMap[selectedShot.id]?.has_active_tasks ? 'Đang tạo…' : 'Chưa tạo'}
                       />
                     </div>
                   )}
                   </div>
                 </div>
 
-                {/* 播放控制条 */}
+                {/* Thanh kiểm soát phát */}
                 <div className="mt-2 flex items-center gap-2">
                   <Button
                     size="small"
                     icon={<CaretLeftOutlined />}
-                    onClick={() => message.info('帧退（Mock）')}
+                    onClick={() => message.info('Khung hình tiến (Mock)')}
                   />
                   <Button
                     size="small"
@@ -2537,12 +2537,12 @@ const ChapterStudio: React.FC = () => {
                       else v.pause()
                     }}
                   >
-                    {isPlaying ? '暂停' : '播放'}
+                    {isPlaying ? 'Tạm dừng' : 'Phát'}
                   </Button>
                   <Button
                     size="small"
                     icon={<CaretRightOutlined />}
-                    onClick={() => message.info('帧进（Mock）')}
+                    onClick={() => message.info('Khung hình lùi (Mock)')}
                   />
                   <div className="flex-1 min-w-0">
                     <Slider
@@ -2563,10 +2563,10 @@ const ChapterStudio: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 对白字幕条 */}
+                {/* Thanh phụ đề thoại */}
                 <div className="cs-subtitle mt-2 px-3 py-2">
                   {subtitleLines.length === 0 ? (
-                    <div className="text-sm opacity-80">暂无对白字幕</div>
+                    <div className="text-sm opacity-80">chưa có phụ đề thoại</div>
                   ) : (
                     <div className="flex flex-col gap-1">
                       {subtitleLines.map((l, idx) => {
@@ -2594,20 +2594,20 @@ const ChapterStudio: React.FC = () => {
               </div>
             </div>
 
-            {/* 章节级时间轴（可折叠，固定在底部不参与滚动） */}
+            {/* Trục thời gian cấp chương (thu gọn được, cố định ở đáy, không cuộn) */}
             {showChapterTimeline && (
               <div
                 className="rounded border border-solid border-gray-200 flex-shrink-0 min-h-0 flex flex-col"
                 style={{ background: 'var(--ant-color-bg-container)' }}
               >
                 <div className="px-3 py-2 flex items-center justify-between flex-shrink-0">
-                  <div className="text-sm font-medium">章节时间轴</div>
+                  <div className="text-sm font-medium">trục thời gian chương</div>
                   <Button
                     size="small"
                     type="text"
                     onClick={() => setPrefs((p) => ({ ...p, timelineCollapsed: !p.timelineCollapsed }))}
                   >
-                    {prefs.timelineCollapsed ? '展开' : '折叠'}
+                    {prefs.timelineCollapsed ? 'Mở' : 'Gấp'}
                   </Button>
                 </div>
                 {!prefs.timelineCollapsed && (
@@ -2641,7 +2641,7 @@ const ChapterStudio: React.FC = () => {
                         })}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      点击条块跳转分镜；隐藏分镜不参与预览
+                      Nhấn vào thanh khối để nhảy tới phân cảnh; phân cảnh ẩn không tham gia xem trước
                     </div>
                   </div>
                 )}
@@ -2650,10 +2650,10 @@ const ChapterStudio: React.FC = () => {
           </Card>
         </Content>
 
-        {/* 右侧：属性面板（推挤 / 覆盖） */}
+        {/* Bên phải: panel thuộc tính (đẩy / chồng) */}
         {prefs.inspectorMode === 'push' ? (
           <>
-            {/* 右侧拖拽条（推挤模式） */}
+            {/* Thanh kéo phía phải (chế độ đẩy) */}
             {prefs.inspectorOpen && (
               <div
                 role="separator"
@@ -2665,7 +2665,7 @@ const ChapterStudio: React.FC = () => {
                   flexShrink: 0,
                 }}
                 onPointerDown={(e) => beginResize('right', e)}
-                title="拖拽调整属性面板宽度"
+                title="Kéo để chỉnh độ rộng bảng thuộc tính"
               />
             )}
             <Sider
@@ -2721,15 +2721,15 @@ const ChapterStudio: React.FC = () => {
               <div
                 className="cs-right-strip"
                 onClick={() => setPrefs((p) => ({ ...p, inspectorOpen: true }))}
-                title="展开属性面板（P / Ctrl/Cmd+I）"
+                title="Mở bảng thuộc tính (P / Ctrl/Cmd+I)"
               >
-                <span>属性</span>
+                <span>Thuộc tính</span>
               </div>
             )}
           </>
         ) : (
           <>
-            {/* 覆盖模式：右侧抽屉覆盖中央 */}
+            {/* Chế độ che phủ: ngăn kéo bên phải phủ lên phần trung tâm */}
             {prefs.inspectorOpen && (
               <div
                 className="absolute top-0 right-0 h-full"
@@ -2748,7 +2748,7 @@ const ChapterStudio: React.FC = () => {
                   className="cs-sep cs-sep-strong"
                   style={{ width: 10, flexShrink: 0 }}
                   onPointerDown={(e) => beginResize('right', e)}
-                  title="拖拽调整覆盖宽度"
+                  title="Kéo thả để điều chỉnh độ rộng phủ"
                 />
                 <div className="flex-1 min-w-0 overflow-hidden">
                   <Inspector
@@ -2793,8 +2793,8 @@ const ChapterStudio: React.FC = () => {
               </div>
             )}
 
-            {/* 覆盖模式下，右侧边缘常驻开关 */}
-            <Tooltip title={prefs.inspectorOpen ? '收起属性面板' : '展开属性面板'}>
+            {/* Trong chế độ che phủ, công tắc thường trực ở mép phải */}
+            <Tooltip title={prefs.inspectorOpen ? 'Thu gọn bảng thuộc tính' : 'Mở bảng thuộc tính'}>
               <Button
                 size="small"
                 className="absolute top-1/2 -translate-y-1/2"
@@ -2807,7 +2807,7 @@ const ChapterStudio: React.FC = () => {
         )}
 
         <Modal
-          title={`批量视频准备度（${selectedShots.length} 条）`}
+          title={`Độ sẵn sàng video hàng loạt(${selectedShots.length} phân cảnh)`}
           open={batchVideoReadinessOpen}
           onCancel={() => {
             if (batchVideoReadinessLoading) return
@@ -2815,7 +2815,7 @@ const ChapterStudio: React.FC = () => {
           }}
           footer={[
             <Button key="close" onClick={() => setBatchVideoReadinessOpen(false)} disabled={batchVideoReadinessLoading}>
-              关闭
+              Đóng
             </Button>,
             <Button
               key="refresh"
@@ -2824,7 +2824,7 @@ const ChapterStudio: React.FC = () => {
               loading={batchVideoReadinessLoading}
               onClick={() => void batchInspectVideoReadiness()}
             >
-              重新检查
+              Kiểm tra lại
             </Button>,
           ]}
           width={880}
@@ -2835,11 +2835,11 @@ const ChapterStudio: React.FC = () => {
               <Spin />
             </div>
           ) : batchVideoReadinessItems.length === 0 ? (
-            <div className="text-sm text-gray-500">暂无批量视频准备度结果</div>
+            <div className="text-sm text-gray-500">Chưa có kết quả độ sẵn sàng tạo video theo lô</div>
           ) : (
             <div className="space-y-3 max-h-[65vh] overflow-y-auto pr-1">
               <div className="text-xs text-gray-500">
-                当前按 <Tag className="!mx-1">text_only</Tag> 参考模式检查这批分镜是否具备视频生成条件。
+                Hiện đang kiểm tra lô phân cảnh này có đủ điều kiện tạo video theo chế độ tham chiếu <Tag className="!mx-1">text_only</Tag> hay không.
               </div>
               {batchVideoReadinessItems.map(({ shot, readiness, error }) => {
                 const failedChecks = (readiness?.checks ?? []).filter((item) => !item.ok)
@@ -2854,12 +2854,12 @@ const ChapterStudio: React.FC = () => {
                           {error
                             ? error
                             : readiness?.ready
-                              ? '当前镜头已满足视频生成条件。'
-                              : `当前镜头还有 ${failedChecks.length} 项待补齐。`}
+                              ? 'Phân cảnh hiện tại đã đủ điều kiện tạo video.'
+                              : `Phân cảnh hiện tại còn ${failedChecks.length} mục cần bổ sung.`}
                         </div>
                       </div>
                       <Tag color={error ? 'red' : readiness?.ready ? 'green' : 'gold'}>
-                        {error ? '检查失败' : readiness?.ready ? '可生成' : '待补齐'}
+                        {error ? 'Kiểm tra thất bại' : readiness?.ready ? 'Sẵn sàng tạo' : 'Cần bổ sung'}
                       </Tag>
                     </div>
                     {!error ? (
@@ -2867,7 +2867,7 @@ const ChapterStudio: React.FC = () => {
                         {(readiness?.checks ?? []).map((check) => (
                           <Tooltip key={check.key} title={check.message}>
                             <Tag color={check.ok ? 'green' : 'default'}>
-                              {check.ok ? '通过' : '未通过'} · {check.key}
+                              {check.ok ? 'Đạt' : 'Chưa đạt'} · {check.key}
                             </Tag>
                           </Tooltip>
                         ))}
@@ -2931,7 +2931,7 @@ function Inspector(props: {
   onPatchShotDetail: (patch: Partial<ShotDetailRead>) => void
   onPatchShotDetailImmediate: (patch: Partial<ShotDetailRead>) => Promise<void>
   onSelectPreviewVideo: (fileId: string) => void
-  /** 下拉展开时拉取最新分镜帧图，用于「参考」关键帧类型选项动态更新 */
+  /** Khi mở dropdown, kéo ảnh khung phân cảnh mới nhất, dùng để cập nhật động tùy chọn loại khung hình chính "tham chiếu" */
   onRefreshShotFrameImages?: () => Promise<void>
 }) {
   const {
@@ -3137,9 +3137,9 @@ function Inspector(props: {
     last: { loading: false, taskStatus: null, taskId: null, thumbs: [], modalOpen: false, applyingFileId: null },
   })
   const selectedShotSourceLabel = useMemo(() => {
-    if (!selectedShot) return '分镜工作室'
+    if (!selectedShot) return 'Studio phân cảnh'
     const shotTitle = selectedShot.title?.trim()
-    return shotTitle ? `镜头：${shotTitle}` : `镜头：第 ${selectedShot.index} 镜`
+    return shotTitle ? `Phân cảnh: ${shotTitle}` : `Phân cảnh: thứ ${selectedShot.index}`
   }, [selectedShot])
   useRelationTaskNotification({
     task: videoTask,
@@ -3156,14 +3156,14 @@ function Inspector(props: {
         ? () =>
             void executeTaskCancel({
               taskId: videoTask.taskId,
-              reason: '用户在分镜工作室取消视频生成任务',
+              reason: 'Người dùng hủy tác vụ tạo video trong studio phân cảnh',
               applyCancelData: (data) => {
                 setVideoTask((current) => applyTaskCancelState(current, data))
                 return null
               },
               cancelledImmediatelyMessage: TASK_COPY.videoGeneration.cancelledImmediatelyMessage,
               cancelRequestedMessage: TASK_COPY.videoGeneration.cancelRequestedMessage,
-              fallbackErrorMessage: '取消视频生成任务失败',
+              fallbackErrorMessage: 'Hủy tác vụ tạo video thất bại',
             })
         : null,
     onNavigate: () => undefined,
@@ -3183,14 +3183,14 @@ function Inspector(props: {
         ? () =>
             void executeTaskCancel({
               taskId: promptTask.taskId,
-              reason: '用户在分镜工作室取消分镜提示词生成任务',
+              reason: 'Người dùng hủy tác vụ tạo prompt phân cảnh trong studio phân cảnh',
               applyCancelData: (data) => {
                 setPromptTask((current) => applyTaskCancelState(current, data))
                 return null
               },
               cancelledImmediatelyMessage: TASK_COPY.shotFramePrompt.cancelledImmediatelyMessage,
               cancelRequestedMessage: TASK_COPY.shotFramePrompt.cancelRequestedMessage,
-              fallbackErrorMessage: '取消分镜提示词生成任务失败',
+              fallbackErrorMessage: 'Hủy tác vụ tạo prompt phân cảnh thất bại',
             })
         : null,
     onNavigate: () => undefined,
@@ -3210,14 +3210,14 @@ function Inspector(props: {
         ? () =>
             void executeTaskCancel({
               taskId: frameImageTask.taskId,
-              reason: '用户在分镜工作室取消关键帧图片生成任务',
+              reason: 'Người dùng hủy tác vụ tạo hình ảnh khung hình chính trong studio phân cảnh',
               applyCancelData: (data) => {
                 setFrameImageTask((current) => applyTaskCancelState(current, data))
                 return null
               },
               cancelledImmediatelyMessage: TASK_COPY.shotFrameImage.cancelledImmediatelyMessage,
               cancelRequestedMessage: TASK_COPY.shotFrameImage.cancelRequestedMessage,
-              fallbackErrorMessage: '取消关键帧图片生成任务失败',
+              fallbackErrorMessage: 'Hủy tác vụ tạo ảnh khung hình chính thất bại',
             })
         : null,
     onNavigate: () => undefined,
@@ -3472,7 +3472,7 @@ function Inspector(props: {
     setShotExtractStatus({
       source: 'idle',
       updatedAt: null,
-      message: '待确认候选请前往分镜编辑页提取或刷新。',
+      message: 'Ứng viên chờ xác nhận vui lòng sang trang chỉnh sửa phân cảnh để trích xuất hoặc làm mới.',
     })
   }, [
     selectedShot?.id,
@@ -3527,26 +3527,26 @@ function Inspector(props: {
     const checks = [
       {
         key: 'characters' as const,
-        label: '角色',
-        importance: '影响人物一致性、关键帧参考图和画面主体描述。',
+        label: 'Nhân vật',
+        importance: 'Ảnh hưởng tính nhất quán nhân vật, ảnh tham chiếu khung hình chính và mô tả chủ thể hình ảnh.',
         candidates: bucket('character'),
       },
       {
         key: 'scene' as const,
-        label: '场景',
-        importance: '影响镜头环境描述、视频提示词和整体空间连续性。',
+        label: 'Bối cảnh',
+        importance: 'Ảnh hưởng mô tả bối cảnh phân cảnh, prompt video và tính liên tục không gian tổng thể.',
         candidates: bucket('scene'),
       },
       {
         key: 'props' as const,
-        label: '道具',
-        importance: '影响关键动作细节，缺失时容易让画面叙事元素不完整。',
+        label: 'Đạo cụ',
+        importance: 'Ảnh hưởng chi tiết hành động chính, thiếu dễ khiến yếu tố kể chuyện trong hình không đầy đủ.',
         candidates: bucket('prop'),
       },
       {
         key: 'costumes' as const,
-        label: '服装',
-        importance: '影响角色外观连续性，尤其在多镜头或生成多版本时更明显。',
+        label: 'Trang phục',
+        importance: 'ảnh hưởng tính liên tục ngoại hình nhân vật, đặc biệt rõ ở nhiều shot hoặc sinh nhiều phiên bản.',
         candidates: bucket('costume'),
       },
     ].map((item) => {
@@ -3656,21 +3656,21 @@ function Inspector(props: {
   const getReadinessExistenceLabel = useCallback((checkKey: 'characters' | 'scene' | 'props' | 'costumes', name: string) => {
     const item = readinessExistenceMap[`${checkKey}:${normalizeAssetName(name)}`]
     if (!item) {
-      return readinessExistenceLoading ? '检测中' : null
+      return readinessExistenceLoading ? 'đang kiểm tra' : null
     }
-    if (!item.exists) return '需新建'
-    if (item.linked_to_project && !item.linked_to_shot) return '项目内可关联'
-    if (!item.linked_to_project) return '资产库已有'
-    if (item.linked_to_shot) return '已关联'
+    if (!item.exists) return 'Cần tạo mới'
+    if (item.linked_to_project && !item.linked_to_shot) return 'Có thể liên kết trong dự án'
+    if (!item.linked_to_project) return 'thư viện tài nguyên đã có'
+    if (item.linked_to_shot) return 'Đã liên kết'
     return null
   }, [readinessExistenceLoading, readinessExistenceMap])
 
 
   const promptAssetReadinessNote = useMemo(() => {
-    if (!selectedShot) return '请先选择一个分镜。'
-    if (selectedShot.skip_extraction) return '当前分镜已明确标记为无需提取，系统会直接按“提取确认已完成”处理。'
-    if (!shotAssetsOverview) return '当前还没有拿到这条分镜的资产总览，暂时无法展示候选确认状态。'
-    return '这里作为生成前的诊断面板，优先依据后端 assets-overview 展示当前镜头的信息确认状态；提取、刷新与精细确认统一在分镜编辑页处理。'
+    if (!selectedShot) return 'Vui lòng chọn một phân cảnh trước.'
+    if (selectedShot.skip_extraction) return 'Phân cảnh này đã được đánh dấu rõ là không cần trích xuất, hệ thống sẽ xử lý trực tiếp theo "xác nhận trích xuất đã hoàn tất".'
+    if (!shotAssetsOverview) return 'Chưa nhận được tổng quan tài nguyên của phân cảnh này, tạm thời không thể hiển thị trạng thái xác nhận ứng viên.'
+    return 'Trang này đóng vai trò bảng chẩn đoán trước khi tạo, ưu tiên hiển thị trạng thái xác nhận thông tin của phân cảnh hiện tại dựa theo assets-overview phía sau; trích xuất, làm mới và xác nhận chi tiết đều xử lý thống nhất trên trang chỉnh sửa phân cảnh.'
   }, [selectedShot, shotAssetsOverview])
 
   const shotExtractStatusText = useMemo(() => {
@@ -3692,7 +3692,7 @@ function Inspector(props: {
   const extractFileIdFromThumbnail = useCallback((thumbnail?: string | null): string | null => {
     const v = (thumbnail || '').trim()
     if (!v) return null
-    // 纯 file_id：不包含路径或协议
+    // Chỉ file_id: không chứa đường dẫn hoặc giao thức
     if (!v.includes('/') && !v.includes(':')) return v
     try {
       const url = new URL(v, typeof window !== 'undefined' ? window.location.origin : 'http://localhost')
@@ -3940,15 +3940,15 @@ function Inspector(props: {
       if (out.includes(fid)) return
       out.push(fid)
     }
-    // 角色（按 index 顺序）
+    // Nhân vật (theo thứ tự index)
     orderedLinkedCharacterIds.forEach((cid) =>
       push(extractFileIdFromThumbnail(linkedAssetThumbByKey.get(`character:${cid}`) ?? null)),
     )
-    // 场景（单个）
+    // Bối cảnh (riêng lẻ)
     if (linkedSceneId) push(extractFileIdFromThumbnail(linkedAssetThumbByKey.get(`scene:${linkedSceneId}`) ?? null))
-    // 道具
+    // Đạo cụ
     linkedPropIds.forEach((pid) => push(extractFileIdFromThumbnail(linkedAssetThumbByKey.get(`prop:${pid}`) ?? null)))
-    // 服装
+    // Trang phục
     linkedCostumeIds.forEach((cid) =>
       push(extractFileIdFromThumbnail(linkedAssetThumbByKey.get(`costume:${cid}`) ?? null)),
     )
@@ -4197,7 +4197,7 @@ function Inspector(props: {
     return shotDetail.key_frame_prompt ?? ''
   }
 
-  const frameLabel: Record<PromptFrameType, string> = { first: '首帧', key: '关键帧', last: '尾帧' }
+  const frameLabel: Record<PromptFrameType, string> = { first: 'Khung hình đầu', key: 'Khung hình chính', last: 'Khung hình cuối' }
 
   const handleRefFrameTypeDropdownVisibleChange = useCallback(
     async (open: boolean) => {
@@ -4215,10 +4215,10 @@ function Inspector(props: {
   const refFrameTypeOptions = useMemo(() => {
     const kinds = new Set((frameImages ?? []).map((x) => x.frame_type))
     const opts: Array<{ value: string; label: string }> = []
-    if (kinds.has('first')) opts.push({ value: 'first', label: '首帧' })
-    if (kinds.has('last')) opts.push({ value: 'last', label: '尾帧' })
-    if (kinds.has('first') && kinds.has('last')) opts.push({ value: 'first_last', label: '首尾帧' })
-    if (kinds.has('key')) opts.push({ value: 'key', label: '关键帧' })
+    if (kinds.has('first')) opts.push({ value: 'first', label: 'Khung hình đầu' })
+    if (kinds.has('last')) opts.push({ value: 'last', label: 'Khung hình cuối' })
+    if (kinds.has('first') && kinds.has('last')) opts.push({ value: 'first_last', label: 'Khung đầu & cuối' })
+    if (kinds.has('key')) opts.push({ value: 'key', label: 'Khung hình chính' })
     return opts
   }, [frameImages])
 
@@ -4247,7 +4247,7 @@ function Inspector(props: {
 
   const openVideoPromptPreview = async () => {
     if (!selectedShot?.id) {
-      message.warning('请先选择一个分镜')
+      message.warning('Vui lòng chọn một phân cảnh trước')
       return
     }
     const { referenceMode, images } = buildVideoRefSelection()
@@ -4275,7 +4275,7 @@ function Inspector(props: {
         })
       }
     } catch {
-      message.error('获取视频提示词预览失败')
+      message.error('Lấy preview prompt video thất bại')
     } finally {
       setVideoPromptPreviewLoading(false)
     }
@@ -4283,16 +4283,16 @@ function Inspector(props: {
 
   const submitVideoGeneration = async () => {
     if (!selectedShot?.id) {
-      message.warning('请先选择一个分镜')
+      message.warning('Vui lòng chọn một phân cảnh trước')
       return
     }
     if (!resolveVideoRatioForRequest()) {
-      message.warning('当前镜头缺少视频比例，请先设置项目默认比例或镜头覆盖比例')
+      message.warning('shot hiện tại thiếu tỷ lệ video, vui lòng đặt tỷ lệ mặc định của dự án hoặc tỷ lệ ghi đè của shot trước')
       return
     }
     const prompt = (videoPromptPreviewDraft || '').trim()
     if (!prompt) {
-      message.warning('请输入视频提示词')
+      message.warning('Vui lòng nhập prompt video')
       return
     }
     setVideoPromptPreviewSubmitting(true)
@@ -4300,7 +4300,7 @@ function Inspector(props: {
       const submitted = await videoPromptDraft.submitNow()
       const taskId = submitted?.taskId
       if (!taskId) {
-        message.error('视频生成任务创建失败：缺少任务 ID')
+        message.error('Tạo tác vụ video thất bại: thiếu ID tác vụ')
         return
       }
       setVideoTaskId(taskId)
@@ -4315,7 +4315,7 @@ function Inspector(props: {
       setVideoSettledTask(null)
       setVideoPromptPreviewOpen(false)
     } catch {
-      message.error('发起视频生成失败')
+      message.error('Khởi tạo quy trình tạo video thất bại')
     } finally {
       setVideoPromptPreviewSubmitting(false)
     }
@@ -4352,7 +4352,7 @@ function Inspector(props: {
         }
       } catch {
         if (!cancelled) {
-          message.error('获取视频任务状态失败')
+          message.error('Lấy trạng thái tác vụ video thất bại')
         }
       } finally {
         if (!cancelled) setVideoTaskPolling(false)
@@ -4420,7 +4420,7 @@ function Inspector(props: {
 
   const generateKeyframeCard = async (frameType: PromptFrameType) => {
     if (!selectedShot?.id) {
-      message.warning('请先选择一个分镜')
+      message.warning('Vui lòng chọn một phân cảnh trước')
       return
     }
     try {
@@ -4438,7 +4438,7 @@ function Inspector(props: {
       })
       setKeyframePromptDebugContext(null)
       setKeyframePromptQualityChecks(null)
-      // 文本区域内容：统一由 frame-render-prompt 获取
+      // Nội dung vùng văn bản: thống nhất lấy từ frame-render-prompt
       if (basePrompt.trim()) {
         void renderShotPromptToTextarea({
           frameType,
@@ -4450,16 +4450,16 @@ function Inspector(props: {
         setKeyframePromptPreviewLoading(false)
       }
     } catch {
-      message.error('获取提示词失败')
+      message.error('Lấy prompt thất bại')
       setKeyframePromptPreviewLoading(false)
     } finally {
-      // loading 由 renderShotPromptToTextarea 结束后关闭
+      // loading sẽ được tắt sau khi renderShotPromptToTextarea kết thúc
     }
   }
 
   const regenerateKeyframePrompt = async () => {
     if (!selectedShot?.id) {
-      message.warning('请先选择一个分镜')
+      message.warning('Vui lòng chọn một phân cảnh trước')
       return
     }
     const frameType = keyframePromptPreviewFrameType
@@ -4473,7 +4473,7 @@ function Inspector(props: {
       })
       const taskId = created.data?.task_id
       if (!taskId) {
-        message.error('生成任务创建失败：缺少任务 ID')
+        message.error('Tạo tác vụ thất bại: thiếu ID tác vụ')
         return
       }
       setPromptTask({
@@ -4510,7 +4510,7 @@ function Inspector(props: {
 
       if (finalStatus !== 'succeeded') {
         if (finalStatus !== 'failed' && finalStatus !== 'cancelled') {
-          message.warning('生成任务仍在执行，请稍后重试')
+          message.warning('Tác vụ tạo vẫn đang thực thi, vui lòng thử lại sau')
         }
         return
       }
@@ -4537,7 +4537,7 @@ function Inspector(props: {
             }
           : null
       if (!generatedPrompt.trim()) {
-        message.warning('生成完成，但未返回提示词')
+        message.warning('Đã hoàn tất tạo nhưng chưa trả về prompt')
         return
       }
       if (frameType === 'first') {
@@ -4556,16 +4556,16 @@ function Inspector(props: {
         prompt: generatedPrompt,
         refFileIds: keyframePromptPreviewRefFileIds.length > 0 ? keyframePromptPreviewRefFileIds : autoKeyframeRefFileIds,
       })
-      message.success('提示词已生成')
+      message.success('Đã tạo prompt')
     } catch {
-      message.error('生成提示词失败')
+      message.error('Tạo prompt thất bại')
     } finally {
       setKeyframePromptActionLoading(false)
     }
   }
 
   useEffect(() => {
-    // 弹窗打开时，若当前没有参考图，则自动填充为分镜关联实体的参考图
+    // Khi mở hộp thoại, nếu hiện tại chưa có ảnh tham chiếu thì tự động điền ảnh tham chiếu của thực thể liên kết với phân cảnh
     if (!keyframePromptPreviewOpen) return
     if (keyframePromptPreviewRefFileIds.length > 0) return
     if (autoKeyframeRefFileIds.length === 0) return
@@ -4601,13 +4601,13 @@ function Inspector(props: {
 
   const confirmGenerateKeyframeWithPrompt = async () => {
     if (!selectedShot?.id) {
-      message.warning('请先选择一个分镜')
+      message.warning('Vui lòng chọn một phân cảnh trước')
       return
     }
     const frameType = keyframePromptPreviewFrameType
     const basePrompt = (keyframePromptPreviewDraft || '').trim()
     if (!basePrompt) {
-      message.warning('请输入提示词')
+      message.warning('Vui lòng nhập prompt')
       return
     }
 
@@ -4619,7 +4619,7 @@ function Inspector(props: {
       const submitted = await keyframePromptDraft.submitNow()
       const taskId = submitted?.taskId
       if (!taskId) {
-        message.error('生成任务创建失败：缺少任务 ID')
+        message.error('Tạo tác vụ thất bại: thiếu ID tác vụ')
         updateCardState(frameType, { loading: false, taskStatus: 'failed' })
         return
       }
@@ -4661,11 +4661,11 @@ function Inspector(props: {
         await loadCardThumbs(frameType, latestSlotId, 5)
         setKeyframePromptPreviewOpen(false)
       } else if (finalStatus !== 'failed' && finalStatus !== 'cancelled') {
-        message.warning('生成任务仍在执行，请稍后刷新')
+        message.warning('Tác vụ tạo vẫn đang thực thi, vui lòng làm mới sau')
       }
     } catch {
       updateCardState(frameType, { taskStatus: 'failed' })
-      message.error(`${frameLabel[frameType]}生成失败`)
+      message.error(`${frameLabel[frameType]}sinh thất bại`)
     } finally {
       updateCardState(frameType, { loading: false })
       setKeyframePromptActionLoading(false)
@@ -4682,9 +4682,9 @@ function Inspector(props: {
         requestBody: { file_id: fileId } as any,
       })
       await loadCardThumbs(frameType)
-      message.success('已切换使用图片')
+      message.success('Đã chuyển sang dùng ảnh')
     } catch {
-      message.error('切换失败')
+      message.error('Đổi thất bại')
     } finally {
       updateCardState(frameType, { applyingFileId: null })
     }
@@ -4702,13 +4702,13 @@ function Inspector(props: {
     <div className="w-full h-full flex flex-col min-h-0">
       <div className="cs-inspector-header flex items-center justify-between">
         <div className="min-w-0">
-          <div className="font-medium truncate">分镜生成面板</div>
+          <div className="font-medium truncate">Bảng tạo phân cảnh</div>
           <div className="text-xs text-gray-500 truncate">
-            {selectedShot ? `${String(selectedShot.index).padStart(2, '0')} · ${selectedShot.title}` : '未选择分镜'}
+            {selectedShot ? `${String(selectedShot.index).padStart(2, '0')} · ${selectedShot.title}` : 'Chưa chọn phân cảnh'}
           </div>
         </div>
         <Space size="small">
-          <Tooltip title="收起">
+          <Tooltip title="Thu gọn">
             <Button size="small" type="text" icon={<DoubleRightOutlined />} onClick={onClose} />
           </Tooltip>
         </Space>
@@ -4723,7 +4723,7 @@ function Inspector(props: {
             const items = [
               {
               key: 'ops',
-              label: '维护设置',
+              label: 'Cài đặt bảo trì',
               children: (
                 <ChapterStudioMaintenancePanel
                   opsTitleDraft={opsTitleDraft}
@@ -4741,11 +4741,11 @@ function Inspector(props: {
                   onRequestDelete={() => {
                     if (!selectedShot?.id) return
                     Modal.confirm({
-                      title: '删除分镜？',
-                      content: '此操作不可撤销。',
-                      okText: '删除',
+                      title: 'Xóa phân cảnh?',
+                      content: 'Thao tác này không thể thu hồi.',
+                      okText: 'Xóa',
                       okButtonProps: { danger: true },
-                      cancelText: '取消',
+                      cancelText: 'Hủy',
                       onOk: () => onDeleteShotOps(selectedShot.id),
                     })
                   }}
@@ -4754,20 +4754,20 @@ function Inspector(props: {
             },
               {
               key: 'camera',
-              label: '生成参数',
+              label: 'Tham số tạo',
               children: (
                 <div>
                   {loadingDetail ? (
-                    <div className="text-gray-500">加载中…</div>
+                    <div className="text-gray-500">đang tải…</div>
                   ) : shotDetail ? (
                     <>
                       <div className="cs-group">
                         <div className="cs-group-title">
-                          <CameraOutlined /> 镜头语言
+                          <CameraOutlined /> Ngôn ngữ điện ảnh
                         </div>
                         <div className="space-y-4">
                           <div>
-                            <div className="text-gray-500 text-xs mb-1">景别</div>
+                            <div className="text-gray-500 text-xs mb-1">Cận (độ rộng shot)</div>
                             <Radio.Group
                               value={shotDetail.camera_shot}
                               optionType="button"
@@ -4779,7 +4779,7 @@ function Inspector(props: {
                             />
                           </div>
                           <div>
-                            <div className="text-gray-500 text-xs mb-1">角度</div>
+                            <div className="text-gray-500 text-xs mb-1">Góc độ</div>
                             <Radio.Group
                               value={shotDetail.angle}
                               optionType="button"
@@ -4790,7 +4790,7 @@ function Inspector(props: {
                             />
                           </div>
                           <div>
-                            <div className="text-gray-500 text-xs mb-1">运镜</div>
+                            <div className="text-gray-500 text-xs mb-1">Chuyển động máy</div>
                             <Radio.Group
                               value={shotDetail.movement}
                               size="small"
@@ -4800,7 +4800,7 @@ function Inspector(props: {
                             />
                           </div>
                           <div>
-                            <div className="text-gray-500 text-xs mb-1">时长（1–30s，整数）</div>
+                            <div className="text-gray-500 text-xs mb-1">Thời lượng (1–30s, số nguyên)</div>
                             <div className="flex items-center gap-2">
                               <Slider
                                 min={1}
@@ -4826,12 +4826,12 @@ function Inspector(props: {
                             </div>
                           </div>
                           <div>
-                            <div className="text-gray-500 text-xs mb-1">视频比例</div>
+                            <div className="text-gray-500 text-xs mb-1">Tỷ lệ video</div>
                             <Select
                               size="small"
                               allowClear
                               value={shotDetail.override_video_ratio ?? undefined}
-                              placeholder={projectDefaultVideoRatio || capabilityDefaultVideoRatio || '请选择视频比例'}
+                              placeholder={projectDefaultVideoRatio || capabilityDefaultVideoRatio || 'Vui lòng chọn tỷ lệ video'}
                               options={videoRatioOptions}
                               onChange={(value) => {
                                 onPatchShotDetail({ override_video_ratio: value ?? null })
@@ -4839,7 +4839,7 @@ function Inspector(props: {
                               disabled={cameraUpdating}
                             />
                             <div className="mt-1 text-[11px] text-gray-400">
-                              当前生效：{resolveVideoRatioForRequest() || '未设置'}
+                              hiện đang hiệu lực:{resolveVideoRatioForRequest() || 'chưa đặt'}
                             </div>
                           </div>
                         </div>
@@ -4847,32 +4847,32 @@ function Inspector(props: {
 
                       <div className="cs-group">
                         <div className="cs-group-title">
-                          <TagOutlined /> 情绪标签
+                          <TagOutlined /> Nhãn cảm xúc
                         </div>
-                        <div className="cs-hint">用标签快速标记镜头情绪，便于生成风格统一。</div>
+                        <div className="cs-hint">Dùng nhãn để đánh dấu nhanh cảm xúc phân cảnh, thuận tiện cho phong cách tạo thống nhất.</div>
                         <div className="mt-3">
                           <Space wrap>
-                            {['愤怒', '反转', '紧张', '温馨', '压抑'].map((t) => (
+                            {['phẫn nộ', 'twist', 'căng thẳng', 'ấm áp', 'u uất'].map((t) => (
                               <Tag key={t} className="cursor-pointer">
                                 {t}
                               </Tag>
                             ))}
                             <Button size="small" type="dashed">
-                              + 自定义
+                              + Tùy chỉnh
                             </Button>
                           </Space>
                         </div>
                       </div>
                     </>
                   ) : (
-                    <div className="text-gray-500">请选择分镜</div>
+                    <div className="text-gray-500">vui lòng chọn phân cảnh</div>
                   )}
                 </div>
               ),
             },
               {
               key: 'prompt_image',
-              label: '确认诊断',
+              label: 'Xác nhận chẩn đoán',
               children: (
                 <div>
                   <ChapterStudioReadinessDiagnosisPanel
@@ -4891,11 +4891,11 @@ function Inspector(props: {
 
                   <div className="cs-group">
                     <div className="cs-group-title">
-                      <PictureOutlined /> 氛围描述
+                      <PictureOutlined /> Mô tả không khí
                     </div>
                     <div>
                         <div className="flex items-center justify-between">
-                          <div className="text-gray-500 text-xs">氛围描述</div>
+                          <div className="text-gray-500 text-xs">mô tả không khí</div>
                           <Switch
                             size="small"
                             checked={shotDetail?.follow_atmosphere ?? false}
@@ -4904,7 +4904,7 @@ function Inspector(props: {
                         </div>
                         <TextArea
                           rows={3}
-                          placeholder="氛围描述…（可选跟随画面）"
+                          placeholder="Mô tả không khí… (tùy chọn đi theo khung hình)"
                           value={shotDetail?.atmosphere ?? ''}
                           onChange={(e) => onPatchShotDetail({ atmosphere: e.target.value })}
                         />
@@ -4916,39 +4916,39 @@ function Inspector(props: {
             },
               {
               key: 'dialogue',
-              label: '对白状态',
+              label: 'Trạng thái thoại',
               children: (
                 <div>
                   <div className="cs-group">
                     <div className="cs-group-title">
-                      <SoundOutlined /> 对白状态
+                      <SoundOutlined /> Trạng thái thoại
                     </div>
-                    <div className="cs-hint">这里主要查看当前镜头对白与待确认状态。对白候选的主确认入口在分镜编辑页，工作室侧重继续准备关键帧、图片和视频生成。</div>
+                    <div className="cs-hint">Ở đây chủ yếu xem thoại và trạng thái chờ xác nhận của phân cảnh hiện tại. Lối vào xác nhận chính cho ứng viên thoại nằm ở trang chỉnh sửa phân cảnh, studio tập trung tiếp tục chuẩn bị khung hình chính, ảnh và tạo video.</div>
                     <div className="space-y-4 mt-3">
                       <div>
                         <Button icon={<EditOutlined />} onClick={goToShotEditForAssets}>
-                          去分镜编辑确认对白
+                          Sang trang chỉnh sửa phân cảnh để xác nhận thoại
                         </Button>
                       </div>
                       <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-500">
-                        如需新增对白、接受候选或忽略候选，请前往分镜编辑页处理。工作室这里主要用于查看当前对白状态，并继续后续生成准备。
+                        Nếu cần thêm thoại, chấp nhận ứng viên hoặc bỏ qua ứng viên, vui lòng xử lý trong trang chỉnh sửa phân cảnh. Studio ở đây chủ yếu để xem trạng thái thoại hiện tại và tiếp tục chuẩn bị tạo.
                       </div>
 
                       {pendingDialogueCandidates.length > 0 ? (
                         <div>
-                          <div className="text-gray-500 text-xs mb-2">待确认对白候选</div>
+                          <div className="text-gray-500 text-xs mb-2">Ứng viên thoại chờ xác nhận</div>
                           <div className="space-y-2">
                             {pendingDialogueCandidates.map((candidate) => (
                               <div key={candidate.id} className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="min-w-0">
                                     <div className="text-xs text-amber-700 mb-1">
-                                      {candidate.speaker_name?.trim() || '未知'} → {candidate.target_name?.trim() || '未知'}
+                                      {candidate.speaker_name?.trim() || 'Không rõ'} → {candidate.target_name?.trim() || 'Không rõ'}
                                     </div>
                                     <div className="text-xs text-gray-700 break-words">{candidate.text}</div>
                                   </div>
                                   <Button size="small" icon={<EditOutlined />} onClick={goToShotEditForAssets}>
-                                    去编辑页处理
+                                    Xử lý ở trang chỉnh sửa
                                   </Button>
                                 </div>
                               </div>
@@ -4958,7 +4958,7 @@ function Inspector(props: {
                       ) : null}
 
                       <div>
-                        <div className="text-gray-500 text-xs mb-2">当前对白</div>
+                        <div className="text-gray-500 text-xs mb-2">Thoại hiện tại</div>
                         {dialogLines.length > 0 ? (
                           <div className="space-y-1">
                             {dialogLines.slice().sort((a, b) => (a.index ?? 0) - (b.index ?? 0)).map((l) => (
@@ -4971,16 +4971,16 @@ function Inspector(props: {
                                   icon={<DeleteOutlined />}
                                   onClick={() => {
                                     Modal.confirm({
-                                      title: '删除该对白？',
-                                      okText: '删除',
-                                      cancelText: '取消',
+                                      title: 'Xóa lời thoại này?',
+                                      okText: 'Xóa',
+                                      cancelText: 'Hủy',
                                       okButtonProps: { danger: true },
                                       onOk: async () => {
                                         try {
                                           await onDeleteDialogLine(l.id)
-                                          message.success('已删除')
+                                          message.success('Đã xóa')
                                         } catch {
-                                          message.error('删除失败')
+                                          message.error('Xóa thất bại')
                                         }
                                       },
                                     })
@@ -4990,7 +4990,7 @@ function Inspector(props: {
                             ))}
                           </div>
                         ) : (
-                          <div className="text-xs text-gray-400">当前镜头还没有对白。</div>
+                          <div className="text-xs text-gray-400">Phân cảnh hiện tại chưa có thoại.</div>
                         )}
                       </div>
                     </div>
@@ -5000,37 +5000,37 @@ function Inspector(props: {
             },
               {
               key: 'keyframe_gen',
-              label: '关键帧与参考图',
+              label: 'Khung hình chính và ảnh tham chiếu',
               children: (
                 <div className="space-y-3">
                   <div className="cs-group">
                     <div className="cs-group-title">
-                      <SettingOutlined /> 关键帧规格
+                      <SettingOutlined /> Spec khung hình chính
                     </div>
                     <div className="text-xs text-gray-500 mb-2">
-                      关键帧会跟随当前视频比例生成；这里控制参考帧分辨率档位。
+                      Khung hình chính sẽ được tạo theo tỉ lệ video hiện tại; ở đây kiểm soát bậc độ phân giải của khung hình tham chiếu.
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="min-w-[96px] text-xs text-gray-500">分辨率档位</div>
+                      <div className="min-w-[96px] text-xs text-gray-500">Hạng phân giải</div>
                       <Select
                         size="small"
                         value={keyframeResolutionProfile}
                         style={{ width: 160 }}
                         options={[
-                          { value: 'standard', label: '标准（2K）' },
-                          { value: 'high', label: '高清（3K）' },
+                          { value: 'standard', label: 'Chuẩn (2K)' },
+                          { value: 'high', label: 'Độ nét cao (3K)' },
                         ]}
                         onChange={(value) => onChangeKeyframeResolutionProfile(value as KeyframeResolutionProfile)}
                       />
                     </div>
                     <div className="mt-2 rounded bg-gray-50 px-3 py-2 text-xs text-gray-600">
                       <div>
-                        当前规格：{resolvedKeyframeRatio || '未设置比例'} ·{' '}
+                        đặc tả hiện tại:{resolvedKeyframeRatio || 'chưa đặt tỷ lệ'} ·{' '}
                         {getResolutionProfileLabel(keyframeResolutionProfile)}
                         {resolvedKeyframePixelSize ? ` → ${resolvedKeyframePixelSize}` : ''}
                       </div>
                       <div className="mt-1 text-gray-500">
-                        当前模型：{imageGenerationOptions?.provider || '未识别供应商'}
+                        Mô hình hiện tại: {imageGenerationOptions?.provider || 'Nhà cung cấp không xác định được'}
                         {imageGenerationOptions?.model_name ? ` / ${imageGenerationOptions.model_name}` : ''}
                       </div>
                     </div>
@@ -5041,32 +5041,32 @@ function Inspector(props: {
                     const inUseFileId = slot?.file_id ? String(slot.file_id) : ''
                     const statusText =
                       st.taskStatus === 'pending'
-                        ? '排队中'
+                        ? 'Đang xếp hàng'
                         : st.taskStatus === 'running'
-                          ? '生成中'
+                          ? 'Đang tạo'
                           : st.taskStatus === 'succeeded'
-                            ? '已完成'
+                            ? 'Đã hoàn thành'
                             : st.taskStatus === 'failed'
-                              ? '失败'
+                              ? 'Thất bại'
                               : st.taskStatus === 'cancelled'
-                                ? '已取消'
+                                ? 'Đã hủy'
                                 : ''
                     return (
                       <div key={ft} className="cs-group">
                         <div className="cs-group-title flex items-center justify-between gap-2">
-                          <span>{frameLabel[ft]}图片</span>
+                          <span>Hình ảnh {frameLabel[ft]}</span>
                           <Space size={8}>
                             <Button size="small" type="link" onClick={() => updateCardState(ft, { modalOpen: true })}>
-                              更多
+                              Thêm
                             </Button>
                             <Button size="small" type="primary" loading={st.loading} onClick={() => void generateKeyframeCard(ft)}>
-                              生成
+                              Tạo
                             </Button>
                           </Space>
                         </div>
                         <div className="text-xs text-gray-500 min-h-5">{statusText}</div>
                         {st.thumbs.length === 0 ? (
-                          <div className="mt-2 h-24 border border-dashed rounded flex items-center justify-center text-xs text-gray-400">暂无图片</div>
+                          <div className="mt-2 h-24 border border-dashed rounded flex items-center justify-center text-xs text-gray-400">Chưa có ảnh</div>
                         ) : (
                           <div className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1">
                             {st.thumbs.slice(0, 4).map((it) => (
@@ -5074,10 +5074,10 @@ function Inspector(props: {
                             ))}
                           </div>
                         )}
-                        <Modal title={`${frameLabel[ft]}图片`} open={st.modalOpen} onCancel={() => updateCardState(ft, { modalOpen: false })} footer={null} width={720}>
+                        <Modal title={`${frameLabel[ft]} ảnh`} open={st.modalOpen} onCancel={() => updateCardState(ft, { modalOpen: false })} footer={null} width={720}>
                           {ft === 'first' ? (
                             <div className="mb-3">
-                              <div className="text-sm text-gray-600 mb-2">关联角色</div>
+                              <div className="text-sm text-gray-600 mb-2">Nhân vật liên kết</div>
                               <div className="flex items-center gap-2 overflow-x-auto pb-1">
                                 <button
                                   type="button"
@@ -5088,12 +5088,12 @@ function Inspector(props: {
                                     setLinkRoleOpen(true)
                                     void loadProjectRoleOptions()
                                   }}
-                                  title="添加关联角色"
+                                  title="Thêm nhân vật liên kết"
                                 >
                                   <PlusOutlined />
                                 </button>
                                 {linkedCharacterIds.length === 0 ? (
-                                  <div className="text-xs text-gray-400">暂无关联角色</div>
+                                  <div className="text-xs text-gray-400">Chưa có nhân vật liên kết</div>
                                 ) : (
                                   linkedCharacterIds.map((cid) => {
                                     const thumb = linkedAssetThumbByKey.get(`character:${cid}`)
@@ -5120,7 +5120,7 @@ function Inspector(props: {
                                 )}
                               </div>
 
-                              <div className="mt-3 text-sm text-gray-600 mb-2">关联场景</div>
+                              <div className="mt-3 text-sm text-gray-600 mb-2">Bối cảnh liên kết</div>
                               <div className="flex items-center gap-2 overflow-x-auto pb-1">
                                 <button
                                   type="button"
@@ -5130,7 +5130,7 @@ function Inspector(props: {
                                     setLinkSceneOpen(true)
                                     void loadProjectAssetOptions('scene')
                                   }}
-                                  title="添加/更换关联场景"
+                                  title="Thêm/đổi bối cảnh liên kết"
                                 >
                                   <PlusOutlined />
                                 </button>
@@ -5145,14 +5145,14 @@ function Inspector(props: {
                                       preview={{ src: resolveAssetUrl(linkedAssetThumbByKey.get(`scene:${linkedSceneId}`) ?? '') }}
                                     />
                                   ) : (
-                                    <div className="text-xs text-gray-400">已关联场景：{sceneNameMap[linkedSceneId] ?? linkedSceneId}</div>
+                                    <div className="text-xs text-gray-400">Bối cảnh đã liên kết: {sceneNameMap[linkedSceneId] ?? linkedSceneId}</div>
                                   )
                                 ) : (
-                                  <div className="text-xs text-gray-400">暂无关联场景</div>
+                                  <div className="text-xs text-gray-400">Chưa có bối cảnh liên kết</div>
                                 )}
                               </div>
 
-                              <div className="mt-3 text-sm text-gray-600 mb-2">关联道具</div>
+                              <div className="mt-3 text-sm text-gray-600 mb-2">Đạo cụ liên kết</div>
                               <div className="flex items-center gap-2 overflow-x-auto pb-1">
                                 <button
                                   type="button"
@@ -5163,12 +5163,12 @@ function Inspector(props: {
                                     setLinkPropOpen(true)
                                     void loadProjectAssetOptions('prop')
                                   }}
-                                  title="添加关联道具"
+                                  title="Thêm đạo cụ liên kết"
                                 >
                                   <PlusOutlined />
                                 </button>
                                 {linkedPropIds.length === 0 ? (
-                                  <div className="text-xs text-gray-400">暂无关联道具</div>
+                                  <div className="text-xs text-gray-400">Chưa có đạo cụ liên kết</div>
                                 ) : (
                                   linkedPropIds.map((pid) =>
                                     linkedAssetThumbByKey.get(`prop:${pid}`) ? (
@@ -5189,7 +5189,7 @@ function Inspector(props: {
                                 )}
                               </div>
 
-                              <div className="mt-3 text-sm text-gray-600 mb-2">关联服装</div>
+                              <div className="mt-3 text-sm text-gray-600 mb-2">Trang phục liên kết</div>
                               <div className="flex items-center gap-2 overflow-x-auto pb-1">
                                 <button
                                   type="button"
@@ -5200,12 +5200,12 @@ function Inspector(props: {
                                     setLinkCostumeOpen(true)
                                     void loadProjectAssetOptions('costume')
                                   }}
-                                  title="添加关联服装"
+                                  title="Thêm trang phục liên kết"
                                 >
                                   <PlusOutlined />
                                 </button>
                                 {linkedCostumeIds.length === 0 ? (
-                                  <div className="text-xs text-gray-400">暂无关联服装</div>
+                                  <div className="text-xs text-gray-400">Chưa có trang phục liên kết</div>
                                 ) : (
                                   linkedCostumeIds.map((cid) =>
                                     linkedAssetThumbByKey.get(`costume:${cid}`) ? (
@@ -5236,10 +5236,10 @@ function Inspector(props: {
                                   <img src={it.thumbUrl} alt="" className="w-full h-36 object-cover rounded" />
                                   <div className="mt-2 flex items-center justify-between">
                                     {inUse ? (
-                                      <Tag color="green">使用中</Tag>
+                                      <Tag color="green">Đang sử dụng</Tag>
                                     ) : (
                                       <Button size="small" loading={st.applyingFileId === it.fileId} onClick={() => void applyCardImage(ft, it.fileId)}>
-                                        使用
+                                        Sử dụng
                                       </Button>
                                     )}
                                   </div>
@@ -5249,7 +5249,7 @@ function Inspector(props: {
                           </div>
 
                           <Modal
-                            title="关联角色"
+                            title="Liên kết nhân vật"
                             open={linkRoleOpen}
                             onCancel={() => setLinkRoleOpen(false)}
                             footer={null}
@@ -5257,11 +5257,11 @@ function Inspector(props: {
                             width={560}
                           >
                             <div className="space-y-2">
-                              <div className="text-xs text-gray-500">来源：当前项目全部角色（选择后立即保存；已关联的角色不可重复选择）</div>
+                              <div className="text-xs text-gray-500">Nguồn: toàn bộ nhân vật trong dự án hiện tại (lưu ngay sau khi chọn; nhân vật đã liên kết không được chọn trùng)</div>
                               <Select
                                 mode="multiple"
                                 className="w-full"
-                                placeholder="选择要关联到当前分镜的角色"
+                                placeholder="Chọn nhân vật cần liên kết vào phân cảnh hiện tại"
                                 value={linkRoleSelectedIds}
                                 loading={linkRoleLoading}
                                 disabled={promptAssetsUpdating}
@@ -5286,7 +5286,7 @@ function Inspector(props: {
                           </Modal>
 
                           <Modal
-                            title="关联场景"
+                            title="Liên kết bối cảnh"
                             open={linkSceneOpen}
                             onCancel={() => setLinkSceneOpen(false)}
                             footer={null}
@@ -5294,10 +5294,10 @@ function Inspector(props: {
                             width={560}
                           >
                             <div className="space-y-2">
-                              <div className="text-xs text-gray-500">来源：当前项目场景（选择后立即保存）</div>
+                              <div className="text-xs text-gray-500">Nguồn: bối cảnh của dự án hiện tại (lưu ngay khi chọn)</div>
                               <Select
                                 className="w-full"
-                                placeholder="选择要关联到当前分镜的场景"
+                                placeholder="Chọn bối cảnh cần liên kết vào phân cảnh hiện tại"
                                 value={linkedSceneId ?? undefined}
                                 loading={linkSceneLoading}
                                 disabled={promptAssetsUpdating}
@@ -5318,7 +5318,7 @@ function Inspector(props: {
                           </Modal>
 
                           <Modal
-                            title="关联道具"
+                            title="Liên kết đạo cụ"
                             open={linkPropOpen}
                             onCancel={() => setLinkPropOpen(false)}
                             footer={null}
@@ -5326,11 +5326,11 @@ function Inspector(props: {
                             width={560}
                           >
                             <div className="space-y-2">
-                              <div className="text-xs text-gray-500">来源：当前项目道具（选择后立即保存；已关联的不可重复选择）</div>
+                              <div className="text-xs text-gray-500">Nguồn: đạo cụ của dự án hiện tại (lưu ngay khi chọn; những mục đã liên kết không được chọn lại)</div>
                               <Select
                                 mode="multiple"
                                 className="w-full"
-                                placeholder="选择要关联到当前分镜的道具"
+                                placeholder="Chọn đạo cụ cần liên kết vào phân cảnh hiện tại"
                                 value={linkPropSelectedIds}
                                 loading={linkPropLoading}
                                 disabled={promptAssetsUpdating}
@@ -5355,7 +5355,7 @@ function Inspector(props: {
                           </Modal>
 
                           <Modal
-                            title="关联服装"
+                            title="Liên kết trang phục"
                             open={linkCostumeOpen}
                             onCancel={() => setLinkCostumeOpen(false)}
                             footer={null}
@@ -5363,11 +5363,11 @@ function Inspector(props: {
                             width={560}
                           >
                             <div className="space-y-2">
-                              <div className="text-xs text-gray-500">来源：当前项目服装（选择后立即保存；已关联的不可重复选择）</div>
+                              <div className="text-xs text-gray-500">Nguồn: trang phục của dự án hiện tại (lưu ngay khi chọn; những mục đã liên kết không được chọn lại)</div>
                               <Select
                                 mode="multiple"
                                 className="w-full"
-                                placeholder="选择要关联到当前分镜的服装"
+                                placeholder="Chọn trang phục cần liên kết vào phân cảnh hiện tại"
                                 value={linkCostumeSelectedIds}
                                 loading={linkCostumeLoading}
                                 disabled={promptAssetsUpdating}
@@ -5399,27 +5399,27 @@ function Inspector(props: {
             },
               ...(showAvTab ? [{
                 key: 'av',
-                label: '音视频控制',
+                label: 'Kiểm soát âm - hình',
                 children: (
                   <div>
                     <div className="cs-group">
                       <div className="cs-group-title">
-                        <CustomerServiceOutlined /> 配乐
+                        <CustomerServiceOutlined /> Nhạc nền
                       </div>
                       <div className="space-y-3">
                         <Radio.Group
                           value={audioMode}
                           onChange={(e) => setAudioMode(e.target.value)}
                           options={[
-                            { value: 'none', label: '无' },
-                            { value: 'prompt', label: '提示词' },
-                            { value: 'upload', label: '上传音频' },
+                            { value: 'none', label: 'không có' },
+                            { value: 'prompt', label: 'Prompt' },
+                            { value: 'upload', label: 'Tải lên âm thanh' },
                           ]}
                         />
-                        {audioMode === 'prompt' && <TextArea rows={3} placeholder="配乐提示词（支持多版本）…" />}
+                        {audioMode === 'prompt' && <TextArea rows={3} placeholder="Prompt nhạc nền (hỗ trợ nhiều phiên bản)…" />}
                         {audioMode === 'upload' && (
                           <Button block icon={<UploadOutlined />}>
-                            上传音频
+                            Tải âm thanh lên
                           </Button>
                         )}
                       </div>
@@ -5427,30 +5427,30 @@ function Inspector(props: {
 
                     <div className="cs-group">
                       <div className="cs-group-title">
-                        <SoundOutlined /> 音效
+                        <SoundOutlined /> Hiệu ứng âm thanh
                       </div>
                       <div className="space-y-3">
                         <Button block icon={<UploadOutlined />}>
-                          添加一条音效（Mock）
+                          Thêm một hiệu ứng âm thanh (Mock)
                         </Button>
                       </div>
                     </div>
 
                     <div className="cs-group">
                       <div className="cs-group-title">
-                        <SettingOutlined /> 开关
+                        <SettingOutlined /> Công tắc
                       </div>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">关闭配乐</span>
+                          <span className="text-sm">Tắt nhạc nền</span>
                           <Switch />
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">关闭对白</span>
+                          <span className="text-sm">Tắt thoại</span>
                           <Switch />
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">智能对口型</span>
+                          <span className="text-sm">Đồng bộ khẩu hình thông minh</span>
                           <Switch />
                         </div>
                       </div>
@@ -5460,7 +5460,7 @@ function Inspector(props: {
               }] : []),
               {
               key: 'gen_ref',
-              label: '视频生成',
+              label: 'Tạo video',
               children: (
                 <div>
                   <ChapterStudioVideoReadinessPanel
@@ -5472,11 +5472,11 @@ function Inspector(props: {
 
                   <div className="cs-group">
                     <div className="cs-group-title">
-                      <LinkOutlined /> 参考
+                      <LinkOutlined /> Tham chiếu
                     </div>
                     <Select
                       allowClear
-                      placeholder="按已有关键帧类型选择"
+                      placeholder="Chọn theo loại khung hình chính đã có"
                       className="w-full"
                       value={refImageType}
                       onChange={(v) => setRefImageType(v === undefined || v === null ? undefined : String(v))}
@@ -5489,19 +5489,19 @@ function Inspector(props: {
                   {showGenRefParams && (
                     <div className="cs-group">
                       <div className="cs-group-title">
-                        <ToolOutlined /> 参数
+                        <ToolOutlined /> Tham số
                       </div>
                       <Space direction="vertical" className="w-full" size="small">
                         <Select
                           size="small"
-                          placeholder="模型选择"
+                          placeholder="Chọn mô hình"
                           options={[
-                            { value: 'model_a', label: '模型 A（写实）' },
-                            { value: 'model_b', label: '模型 B（风格化）' },
+                            { value: 'model_a', label: 'Mô hình A (thực tế)' },
+                            { value: 'model_b', label: 'mô hình B (mỹ học hóa)' },
                           ]}
                         />
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">ControlNet（深度/骨骼）</span>
+                          <span className="text-sm">ControlNet (độ sâu/xương)</span>
                           <Switch checked={useBoneDepth} onChange={setUseBoneDepth} />
                         </div>
                         <Slider min={3} max={12} defaultValue={5} />
@@ -5511,22 +5511,22 @@ function Inspector(props: {
 
                   <div className="cs-group">
                     <div className="cs-group-title">
-                      <ThunderboltOutlined /> 生成
+                      <ThunderboltOutlined /> Tạo
                     </div>
                     <Space wrap>
                       <Button type="primary" icon={<VideoCameraOutlined />} loading={videoPromptPreviewSubmitting || videoTaskPolling} onClick={() => void openVideoPromptPreview()}>
-                        生成视频
+                        Tạo video
                       </Button>
-                      {videoTaskStatus ? <span className="text-xs text-gray-500">任务状态：{videoTaskStatus}</span> : null}
+                      {videoTaskStatus ? <span className="text-xs text-gray-500">Trạng thái tác vụ: {videoTaskStatus}</span> : null}
                     </Space>
                   </div>
 
                   <div className="cs-group">
                     <div className="cs-group-title">
-                      <VideoCameraOutlined /> 已生成视频
+                      <VideoCameraOutlined /> Đã tạo video
                     </div>
                     {generatedVideos.length === 0 ? (
-                      <div className="text-xs text-gray-400">当前分镜暂无已生成视频</div>
+                      <div className="text-xs text-gray-400">Phân cảnh hiện tại chưa có video nào được tạo</div>
                     ) : (
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                         {generatedVideos.map((item, idx) => (
@@ -5540,8 +5540,8 @@ function Inspector(props: {
                               style={{ cursor: 'pointer' }}
                             />
                             <div className="mt-2 flex items-center justify-between gap-2">
-                              <span className="text-xs text-gray-500">视频 {idx + 1}</span>
-                              <Tooltip title="下载视频">
+                              <span className="text-xs text-gray-500">Video {idx + 1}</span>
+                              <Tooltip title="Tải video xuống">
                                 <Button
                                   size="small"
                                   icon={<DownloadOutlined />}
@@ -5561,7 +5561,7 @@ function Inspector(props: {
                   {showGenRefVersions && (
                     <div className="cs-group">
                       <div className="cs-group-title">
-                        <AppstoreOutlined /> 版本
+                        <AppstoreOutlined /> Phiên bản
                       </div>
                       <Tabs
                         type="card"
@@ -5596,7 +5596,7 @@ function Inspector(props: {
         />
 
         <Modal
-          title={`${frameLabel[keyframePromptPreviewFrameType]}图片生成提示词预览`}
+          title={`${frameLabel[keyframePromptPreviewFrameType]}Xem trước prompt tạo ảnh`}
           open={keyframePromptPreviewOpen}
           onCancel={() => {
             if (keyframePromptActionLoading) return
@@ -5613,10 +5613,10 @@ function Inspector(props: {
                     setKeyframePromptPreviewOpen(false)
                   }}
                 >
-                  取消
+                  Hủy
                 </Button>
                 <Button type="primary" loading={keyframePromptActionLoading} onClick={() => void confirmGenerateKeyframeWithPrompt()}>
-                  生成
+                  Tạo
                 </Button>
               </Space>
             </div>
@@ -5661,7 +5661,7 @@ function Inspector(props: {
             const guidanceLevelSummary = buildGuidanceLevelSummary(parsedDirectorCommandSummary, keyframeGuidanceSummary)
             const debugUnifyStyle =
               typeof keyframePromptDebugContext?.unify_style === 'boolean'
-                ? (keyframePromptDebugContext.unify_style ? '是' : '否')
+                ? (keyframePromptDebugContext.unify_style ? 'Có' : 'Không')
                 : readDebugContextText(keyframePromptDebugContext, 'unify_style')
             const hasPromptDebugContext = Boolean(
               debugVisualStyle ||
@@ -5697,15 +5697,15 @@ function Inspector(props: {
                 <div className="rounded-xl border border-slate-200 bg-white p-4">
                   <div className="mb-2 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-slate-900">参考图映射</div>
+                      <div className="text-sm font-medium text-slate-900">Ánh xạ ảnh tham chiếu</div>
                       <div className="mt-1 text-xs text-slate-500">
-                        图片顺序会直接决定最终提示词中的图1、图2映射关系，并影响模型生成结果。
+                        Thứ tự ảnh sẽ quyết định trực tiếp mối quan hệ ánh xạ 图1, 图2 trong prompt cuối cùng và ảnh hưởng kết quả tạo của mô hình.
                       </div>
                     </div>
-                    <Tag color="gold">顺序影响图1/图2</Tag>
+                    <Tag color="gold">Thứ tự ảnh hưởng hình 1/hình 2</Tag>
                   </div>
                   {keyframePromptPreviewRefFileIds.length === 0 ? (
-                    <div className="text-xs text-gray-400">暂无关联图片</div>
+                    <div className="text-xs text-gray-400">Chưa có ảnh liên kết</div>
                   ) : (
                     <div className="flex gap-3 overflow-x-auto pb-1">
                       <Image.PreviewGroup>
@@ -5720,7 +5720,7 @@ function Inspector(props: {
                               />
                             </Tooltip>
                             <div className="mt-1">
-                              <Tag color="blue">{`图${index + 1}`}</Tag>
+                              <Tag color="blue">{`ảnh${index + 1}`}</Tag>
                             </div>
                             <div className="truncate text-[11px] text-gray-700">
                               {shotLinkedAssetNameByFileId.get(fid) ?? fid}
@@ -5731,7 +5731,7 @@ function Inspector(props: {
                                 disabled={index === 0 || keyframePromptActionLoading || shotRenderPromptLoading}
                                 onClick={() => moveKeyframePromptRefFile(index, index - 1)}
                               >
-                                左移
+                                Dịch trái
                               </Button>
                               <Button
                                 size="small"
@@ -5742,7 +5742,7 @@ function Inspector(props: {
                                 }
                                 onClick={() => moveKeyframePromptRefFile(index, index + 1)}
                               >
-                                右移
+                                Dịch phải
                               </Button>
                             </div>
                           </div>
@@ -5755,29 +5755,29 @@ function Inspector(props: {
               <div className="rounded-xl border border-slate-200 bg-white p-4">
                 <div className="mb-2 flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-slate-900">基础提示词</div>
+                    <div className="text-sm font-medium text-slate-900">Prompt cơ sở</div>
                     <div className="mt-1 text-xs text-slate-500">
-                      描述画面内容本身，不包含图片映射说明。
+                      Mô tả nội dung khung hình, không chứa diễn giải ánh xạ ảnh.
                     </div>
                     <div className="mt-1 text-xs text-slate-500">
-                      AI生成会继承当前项目风格，并优先参考已确认的角色、场景、道具和服装设定。
+                      Tạo bằng AI sẽ kế thừa style dự án hiện tại và ưu tiên tham khảo các thiết lập nhân vật, bối cảnh, đạo cụ, trang phục đã xác nhận.
                     </div>
                   </div>
                   <Space size="small">
-                    <Tag color={hasBasePrompt ? 'blue' : 'default'}>{hasBasePrompt ? '可编辑' : '未生成'}</Tag>
+                    <Tag color={hasBasePrompt ? 'blue' : 'default'}>{hasBasePrompt ? 'Có thể chỉnh sửa' : 'Chưa tạo'}</Tag>
                     <Button
                       size="small"
                       type={hasBasePrompt ? 'default' : 'primary'}
                       loading={keyframePromptActionLoading}
                       onClick={() => void regenerateKeyframePrompt()}
                     >
-                      AI生成
+                      AItạo
                     </Button>
                   </Space>
                 </div>
                 {!hasBasePrompt ? (
                   <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
-                    当前还没有基础提示词。你可以先让 AI 生成一版，再按需修改；也可以直接手动输入。
+                    hiện chưa có prompt nền. Bạn có thể để AI sinh một bản trước rồi sửa theo cần；hoặc cũng có thể tự nhập trực tiếp.
                   </div>
                   ) : null}
                   {hasPromptQualityChecks ? (
@@ -5790,12 +5790,12 @@ function Inspector(props: {
                     >
                       <div className="flex items-center gap-2">
                         <Tag color={keyframePromptQualityChecks?.passed ? 'green' : 'gold'}>
-                          {keyframePromptQualityChecks?.passed ? '质量校验通过' : '已触发自动修正'}
+                          {keyframePromptQualityChecks?.passed ? 'Xác thực chất lượng đạt' : 'Đã kích hoạt sửa tự động'}
                         </Tag>
                         <span>
                           {keyframePromptQualityChecks?.passed
-                            ? '本次 AI 生成已通过基础质量校验。'
-                            : '本次 AI 生成触发过自动修正，系统已尽量清理不符合基础提示词要求的内容。'}
+                            ? 'Lần tạo AI này đã vượt qua xác thực chất lượng cơ bản.'
+                            : 'lượt sinh AI này đã kích hoạt hiệu chỉnh tự động, hệ thống đã dọn theo mức có thể nội dung không khớp yêu cầu prompt nền.'}
                         </span>
                       </div>
                     </div>
@@ -5809,28 +5809,28 @@ function Inspector(props: {
                         keyframePromptDraft.resetDerived()
                       }
                     }}
-                    placeholder="请输入基础提示词，例如人物动作、场景氛围、镜头视角等…"
+                    placeholder="vui lòng nhập prompt nền, ví dụ hành động nhân vật, không khí bối cảnh, góc shot…"
                     disabled={keyframePromptActionLoading || shotRenderPromptLoading}
                   />
                   {keyframeGuidanceSummary.length > 0 || debugDirectorCommandSummary ? (
                     <div className="mt-3 rounded-lg border border-sky-200 bg-sky-50 px-3 py-3 text-xs text-sky-800">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <div className="font-medium">基础提示词生成依据</div>
+                          <div className="font-medium">cơ sở sinh prompt nền</div>
                           <div className="mt-1 text-sky-700">
-                            这些导演约束主要用于生成上游基础提示词，默认先看摘要；只有少量高优先级规则会再进入最终图片提示词。
+                            Các ràng buộc đạo diễn này chủ yếu dùng để tạo prompt nền tảng phía upstream, mặc định chỉ xem tóm tắt; một số ít quy tắc ưu tiên cao mới bước tiếp vào prompt ảnh cuối cùng.
                           </div>
                         </div>
                         <Button size="small" type="text" onClick={() => setKeyframeDirectiveCollapsed((prev) => !prev)}>
-                          {keyframeDirectiveCollapsed ? '展开细节' : '收起细节'}
+                          {keyframeDirectiveCollapsed ? 'mở rộng chi tiết' : 'thu gọn chi tiết'}
                         </Button>
                       </div>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <Tag color="red">{`必须 ${guidanceLevelSummary.must}`}</Tag>
-                        <Tag color="blue">{`优先 ${guidanceLevelSummary.prefer}`}</Tag>
-                        <Tag>{`普通 ${guidanceLevelSummary.normal}`}</Tag>
+                        <Tag color="red">{`Bắt buộc ${guidanceLevelSummary.must}`}</Tag>
+                        <Tag color="blue">{`Ưu tiên ${guidanceLevelSummary.prefer}`}</Tag>
+                        <Tag>{`thường ${guidanceLevelSummary.normal}`}</Tag>
                         {actionBeatPhaseTags.length > 0 ? (
-                          <Tag color="purple">{`动作阶段 ${actionBeatPhaseTags.length}`}</Tag>
+                          <Tag color="purple">{`Giai đoạn hành động ${actionBeatPhaseTags.length}`}</Tag>
                         ) : null}
                       </div>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -5839,7 +5839,7 @@ function Inspector(props: {
                             parsedDirectorCommandSummary.length > 0
                               ? parsedDirectorCommandSummary
                                   .slice(0, 2)
-                                  .map((item) => `${item.level === 'must' ? '必须' : '优先'} · ${item.text}`)
+                                  .map((item) => `${item.level === 'must' ? 'Bắt buộc' : 'Ưu tiên'} · ${item.text}`)
                               : keyframeGuidanceSummary.slice(0, 2)
                           )
                           : keyframeGuidanceSummary
@@ -5854,7 +5854,7 @@ function Inspector(props: {
                       {actionBeatPhaseTags.length > 0 ? (
                         <div className="mt-3 rounded-lg border border-slate-200 bg-white px-3 py-3 text-xs text-slate-700">
                           <div className="flex items-center justify-between gap-2">
-                            <div className="font-medium text-slate-800">当前帧消费的动作阶段</div>
+                            <div className="font-medium text-slate-800">Giai đoạn hành động mà khung hình hiện tại tiêu thụ</div>
                             {debugSelectedActionBeatPhase && debugSelectedActionBeatText ? (
                               <Tag color="purple">
                                 {`${debugSelectedActionBeatPhase} · ${debugSelectedActionBeatText}`}
@@ -5866,9 +5866,9 @@ function Inspector(props: {
                               <Tooltip key={`${item.phaseLabel}:${index}:${item.text}`} title={`${item.phaseLabel} · ${item.text}`}>
                                 <Tag
                                   color={
-                                    item.phaseLabel === '触发'
+                                    item.phaseLabel === 'Kích hoạt'
                                       ? 'gold'
-                                      : item.phaseLabel === '峰值'
+                                      : item.phaseLabel === 'Đỉnh'
                                         ? 'blue'
                                         : 'green'
                                   }
@@ -5887,16 +5887,16 @@ function Inspector(props: {
                         <div className="mt-3 grid gap-3 md:grid-cols-2">
                           {debugDirectorCommandSummary ? (
                             <div className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-3 text-xs text-indigo-800">
-                              <div className="font-medium">高优先级导演指令</div>
+                              <div className="font-medium">lệnh đạo diễn ưu tiên cao</div>
                               <div className="mt-2 flex flex-wrap gap-2">
                                 {parsedDirectorCommandSummary.map((item, index) => (
-                                  <Tooltip key={`${item.level}:${index}:${item.text}`} title={`${item.level === 'must' ? '必须' : '优先'} · ${item.text}`}>
+                                  <Tooltip key={`${item.level}:${index}:${item.text}`} title={`${item.level === 'must' ? 'Bắt buộc' : 'Ưu tiên'} · ${item.text}`}>
                                     <Tag
                                       color={item.level === 'must' ? 'red' : 'blue'}
                                       className="max-w-[240px] overflow-hidden"
                                     >
                                       <span className="inline-block max-w-[200px] truncate align-bottom">
-                                        {item.level === 'must' ? '必须' : '优先'} · {item.text}
+                                        {item.level === 'must' ? 'Bắt buộc' : 'Ưu tiên'} · {item.text}
                                       </span>
                                     </Tag>
                                   </Tooltip>
@@ -5906,7 +5906,7 @@ function Inspector(props: {
                           ) : null}
                           {keyframeGuidanceSummary.length > 0 ? (
                             <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-xs text-blue-800">
-                              <div className="font-medium">补充 Guidance</div>
+                              <div className="font-medium">Guidance bổ sung</div>
                               <div className="mt-2 flex flex-wrap gap-2">
                                 {keyframeGuidanceSummary.map((item) => (
                                   <Tooltip key={item} title={item}>
@@ -5925,57 +5925,57 @@ function Inspector(props: {
                   {hasPromptDebugContext ? (
                     <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-600">
                       <div className="flex items-center justify-between gap-3">
-                        <div className="font-medium text-slate-700">最近一次 AI 生成上下文</div>
+                        <div className="font-medium text-slate-700">Bối cảnh tạo bằng AI gần nhất</div>
                         <Space size="small">
-                          <Tag color="default">调试信息</Tag>
+                          <Tag color="default">Thông tin gỡ lỗi</Tag>
                           <Button
                             size="small"
                             type="text"
                             onClick={() => setKeyframePromptDebugCollapsed((prev) => !prev)}
                           >
-                            {keyframePromptDebugCollapsed ? '展开细节' : '收起细节'}
+                            {keyframePromptDebugCollapsed ? 'mở rộng chi tiết' : 'thu gọn chi tiết'}
                           </Button>
                         </Space>
                       </div>
                       {keyframePromptDebugCollapsed ? (
                         <div className="mt-2 text-slate-500">
-                          调试信息默认收起，展开后可查看最近一次 AI 生成使用的项目风格、镜头描述、连续性约束与实体上下文。
+                          Thông tin gỡ lỗi mặc định là thu gọn; sau khi mở rộng có thể xem phong cách dự án, mô tả phân cảnh, ràng buộc liên tục và ngữ cảnh thực thể được dùng trong lần tạo AI gần nhất.
                         </div>
                       ) : (
                         <div className="mt-2 grid gap-2 md:grid-cols-2">
                           <div>
-                            <div className="text-slate-500">项目风格</div>
+                            <div className="text-slate-500">phong cách dự án</div>
                             <div className="mt-1 text-slate-700">
-                              {[debugVisualStyle, debugStyle].filter(Boolean).join(' / ') || '无'}
+                              {[debugVisualStyle, debugStyle].filter(Boolean).join(' / ') || 'Không có'}
                             </div>
                           </div>
                           <div>
-                            <div className="text-slate-500">统一风格</div>
-                            <div className="mt-1 text-slate-700">{debugUnifyStyle || '无'}</div>
+                            <div className="text-slate-500">phong cách thống nhất</div>
+                            <div className="mt-1 text-slate-700">{debugUnifyStyle || 'Không có'}</div>
                           </div>
                           {debugShotDescription ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">镜头补充描述</div>
+                              <div className="text-slate-500">mô tả bổ sung shot</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugShotDescription}</div>
                             </div>
                           ) : null}
                           {debugDialogSummary ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">对白摘要</div>
+                              <div className="text-slate-500">tóm tắt thoại</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugDialogSummary}</div>
                             </div>
                           ) : null}
                           {debugActionBeatPhases ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">动作拍点阶段</div>
+                              <div className="text-slate-500">giai đoạn mốc hành động</div>
                               <div className="mt-1 flex flex-wrap gap-2">
                                 {actionBeatPhaseTags.map((item, index) => (
                                   <Tag
                                     key={`debug-action-phase:${index}:${item.text}`}
                                     color={
-                                      item.phaseLabel === '触发'
+                                      item.phaseLabel === 'Kích hoạt'
                                         ? 'gold'
-                                        : item.phaseLabel === '峰值'
+                                        : item.phaseLabel === 'Đỉnh'
                                           ? 'blue'
                                           : 'green'
                                     }
@@ -5986,84 +5986,84 @@ function Inspector(props: {
                               </div>
                               {debugSelectedActionBeatPhase || debugSelectedActionBeatText ? (
                                 <div className="mt-2 text-slate-700">
-                                  {`当前帧优先消费：${[debugSelectedActionBeatPhase, debugSelectedActionBeatText].filter(Boolean).join(' · ')}`}
+                                  {`Khung hình hiện tại ưu tiên dùng: ${[debugSelectedActionBeatPhase, debugSelectedActionBeatText].filter(Boolean).join(' · ')}`}
                                 </div>
                               ) : null}
                             </div>
                           ) : null}
                           {debugPreviousShotTitle || debugPreviousShotScriptExcerpt || debugPreviousShotEndState ? (
                             <div className="md:col-span-2 rounded-lg border border-slate-200 bg-white px-3 py-3">
-                              <div className="text-slate-500">上一镜头承接</div>
+                              <div className="text-slate-500">tiếp nối shot trước</div>
                               <div className="mt-1 space-y-1 text-slate-700">
-                                {debugPreviousShotTitle ? <div>标题：{debugPreviousShotTitle}</div> : null}
+                                {debugPreviousShotTitle ? <div>Tiêu đề: {debugPreviousShotTitle}</div> : null}
                                 {debugPreviousShotScriptExcerpt ? (
-                                  <div className="whitespace-pre-wrap">摘录：{debugPreviousShotScriptExcerpt}</div>
+                                  <div className="whitespace-pre-wrap">Trích dẫn: {debugPreviousShotScriptExcerpt}</div>
                                 ) : null}
                                 {debugPreviousShotEndState ? (
-                                  <div className="whitespace-pre-wrap">结尾状态：{debugPreviousShotEndState}</div>
+                                  <div className="whitespace-pre-wrap">Trạng thái kết thúc: {debugPreviousShotEndState}</div>
                                 ) : null}
                               </div>
                             </div>
                           ) : null}
                           {debugNextShotTitle || debugNextShotScriptExcerpt || debugNextShotStartGoal ? (
                             <div className="md:col-span-2 rounded-lg border border-slate-200 bg-white px-3 py-3">
-                              <div className="text-slate-500">下一镜头衔接</div>
+                              <div className="text-slate-500">nối tiếp shot tiếp theo</div>
                               <div className="mt-1 space-y-1 text-slate-700">
-                                {debugNextShotTitle ? <div>标题：{debugNextShotTitle}</div> : null}
+                                {debugNextShotTitle ? <div>Tiêu đề: {debugNextShotTitle}</div> : null}
                                 {debugNextShotScriptExcerpt ? (
-                                  <div className="whitespace-pre-wrap">摘录：{debugNextShotScriptExcerpt}</div>
+                                  <div className="whitespace-pre-wrap">Trích dẫn: {debugNextShotScriptExcerpt}</div>
                                 ) : null}
                                 {debugNextShotStartGoal ? (
-                                  <div className="whitespace-pre-wrap">起始目标：{debugNextShotStartGoal}</div>
+                                  <div className="whitespace-pre-wrap">Mục tiêu khởi đầu: {debugNextShotStartGoal}</div>
                                 ) : null}
                               </div>
                             </div>
                           ) : null}
                           {debugContinuityGuidance ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">连续性建议</div>
+                              <div className="text-slate-500">Gợi ý liên tục</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugContinuityGuidance}</div>
                             </div>
                           ) : null}
                           {debugCompositionAnchor ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">构图与空间锚点</div>
+                              <div className="text-slate-500">Bố cục và mỏ neo không gian</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugCompositionAnchor}</div>
                             </div>
                           ) : null}
                           {debugScreenDirectionGuidance ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">朝向与视线建议</div>
+                              <div className="text-slate-500">Gợi ý hướng nhìn và ánh mắt</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugScreenDirectionGuidance}</div>
                             </div>
                           ) : null}
                           {debugFrameSpecificGuidance ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">当前帧专项建议</div>
+                              <div className="text-slate-500">đề xuất chuyên biệt khung hiện tại</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugFrameSpecificGuidance}</div>
                             </div>
                           ) : null}
                           {debugCharacterContext ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">角色上下文</div>
+                              <div className="text-slate-500">ngữ cảnh nhân vật</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugCharacterContext}</div>
                             </div>
                           ) : null}
                           {debugSceneContext ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">场景上下文</div>
+                              <div className="text-slate-500">ngữ cảnh bối cảnh</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugSceneContext}</div>
                             </div>
                           ) : null}
                           {debugPropContext ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">道具上下文</div>
+                              <div className="text-slate-500">ngữ cảnh đạo cụ</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugPropContext}</div>
                             </div>
                           ) : null}
                           {debugCostumeContext ? (
                             <div className="md:col-span-2">
-                              <div className="text-slate-500">服装上下文</div>
+                              <div className="text-slate-500">ngữ cảnh trang phục</div>
                               <div className="mt-1 whitespace-pre-wrap text-slate-700">{debugCostumeContext}</div>
                             </div>
                           ) : null}
@@ -6076,14 +6076,14 @@ function Inspector(props: {
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                   <div className="mb-3 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-slate-900">最终生成提示词</div>
+                      <div className="text-sm font-medium text-slate-900">Prompt tạo cuối cùng</div>
                       <div className="mt-1 text-xs text-slate-500">
-                        系统会根据当前基础提示词和参考图顺序自动生成这一版内容，提交给模型时将使用这里的结果。
+                        hệ thống sẽ tự động sinh nội dung phiên này dựa trên prompt nền và thứ tự ảnh tham chiếu hiện tại, khi gửi cho mô hình sẽ dùng kết quả ở đây.
                       </div>
                     </div>
                     <Space size="small">
-                      <Tag color="geekblue">系统生成</Tag>
-                      <Tag>只读</Tag>
+                      <Tag color="geekblue">Hệ thống tạo</Tag>
+                      <Tag>Chỉ đọc</Tag>
                       <Button
                         size="small"
                         onClick={() =>
@@ -6099,21 +6099,21 @@ function Inspector(props: {
                         disabled={!hasBasePrompt}
                         loading={shotRenderPromptLoading}
                       >
-                        重新同步
+                        Đồng bộ lại
                       </Button>
                       <Button
                         size="small"
                         onClick={async () => {
                           try {
                             await navigator.clipboard.writeText(keyframePromptRenderedDraft || '')
-                            message.success('最终提示词已复制')
+                            message.success('Đã sao chép prompt cuối cùng')
                           } catch {
-                            message.error('复制失败')
+                            message.error('Sao chép thất bại')
                           }
                         }}
                         disabled={!keyframePromptRenderedDraft.trim()}
                       >
-                        复制
+                        Sao chép
                       </Button>
                     </Space>
                   </div>
@@ -6146,28 +6146,28 @@ function Inspector(props: {
                     <div className="mb-3 rounded-lg border border-slate-200 bg-white px-3 py-3 text-xs text-slate-700">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <div className="font-medium text-slate-900">最终图片提示词收敛结果</div>
+                          <div className="font-medium text-slate-900">Kết quả hội tụ prompt ảnh cuối cùng</div>
                           <div className="mt-1 text-slate-500">
-                            系统会从上游导演约束里挑出最关键的少量规则，补进最终图片提示词。
+                            Hệ thống sẽ chọn từ ràng buộc đạo diễn thượng nguồn một số quy tắc quan trọng nhất, bổ sung vào prompt hình ảnh cuối cùng.
                           </div>
                         </div>
                         <Space size="small" wrap>
-                          <Tag color="green">{`保留 ${keyframePromptSelectedGuidance.length}`}</Tag>
-                          <Tag color="gold">{`压缩 ${keyframePromptDroppedGuidance.length}`}</Tag>
+                          <Tag color="green">{`Giữ lại ${keyframePromptSelectedGuidance.length}`}</Tag>
+                          <Tag color="gold">{`Nén ${keyframePromptDroppedGuidance.length}`}</Tag>
                           {(keyframePromptSelectedGuidance.length > 2 || keyframePromptDroppedGuidance.length > 0) ? (
                             <Button
                               size="small"
                               type="text"
                               onClick={() => setKeyframePromptDecisionCollapsed((prev) => !prev)}
                             >
-                              {keyframePromptDecisionCollapsed ? '查看取舍' : '收起取舍'}
+                              {keyframePromptDecisionCollapsed ? 'Xem sự đánh đổi' : 'Thu gọn sự đánh đổi'}
                             </Button>
                           ) : null}
                         </Space>
                       </div>
                       <div className="mt-3 grid gap-3 md:grid-cols-2">
                         <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-3 text-xs text-emerald-800">
-                          <div className="font-medium">实际保留的 Guidance</div>
+                          <div className="font-medium">Guidance được giữ lại</div>
                           {keyframePromptSelectedGuidance.length > 0 ? (
                             <div className="mt-2 flex flex-wrap gap-2">
                               {keyframePromptVisibleSelectedGuidanceDetails.map((item) => (
@@ -6191,19 +6191,19 @@ function Inspector(props: {
                                 </Tooltip>
                               ))}
                               {keyframePromptDecisionCollapsed && keyframePromptSelectedGuidanceDetails.length > 2 ? (
-                                <Tag>{`+${keyframePromptSelectedGuidanceDetails.length - 2} 条`}</Tag>
+                                <Tag>{`+${keyframePromptSelectedGuidanceDetails.length - 2} mục`}</Tag>
                               ) : null}
                             </div>
                           ) : (
-                            <div className="mt-2 text-emerald-700">当前没有额外 guidance 被保留。</div>
+                            <div className="mt-2 text-emerald-700">Hiện không có guidance bổ sung nào được giữ.</div>
                           )}
                         </div>
                         <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-xs text-amber-800">
-                          <div className="font-medium">已压缩的 Guidance</div>
+                          <div className="font-medium">Guidance đã nén</div>
                           {keyframePromptDroppedGuidance.length > 0 ? (
                             keyframePromptDecisionCollapsed ? (
                               <div className="mt-2 text-amber-700">
-                                当前有 {keyframePromptDroppedGuidance.length} 条 guidance 被压缩，展开后可查看具体取舍原因。
+                                Hiện có {keyframePromptDroppedGuidance.length} guidance bị nén, xem chi tiết lý do chọn/bỏ sau khi mở rộng.
                               </div>
                             ) : (
                               <div className="mt-2 flex flex-wrap gap-2">
@@ -6230,7 +6230,7 @@ function Inspector(props: {
                               </div>
                             )
                           ) : (
-                            <div className="mt-2 text-amber-700">当前没有 guidance 被压缩。</div>
+                            <div className="mt-2 text-amber-700">Hiện không có guidance nào bị nén.</div>
                           )}
                         </div>
                       </div>
@@ -6238,18 +6238,18 @@ function Inspector(props: {
                   ) : null}
                   {hasBasePrompt ? (
                     <div className="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm leading-6 text-slate-800 whitespace-pre-wrap min-h-[220px]">
-                      {keyframePromptRenderedDraft || '系统正在根据当前内容准备最终提示词…'}
+                      {keyframePromptRenderedDraft || 'Hệ thống đang chuẩn bị prompt cuối cùng dựa trên nội dung hiện tại…'}
                     </div>
                   ) : (
                     <div className="rounded-lg border border-dashed border-slate-300 bg-white px-4 py-6 text-sm text-slate-500">
-                      <div className="font-medium text-slate-700">等待基础提示词</div>
+                      <div className="font-medium text-slate-700">Đợi prompt nền tảng</div>
                       <div className="mt-2">
-                        基础提示词准备完成后，系统会自动：
+                        Sau khi chuẩn bị xong prompt cơ bản, hệ thống sẽ tự động:
                       </div>
                       <div className="mt-2 space-y-1 text-slate-500">
-                        <div>1. 根据当前参考图顺序生成图1 / 图2映射</div>
-                        <div>2. 补充“## 图片内容说明”</div>
-                        <div>3. 生成最终提交给模型的提示词</div>
+                        <div>1. Tạo ánh xạ 图1 / 图2 theo thứ tự ảnh tham chiếu hiện tại</div>
+                        <div>2. Bổ sung “## Diễn giải nội dung hình ảnh”</div>
+                        <div>3. Tạo prompt cuối cùng để gửi cho mô hình</div>
                       </div>
                     </div>
                   )}
@@ -6260,14 +6260,14 @@ function Inspector(props: {
         </Modal>
 
         <Modal
-          title="视频生成提示词预览"
+          title="Xem trước prompt tạo video"
           open={videoPromptPreviewOpen}
           onCancel={() => {
             if (videoPromptPreviewSubmitting) return
             setVideoPromptPreviewOpen(false)
           }}
-          okText="生成"
-          cancelText="取消"
+          okText="Tạo"
+          cancelText="Hủy"
           onOk={() => void submitVideoGeneration()}
           confirmLoading={videoPromptPreviewSubmitting}
           width={900}
@@ -6282,9 +6282,9 @@ function Inspector(props: {
               <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-600">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="font-medium text-slate-700">镜头连续性上下文</div>
+                    <div className="font-medium text-slate-700">Bối cảnh liên tục của phân cảnh</div>
                     <div className="mt-1 text-[11px] leading-5 text-slate-500">
-                      这些上下文会参与视频模板渲染和最终提示词补强，默认先展示摘要，需要时再展开细节。
+                      những ngữ cảnh này sẽ tham gia render mẫu video và tăng cường prompt cuối, mặc định trước chỉ hiển thị tóm tắt, cần thì mới mở rộng chi tiết.
                     </div>
                   </div>
                   <Button
@@ -6293,24 +6293,24 @@ function Inspector(props: {
                     className="px-0"
                     onClick={() => setVideoPromptContextCollapsed((prev) => !prev)}
                   >
-                    {videoPromptContextCollapsed ? '展开细节' : '收起细节'}
+                    {videoPromptContextCollapsed ? 'mở rộng chi tiết' : 'thu gọn chi tiết'}
                   </Button>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <Tag color="blue">{`动作节拍 ${videoActionBeats.length}`}</Tag>
+                  <Tag color="blue">{`Mốc hành động ${videoActionBeats.length}`}</Tag>
                   {videoPromptPreviewPack?.previous_shot_summary ? (
-                    <Tag color="purple">上一镜头</Tag>
+                    <Tag color="purple">Phân cảnh trước</Tag>
                   ) : null}
                   {videoPromptPreviewPack?.next_shot_goal ? (
-                    <Tag color="cyan">下一镜头</Tag>
+                    <Tag color="cyan">Phân cảnh tiếp theo</Tag>
                   ) : null}
                   {videoPromptPreviewPack?.continuity_guidance ? (
-                    <Tag color="gold">连续性</Tag>
+                    <Tag color="gold">Liên tục</Tag>
                   ) : null}
                 </div>
                 <div className="mt-3 space-y-3">
                   <div>
-                    <div className="text-slate-500">动作节拍</div>
+                    <div className="text-slate-500">nhịp hành động</div>
                     {videoVisibleActionBeats.length > 0 ? (
                       <div className="mt-1 flex flex-wrap gap-2">
                         {videoVisibleActionBeats.map((item, index) => (
@@ -6327,7 +6327,7 @@ function Inspector(props: {
                             }
                           >
                             {item.phase
-                              ? `${item.phase === 'trigger' ? '触发' : item.phase === 'peak' ? '峰值' : '收束'} · ${item.text}`
+                              ? `${item.phase === 'trigger' ? 'Kích hoạt' : item.phase === 'peak' ? 'Đỉnh' : 'Khép lại'} · ${item.text}`
                               : item.text}
                           </Tag>
                         ))}
@@ -6336,39 +6336,39 @@ function Inspector(props: {
                         ) : null}
                       </div>
                     ) : (
-                      <div className="mt-1 text-gray-400">暂无动作节拍</div>
+                      <div className="mt-1 text-gray-400">chưa có nhịp hành động</div>
                     )}
                   </div>
                   {!videoPromptContextCollapsed ? (
                     <>
                       <div>
-                        <div className="text-slate-500">上一镜头摘要</div>
+                        <div className="text-slate-500">tóm tắt shot trước</div>
                         <div className="mt-1 whitespace-pre-wrap text-slate-700">
-                          {videoPromptPreviewPack?.previous_shot_summary || '无'}
+                          {videoPromptPreviewPack?.previous_shot_summary || 'Trống'}
                         </div>
                       </div>
                       <div>
-                        <div className="text-slate-500">下一镜头目标</div>
+                        <div className="text-slate-500">mục tiêu shot tiếp theo</div>
                         <div className="mt-1 whitespace-pre-wrap text-slate-700">
-                          {videoPromptPreviewPack?.next_shot_goal || '无'}
+                          {videoPromptPreviewPack?.next_shot_goal || 'không có'}
                         </div>
                       </div>
                       <div>
-                        <div className="text-slate-500">连续性建议</div>
+                        <div className="text-slate-500">Gợi ý liên tục</div>
                         <div className="mt-1 whitespace-pre-wrap text-slate-700">
-                          {videoPromptPreviewPack?.continuity_guidance || '无'}
+                          {videoPromptPreviewPack?.continuity_guidance || 'Trống'}
                         </div>
                       </div>
                       <div>
-                        <div className="text-slate-500">构图与空间锚点</div>
+                        <div className="text-slate-500">Bố cục và mỏ neo không gian</div>
                         <div className="mt-1 whitespace-pre-wrap text-slate-700">
-                          {videoPromptPreviewPack?.composition_anchor || '无'}
+                          {videoPromptPreviewPack?.composition_anchor || 'Trống'}
                         </div>
                       </div>
                       <div>
-                        <div className="text-slate-500">朝向与视线建议</div>
+                        <div className="text-slate-500">Gợi ý hướng nhìn và ánh mắt</div>
                         <div className="mt-1 whitespace-pre-wrap text-slate-700">
-                          {videoPromptPreviewPack?.screen_direction_guidance || '无'}
+                          {videoPromptPreviewPack?.screen_direction_guidance || 'Trống'}
                         </div>
                       </div>
                     </>
@@ -6376,9 +6376,9 @@ function Inspector(props: {
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-500 mb-2">关联图片（参考图）</div>
+                <div className="text-xs text-gray-500 mb-2">Hình liên kết (ảnh tham chiếu)</div>
                 {videoPromptPreviewImages.length === 0 ? (
-                  <div className="text-xs text-gray-400">暂无关联图片</div>
+                  <div className="text-xs text-gray-400">Chưa có ảnh liên kết</div>
                 ) : (
                   <div className="flex gap-2 overflow-x-auto pb-1">
                     <Image.PreviewGroup>
@@ -6396,12 +6396,12 @@ function Inspector(props: {
                 )}
               </div>
               <div>
-                <div className="text-xs text-gray-500 mb-2">提示词（可编辑）</div>
+                <div className="text-xs text-gray-500 mb-2">Prompt (chỉnh sửa được)</div>
                 <Input.TextArea
                   rows={10}
                   value={videoPromptPreviewDraft}
                   onChange={(e) => videoPromptDraft.setBase({ prompt: e.target.value })}
-                  placeholder="请输入视频提示词…"
+                  placeholder="Vui lòng nhập prompt video…"
                   disabled={videoPromptPreviewSubmitting}
                 />
               </div>

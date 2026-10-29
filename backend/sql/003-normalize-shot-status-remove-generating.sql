@@ -1,8 +1,8 @@
--- 将历史 shots.status='generating' 回算为静态状态。
--- 说明：
--- 1. 新逻辑下 shot.status 仅表示“信息提取确认状态”：pending / ready
--- 2. 运行中的生成任务应从 GenerationTask / GenerationTaskLink 动态聚合，不再写入 shots.status
--- 3. dialogue candidates 表在部分环境可能尚未创建，因此这里按“存在才参与回算”处理
+-- tính lại các shots.status='generating' lịch sử về trạng thái tĩnh.
+-- Giải thích:
+-- 1. Trong logic mới, shot.status chỉ biểu thị "trạng thái xác nhận trích xuất thông tin": pending / ready
+-- 2. Các tác vụ tạo đang chạy phải được tập hợp động từ GenerationTask / GenerationTaskLink, không còn ghi vào shots.status
+-- 3. bảng ứng viên thoại có thể chưa được tạo trong một số môi trường, do đó xử lý "có mới tham gia tính lại"
 
 SET @has_dialogue_candidates_table = (
     SELECT COUNT(*)

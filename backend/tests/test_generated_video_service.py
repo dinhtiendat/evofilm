@@ -47,22 +47,22 @@ async def _build_session() -> tuple[AsyncSession, object]:
 async def _seed_shot_graph(db: AsyncSession) -> None:
     project = Project(
         id="p1",
-        name="项目一",
+        name="Dự án 1",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
     )
-    chapter = Chapter(id="c1", project_id="p1", index=1, title="第一章")
-    prev_shot = Shot(id="s0", chapter_id="c1", index=0, title="镜头零", script_excerpt="角色沿着墙边逼近门口。")
-    shot = Shot(id="s1", chapter_id="c1", index=1, title="镜头一", script_excerpt="角色推门而入。")
-    next_shot = Shot(id="s2", chapter_id="c1", index=2, title="镜头二", script_excerpt="角色停下脚步，盯向走廊尽头。")
+    chapter = Chapter(id="c1", project_id="p1", index=1, title="Chương 1")
+    prev_shot = Shot(id="s0", chapter_id="c1", index=0, title="Cảnh 0", script_excerpt="Nhân vật bám theo mép tường tiến lại gần cửa.")
+    shot = Shot(id="s1", chapter_id="c1", index=1, title="Cảnh 1", script_excerpt="Nhân vật đẩy cửa bước vào.")
+    next_shot = Shot(id="s2", chapter_id="c1", index=2, title="Cảnh 2", script_excerpt="Nhân vật dừng bước, nhìn về cuối hành lang.")
     prev_detail = ShotDetail(
         id="s0",
         camera_shot=CameraShotType.ms,
         angle=CameraAngle.eye_level,
         movement=CameraMovement.dolly_in,
         duration=4,
-        description="主角贴墙缓慢逼近门口，视线紧盯前方。",
+        description="Nhân vật chính bám tường, từ từ tiến lại gần cửa, ánh mắt chăm chú nhìn về phía trước.",
     )
     detail = ShotDetail(
         id="s1",
@@ -72,10 +72,10 @@ async def _seed_shot_graph(db: AsyncSession) -> None:
         duration=6,
         follow_atmosphere=True,
         vfx_type=VFXType.none,
-        description="角色推门后微微停顿，确认走廊内部情况，再向前迈出一步。",
-        first_frame_prompt="首帧提示词",
-        last_frame_prompt="尾帧提示词",
-        key_frame_prompt="关键帧提示词",
+        description="sau khi nhân vật đẩy cửa vào thì tạm dừng nhẹ, xác nhận tình hình trong hành lang, rồi tiến thêm một bước.",
+        first_frame_prompt="Prompt khung hình đầu",
+        last_frame_prompt="Prompt khung hình cuối",
+        key_frame_prompt="Prompt khung hình chính",
     )
     next_detail = ShotDetail(
         id="s2",
@@ -83,7 +83,7 @@ async def _seed_shot_graph(db: AsyncSession) -> None:
         angle=CameraAngle.eye_level,
         movement=CameraMovement.static,
         duration=3,
-        description="角色停住动作，盯向走廊尽头，情绪绷紧。",
+        description="Nhân vật dừng chuyển động, nhìn chằm chằm về phía cuối hành lang, cảm xúc căng thẳng.",
     )
     db.add_all([project, chapter, prev_shot, shot, next_shot, prev_detail, detail, next_detail])
     await db.commit()
@@ -101,7 +101,7 @@ async def test_validate_images_count_rejects_wrong_count() -> None:
 def test_resolve_provider_key_from_name_supports_known_aliases() -> None:
     bootstrap_all_registries()
     assert resolve_provider_key_from_name("OpenAI") == "openai"
-    assert resolve_provider_key_from_name("火山引擎") == "volcengine"
+    assert resolve_provider_key_from_name("Volcengine") == "volcengine"
     assert resolve_provider_key_from_name("Doubao Video") == "volcengine"
 
 
@@ -143,19 +143,19 @@ async def test_preview_prompt_and_images_uses_auto_frame_ids() -> None:
             prompt=None,
         )
 
-        assert "镜头标题：镜头一" in prompt
-        assert "剧本摘录：角色推门而入。" in prompt
-        assert "动作节拍：" in prompt
-        assert "上一镜头：" in prompt
-        assert "下一镜头目标：" in prompt
-        assert "构图锚点：" in prompt
-        assert "朝向与视线：" in prompt
+        assert "Tiêu đề phân cảnh: Cảnh 1" in prompt
+        assert "Trích đoạn kịch bản: Nhân vật đẩy cửa bước vào." in prompt
+        assert "Nhịp hành động:" in prompt
+        assert "Phân cảnh trước:" in prompt
+        assert "Mục tiêu phân cảnh sau:" in prompt
+        assert "Mỏ neo bố cục:" in prompt
+        assert "Hướng và ánh mắt:" in prompt
         assert images == ["f1", "f2"]
         assert pack is not None
         assert pack["camera"]["duration"] == 6
         assert pack["action_beats"]
-        assert "镜头零" in pack["previous_shot_summary"]
-        assert "镜头二" in pack["next_shot_goal"]
+        assert "Cảnh 0" in pack["previous_shot_summary"]
+        assert "Cảnh 2" in pack["next_shot_goal"]
     await engine.dispose()
 
 
@@ -168,13 +168,13 @@ async def test_preview_prompt_and_images_prefers_request_images_when_provided() 
             db,
             shot_id="s1",
             reference_mode="first_last",
-            prompt="自定义视频提示词",
+            prompt="Prompt video tùy chỉnh",
             images=["manual-first", "manual-last"],
         )
 
-        assert "自定义视频提示词" in prompt
-        assert "动作节拍：" in prompt
-        assert "连续性要求：" in prompt
+        assert "Prompt video tùy chỉnh" in prompt
+        assert "Nhịp hành động:" in prompt
+        assert "Yêu cầu liên tục:" in prompt
         assert images == ["manual-first", "manual-last"]
         assert pack is not None
         assert pack["camera"]["duration"] == 6
@@ -204,7 +204,7 @@ async def test_build_run_args_maps_reference_images(monkeypatch: pytest.MonkeyPa
             db,
             shot_id="s1",
             reference_mode="first_last",
-            prompt="最终视频提示词",
+            prompt="Prompt video cuối cùng",
             images=["img-first", "img-last"],
             ratio="9:16",
         )
@@ -248,13 +248,13 @@ async def test_build_run_args_uses_prompt_pack_when_prompt_missing(monkeypatch: 
             ratio="16:9",
         )
 
-        assert "镜头标题：镜头一" in run_args["input"]["prompt"]
-        assert "动作节拍：" in run_args["input"]["prompt"]
+        assert "Tiêu đề phân cảnh: Cảnh 1" in run_args["input"]["prompt"]
+        assert "Nhịp hành động:" in run_args["input"]["prompt"]
         assert run_args["input"]["ratio"] == "16:9"
         assert run_args["prompt_preview"]["shot_id"] == "s1"
         assert run_args["prompt_preview"]["pack"]["action_beats"]
-        assert "镜头零" in run_args["prompt_preview"]["pack"]["previous_shot_summary"]
-        assert "镜头二" in run_args["prompt_preview"]["pack"]["next_shot_goal"]
+        assert "Cảnh 0" in run_args["prompt_preview"]["pack"]["previous_shot_summary"]
+        assert "Cảnh 2" in run_args["prompt_preview"]["pack"]["next_shot_goal"]
         assert run_args["prompt_preview"]["pack"]["composition_anchor"]
         assert run_args["prompt_preview"]["pack"]["screen_direction_guidance"]
     await engine.dispose()
@@ -267,7 +267,7 @@ async def test_template_render_is_enriched_with_guidance_when_template_omits_it(
         await _seed_shot_graph(db)
 
         async def _fake_template(*_args, **_kwargs):
-            return type("Template", (), {"id": "tpl-1", "name": "simple", "content": "镜头标题：{{ title }}"})()
+            return type("Template", (), {"id": "tpl-1", "name": "simple", "content": "Tiêu đề phân cảnh: {{ title }}"})()
 
         monkeypatch.setattr(
             "app.services.studio.generation.video.derive_preview._resolve_video_prompt_template",
@@ -285,11 +285,11 @@ async def test_template_render_is_enriched_with_guidance_when_template_omits_it(
             ),
         )
 
-        assert "镜头标题：镜头一" in derived.rendered_prompt
-        assert "动作节拍：" in derived.rendered_prompt
-        assert "连续性要求：" in derived.rendered_prompt
-        assert "构图锚点：" in derived.rendered_prompt
-        assert "朝向与视线：" in derived.rendered_prompt
+        assert "Tiêu đề phân cảnh: Cảnh 1" in derived.rendered_prompt
+        assert "Nhịp hành động:" in derived.rendered_prompt
+        assert "Yêu cầu liên tục:" in derived.rendered_prompt
+        assert "Mỏ neo bố cục:" in derived.rendered_prompt
+        assert "Hướng và ánh mắt:" in derived.rendered_prompt
     await engine.dispose()
 
 
@@ -301,7 +301,7 @@ async def test_manual_video_prompt_is_also_enriched_with_guidance() -> None:
 
         derived = await derive_video_preview(
             db,
-            base=VideoBaseDraft(shot_id="s1", prompt="手动视频提示词"),
+            base=VideoBaseDraft(shot_id="s1", prompt="prompt video thủ công"),
             context=VideoGenerationContext(
                 shot_id="s1",
                 reference_mode="text_only",
@@ -310,11 +310,11 @@ async def test_manual_video_prompt_is_also_enriched_with_guidance() -> None:
             ),
         )
 
-        assert "手动视频提示词" in derived.rendered_prompt
-        assert "动作节拍：" in derived.rendered_prompt
-        assert "连续性要求：" in derived.rendered_prompt
-        assert "构图锚点：" in derived.rendered_prompt
-        assert "朝向与视线：" in derived.rendered_prompt
+        assert "prompt video thủ công" in derived.rendered_prompt
+        assert "Nhịp hành động:" in derived.rendered_prompt
+        assert "Yêu cầu liên tục:" in derived.rendered_prompt
+        assert "Mỏ neo bố cục:" in derived.rendered_prompt
+        assert "Hướng và ánh mắt:" in derived.rendered_prompt
     await engine.dispose()
 
 
@@ -331,7 +331,7 @@ async def test_template_render_keeps_existing_guidance_without_duplicate_suffix(
                 {
                     "id": "tpl-2",
                     "name": "guided",
-                    "content": "镜头标题：{{ title }}\n连续性要求：{{ continuity_guidance }}",
+                    "content": "Tiêu đề phân cảnh: {{ title }}\nYêu cầu liên tục: {{ continuity_guidance }}",
                 },
             )()
 
@@ -351,7 +351,7 @@ async def test_template_render_keeps_existing_guidance_without_duplicate_suffix(
             ),
         )
 
-        assert derived.rendered_prompt.count("连续性要求：") == 1
+        assert derived.rendered_prompt.count("Yêu cầu liên tục: ") == 1
     await engine.dispose()
 
 
@@ -377,7 +377,7 @@ async def test_build_run_args_rejects_disabled_provider() -> None:
                 db,
                 shot_id="s1",
                 reference_mode="text_only",
-                prompt="最终视频提示词",
+                prompt="Prompt video cuối cùng",
                 images=[],
                 ratio="16:9",
             )
@@ -455,7 +455,7 @@ async def test_build_run_args_uses_request_ratio_as_final_value(monkeypatch: pyt
             db,
             shot_id="s1",
             reference_mode="text_only",
-            prompt="最终视频提示词",
+            prompt="Prompt video cuối cùng",
             images=[],
             ratio="9:16",
         )
@@ -488,7 +488,7 @@ async def test_build_run_args_rejects_missing_ratio(monkeypatch: pytest.MonkeyPa
                 db,
                 shot_id="s1",
                 reference_mode="text_only",
-                prompt="最终视频提示词",
+                prompt="Prompt video cuối cùng",
                 images=[],
                 ratio=None,
             )
@@ -524,7 +524,7 @@ async def test_build_run_args_does_not_read_shot_override_ratio(monkeypatch: pyt
             db,
             shot_id="s1",
             reference_mode="text_only",
-            prompt="最终视频提示词",
+            prompt="Prompt video cuối cùng",
             images=[],
             ratio="16:9",
         )
@@ -556,7 +556,7 @@ async def test_build_run_args_accepts_supported_ratio_without_size(monkeypatch: 
             db,
             shot_id="s1",
             reference_mode="text_only",
-            prompt="最终视频提示词",
+            prompt="Prompt video cuối cùng",
             images=[],
             ratio="9:16",
         )

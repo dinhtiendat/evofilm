@@ -1,9 +1,9 @@
 ---
-title: "博客"
+title: "Blog"
 weight: 3
-description: "发布日志、开发进展与产品更新。"
+description: "Nhật log phát hành, tiến trình phát triển và cập nhật sản phẩm."
 images:
   - /images/og-default.svg
 ---
 
-这里用于承接版本日志、开发进展和产品更新。
+Nơi này dùng để tiếp nhận nhật ký phiên bản, tiến độ phát triển và cập nhật sản phẩm.

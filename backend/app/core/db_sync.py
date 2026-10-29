@@ -1,6 +1,6 @@
-"""SQLAlchemy 同步引擎与会话。
+"""Engine và phiên (session) đồng bộ của SQLAlchemy.
 
-给 Celery worker 使用，避免在同步 worker 进程里承载 async DB runtime。
+Để Celery worker sử dụng, tránh để worker tiến trình đồng bộ phải tải runtime DB async.
 """
 
 from __future__ import annotations

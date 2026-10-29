@@ -51,9 +51,9 @@ async def upsert_project_link(
     chapter_id: str | None,
     shot_id: str | None,
 ) -> Any:  # noqa: ANN401
-    """优先补全已有记录（chapter_id/shot_id），否则新建。
+    """Ưu tiên hoàn thiện bản ghi có sẵn (chapter_id/shot_id), nếu không thì tạo mới."
 
-    只会做 null -> value 的补全，不会覆盖已有非空字段。
+    Chỉ hoàn thiện null -> value, không ghi đè trường có giá trị khác rỗng.
     """
 
     await _ensure_project_exists(db, project_id)

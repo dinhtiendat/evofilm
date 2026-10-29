@@ -1,4 +1,4 @@
-"""shot_character_links 接口响应壳测试。"""
+"""Kiểm thử vỏ phản ứng của interface shot_character_links."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ def _make_link() -> ShotCharacterLink:
         shot_id="shot-1",
         character_id="char-1",
         index=1,
-        note="主角",
+        note="Nhân vật chính",
     )
     obj.id = 1
     obj.created_at = datetime.now(UTC)
@@ -73,7 +73,7 @@ def test_upsert_shot_character_link_returns_success_envelope(client: TestClient,
                 "shot_id": "shot-1",
                 "character_id": "char-1",
                 "index": 1,
-                "note": "主角",
+                "note": "Nhân vật chính",
             },
         )
     finally:
@@ -84,7 +84,7 @@ def test_upsert_shot_character_link_returns_success_envelope(client: TestClient,
     assert body["code"] == 200
     assert body["message"] == "success"
     assert body["data"]["id"] == 1
-    assert body["data"]["note"] == "主角"
+    assert body["data"]["note"] == "Nhân vật chính"
 
 
 def test_upsert_shot_character_link_value_error_returns_api_response(client: TestClient, monkeypatch) -> None:

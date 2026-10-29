@@ -1,10 +1,10 @@
-"""提示词模板相关路由：CRUD。
+"""Định tuyến liên quan mẫu prompt: CRUD.
 
-业务规则：
-- is_system=True 的记录禁止修改和删除（403）。
-- is_default=True 的记录禁止删除（403）。
-- 同一 category 下至多一条 is_default=True：创建/更新时将同 category 其余记录置为 False。
-- id 由后端自动生成 UUID；is_system 不接受客户端传入（固定为 False）。
+Quy tắc nghiệp vụ:
+- Cấm sửa và xóa bản ghi có is_system=True (403).
+- Cấm xóa bản ghi có is_default=True (403).
+- Tối đa một bản ghi is_default=True trong mỗi category: khi tạo/cập nhật, các bản ghi còn lại cùng category sẽ bị đặt False.
+- id do phía sau tự sinh UUID；is_system không nhận giá trị từ client (cố định False).
 """
 
 from __future__ import annotations
@@ -32,30 +32,30 @@ router = APIRouter()
 
 _ORDER_FIELDS = {"name", "category", "created_at", "updated_at"}
 _PROMPT_CATEGORY_ZH: dict[PromptCategory, tuple[str, str]] = {
-    # 用于提交给图片模型的提示词
-    PromptCategory.frame_head_image: ("首帧图片", "用于生成首帧图片的提示词"),
-    PromptCategory.frame_tail_image: ("尾帧图片", "用于生成尾帧图片的提示词"),
-    PromptCategory.frame_key_image: ("关键帧图片", "用于生成关键帧图片的提示词"),
-    PromptCategory.character_image_front: ("角色正面图片", "用于生成角色正面图片的提示词"),
-    PromptCategory.character_image_other: ("角色侧面/背面图片", "用于生成角色侧面或背面图片的提示词"),
-    PromptCategory.actor_image_front: ("演员正面图片", "用于生成演员正面图片的提示词"),
-    PromptCategory.actor_image_other: ("演员侧面/背面图片", "用于生成演员侧面或背面图片的提示词"),
-    PromptCategory.prop_image_front: ("道具正面图片", "用于生成道具正面图片的提示词"),
-    PromptCategory.prop_image_other: ("道具侧面/背面图片", "用于生成道具侧面或背面图片的提示词"),
-    PromptCategory.scene_image_front: ("场景正面图片", "用于生成场景正面图片的提示词"),
-    PromptCategory.scene_image_other: ("场景侧面/背面图片", "用于生成场景侧面或背面图片的提示词"),
-    PromptCategory.costume_image_front: ("服装正面图片", "用于生成服装正面图片的提示词"),
-    PromptCategory.costume_image_other: ("服装侧面/背面图片", "用于生成服装侧面或背面图片的提示词"),
-    # 用于提交给文本模型的提示词
-    PromptCategory.frame_head_prompt: ("首帧图片提示词", "用于生成首帧图片文案的提示词"),
-    PromptCategory.frame_tail_prompt: ("尾帧图片提示词", "用于生成尾帧图片文案的提示词"),
-    PromptCategory.frame_key_prompt: ("关键帧图片提示词", "用于生成关键帧图片文案的提示词"),
-    PromptCategory.video_prompt: ("视频提示词", "用于视频生成的整体提示词"),
-    PromptCategory.storyboard_prompt: ("分镜提示词", "用于分镜拆解与描述的提示词"),
-    # 预留/扩展类别（即使暂时不用，也需要完整映射用于前端展示与校验）
-    PromptCategory.combined: ("组合提示词", "用于组合多段提示词的模板"),
-    PromptCategory.bgm: ("背景音乐提示词", "用于生成背景音乐描述的提示词"),
-    PromptCategory.sfx: ("音效提示词", "用于生成音效描述的提示词"),
+    # Prompt dùng để gửi cho mô hình hình ảnh
+    PromptCategory.frame_head_image: ("Ảnh khung hình đầu", "Prompt dùng để tạo ảnh khung hình đầu"),
+    PromptCategory.frame_tail_image: ("Ảnh khung hình cuối", "Prompt dùng để tạo ảnh khung hình cuối"),
+    PromptCategory.frame_key_image: ("Ảnh khung hình chính", "Prompt dùng để tạo ảnh khung hình chính"),
+    PromptCategory.character_image_front: ("Hình ảnh phía trước của nhân vật", "Prompt dùng để tạo hình ảnh phía trước của nhân vật"),
+    PromptCategory.character_image_other: ("Hình ảnh mặt bên / mặt sau của nhân vật", "Prompt dùng để tạo hình ảnh mặt bên hoặc mặt sau của nhân vật"),
+    PromptCategory.actor_image_front: ("Ảnh mặt trước diễn viên", "Prompt dùng để tạo ảnh mặt trước diễn viên"),
+    PromptCategory.actor_image_other: ("Hình ảnh bên cạnh / phía sau của diễn viên", "Prompt dùng để tạo hình ảnh bên cạnh hoặc phía sau của diễn viên"),
+    PromptCategory.prop_image_front: ("Ảnh mặt trước đạo cụ", "Prompt dùng để tạo ảnh mặt trước đạo cụ"),
+    PromptCategory.prop_image_other: ("Hình ảnh bên cạnh / phía sau của đạo cụ", "Prompt dùng để tạo hình ảnh bên cạnh hoặc phía sau của đạo cụ"),
+    PromptCategory.scene_image_front: ("Ảnh mặt trước bối cảnh", "Prompt dùng để tạo ảnh mặt trước bối cảnh"),
+    PromptCategory.scene_image_other: ("Hình ảnh bên cạnh / phía sau của bối cảnh", "Prompt dùng để tạo hình ảnh bên cạnh hoặc phía sau của bối cảnh"),
+    PromptCategory.costume_image_front: ("Ảnh mặt trước trang phục", "Prompt dùng để tạo ảnh mặt trước trang phục"),
+    PromptCategory.costume_image_other: ("Hình ảnh bên cạnh / phía sau của trang phục", "Prompt dùng để tạo hình ảnh bên cạnh hoặc phía sau của trang phục"),
+    # Prompt dùng để gửi cho mô hình văn bản
+    PromptCategory.frame_head_prompt: ("Prompt ảnh khung hình đầu", "Prompt dùng để tạo nội dung cho ảnh khung hình đầu"),
+    PromptCategory.frame_tail_prompt: ("Prompt ảnh khung hình cuối", "Prompt dùng để tạo nội dung cho ảnh khung hình cuối"),
+    PromptCategory.frame_key_prompt: ("Prompt ảnh khung hình chính", "Prompt dùng để tạo nội dung cho ảnh khung hình chính"),
+    PromptCategory.video_prompt: ("Prompt video", "Prompt tổng thể dùng để tạo video"),
+    PromptCategory.storyboard_prompt: ("Prompt phân cảnh", "Prompt dùng để phân tách và mô tả phân cảnh"),
+    # Hạng mục dự phòng/mở rộng (ngay cả khi tạm thời chưa dùng, vẫn cần ánh xạ đầy đủ để frontend hiển thị và kiểm tra)
+    PromptCategory.combined: ("Prompt ghép", "Mẫu dùng để ghép nhiều đoạn prompt"),
+    PromptCategory.bgm: ("Prompt nhạc nền", "Prompt dùng để tạo mô tả nhạc nền"),
+    PromptCategory.sfx: ("prompt effect âm thanh", "prompt dùng để sinh mô tả effect âm thanh"),
 }
 
 
@@ -65,7 +65,7 @@ async def _clear_category_default(
     category: PromptCategory,
     exclude_id: str | None = None,
 ) -> None:
-    """将同 category 下所有记录的 is_default 置为 False（排除 exclude_id）。"""
+    """Đặt is_default của tất cả bản ghi cùng category thành False (loại trừ exclude_id)."""
     stmt = (
         update(PromptTemplate)
         .where(PromptTemplate.category == category, PromptTemplate.is_default.is_(True))
@@ -75,19 +75,19 @@ async def _clear_category_default(
     await db.execute(stmt)
 
 
-# ---------- 列表 ----------
+# ---------- Danh sách ----------
 
 @router.get(
     "",
     response_model=ApiResponse[PaginatedData[PromptTemplateRead]],
-    summary="提示词模板列表（分页）",
+    summary="Danh sách mẫu prompt (phân trang)",
 )
 async def list_prompt_templates(
     db: AsyncSession = Depends(get_db),
-    category: PromptCategory | None = Query(None, description="按类别过滤"),
-    q: str | None = Query(None, description="关键字，过滤 name"),
-    is_default: bool | None = Query(None, description="过滤是否为默认"),
-    is_system: bool | None = Query(None, description="过滤是否为系统预置"),
+    category: PromptCategory | None = Query(None, description="Lọc theo hạng mục"),
+    q: str | None = Query(None, description="từ khóa, lọc name"),
+    is_default: bool | None = Query(None, description="lọc liệu là mặc định hay không"),
+    is_system: bool | None = Query(None, description="lọc liệu là hệ thống có sẵn hay không"),
     order: str | None = Query(None),
     is_desc: bool = Query(False),
     page: int = Query(1, ge=1),
@@ -121,7 +121,7 @@ async def list_prompt_templates(
 @router.get(
     "/categories",
     response_model=ApiResponse[list[PromptCategoryOptionRead]],
-    summary="获取提示词类别枚举（含中文映射）",
+    summary="Lấy enum hạng mục prompt (kèm ánh xạ tiếng Trung)",
 )
 async def list_prompt_categories() -> ApiResponse[list[PromptCategoryOptionRead]]:
     items: list[PromptCategoryOptionRead] = []
@@ -131,12 +131,12 @@ async def list_prompt_categories() -> ApiResponse[list[PromptCategoryOptionRead]
     return success_response(items)
 
 
-# ---------- 详情 ----------
+# ---------- Chi tiết ----------
 
 @router.get(
     "/{template_id}",
     response_model=ApiResponse[PromptTemplateRead],
-    summary="获取提示词模板详情",
+    summary="Lấy chi tiết mẫu prompt",
 )
 async def get_prompt_template(
     template_id: str,
@@ -148,19 +148,19 @@ async def get_prompt_template(
     return success_response(PromptTemplateRead.model_validate(obj))
 
 
-# ---------- 创建 ----------
+# ---------- Tạo mới ----------
 
 @router.post(
     "",
     response_model=ApiResponse[PromptTemplateRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建提示词模板",
+    summary="Tạo mẫu prompt",
 )
 async def create_prompt_template(
     body: PromptTemplateCreate,
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[PromptTemplateRead]:
-    # 若设为默认，先清除同类别其他默认
+    # Nếu đặt làm mặc định, trước tiên xóa các mặc định khác cùng hạng mục
     if body.is_default:
         await _clear_category_default(db, category=body.category)
 
@@ -172,7 +172,7 @@ async def create_prompt_template(
         preview=body.preview,
         variables=body.variables,
         is_default=body.is_default,
-        is_system=False,  # 客户端不可设置
+        is_system=False,  # Client không được đặt
     )
     db.add(obj)
     await db.flush()
@@ -180,12 +180,12 @@ async def create_prompt_template(
     return created_response(PromptTemplateRead.model_validate(obj))
 
 
-# ---------- 更新 ----------
+# ---------- Cập nhật ----------
 
 @router.patch(
     "/{template_id}",
     response_model=ApiResponse[PromptTemplateRead],
-    summary="局部更新提示词模板",
+    summary="Cập nhật cục bộ mẫu prompt",
 )
 async def update_prompt_template(
     template_id: str,
@@ -196,9 +196,9 @@ async def update_prompt_template(
     if obj is None:
         raise HTTPException(status_code=404, detail=entity_not_found("PromptTemplate"))
     if obj.is_system:
-        raise HTTPException(status_code=403, detail="系统预置提示词不可修改")
+        raise HTTPException(status_code=403, detail="Prompt do hệ thống cài đặt sẵn không thể chỉnh sửa")
 
-    # 若将当前记录设为默认，先清除同类别其他默认
+    # Nếu đặt bản ghi hiện tại làm mặc định, trước tiên xóa các mặc định khác cùng hạng mục
     if body.is_default is True:
         await _clear_category_default(db, category=cast(PromptCategory, cast(object, obj.category)), exclude_id=template_id)
 
@@ -211,12 +211,12 @@ async def update_prompt_template(
     return success_response(PromptTemplateRead.model_validate(obj))
 
 
-# ---------- 删除 ----------
+# ---------- Xóa ----------
 
 @router.delete(
     "/{template_id}",
     response_model=ApiResponse[None],
-    summary="删除提示词模板",
+    summary="Xóa mẫu prompt",
 )
 async def delete_prompt_template(
     template_id: str,
@@ -226,8 +226,8 @@ async def delete_prompt_template(
     if obj is None:
         raise HTTPException(status_code=404, detail=entity_not_found("PromptTemplate"))
     if obj.is_system:
-        raise HTTPException(status_code=403, detail="系统预置提示词不可删除")
+        raise HTTPException(status_code=403, detail="Prompt do hệ thống cài đặt sẵn không thể xóa")
     if obj.is_default:
-        raise HTTPException(status_code=403, detail="默认提示词不可删除，请先将其他提示词设为默认")
+        raise HTTPException(status_code=403, detail="Prompt mặc định không thể xóa, vui lòng đặt prompt khác làm mặc định trước")
     await db.delete(obj)
     return empty_response()

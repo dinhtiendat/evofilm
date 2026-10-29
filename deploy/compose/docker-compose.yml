@@ -34,8 +34,8 @@ services:
       RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY}
       RUSTFS_CONSOLE_ENABLE: "true"
     ports:
-      - "${RUSTFS_PORT:-9000}:9000"
-      - "${RUSTFS_CONSOLE_PORT:-9001}:9001"
+      - "${RUSTFS_PORT:-9400}:9400"
+      - "${RUSTFS_CONSOLE_PORT:-9401}:9401"
     volumes:
       - rustfs_data:/data
 
@@ -47,14 +47,14 @@ services:
       DATABASE_URL: mysql+aiomysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
       DEBUG: "false"
       # S3 / RustFS
-      S3_ENDPOINT_URL: http://rustfs:9000
+      S3_ENDPOINT_URL: http://rustfs:9400
       S3_REGION_NAME: us-east-1
       S3_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY}
       S3_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY}
       S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       # CORS
-      CORS_ORIGINS: http://localhost:7788,http://127.0.0.1:7788
-      # 可选
+      CORS_ORIGINS: http://localhost:7788,http://127.0.0.1:7788,http://172.31.2.23:7788
+      # Tùy chọn
       OPENAI_API_KEY: ${OPENAI_API_KEY-}
     depends_on:
       mysql:
@@ -97,14 +97,14 @@ services:
       DEBUG: "false"
       API_V1_PREFIX: /api/v1
       # S3 / RustFS
-      S3_ENDPOINT_URL: http://rustfs:9000
+      S3_ENDPOINT_URL: http://rustfs:9400
       S3_REGION_NAME: us-east-1
       S3_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY}
       S3_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY}
       S3_BUCKET_NAME: ${S3_BUCKET_NAME}
       # CORS
-      CORS_ORIGINS: http://localhost:7788,http://127.0.0.1:7788
-      # 可选
+      CORS_ORIGINS: http://localhost:7788,http://127.0.0.1:7788,http://172.31.2.23:7788
+      # Tùy chọn
       OPENAI_API_KEY: ${OPENAI_API_KEY-}
     ports:
       - "8000:8000"
@@ -131,12 +131,12 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL:-}
       DEBUG: "false"
       API_V1_PREFIX: /api/v1
-      S3_ENDPOINT_URL: http://rustfs:9000
+      S3_ENDPOINT_URL: http://rustfs:9400
       S3_REGION_NAME: us-east-1
       S3_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY}
       S3_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY}
       S3_BUCKET_NAME: ${S3_BUCKET_NAME}
-      CORS_ORIGINS: http://localhost:7788,http://127.0.0.1:7788
+      CORS_ORIGINS: http://localhost:7788,http://127.0.0.1:7788,http://172.31.2.23:7788
       OPENAI_API_KEY: ${OPENAI_API_KEY-}
     depends_on:
       mysql:

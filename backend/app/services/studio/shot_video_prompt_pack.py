@@ -1,11 +1,11 @@
-"""镜头视频提示词上下文包与模板渲染底层服务。
+"""Gói ngữ cảnh prompt video của shot và dịch vụ kết xuất mẫu nền.
 
-该模块只负责两类稳定能力：
+Mô-đun này chỉ chịu trách nhiệm hai khả năng ổn định:
 
-1. 构建 `ShotVideoPromptPackRead`
-2. 基于模板将 pack 渲染为文本
+1. Dựng `ShotVideoPromptPackRead`
+2. Render pack thành văn bản dựa theo mẫu
 
-视频预览与提交编排统一放在 `app.services.studio.generation.video`。
+Xếp đặt xem trước và gửi video thống nhất đặt trong `app.services.studio.generation.video`.
 """
 
 from __future__ import annotations
@@ -32,8 +32,8 @@ from app.services.studio.shot_assets_overview import get_shot_assets_overview
 
 
 DEFAULT_VIDEO_NEGATIVE_PROMPT = (
-    "不要新增无关人物；不要改变角色身份、服装颜色和场景地点；"
-    "不要出现文字水印、肢体畸形、镜头跳变和画面闪烁。"
+    "Không thêm nhân vật không liên quan; không thay đổi thân phận nhân vật, màu trang phục và địa điểm bối cảnh;"
+    "Không được có chữ chìm, chi tiết cơ thể méo, nhảy phân cảnh và chớp mờ khung hình."
 )
 
 
@@ -55,9 +55,9 @@ def _asset_ref_from_overview_item(item: Any) -> ShotPromptAssetRef:
 
 
 def _pack_variables(pack: ShotVideoPromptPackRead) -> dict[str, Any]:
-    """为 DB 模板暴露稳定变量名。
+    """Phơi tên biến ổn định cho mẫu DB.
 
-    同时保留扁平变量和 `pack`，让模板可以逐步迁移到更结构化的写法。
+    Giữ nguyên cả biến phẳng lẫn `pack`, để mẫu có thể dần di chuyển sang cách viết cấu trúc hơn.
     """
     data = pack.model_dump()
     return {
@@ -101,20 +101,20 @@ def _render_template(content: str, variables: dict[str, Any]) -> str:
 
 
 def _build_guidance_suffix(pack: ShotVideoPromptPackRead) -> str:
-    """生成一段稳定的镜头执行约束，供模板渲染结果补强使用。"""
+    """Sinh một đoạn ràng buộc thực thi phân cảnh ổn định, dùng để bổ sung cho kết quả render mẫu."""
     lines: list[str] = []
     if pack.action_beats:
-        lines.append(f"动作节拍：{'；'.join(pack.action_beats)}")
+        lines.append(f"Nhịp hành động: {'；'.join(pack.action_beats)}")
     if pack.previous_shot_summary:
-        lines.append(f"上一镜头承接：{pack.previous_shot_summary}")
+        lines.append(f"Tiếp nối phân cảnh trước: {pack.previous_shot_summary}")
     if pack.next_shot_goal:
-        lines.append(f"下一镜头目标：{pack.next_shot_goal}")
+        lines.append(f"Mục tiêu phân cảnh sau: {pack.next_shot_goal}")
     if pack.continuity_guidance:
-        lines.append(f"连续性要求：{pack.continuity_guidance}")
+        lines.append(f"Yêu cầu liên tục: {pack.continuity_guidance}")
     if pack.composition_anchor:
-        lines.append(f"构图锚点：{pack.composition_anchor}")
+        lines.append(f"Mỏ neo bố cục: {pack.composition_anchor}")
     if pack.screen_direction_guidance:
-        lines.append(f"朝向与视线：{pack.screen_direction_guidance}")
+        lines.append(f"Hướng và ánh mắt: {pack.screen_direction_guidance}")
     return "\n".join(lines).strip()
 
 
@@ -123,10 +123,10 @@ def enrich_rendered_video_prompt(
     rendered_prompt: str,
     pack: ShotVideoPromptPackRead,
 ) -> str:
-    """为模板渲染结果补强关键执行约束。
+    """Bổ sung các ràng buộc thực thi quan trọng cho kết quả render mẫu.
 
-    若模板未显式消费新的连续性/构图变量，则自动在末尾追加一段稳定约束，
-    避免这类信息只停留在 preview pack 中却没有真正进入最终 prompt。
+    Nếu mẫu không dùng tường minh các biến tính liên tục/bố cục mới, hệ thống sẽ tự động thêm một đoạn ràng buộc ổn định ở cuối,
+    tránh những thông tin này chỉ dừng ở preview pack mà không thực sự vào prompt cuối.
     """
     text = str(rendered_prompt or "").strip()
     suffix = _build_guidance_suffix(pack)
@@ -135,13 +135,14 @@ def enrich_rendered_video_prompt(
 
     normalized = text.replace(" ", "")
     if any(
-        marker in normalized
+        marker.replace(" ", "") in normalized
         for marker in (
-            "动作节拍：",
-            "上一镜头承接：",
-            "连续性要求：",
-            "构图锚点：",
-            "朝向与视线：",
+            "Nhịp hành động:",
+            "Tiếp nối phân cảnh trước:",
+            "Mục tiêu phân cảnh sau:",
+            "Yêu cầu liên tục:",
+            "Mỏ neo bố cục:",
+            "Hướng và ánh mắt:",
         )
     ):
         return text
@@ -152,7 +153,7 @@ def enrich_rendered_video_prompt(
 
 
 def _split_beats(*values: str) -> list[str]:
-    """按常见中文断句规则拆分为动作节拍候选。"""
+    """Tách theo quy tắc ngắt câu tiếng Trung phổ biến thành ứng viên nhịp hành động."""
     parts: list[str] = []
     for value in values:
         text = str(value or "").strip()
@@ -186,13 +187,13 @@ def _build_action_beats(
     shot_description: str,
     dialogue_summary: str,
 ) -> list[str]:
-    """从剧本摘录、镜头描述与对白中提炼镜头内动作节拍。"""
+    """Rút ra nhịp hành động trong phân cảnh từ trích đoạn kịch bản, mô tả phân cảnh và thoại."""
     confirmed = _dedupe_keep_order(list(confirmed_action_beats or []), limit=4)
     if confirmed:
         return confirmed
     beat_candidates = _split_beats(shot_description, script_excerpt)
     dialogue_candidates = [
-        f"对白推进：{item}"
+        f"Đẩy tiến thoại: {item}"
         for item in _split_beats(dialogue_summary)
         if len(item) <= 24
     ]
@@ -200,7 +201,7 @@ def _build_action_beats(
 
 
 def _build_neighbor_prompt_summary(shot: Shot | None) -> tuple[str, str]:
-    """生成相邻镜头摘要与承接目标。"""
+    """Tạo bản tóm tắt và mục tiêu tiếp nối của phân cảnh liền kề."""
     if shot is None:
         return "", ""
     detail = getattr(shot, "detail", None)
@@ -212,15 +213,15 @@ def _build_neighbor_prompt_summary(shot: Shot | None) -> tuple[str, str]:
         _enum_value(getattr(detail, "movement", None)),
     ]
     summary_parts = [
-        f"标题：{str(shot.title or '').strip()}" if str(shot.title or '').strip() else "",
-        f"场景：{scene_name}" if scene_name else "",
-        f"镜头语言：{' / '.join(part for part in camera_parts if part)}" if any(camera_parts) else "",
-        f"画面状态：{shot_description}" if shot_description else "",
-        f"剧本摘录：{str(shot.script_excerpt or '').strip()}" if str(shot.script_excerpt or '').strip() else "",
+        f"Tiêu đề:{str(shot.title or '').strip()}" if str(shot.title or '').strip() else "",
+        f"Bối cảnh:{scene_name}" if scene_name else "",
+        f"Ngôn ngữ điện ảnh: {' / '.join(part for part in camera_parts if part)}" if any(camera_parts) else "",
+        f"Trạng thái khung hình: {shot_description}" if shot_description else "",
+        f"Trích đoạn kịch bản: {str(shot.script_excerpt or '').strip()}" if str(shot.script_excerpt or '').strip() else "",
     ]
     compact = "；".join(part for part in summary_parts if part)
     goal_parts = [
-        f"标题：{str(shot.title or '').strip()}" if str(shot.title or '').strip() else "",
+        f"Tiêu đề:{str(shot.title or '').strip()}" if str(shot.title or '').strip() else "",
         shot_description or str(shot.script_excerpt or "").strip(),
     ]
     goal = "；".join(part for part in goal_parts if part)
@@ -233,22 +234,22 @@ def _build_continuity_guidance(
     previous_shot: Shot | None,
     next_shot: Shot | None,
 ) -> str:
-    """构造视频提示词的连续性建议。"""
+    """Gợi ý tính liên tục khi xây dựng prompt video."""
     detail = getattr(current_shot, "detail", None)
     current_scene_id = str(getattr(detail, "scene_id", "") or "")
     tips: list[str] = []
     if previous_shot is not None:
-        tips.append("承接上一镜头的动作、视线或情绪，不要像新场景重新开局")
+        tips.append("tiếp nối hành động, hướng nhìn hoặc cảm xúc của shot trước, đừng như cảnh mới bắt đầu lại")
         previous_detail = getattr(previous_shot, "detail", None)
         previous_scene_id = str(getattr(previous_detail, "scene_id", "") or "")
         if current_scene_id and previous_scene_id and current_scene_id == previous_scene_id:
-            tips.append("与上一镜头同场景时保持空间轴线和人物朝向稳定")
+            tips.append("Khi cùng bối cảnh với phân cảnh trước, giữ trục không gian và định hướng nhân vật ổn định")
     if next_shot is not None:
-        tips.append("在本镜头结尾形成自然收束，为下一镜头留出动作或情绪落点")
+        tips.append("ở kết thúc shot này tạo khép lại tự nhiên, để lại điểm rơi hành động hoặc cảm xúc cho shot tiếp")
         next_detail = getattr(next_shot, "detail", None)
         next_scene_id = str(getattr(next_detail, "scene_id", "") or "")
         if current_scene_id and next_scene_id and current_scene_id == next_scene_id:
-            tips.append("与下一镜头同场景时保持视觉重心连续，避免突兀跳轴")
+            tips.append("Khi cùng bối cảnh với phân cảnh tiếp theo, giữ trọng tâm thị giác liên tục, tránh nhảy trục đột ngột")
     return "；".join(tips)
 
 
@@ -260,38 +261,38 @@ def _build_composition_anchor(
     scene_name: str,
     character_names: list[str],
 ) -> str:
-    """为视频提示词构造稳定的画面构图与空间锚点建议。"""
+    """Xây dựng gợi ý bố cục cảnh quay và mỏ neo không gian ổn định cho prompt video."""
     detail = getattr(shot, "detail", None)
     camera_shot = _enum_value(getattr(detail, "camera_shot", None))
     movement = _enum_value(getattr(detail, "movement", None))
     anchors: list[str] = []
 
     if camera_shot in {"ECU", "CU"}:
-        anchors.append("以人物表情或关键动作细节作为画面重心，环境只保留必要轮廓")
+        anchors.append("lấy biểu cảm nhân vật hoặc chi tiết hành động chính làm trọng tâm khung, môi trường chỉ giữ đường nét cần thiết")
     elif camera_shot in {"MS", "FS"}:
-        anchors.append("保持人物与环境的相对位置可读，避免主体漂在空场中")
+        anchors.append("giữ vị trí tương đối giữa nhân vật và môi trường dễ đọc, tránh chủ thể trôi trong không gian trống")
     else:
-        anchors.append("先建立环境纵深和主体站位，再推进动作表现")
+        anchors.append("Thiết lập chiều sâu bối cảnh và vị trí đứng chủ thể trước, rồi mới đẩy biểu hiện hành động")
 
     if movement in {"DOLLY_IN", "ZOOM_IN"}:
-        anchors.append("镜头重心应逐步向主体收束，形成推进感")
+        anchors.append("Trọng tâm phân cảnh nên dần thu về chủ thể, tạo cảm giác tiến lên")
     elif movement in {"DOLLY_OUT", "ZOOM_OUT"}:
-        anchors.append("镜头重心可从主体退向环境，强调空间扩展")
+        anchors.append("Trọng tâm phân cảnh có thể lùi từ chủ thể về bối cảnh, nhấn mạnh sự mở rộng không gian")
     elif movement == "STATIC":
-        anchors.append("保持主体在画面中的位置稳定，避免重心突然跳变")
+        anchors.append("Giữ vị trí chủ thể trong khung hình ổn định, tránh trọng tâm nhảy đột ngột")
 
     if scene_name:
-        anchors.append(f"以场景 {scene_name} 作为主要空间锚点")
+        anchors.append(f"lấy bối cảnh {scene_name} làm neo không gian chính")
     if character_names:
-        anchors.append(f"锁定角色 {'、'.join(character_names[:2])} 的朝向与视线逻辑")
+        anchors.append(f"Cố định logic hướng thân và tầm nhìn của nhân vật {'、'.join(character_names[:2])}")
 
     current_scene_id = str(getattr(detail, "scene_id", "") or "")
     previous_scene_id = str(getattr(getattr(previous_shot, "detail", None), "scene_id", "") or "")
     next_scene_id = str(getattr(getattr(next_shot, "detail", None), "scene_id", "") or "")
     if previous_shot is not None and current_scene_id and current_scene_id == previous_scene_id:
-        anchors.append("与上一镜头同场景时，延续既有空间轴线和视觉方向")
+        anchors.append("khi cùng bối cảnh với shot trước, tiếp nối trục không gian và hướng nhìn có sẵn")
     if next_shot is not None and current_scene_id and current_scene_id == next_scene_id:
-        anchors.append("与下一镜头同场景时，保留可自然衔接的视觉落点")
+        anchors.append("Khi cùng bối cảnh với phân cảnh tiếp theo, giữ điểm rơi thị giác có thể nối tiếp tự nhiên")
 
     return "；".join(anchors)
 
@@ -304,32 +305,32 @@ def _build_screen_direction_guidance(
     dialogue_summary: str,
     character_names: list[str],
 ) -> str:
-    """构造视频镜头的人物朝向、视线与左右轴线建议。"""
+    """Tạo gợi ý hướng người, đường nhìn và trục trái/phải của phân cảnh video."""
     detail = getattr(shot, "detail", None)
     angle = _enum_value(getattr(detail, "angle", None))
     guidance: list[str] = []
 
     if angle == "OVER_SHOULDER":
-        guidance.append("保持过肩镜头的前景肩部位置稳定，不要无故交换左右关系")
+        guidance.append("giữ ổn định vị trí vai tiền cảnh của cảnh qua vai (over-shoulder), không đổi quan hệ trái/phải vô cớ")
     elif angle == "EYE_LEVEL":
-        guidance.append("保持人物平视方向和视线落点连续，避免镜头间突然翻面")
+        guidance.append("giữ hướng nhìn ngang và điểm nhìn của nhân vật liên tục, tránh lật mặt đột ngột giữa các shot")
     else:
-        guidance.append("明确人物朝向与视线落点，避免跳轴和朝向突变")
+        guidance.append("Làm rõ định hướng nhân vật và điểm rơi ánh mắt, tránh nhảy trục và đổi hướng đột ngột")
 
     if dialogue_summary.strip():
-        guidance.append("对白驱动镜头应优先保持说话者与受话者的对视逻辑")
+        guidance.append("shot do thoại dẫn nên ưu tiên giữ logic nhìn đối giữa người nói và người nghe")
     if len(character_names) >= 2:
-        guidance.append(f"角色 {character_names[0]} 与 {character_names[1]} 的左右站位和对视方向应保持稳定")
+        guidance.append(f"Vị trí đứng trái-phải và hướng nhìn đối diện giữa nhân vật {character_names[0]} và {character_names[1]} nên được giữ ổn định")
     elif character_names:
-        guidance.append(f"角色 {character_names[0]} 的视线方向应在相邻镜头中保持延续")
+        guidance.append(f"hướng nhìn của nhân vật {character_names[0]} nên được giữ liên tục giữa các phân cảnh liền kề")
 
     current_scene_id = str(getattr(detail, "scene_id", "") or "")
     previous_scene_id = str(getattr(getattr(previous_shot, "detail", None), "scene_id", "") or "")
     next_scene_id = str(getattr(getattr(next_shot, "detail", None), "scene_id", "") or "")
     if previous_shot is not None and current_scene_id and current_scene_id == previous_scene_id:
-        guidance.append("与上一镜头同场景时，不要无故翻转人物左右面向")
+        guidance.append("khi cùng bối cảnh với shot trước, không xoay hướng trái/phải của nhân vật vô cớ")
     if next_shot is not None and current_scene_id and current_scene_id == next_scene_id:
-        guidance.append("与下一镜头同场景时，为后续镜头保留可延续的视线方向")
+        guidance.append("khi cùng bối cảnh với shot tiếp theo, giữ hướng nhìn có thể tiếp nối cho shot sau")
 
     return "；".join(guidance)
 
@@ -338,26 +339,26 @@ def _fallback_video_prompt(pack: ShotVideoPromptPackRead) -> str:
     style_text = "，".join(x for x in [pack.visual_style, pack.style] if x)
     camera_text = " / ".join(x for x in [pack.camera.camera_shot, pack.camera.angle, pack.camera.movement] if x)
     parts = [
-        f"镜头标题：{pack.title}",
-        f"剧本摘录：{pack.script_excerpt}",
-        f"动作节拍：{'；'.join(pack.action_beats)}" if pack.action_beats else "",
-        f"画面风格：{style_text}",
-        f"镜头语言：{camera_text}",
-        f"时长：{pack.camera.duration} 秒" if pack.camera.duration else "",
-        f"场景：{pack.scene.name if pack.scene else ''}",
-        f"角色：{'、'.join(item.name for item in pack.characters)}",
-        f"道具：{'、'.join(item.name for item in pack.props)}",
-        f"服装：{'、'.join(item.name for item in pack.costumes)}",
-        f"对白摘要：{pack.dialogue_summary}",
-        f"上一镜头：{pack.previous_shot_summary}" if pack.previous_shot_summary else "",
-        f"下一镜头目标：{pack.next_shot_goal}" if pack.next_shot_goal else "",
-        f"连续性要求：{pack.continuity_guidance}" if pack.continuity_guidance else "",
-        f"构图锚点：{pack.composition_anchor}" if pack.composition_anchor else "",
-        f"朝向与视线：{pack.screen_direction_guidance}" if pack.screen_direction_guidance else "",
-        f"氛围：{pack.atmosphere}",
-        f"负面约束：{pack.negative_prompt}",
+        f"Tiêu đề phân cảnh: {pack.title}",
+        f"Trích đoạn kịch bản: {pack.script_excerpt}",
+        f"Nhịp hành động: {'；'.join(pack.action_beats)}" if pack.action_beats else "",
+        f"Phong cách khung hình: {style_text}",
+        f"Ngôn ngữ điện ảnh: {camera_text}",
+        f"Thời lượng: {pack.camera.duration} giây" if pack.camera.duration else "",
+        f"Bối cảnh: {pack.scene.name if pack.scene else ''}",
+        f"Nhân vật: {'、'.join(item.name for item in pack.characters)}",
+        f"Đạo cụ: {'、'.join(item.name for item in pack.props)}",
+        f"Trang phục: {'、'.join(item.name for item in pack.costumes)}",
+        f"Tóm tắt thoại: {pack.dialogue_summary}",
+        f"Phân cảnh trước: {pack.previous_shot_summary}" if pack.previous_shot_summary else "",
+        f"Mục tiêu phân cảnh sau: {pack.next_shot_goal}" if pack.next_shot_goal else "",
+        f"Yêu cầu liên tục: {pack.continuity_guidance}" if pack.continuity_guidance else "",
+        f"Mỏ neo bố cục: {pack.composition_anchor}" if pack.composition_anchor else "",
+        f"Hướng và ánh mắt: {pack.screen_direction_guidance}" if pack.screen_direction_guidance else "",
+        f"Không khí: {pack.atmosphere}",
+        f"Ràng buộc tiêu cực: {pack.negative_prompt}",
     ]
-    return "\n".join(part for part in parts if part.split("：", 1)[-1].strip())
+    return "\n".join(part for part in parts if part.split(": ", 1)[-1].strip())
 
 
 async def _resolve_video_prompt_template(
@@ -433,7 +434,7 @@ async def build_shot_video_prompt_pack(
 
     dialog_lines = list(getattr(detail, "dialog_lines", []) or []) if detail is not None else []
     dialogue_summary = "\n".join(
-        f"{line.speaker_name or '角色'}：{line.text}" if line.speaker_name else line.text
+        f"{line.speaker_name or 'Nhân vật'}: {line.text}" if line.speaker_name else line.text
         for line in sorted(dialog_lines, key=lambda x: (x.index, x.id))
         if line.text
     )

@@ -1,4 +1,4 @@
-"""接口响应壳测试：验证创建/删除/异常返回结构。"""
+"""Kiểm thử vỏ phản hồi API: xác thực cấu trúc trả về khi tạo/xóa/lỗi."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from app.models.studio import PromptCategory, PromptTemplate
 
 
 class _FakePromptDB:
-    """最小 DB 替身：仅覆盖 prompts 路由测试所需行为。"""
+    """DB giả dạng tối thiểu: chỉ bao phủ hành vi cần cho test route prompts."""
 
     def __init__(self) -> None:
         self.items: dict[str, PromptTemplate] = {}
@@ -53,9 +53,9 @@ def _seed_prompt(
     obj = PromptTemplate(
         id=prompt_id,
         category=PromptCategory.video_prompt,
-        name="视频提示词",
-        preview="预览",
-        content="内容",
+        name="Prompt video",
+        preview="Xem trước",
+        content="Nội dung",
         variables=["scene"],
         is_default=is_default,
         is_system=is_system,
@@ -81,9 +81,9 @@ def test_create_prompt_template_returns_created_envelope(client: TestClient) -> 
             "/api/v1/studio/prompts",
             json={
                 "category": "video_prompt",
-                "name": "视频生成提示词",
-                "content": "请生成视频提示词",
-                "preview": "预览文案",
+                "name": "Prompt tạo video",
+                "content": "Vui lòng tạo prompt video",
+                "preview": "Văn bản xem trước",
                 "variables": ["scene", "style"],
                 "is_default": True,
             },
@@ -96,7 +96,7 @@ def test_create_prompt_template_returns_created_envelope(client: TestClient) -> 
     assert body["code"] == 201
     assert body["message"] == "success"
     assert body["data"]["category"] == "video_prompt"
-    assert body["data"]["name"] == "视频生成提示词"
+    assert body["data"]["name"] == "Prompt tạo video"
     assert body["data"]["is_default"] is True
     assert body["data"]["is_system"] is False
     assert body["data"]["id"]
@@ -137,7 +137,7 @@ def test_create_prompt_template_validation_error_returns_api_response(client: Te
         response = client.post(
             "/api/v1/studio/prompts",
             json={
-                "name": "缺字段模板",
+                "name": "Mẫu thiếu trường",
             },
         )
     finally:

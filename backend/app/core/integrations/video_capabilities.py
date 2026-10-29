@@ -1,4 +1,4 @@
-"""视频生成能力约束与参数映射辅助。"""
+"""Ràng buộc khả năng tạo video và phụ trợ ánh xạ tham số."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ DEFAULT_RATIO_TO_SIZE_MAPPING: dict[str, str] = {
 
 @dataclass(frozen=True, slots=True)
 class VideoModelCapability:
-    """供应商/模型能力约束。"""
+    """Ràng buộc khả năng nhà cung cấp/mô hình."""
 
     supports_seed: bool = True
     supports_watermark: bool = True
@@ -37,7 +37,7 @@ def register_video_model_capability(
     model_prefix: str,
     capability: VideoModelCapability,
 ) -> None:
-    """兼容入口：注册模型能力覆盖（按前缀匹配，大小写不敏感）。"""
+    """Điểm vào tương thích: đăng ký lớp phủ khả năng mô hình (khớp theo tiền tố, không phân biệt hoa thường)."""
     if provider == "openai":
         from app.core.integrations.openai.video_capabilities import register_openai_video_capability
 
@@ -49,7 +49,7 @@ def register_video_model_capability(
 
 
 def clear_video_model_capability_overrides(*, provider: ProviderKey | None = None) -> None:
-    """兼容入口：清空能力覆盖；供测试或重置场景使用。"""
+    """Điểm vào tương thích: dọn sạch lớp phủ khả năng; dùng cho kiểm thử hoặc đặt lại bối cảnh."""
     from app.core.integrations.openai.video_capabilities import clear_openai_video_capability_overrides
     from app.core.integrations.volcengine.video_capabilities import clear_volcengine_video_capability_overrides
 

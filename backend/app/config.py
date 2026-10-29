@@ -1,4 +1,4 @@
-"""应用配置，从环境变量加载。"""
+"""Cấu hình ứng dụng, nạp từ biến môi trường."""
 
 import json
 from pathlib import Path
@@ -35,8 +35,8 @@ class Settings(BaseSettings):
     redis_password: str | None = None
     celery_broker_url: str | None = None
 
-    # CORS：环境变量中建议使用逗号分隔（更贴近 docker-compose 用法）
-    # 也兼容 JSON 数组：'["http://a","http://b"]'
+    # CORS: trong biến môi trường nên dùng dấu phẩy ngăn cách (thân thiện với docker-compose hơn)
+    # Tương thích cả mảng JSON: '["http://a","http://b"]'
     cors_origins: str = "http://localhost:7788,http://127.0.0.1:7788"
 
     @property
@@ -51,15 +51,15 @@ class Settings(BaseSettings):
             return []
         return [x.strip() for x in s.split(",") if x.strip()]
 
-    # S3 / 对象存储（用于素材文件）
+    # S3 / object storage (dùng cho file tài nguyên)
     s3_endpoint_url: str | None = None
     s3_region_name: str | None = None
     s3_access_key_id: str | None = None
     s3_secret_access_key: str | None = None
     s3_bucket_name: str | None = None
-    # 可选：统一前缀，方便按环境/项目隔离，如 "jellyfish/dev"
+    # Tùy chọn: tiền tố chung, tiện cách ly theo môi trường/dự án, ví dụ "jellyfish/dev"
     s3_base_path: str = ""
-    # 可选：对外访问基址（CDN 或自定义域名），为空则使用 S3 自带 URL 或预签名 URL
+    # Tùy chọn: URL base truy cập từ ngoài (CDN hoặc domain tùy chỉnh), để trống thì dùng URL mặc định của S3 hoặc signed URL
     s3_public_base_url: str | None = None
 
     def model_post_init(self, __context: object) -> None:

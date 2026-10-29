@@ -9,33 +9,33 @@ from app.models.types import ProjectStyle, ProjectVisualStyle
 
 
 class Scene(Base, TimestampMixin):
-    """场景表。"""
+    """Bảng bối cảnh.。"""
 
     __tablename__ = "scenes"
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="ID")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="名称")
-    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="描述")
-    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="题材/风格")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tên)")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="description: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả)")
+    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="Thể loại/phong cách")
     view_count: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
         default=1,
-        comment="计划为该场景生成的视角图片数量（不含分镜帧）",
+        comment="Số lượng ảnh góc nhìn dự kiến tạo cho bối cảnh này (không gồm khung hình phân cảnh)",
     )
-    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="标签")
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment=Nhãn)")
     prompt_template_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("prompt_templates.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="提示词模板 ID",
+        comment="comment=ID mẫu prompt, ID",
     )
     visual_style: Mapped[ProjectVisualStyle] = mapped_column(
         String(16),
         nullable=False,
         default=ProjectVisualStyle.live_action,
-        comment="画面表现形式（现实/动漫等）",
+        comment="Hình thức biểu diễn của khung hình (thực tế/hoạt hình...)",
     )
 
     prompt_template: Mapped["PromptTemplate | None"] = relationship()
@@ -53,33 +53,33 @@ class Scene(Base, TimestampMixin):
 
 
 class Prop(Base, TimestampMixin):
-    """道具表。角色道具绑定见 CharacterPropLink。"""
+    """Bảng đạo cụ. Liên kết nhân vật - đạo cụ xem tại CharacterPropLink."""
 
     __tablename__ = "props"
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="ID")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="名称")
-    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="描述")
-    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="题材/风格")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tên)")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="description: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả)")
+    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="Thể loại/phong cách")
     view_count: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
         default=1,
-        comment="计划为该道具生成的视角图片数量（不含分镜帧）",
+        comment="Số lượng ảnh góc nhìn dự kiến tạo cho đạo cụ này (không gồm khung hình phân cảnh)",
     )
-    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="标签")
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment=Nhãn)")
     prompt_template_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("prompt_templates.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="提示词模板 ID",
+        comment="comment=ID mẫu prompt, ID",
     )
     visual_style: Mapped[ProjectVisualStyle] = mapped_column(
         String(16),
         nullable=False,
         default=ProjectVisualStyle.live_action,
-        comment="画面表现形式（现实/动漫等）",
+        comment="Hình thức biểu diễn của khung hình (thực tế/hoạt hình...)",
     )
 
     prompt_template: Mapped["PromptTemplate | None"] = relationship()
@@ -102,33 +102,33 @@ class Prop(Base, TimestampMixin):
 
 
 class Costume(Base, TimestampMixin):
-    """服装表。角色服装见 Character.costume_id。"""
+    """Bảng trang phục. Trang phục của nhân vật xem tại Character.costume_id."""
 
     __tablename__ = "costumes"
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="ID")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="名称")
-    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="描述")
-    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="题材/风格")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tên)")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="description: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả)")
+    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="Thể loại/phong cách")
     view_count: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
         default=1,
-        comment="计划为该服装生成的视角图片数量（不含分镜帧）",
+        comment="Số lượng ảnh góc nhìn dự kiến tạo cho trang phục này (không gồm khung hình phân cảnh)",
     )
-    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="标签")
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment=Nhãn)")
     prompt_template_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("prompt_templates.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="提示词模板 ID",
+        comment="comment=ID mẫu prompt, ID",
     )
     visual_style: Mapped[ProjectVisualStyle] = mapped_column(
         String(16),
         nullable=False,
         default=ProjectVisualStyle.live_action,
-        comment="画面表现形式（现实/动漫等）",
+        comment="Hình thức biểu diễn của khung hình (thực tế/hoạt hình...)",
     )
 
     prompt_template: Mapped["PromptTemplate | None"] = relationship()
@@ -147,38 +147,38 @@ class Costume(Base, TimestampMixin):
 
 
 class Actor(Base, TimestampMixin):
-    """演员表（与角色区分）。
+    """Bảng diễn viên (khác biệt với nhân vật).
 
-    说明：
-    - 使用 ActorImage（旧） 的字段集合，作为“演员形象/立绘资产”的主表。
-    - 归属由 ProjectActorLink（project/chapter/shot 维度）表达。
+    Giải thích:：
+    - dùng bộ trường của ActorImage (cũ), làm bảng chính của "tài nguyên hình mẫu/chân dung diễn viên".
+    - Thuộc sở hữu được diễn đạt bởi ProjectActorLink (chiều project/chapter/shot).
     """
 
     __tablename__ = "actors"
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="ID")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="名称")
-    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="描述")
-    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="题材/风格")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tên)")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="description: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả)")
+    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="Thể loại/phong cách")
     view_count: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
         default=1,
-        comment="计划为该演员形象生成的视角图片数量（不含分镜帧）",
+        comment="Số lượng ảnh góc nhìn dự kiến tạo cho hình tượng diễn viên này (không gồm khung hình phân cảnh)",
     )
-    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="标签")
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment=Nhãn)")
     prompt_template_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("prompt_templates.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="提示词模板 ID",
+        comment="comment=ID mẫu prompt, ID",
     )
     visual_style: Mapped[ProjectVisualStyle] = mapped_column(
         String(16),
         nullable=False,
         default=ProjectVisualStyle.live_action,
-        comment="画面表现形式（现实/动漫等）",
+        comment="Hình thức biểu diễn của khung hình (thực tế/hoạt hình...)",
     )
 
     prompt_template: Mapped["PromptTemplate | None"] = relationship()
@@ -197,48 +197,48 @@ class Actor(Base, TimestampMixin):
 
 
 class Character(Base, TimestampMixin):
-    """角色表（归属项目）。
+    """Bảng nhân vật (thuộc dự án).
 
-    组成约定：
-    - 角色由：Actor（演员） + Costume（服装） + Props（道具）组成。
-    - 最终在分镜中引用角色：`ShotCharacterLink`（shot_character_links）。
+    Quy ước cấu thành:：
+    - nhân vật gồm:Actor (diễn viên) + Costume (trang phục) + Props (đạo cụ).
+    - - Cuối cùng trích dẫn nhân vật trong phân cảnh: `ShotCharacterLink` (shot_character_links).：`ShotCharacterLink`（shot_character_links）。
 
-    应用层保证：
-    - `costume_id` 所指服装应为该角色所属项目或全局资产，避免跨项目误用。
+    Đảm bảo ở tầng ứng dụng:：
+    - trang phục mà `costume_id` trỏ nên thuộc dự án của nhân vật đó hoặc tài nguyên toàn cục, tránh dùng nhầm chéo dự án.
     """
 
     __tablename__ = "characters"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="角色 ID")
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="id: Mapped[str] = mapped_column(String(64), primary_key=True, comment=ID nhân vật) ID")
     project_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("projects.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属项目 ID",
+        comment="comment=ID dự án sở hữu, ID",
     )
-    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="角色名称")
-    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="角色描述")
-    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="题材/风格")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tên nhân vật)")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="description: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả nhân vật)")
+    style: Mapped[ProjectStyle] = mapped_column(String(32), nullable=False, comment="Thể loại/phong cách")
     visual_style: Mapped[ProjectVisualStyle] = mapped_column(
         String(16),
         nullable=False,
         default=ProjectVisualStyle.live_action,
-        comment="画面表现形式（现实/动漫等）",
+        comment="Hình thức biểu diễn của khung hình (thực tế/hoạt hình...)",
     )
     actor_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("actors.id", ondelete="RESTRICT"),
         nullable=True,
         index=True,
-        comment="对应演员 ID",
+        comment="comment=ID diễn viên tương ứng, ID",
     )
     costume_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("costumes.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="服装 ID（可空）；应用层需保证与角色同项目或全局",
+        comment="ID trang phục (có thể để trống); tầng ứng dụng phải đảm bảo cùng dự án với nhân vật hoặc toàn cục",
     )
 
     project: Mapped["Project"] = relationship(back_populates="characters")
@@ -269,31 +269,31 @@ class Character(Base, TimestampMixin):
 
 
 class CharacterPropLink(Base,TimestampMixin):
-    """角色与道具绑定（多对多）。
+    """Liên kết nhân vật với đạo cụ (nhiều-đến-nhiều).
 
-    应用层保证：
-    - `prop_id` 所指道具应为该角色所属项目或全局资产，避免跨项目误用。
+    Đảm bảo ở tầng ứng dụng:：
+    - Đạo cụ mà `prop_id` chỉ đến nên thuộc dự án của nhân vật này hoặc tài nguyên toàn cục, tránh dùng nhầm giữa các dự án.
     """
 
     __tablename__ = "character_prop_links"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="关联行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment=ID hàng liên kết) ID")
     character_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("characters.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="角色 ID",
+        comment="comment=ID nhân vật, ID",
     )
     prop_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("props.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="道具 ID",
+        comment="comment=ID đạo cụ, ID",
     )
-    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="角色道具排序")
-    note: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="备注（可选）")
+    index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment=Thứ tự nhân vật / đạo cụ)")
+    note: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="Ghi chú (tùy chọn)")
 
     character: Mapped["Character"] = relationship(back_populates="prop_links")
     prop: Mapped["Prop"] = relationship(back_populates="character_prop_links")

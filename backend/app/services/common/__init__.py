@@ -1,4 +1,4 @@
-"""通用服务层能力：基础校验与 CRUD 助手。"""
+"""Năng lực tầng service dùng chung: kiểm tra nền và trợ lý CRUD."""
 
 from app.services.common.crud import (
     create_and_refresh,

@@ -1,4 +1,4 @@
-"""实体名称存在性检测服务。"""
+"""Dịch vụ phát hiện tên thực thể tồn tại."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ async def check_names_existence(
     scene_names: list[str],
     costume_names: list[str],
 ) -> dict[str, list[dict[str, Any]]]:
-    """批量检测名称是否存在，并返回项目/镜头关联状态。"""
+    """Kiểm tra hàng loạt tên có tồn tại không, và trả về trạng thái liên kết dự án/phân cảnh."""
 
     effective_shot_id = shot_id.strip() if shot_id and str(shot_id).strip() else None
     if effective_shot_id:

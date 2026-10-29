@@ -1,4 +1,4 @@
-"""CharacterPortraitAnalysisAgent 解析回归测试。"""
+"""test hồi quy phân tích của CharacterPortraitAnalysisAgent."""
 
 from __future__ import annotations
 
@@ -25,35 +25,35 @@ class _MockChatModel(BaseChatModel):
 
 
 def test_character_portrait_format_output_accepts_unquoted_keys() -> None:
-    raw = '{issues: [], optimized_description: "一段可生成画像的描述"}'
+    raw = '{issues: [], optimized_description: "Mô tả có thể tạo chân dung"}'
     agent = CharacterPortraitAnalysisAgent(_MockChatModel(raw))
     result = agent.format_output(raw)
 
     assert isinstance(result, CharacterPortraitAnalysisResult)
     assert result.issues == []
     assert isinstance(result.optimized_description, str)
-    assert "可生成画像的描述" in result.optimized_description
+    assert "Mô tả có thể tạo chân dung" in result.optimized_description
 
 
 def test_character_portrait_format_output_accepts_python_literal_style() -> None:
-    raw = "{'issues': ['缺少外貌细节'], 'optimized_description': '补全后的描述'}"
+    raw = "{'issues': ['thiếu chi tiết ngoại hình'], 'optimized_description': 'Mô tả sau khi bổ sung đầy đủ'}"
     agent = CharacterPortraitAnalysisAgent(_MockChatModel(raw))
     result = agent.format_output(raw)
 
     assert isinstance(result, CharacterPortraitAnalysisResult)
-    assert result.issues == ["缺少外貌细节"]
-    assert result.optimized_description == "补全后的描述"
+    assert result.issues == ["thiếu chi tiết ngoại hình"]
+    assert result.optimized_description == "Mô tả sau khi bổ sung đầy đủ"
 
 
 def test_character_portrait_removes_fuzzy_placeholder_sentences() -> None:
     raw = (
-        "{'issues': ['缺少体态与面部特征'], "
-        "'optimized_description': '他看起来很有气质。性格特点以及是否有显著的体态或面部特征等信息不详。衣着风格偏复古。'}"
+        "{'issues': ['Thiếu tư thế và đặc điểm khuôn mặt'], "
+        "'optimized_description': 'Ngoại hình trông có khí chất. Đặc điểm tính cách và liệu có nét hình thể hay gương mặt nổi bật không thì chưa rõ. Phong cách ăn mặc thiên cổ điển.'}"
     )
     agent = CharacterPortraitAnalysisAgent(_MockChatModel(raw))
     result = agent.format_output(raw)
 
     assert isinstance(result, CharacterPortraitAnalysisResult)
-    assert "信息不详" not in result.optimized_description
-    assert "复古" in result.optimized_description
+    assert "thông tin chưa rõ" not in result.optimized_description
+    assert "cổ điển" in result.optimized_description
 

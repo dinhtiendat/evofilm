@@ -1,26 +1,26 @@
 ---
-title: "LLM 默认模型解析"
+title: "Phiên giải mô hình mặc định của LLM"
 weight: 35
-description: "当前生效的 LLM 默认模型来源与解析顺序。"
+description: "Nguồn và thứ tự phân tích mô hình LLM mặc định hiện hiệu lực."
 ---
 
-本文记录当前真实生效的默认模型规则（text / image / video）。
+bài này ghi lại quy tắc mô hình mặc định (text / image / video) đang hiệu lực thật sự hiện tại.
 
-## 单一事实来源
+## Nguồn sự thật duy nhất
 
-- 默认模型统一由 `model_settings` 单例表维护：
+- Mô hình mặc định được duy nhất một bảng singleton `model_settings` quản lý:
   - `default_text_model_id`
   - `default_image_model_id`
   - `default_video_model_id`
-- `models` 表不再承担“默认模型”语义，`models.is_default` 已下线。
+- bảng `models` không còn mang ngữ nghĩa "mô hình mặc định", `models.is_default` đã ngừng hiệu lực.
 
-## 解析规则
+## Quy tắc phân tích
 
-- 运行时按类别读取 `model_settings` 对应字段。
-- 若对应默认模型 ID 未配置，服务返回 `503`（`No default model configured for category=...`）。
-- 若配置了模型 ID 但模型不存在，服务返回 `503`（`Configured default model not found: ...`）。
+- Runtime đọc các trường tương ứng của `model_settings` theo từng hạng mục.
+- Nếu ID mô hình mặc định tương ứng chưa được cấu hình, dịch vụ sẽ trả về `503` (`No default model configured for category=...`).
+- Nếu đã cấu hình ID mô hình nhưng mô hình không tồn tại, service trả về `503` (`Configured default model not found: ...`).
 
-## 管理入口
+## Điểm vào quản lý
 
-- 默认模型仅通过 `LLM Model Settings` 接口维护（`/api/v1/llm/model-settings`）。
-- 模型列表（`/api/v1/llm/models`）仅维护模型实体信息（名称、类别、供应商、参数等），不再提供默认切换语义。
+- Mô hình mặc định chỉ được duy trì qua giao diện `LLM Model Settings` (`/api/v1/llm/model-settings`).
+- Danh sách mô hình (`/api/v1/llm/models`) chỉ duy trì thông tin thực thể mô hình (tên, hạng mục, nhà cung cấp, tham số, v.v.), không còn cung cấp ngữ nghĩa chuyển đổi mặc định.

@@ -56,32 +56,32 @@ export function ChapterShotAssetConfirmation({
   )
   const assetStatus = (() => {
     if (extraction.state === 'skipped') {
-      return { text: '已跳过', color: 'blue' as const }
+      return { text: 'đã bỏ qua', color: 'blue' as const }
     }
     if (extraction.state === 'not_extracted') {
-      return { text: '未提取', color: 'gold' as const }
+      return { text: 'chưa trích xuất', color: 'gold' as const }
     }
     if ((extraction.asset_candidate_total ?? 0) === 0 && extraction.state === 'extracted_empty') {
-      return { text: '已提取无候选', color: 'default' as const }
+      return { text: 'Đã trích xuất, không có ứng viên', color: 'default' as const }
     }
     if (pendingCount > 0) {
-      return { text: `待处理 ${pendingCount}`, color: 'gold' as const }
+      return { text: `Chờ xử lý ${pendingCount}`, color: 'gold' as const }
     }
-    return { text: '已完成', color: 'green' as const }
+    return { text: 'hoàn tất', color: 'green' as const }
   })()
 
   const emptyStateText =
     extraction.state === 'skipped'
-      ? '当前镜头已标记为无需提取，资产候选已按完成处理'
+      ? 'Phân cảnh hiện tại đã được đánh dấu không cần trích xuất, ứng viên tài nguyên đã được xử lý như hoàn tất'
       : extraction.state === 'not_extracted'
-        ? '当前还没有执行提取，先在上方点击“提取并刷新候选”'
+        ? 'Trích xuất chưa được thực hiện, trước tiên nhấn “Trích xuất và làm mới ứng viên” ở phía trên'
         : extraction.state === 'extracted_empty'
-          ? '已执行提取，但当前没有识别到资产候选'
-          : '当前没有待确认的资产候选'
+          ? 'Đã chạy trích xuất, nhưng hiện chưa nhận diện được ứng viên tài nguyên'
+          : 'Hiện không có ứng viên tài nguyên chờ xác nhận'
 
   const renderAssetCard = (asset: AssetVM) => {
     const existence = existenceByKindName[asset.kind][asset.name]
-    const actionLabel = existence ? (existence.exists ? '关联' : '新建') : '…'
+    const actionLabel = existence ? (existence.exists ? 'Liên kết' : 'Tạo mới') : '…'
     const candidateBusy = asset.candidateId ? !!candidateActionIds[asset.candidateId] : false
     const footer =
       asset.status === 'new' ? (
@@ -89,11 +89,11 @@ export function ChapterShotAssetConfirmation({
           <div className="text-[11px] text-gray-500 truncate">
             {existence
               ? existence.linked_to_project
-                ? '项目内可关联'
+                ? 'Có thể liên kết trong dự án'
                 : existence.exists
-                  ? '资产库已有'
-                  : '需新建'
-              : '正在检查…'}
+                  ? 'Thư viện tài nguyên đã có'
+                  : 'Cần tạo mới'
+              : 'Đang kiểm tra…'}
           </div>
           <div className="flex items-center gap-1">
             {asset.candidateId ? (
@@ -104,7 +104,7 @@ export function ChapterShotAssetConfirmation({
                 loading={candidateBusy}
                 onClick={() => onIgnoreCandidate(asset)}
               >
-                忽略
+                Bỏ qua
               </Button>
             ) : null}
             <Button size="small" disabled={!existence || candidateBusy} onClick={() => onHandleNewAsset(asset)}>
@@ -113,7 +113,7 @@ export function ChapterShotAssetConfirmation({
           </div>
         </div>
       ) : (
-        <div className="text-[11px] text-gray-500">当前镜头已关联</div>
+        <div className="text-[11px] text-gray-500">Đã liên kết cho phân cảnh hiện tại</div>
       )
     return (
       <div key={`${asset.kind}:${asset.name}`} className="col-span-12 md:col-span-6 xl:col-span-3 2xl:col-span-2">
@@ -133,12 +133,12 @@ export function ChapterShotAssetConfirmation({
                     <span className="truncate inline-block max-w-[140px] align-bottom">{asset.name}</span>
                   </Button>
                 ) : (
-                  <Tooltip title="该资产仅提取结果，尚未落库">
+                  <Tooltip title="Tài nguyên này chỉ là kết quả trích xuất, chưa lưu vào CSDL">
                     <span className="truncate inline-block max-w-[140px] text-gray-400 cursor-not-allowed align-bottom">{asset.name}</span>
                   </Tooltip>
                 )}
               </div>
-              {asset.status === 'linked' ? <Tag color="blue">已关联</Tag> : <Tag color="magenta">新提取</Tag>}
+              {asset.status === 'linked' ? <Tag color="blue">Đã liên kết</Tag> : <Tag color="magenta">Vừa trích xuất</Tag>}
             </div>
           }
           imageUrl={resolveAssetUrl(asset.thumbnail)}
@@ -168,7 +168,7 @@ export function ChapterShotAssetConfirmation({
           </div>
           {items.length > 12 ? (
             <Button type="link" size="small" onClick={() => onToggleExpanded(kind)}>
-              {expanded ? '收起' : `更多（+${hiddenCount}）`}
+              {expanded ? 'thu gọn' : `nữa(+${hiddenCount})`}
             </Button>
           ) : null}
         </div>
@@ -180,12 +180,12 @@ export function ChapterShotAssetConfirmation({
           <div className="space-y-3">
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-[11px] font-medium text-slate-600">当前已关联（{linkedItems.length}）</div>
-                {linkedItems.length > 0 ? <Tag color="blue">当前状态</Tag> : null}
+                <div className="text-[11px] font-medium text-slate-600">Đã liên kết ({linkedItems.length})</div>
+                {linkedItems.length > 0 ? <Tag color="blue">Trạng thái hiện tại</Tag> : null}
               </div>
               {linkedItems.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-slate-200 bg-white px-3 py-4 text-xs text-slate-500">
-                  当前镜头还没有关联{titleLabel}
+                  Phân cảnh hiện tại chưa liên kết {titleLabel}
                 </div>
               ) : (
                 <div className="grid grid-cols-12 gap-2">
@@ -196,12 +196,12 @@ export function ChapterShotAssetConfirmation({
 
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-[11px] font-medium text-slate-600">待确认候选（{candidateItems.length}）</div>
-                {candidateItems.length > 0 ? <Tag color="magenta">待确认</Tag> : null}
+                <div className="text-[11px] font-medium text-slate-600">Ứng viên chờ xác nhận ({candidateItems.length})</div>
+                {candidateItems.length > 0 ? <Tag color="magenta">Chờ xác nhận</Tag> : null}
               </div>
               {candidateItems.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-slate-200 bg-white px-3 py-4 text-xs text-slate-500">
-                  当前没有待确认的{titleLabel}候选
+                  Hiện không có ứng viên {titleLabel} chờ xác nhận
                 </div>
               ) : (
                 <div className="grid grid-cols-12 gap-2">
@@ -223,19 +223,19 @@ export function ChapterShotAssetConfirmation({
             <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-900 px-1.5 text-[11px] font-semibold text-white">
               2.1
             </span>
-            <div className="text-sm font-medium text-slate-900">资产候选确认</div>
+            <div className="text-sm font-medium text-slate-900">Xác nhận ứng viên tài nguyên</div>
             <Tag color={assetStatus.color} className="m-0">
               {assetStatus.text}
             </Tag>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">这里处理系统提取出的场景、角色、道具和服装候选。</div>
+          <div className="text-[11px] text-slate-500 mt-1">Xử lý tại đây các ứng viên bối cảnh, nhân vật, đạo cụ và trang phục do hệ thống trích xuất.</div>
         </div>
       </div>
       <div className="space-y-4">
-        {renderAssetGrid('scene', '场景', unionAssets.scene)}
-        {renderAssetGrid('actor', '角色', unionAssets.actor)}
-        {renderAssetGrid('prop', '道具', unionAssets.prop)}
-        {renderAssetGrid('costume', '服装', unionAssets.costume)}
+        {renderAssetGrid('scene', 'Bối cảnh', unionAssets.scene)}
+        {renderAssetGrid('actor', 'Nhân vật', unionAssets.actor)}
+        {renderAssetGrid('prop', 'Đạo cụ', unionAssets.prop)}
+        {renderAssetGrid('costume', 'Trang phục', unionAssets.costume)}
       </div>
     </div>
   )

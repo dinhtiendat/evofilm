@@ -20,7 +20,7 @@ export default function SettingsTab() {
       setSettings(settRes.data ?? null)
       setModels(modelsRes.data?.items ?? [])
     } catch {
-      message.error('加载失败')
+      message.error('Tải thất bại')
     } finally {
       setLoading(false)
     }
@@ -55,10 +55,10 @@ export default function SettingsTab() {
           log_level: values.log_level,
         },
       })
-      message.success('设置已保存')
+      message.success('Đã lưu cài đặt')
       void load()
     } catch {
-      message.error('保存失败')
+      message.error('Lưu thất bại')
     } finally {
       setSettingsSaving(false)
     }
@@ -70,39 +70,39 @@ export default function SettingsTab() {
 
   return (
     <div className="flex-1 overflow-auto p-6 bg-gray-50">
-      <Card title="全局默认模型与参数" className="max-w-2xl" loading={loading}>
+      <Card title="Mô hình và tham số mặc định toàn cục" className="max-w-2xl" loading={loading}>
         <Alert
           type="info"
           showIcon
           className="mb-4"
-          message="默认模型仅在本页面统一维护，模型列表页不再提供“设为默认”操作。"
+          message={"mô hình mặc định chỉ duy nhất ở trang này, trang danh sách mô hình không còn thao tác “đặt làm mặc định”."}
         />
         <Form form={form} layout="vertical" onFinish={handleSaveSettings}>
-          <Form.Item name="default_text_model_id" label="默认文本生成模型">
+          <Form.Item name="default_text_model_id" label="Mô hình tạo văn bản mặc định">
             <Select
               allowClear
-              placeholder="选择模型"
+              placeholder="Chọn mô hình"
               options={textModels.map((m) => ({ label: m.name, value: m.id }))}
             />
           </Form.Item>
-          <Form.Item name="default_image_model_id" label="默认图片生成模型">
+          <Form.Item name="default_image_model_id" label="Mô hình tạo ảnh mặc định">
             <Select
               allowClear
-              placeholder="选择模型"
+              placeholder="Chọn mô hình"
               options={imageModels.map((m) => ({ label: m.name, value: m.id }))}
             />
           </Form.Item>
-          <Form.Item name="default_video_model_id" label="默认视频生成模型">
+          <Form.Item name="default_video_model_id" label="Mô hình tạo video mặc định">
             <Select
               allowClear
-              placeholder="选择模型"
+              placeholder="Chọn mô hình"
               options={videoModels.map((m) => ({ label: m.name, value: m.id }))}
             />
           </Form.Item>
-          <Form.Item name="api_timeout" label="API 超时（秒）">
+          <Form.Item name="api_timeout" label="thời gian chờ API(giây)">
             <InputNumber min={5} max={300} className="w-full" />
           </Form.Item>
-          <Form.Item name="log_level" label="日志级别">
+          <Form.Item name="log_level" label="mức log">
             <Select
               options={[
                 { label: 'Debug', value: 'debug' },
@@ -113,7 +113,7 @@ export default function SettingsTab() {
             />
           </Form.Item>
           <Button type="primary" htmlType="submit" loading={settingsSaving}>
-            保存设置
+            Lưu thiết lập
           </Button>
         </Form>
       </Card>

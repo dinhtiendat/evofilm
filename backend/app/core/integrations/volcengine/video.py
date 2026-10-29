@@ -1,4 +1,4 @@
-"""火山方舟：内容生成任务创建与查询。"""
+"""Volcano Ark: tạo và truy vấn tác vụ sinh nội dung."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from app.core.contracts.video_generation import VideoGenerationInput
 
 
 class VolcengineVideoApiAdapter:
-    """火山视频任务 HTTP。"""
+    """HTTP tác vụ video Volcano."""
 
     async def create_contents_task(
         self,

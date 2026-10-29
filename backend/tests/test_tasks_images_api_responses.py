@@ -1,4 +1,4 @@
-"""film/tasks_images 接口响应壳测试。"""
+"""Kiểm thử vỏ phản hồi API film/tasks_images."""
 
 from __future__ import annotations
 

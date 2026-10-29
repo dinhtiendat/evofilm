@@ -54,10 +54,10 @@ const AssetManager = () => {
             if (isValidTab(k)) setTabInUrl(k)
           }}
           items={[
-            { key: 'actor', label: '演员', children: <ActorsTab /> },
-            { key: 'scene', label: '场景', children: <ScenesTab /> },
-            { key: 'prop', label: '道具', children: <PropsTab /> },
-            { key: 'costume', label: '服装', children: <CostumesTab /> },
+            { key: 'actor', label: 'Diễn viên', children: <ActorsTab /> },
+            { key: 'scene', label: 'Bối cảnh', children: <ScenesTab /> },
+            { key: 'prop', label: 'Đạo cụ', children: <PropsTab /> },
+            { key: 'costume', label: 'Trang phục', children: <CostumesTab /> },
           ]}
         />
       </Card>

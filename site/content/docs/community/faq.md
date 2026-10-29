@@ -1,21 +1,21 @@
 ---
 title: "FAQ"
 weight: 3
-description: "常见开发与站点维护问题。"
+description: "Các vấn đề phát triển và bảo trì website phổ biến."
 ---
 
-## 后端没启动时，前端为什么无法更新 OpenAPI？
+## Khi backend chưa chạy, tại sao frontend không thể cập nhật OpenAPI?
 
-因为 `pnpm run openapi:update` 会先请求本地后端的 `/openapi.json`。
+Bởi vì `pnpm run openapi:update` sẽ gọi trước `/openapi.json` của backend cục bộ.
 
-## 开发时一定要用 Docker 吗？
+## Khi phát triển nhất định phải dùng Docker không?
 
-不一定。前后端都支持本地直接启动，Docker 更适合完整联调与依赖服务管理。
+Chưa chắc. Cả front lẫn back đều khởi động được trực tiếp cục bộ, Docker phù hợp hơn cho liên động đầy đủ và quản lý dịch vụ phụ thuộc.
 
-## 官网为什么需要 Go？
+## Tại sao trang web chính cần Go?
 
-因为 Hextra 通过 Hugo Modules 拉取，模块解析依赖 Go 工具链。
+vì Hextra được lấy qua Hugo Modules, phân tích module phụ thuộc vào bộ công cụ Go.
 
-## 为什么本地 Hugo 版本也要注意？
+## Vì sao phiên bản Hugo cục bộ cũng cần chú ý?
 
-因为 Hextra 对 Hugo 最低版本有要求。版本过低时，主题模板可能无法正常加载。
+Vì Hextra yêu cầu phiên bản Hugo tối thiểu. Phiên bản quá thấp, template theme có thể không tải được bình thường.

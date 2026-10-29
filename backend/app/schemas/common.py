@@ -1,4 +1,4 @@
-"""API 全局响应结构与分页。"""
+"""API Cấu trúc phản hồi toàn cục và phân trang của API.。"""
 
 from __future__ import annotations
 
@@ -10,28 +10,28 @@ T = TypeVar("T")
 
 
 class ApiResponse(BaseModel, Generic[T]):
-    """无分页时的统一响应结构。"""
+    """Cấu trúc phản hồi thống nhất khi không phân trang.。"""
 
-    code: int = Field(200, description="与 HTTP 状态码一致")
-    message: str = Field("success", description="提示信息")
-    data: T | None = Field(None, description="实际数据")
-    meta: dict[str, Any] | None = Field(None, description="附加元信息")
+    code: int = Field(200, description="Khớp mã trạng thái HTTP")
+    message: str = Field("success", description="message: str = Field(success, description=Thông báo)")
+    data: T | None = Field(None, description="data: T | None = Field(None, description=dữ liệu thực)")
+    meta: dict[str, Any] | None = Field(None, description="meta: dict[str, Any] | None = Field(None, description=siêu dữ liệu đi kèm)")
 
 
 class Pagination(BaseModel):
-    """分页信息。"""
+    """Thông tin phân trang.。"""
 
-    page: int = Field(..., description="当前页，从 1 开始")
-    page_size: int = Field(..., description="每页条数")
-    total: int = Field(..., description="总条数")
-    max_page: int = Field(..., description="最大页码")
+    page: int = Field(..., description="trang hiện tại, bắt đầu từ 1")
+    page_size: int = Field(..., description="page_size: int = Field(..., description=số dòng mỗi trang)")
+    total: int = Field(..., description="total: int = Field(..., description=tổng số dòng)")
+    max_page: int = Field(..., description="max_page: int = Field(..., description=số trang tối đa)")
 
 
 class PaginatedData(BaseModel, Generic[T]):
-    """有分页时的 data 结构。"""
+    """Cấu trúc data khi có phân trang."""
 
-    items: list[T] = Field(..., description="当前页数据")
-    pagination: Pagination = Field(..., description="分页信息")
+    items: list[T] = Field(..., description="items: list[T] = Field(..., description=dữ liệu trang hiện tại)")
+    pagination: Pagination = Field(..., description="pagination: Pagination = Field(..., description=Thông tin phân trang)")
 
 
 def success_response(
@@ -41,7 +41,7 @@ def success_response(
     message: str = "success",
     meta: dict[str, Any] | None = None,
 ) -> ApiResponse[T]:
-    """构造无分页的成功响应。"""
+    """Xây dựng phản hồi thành công không phân trang.。"""
     return ApiResponse(code=code, message=message, data=data, meta=meta)
 
 
@@ -51,7 +51,7 @@ def created_response(
     message: str = "success",
     meta: dict[str, Any] | None = None,
 ) -> ApiResponse[T]:
-    """构造创建成功响应。"""
+    """Xây dựng phản hồi tạo thành công.。"""
     return success_response(data, code=201, message=message, meta=meta)
 
 
@@ -61,7 +61,7 @@ def empty_response(
     message: str = "success",
     meta: dict[str, Any] | None = None,
 ) -> ApiResponse[None]:
-    """构造 data 为 null 的成功响应。"""
+    """Dựng phản hồi thành công với data là null."""
     return ApiResponse(code=code, message=message, data=None, meta=meta)
 
 
@@ -75,7 +75,7 @@ def paginated_response(
     message: str = "success",
     meta: dict[str, Any] | None = None,
 ) -> ApiResponse[PaginatedData[T]]:
-    """构造有分页的成功响应。"""
+    """Xây dựng phản hồi thành công có phân trang.。"""
     max_page = max(1, (total + page_size - 1) // page_size) if page_size > 0 else 1
     pagination = Pagination(
         page=page,
@@ -92,5 +92,5 @@ def error_response(
     code: int = 500,
     message: str = "error",
 ) -> ApiResponse[None]:
-    """构造错误响应（data 为 null）。"""
+    """Dựng phản hồi lỗi (data là null)."""
     return ApiResponse(code=code, message=message, data=None)

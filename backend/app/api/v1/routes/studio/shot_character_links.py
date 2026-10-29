@@ -1,4 +1,4 @@
-"""镜头-角色阵容：ShotCharacterLink 创建/更新接口。"""
+"""Dàn diễn viên phân cảnh - nhân vật: interface tạo/cập nhật ShotCharacterLink."""
 
 from __future__ import annotations
 
@@ -19,10 +19,10 @@ router = APIRouter()
 @router.get(
     "",
     response_model=ApiResponse[list[ShotCharacterLinkRead]],
-    summary="查询镜头角色关联列表（ShotCharacterLink）",
+    summary="Truy vấn danh sách liên kết nhân vật của phân cảnh (ShotCharacterLink)"
 )
 async def list_shot_character_links(
-    shot_id: str = Query(..., description="镜头 ID"),
+    shot_id: str = Query(..., description="ID shot"),
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[list[ShotCharacterLinkRead]]:
     items = await list_by_shot(db, shot_id=shot_id)
@@ -32,7 +32,7 @@ async def list_shot_character_links(
 @router.post(
     "",
     response_model=ApiResponse[ShotCharacterLinkRead],
-    summary="创建/更新镜头角色关联（ShotCharacterLink）",
+    summary="tạo/cập nhật liên kết shot-nhân vật(ShotCharacterLink)",
 )
 async def upsert_shot_character_link(
     body: ShotCharacterLinkCreate,

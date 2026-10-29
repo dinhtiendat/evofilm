@@ -9,15 +9,15 @@ from app.core.task_manager.types import BaseTask, DeliveryMode, TaskRecord, Task
 
 
 class TaskManager:
-    """任务管理器：对上层（路由/业务）提供统一入口。
+    """Trình quản lý tác vụ: cung cấp lối vào thống nhất cho tầng trên (routing/nghiệp vụ).
 
     init params:
-    - store: TaskStore, 任务存储
+    - store: TaskStore, kho lưu trữ tác vụ
 
-    特性：
-    - store 可插拔：内存 or MySQL（通过 SQLAlchemy）
-    - delivery strategy 可插拔：streaming / async_polling / ...（后续扩展只需新增策略并注册）
-    - 为高频轮询提供轻量查询：get_status()
+    Tính năng:
+    - store tháo lắp được: bộ nhớ hoặc MySQL (qua SQLAlchemy)
+    - delivery strategy có thể tháo lắp: streaming / async_polling / ... (mở rộng sau chỉ cần thêm strategy và đăng ký)
+    - Cung cấp truy vấn nhẹ cho truy vấn lặp tần suất cao: get_status()
     """
 
     def __init__(self, *, store: TaskStore, strategies: Mapping[DeliveryMode, DeliveryStrategy]) -> None:
@@ -38,12 +38,12 @@ class TaskManager:
         task_kind: str | None = None,
         run_args: dict[str, Any] | None = None,
     ) -> TaskRecord:
-        """创建任务记录。
+        """Tạo bản ghi tác vụ.
 
-        参数：
-        - task: 实际要执行的 Task 对象，必须实现 run/status/is_done/get_result
-        - mode: 结果交付方式（流式 / 任务+轮询）
-        - run_args: 传给 task.run 的参数（会序列化到 payload，便于后续 worker 使用）
+        Tham số:
+        - task: Đối tượng Task thực sự cần thực thi, bắt buộc phải implement run/status/is_done/get_result
+        - mode: cách bàn giao kết quả (stream / tác vụ + truy vấn lặp)
+        - run_args: tham số truyền cho task.run (được serialize vào payload, thuận tiện worker dùng sau)
         """
         payload: dict[str, Any] = {
             "task_class": task.__class__.__name__,

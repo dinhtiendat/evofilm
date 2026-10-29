@@ -1,4 +1,4 @@
-"""镜头分镜首帧/尾帧/关键帧提示词生成 Agent：根据镜头信息生成对应帧的画面提示词。"""
+"""Agent tạo prompt khung đầu/khung cuối/khung chính của cảnh: sinh prompt hình ảnh cho từng khung theo thông tin cảnh."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from app.schemas.skills.shot_frame_prompt import ShotFramePromptResult
 
 
 def _prepare_shot_frame_input(input_dict: dict[str, Any]) -> dict[str, Any]:
-    """将 input_dict 转为 prompt 模板所需格式，mood_tags 转为字符串。"""
+    """Chuyển input_dict về định dạng mà template prompt cần, mood_tags chuyển thành chuỗi."""
     out = dict(input_dict)
     if "mood_tags" in out and isinstance(out["mood_tags"], list):
         out["mood_tags"] = ", ".join(str(t) for t in out["mood_tags"])
@@ -61,7 +61,7 @@ def _prepare_shot_frame_input(input_dict: dict[str, Any]) -> dict[str, Any]:
         if key not in out or out[key] is None:
             out[key] = ""
     if isinstance(out.get("unify_style"), bool):
-        out["unify_style"] = "是" if out["unify_style"] else "否"
+        out["unify_style"] = "Có" if out["unify_style"] else "Không"
     out.setdefault("title", "")
     return out
 
@@ -107,77 +107,77 @@ _SHOT_FRAME_INPUT_VARS = [
 ]
 
 _FRAME_FOCUS = {
-    "首帧": "优先描述镜头开始时最先看到的画面建立信息，强调开场定场、主体初始状态与进入情境的第一印象；只表现触发瞬间或最初反应，不要直接写成后续完成动作、最终姿态或情绪爆发完成态。",
-    "尾帧": "优先描述镜头结束时最终停留的画面状态，强调动作收束、人物结束姿态、视线落点或情绪余韵。",
-    "关键帧": "优先捕捉镜头中最具代表性、最有戏剧张力或信息密度最高的瞬间，不必平均描述整个过程。",
+    "khung đầu": "Ưu tiên mô tả các thông tin tạo dựng khung hình được nhìn thấy đầu tiên khi cảnh bắt đầu, nhấn mạnh thiết lập mở đầu, trạng thái ban đầu của chủ thể và ấn tượng ban đầu khi bước vào tình huống; chỉ thể hiện khoảnh khắc kích hoạt hoặc phản ứng đầu tiên, không viết trực tiếp thành hành động hoàn thành phía sau, tư thế cuối cùng hay trạng thái bộc phát cảm xúc.",
+    "khung cuối": "Ưu tiên mô tả trạng thái khung hình dừng lại cuối cùng khi cảnh kết thúc, nhấn mạnh việc khép lại hành động, tư thế kết thúc của nhân vật, điểm nhìn hay dư âm cảm xúc.",
+    "khung chính": "Ưu tiên bắt lấy khoảnh khắc đại diện nhất, giàu kịch tính nhất hoặc có mật độ thông tin cao nhất trong cảnh, không cần mô tả đều khắp cả quá trình.",
 }
 
-_SHOT_FRAME_TEMPLATE = """你是一名专业影视分镜提示词设计师，需要为同一项目中的镜头生成**{frame_name}基础提示词**。
+_SHOT_FRAME_TEMPLATE = """Bạn là một nhà thiết kế prompt phân cảnh phim/video chuyên nghiệp, cần tạo **prompt cơ bản {frame_name}** cho các cảnh trong cùng một dự án.
 
-你的任务是生成“基础提示词”，只描述画面本身，供后续系统继续拼接图片映射说明。
+Nhiệm vụ của bạn là tạo ra "prompt cơ bản", chỉ mô tả bản thân khung hình, để hệ thống phía sau tiếp tục ghép các diễn giải ánh xạ hình ảnh.
 
-## 强约束
-1. 必须继承项目级画面表现形式与题材风格：{visual_style} / {style}
-2. 项目是否要求统一风格：{unify_style}
-3. 若镜头信息不足，优先向项目风格与已确认实体设定收敛，不要自由发散到其他风格
-4. 当前镜头已确认的角色、场景、道具、服装名称必须原样保留，不得翻译、不得改名、不得替换为同义词
-5. 不得输出“图1/图2”、不得输出“## 图片内容说明”、不得输出引用映射说明
-6. 输出应为一句或几句简洁、可视化、可直接用于图像生成模型的中文描述
-7. 尽量保持统一描述口径，优先按“景别/机位/运镜 -> 场景环境 -> 主体人物/关键对象 -> 动作状态 -> 氛围情绪 -> 风格收束”组织
-8. 只输出一个 JSON 对象：{{"prompt": "你的提示词内容"}}，不要输出其他文字
-9. 当前帧关注重点：{frame_focus}
-10. 主体优先级建议：{subject_priority}
-11. 不要为了“写全信息”而平均罗列所有角色、道具、服装；优先突出主角色、主场景和主动作，其余元素仅在能强化当前画面时再进入提示词
-12. 如果下面提供了“修正要求”，必须逐条满足后再输出最终结果
-13. 若存在上一镜头信息，当前画面应尽量承接上一镜头的动作、空间方向、视线或情绪，不要像全新场景重新开局
-14. 若存在下一镜头信息，当前画面应为下一镜头留下自然的动作或情绪收束，避免硬切
-15. 尽量明确主体在画面中的相对位置、朝向与动作峰值，减少构图和轴线突变
-16. 若提供了构图与空间锚点建议，应尽量落实到画面描述中，让主体位置、环境重心和空间方向更稳定
-17. 若提供了朝向与视线建议，应保持人物左右关系、视线落点与反打轴线稳定，不要无故翻转
-18. 若提供了当前帧专项建议，应优先满足该建议，确保首帧/关键帧/尾帧各自承担清晰职责
-19. 若提供了导演指令摘要，应将其视为最高优先级的镜头执行约束，优先体现到最终画面描述中
-20. 若当前为首帧，只能表现事件触发瞬间或最初反应，不要直接把后续完成动作、最终姿态或情绪爆发结果写进画面
-21. 若当前为首帧且镜头存在连续动作链，应优先使用“刚开始 / 尚未完成 / 被打断”的未完成态表达，而不是结果态表达
+## Ràng buộc mạnh
+1. Phải kế thừa biểu hiện hình ảnh cấp dự án và phong cách thể loại: {visual_style} / {style}
+2. Dự án có yêu cầu thống nhất phong cách không: {unify_style}
+3. Nếu thông tin cảnh không đầy đủ, ưu tiên hội tụ về phong cách dự án và các thiết lập thực thể đã xác nhận, không lan man tự do sang phong cách khác
+4. Tên nhân vật, bối cảnh, đạo cụ, trang phục đã xác nhận trong cảnh hiện tại phải giữ nguyên, không được dịch, không đổi tên, không thay bằng từ đồng nghĩa
+5. Không được xuất "Hình 1/Hình 2", không được xuất "## Diễn giải nội dung hình ảnh", không được xuất diễn giải ánh xạ trích dẫn
+6. Đầu ra phải là một câu hoặc vài câu mô tả bằng tiếng Việt ngắn gọn, trực quan, dùng được trực tiếp cho mô hình tạo hình ảnh
+7. Cố gắng giữ cách mô tả thống nhất, ưu tiên tổ chức theo "cận / góc máy / chuyển động máy -> bối cảnh môi trường -> nhân vật chính/đại tượng chính -> trạng thái hành động -> không khí cảm xúc -> khép lại phong cách"
+8. Chỉ xuất một object JSON: {{"prompt": "nội dung prompt của bạn"}}, không xuất thêm văn bản nào khác
+9. Trọng tâm quan tâm của khung hiện tại: {frame_focus}
+10. Gợi ý ưu tiên chủ thể: {subject_priority}
+11. Đừng vì "viết đủ thông tin" mà liệt kê đều tất cả nhân vật, đạo cụ, trang phục; ưu tiên nổi bật nhân vật chính, bối cảnh chính và hành động chính, các yếu tố khác chỉ đưa vào prompt khi làm nổi bật khung hình hiện tại
+12. Nếu phía dưới có "yêu cầu chỉnh sửa", phải đáp ứng từng mục rồi mới xuất kết quả cuối
+13. Nếu có thông tin cảnh trước, khung hình hiện tại nên tiếp nhận càng nhiều càng tốt hành động, hướng không gian, tầm nhìn hoặc cảm xúc của cảnh trước, đừng như mở đầu toàn bộ từ một cảnh hoàn toàn mới
+14. Nếu có thông tin cảnh sau, khung hình hiện tại nên để lại cho cảnh sau một kết thúc hành động hoặc cảm xúc tự nhiên, tránh cắt cứng
+15. Càng rõ ràng càng tốt về vị trí tương đối, hướng và đỉnh hành động của chủ thể trong khung hình, giảm thiểu biến động bố cục và trục kịch
+16. Nếu có gợi ý mỏ neo bố cục và không gian, nên đưa vào mô tả khung hình nhiều nhất có thể, làm cho vị trí chủ thể, trọng tâm môi trường và hướng không gian ổn định hơn
+17. Nếu có gợi ý hướng và tầm nhìn, nên giữ mối quan hệ trái-phải của nhân vật, điểm nhìn và trục cảnh phản (reverse shot) ổn định, không tự ý lật ngược
+18. Nếu có gợi ý chuyên biệt cho khung hiện tại, nên ưu tiên đáp ứng gợi ý đó, đảm bảo khung đầu/khung chính/khung cuối mỗi loại đảm nhận vai trò rõ ràng
+19. Nếu có tóm tắt chỉ đạo của đạo diễn, nên xem đó là ràng buộc thực thi cảnh có ưu tiên cao nhất, ưu tiên thể hiện trong mô tả khung hình cuối
+20. Nếu hiện tại là khung đầu, chỉ được thể hiện khoảnh khắc sự kiện kích hoạt hoặc phản ứng đầu tiên, không viết trực tiếp kết quả hành động hoàn thành phía sau, tư thế cuối cùng hay bộc phát cảm xúc vào khung hình
+21. Nếu hiện tại là khung đầu và cảnh có chuỗi hành động liên tục, nên ưu tiên dùng cách diễn đạt trạng thái chưa hoàn thành như "vừa bắt đầu / chưa hoàn thành / bị ngắt", thay vì cách diễn đạt trạng thái kết quả
 
-## 镜头信息
-剧本摘录：{script_excerpt}
-镜头标题：{title}
-镜头补充描述：{shot_description}
-景别：{camera_shot}
-机位角度：{angle}
-运镜：{movement}
-氛围：{atmosphere}
-情绪标签：{mood_tags}
-视效：{vfx_type} - {vfx_note}
-时长：{duration}秒
-对白摘要：{dialog_summary}
-动作拍点：{action_beats}
-动作拍点阶段：{action_beat_phases}
-当前帧优先消费阶段：{selected_action_beat_phase}
-当前帧主拍点：{selected_action_beat_text}
+## Thông tin cảnh
+Trích đoạn kịch bản: {script_excerpt}
+Tiêu đề cảnh: {title}
+Mô tả bổ sung cảnh: {shot_description}
+Cận: {camera_shot}
+Góc máy: {angle}
+Chuyển động máy: {movement}
+Không khí: {atmosphere}
+Nhãn cảm xúc: {mood_tags}
+Hiệu ứng đặc biệt: {vfx_type} - {vfx_note}
+Thời lượng: {duration} giây
+Tóm tắt thoại: {dialog_summary}
+Mốc hành động: {action_beats}
+Giai đoạn mốc hành động: {action_beat_phases}
+Giai đoạn ưu tiên của khung hiện tại: {selected_action_beat_phase}
+Mốc chính của khung hiện tại: {selected_action_beat_text}
 
-## 已确认实体上下文
-角色：{character_context}
-场景：{scene_context}
-道具：{prop_context}
-服装：{costume_context}
+## Bối cảnh thực thể đã xác nhận
+Nhân vật: {character_context}
+Bối cảnh: {scene_context}
+Đạo cụ: {prop_context}
+Trang phục: {costume_context}
 
-## 相邻镜头承接信息
-上一镜头标题：{previous_shot_title}
-上一镜头剧本摘录：{previous_shot_script_excerpt}
-上一镜头结尾状态：{previous_shot_end_state}
-下一镜头标题：{next_shot_title}
-下一镜头剧本摘录：{next_shot_script_excerpt}
-下一镜头起始目标：{next_shot_start_goal}
-连续性建议：{continuity_guidance}
-构图与空间锚点：{composition_anchor}
-朝向与视线建议：{screen_direction_guidance}
-当前帧专项建议：{frame_specific_guidance}
-导演指令摘要：{director_command_summary}
+## Thông tin tiếp nối cảnh kề
+Tiêu đề cảnh trước: {previous_shot_title}
+Trích đoạn kịch bản cảnh trước: {previous_shot_script_excerpt}
+Trạng thái kết thúc cảnh trước: {previous_shot_end_state}
+Tiêu đề cảnh sau: {next_shot_title}
+Trích đoạn kịch bản cảnh sau: {next_shot_script_excerpt}
+Mục tiêu bắt đầu cảnh sau: {next_shot_start_goal}
+Gợi ý tính liên tục: {continuity_guidance}
+Mỏ neo bố cục và không gian: {composition_anchor}
+Gợi ý hướng và tầm nhìn: {screen_direction_guidance}
+Gợi ý chuyên biệt khung hiện tại: {frame_specific_guidance}
+Tóm tắt chỉ đạo đạo diễn: {director_command_summary}
 
-修正要求：{retry_guidance}
+Yêu cầu chỉnh sửa: {retry_guidance}
 
-## 输出（仅 {frame_name} 基础提示词，JSON：{{"prompt": "..."}}）
+## Đầu ra (chỉ có prompt cơ bản {frame_name}, JSON: {{"prompt": "..."}})
 """
 
 def _build_frame_template(frame_name: str) -> str:
@@ -187,9 +187,9 @@ def _build_frame_template(frame_name: str) -> str:
     )
 
 
-_FIRST_FRAME_TEMPLATE = _build_frame_template("首帧")
-_LAST_FRAME_TEMPLATE = _build_frame_template("尾帧")
-_KEY_FRAME_TEMPLATE = _build_frame_template("关键帧")
+_FIRST_FRAME_TEMPLATE = _build_frame_template("khung đầu")
+_LAST_FRAME_TEMPLATE = _build_frame_template("khung cuối")
+_KEY_FRAME_TEMPLATE = _build_frame_template("khung chính")
 
 SHOT_FIRST_FRAME_PROMPT = PromptTemplate(input_variables=_SHOT_FRAME_INPUT_VARS, template=_FIRST_FRAME_TEMPLATE)
 SHOT_LAST_FRAME_PROMPT = PromptTemplate(input_variables=_SHOT_FRAME_INPUT_VARS, template=_LAST_FRAME_TEMPLATE)
@@ -197,7 +197,7 @@ SHOT_KEY_FRAME_PROMPT = PromptTemplate(input_variables=_SHOT_FRAME_INPUT_VARS, t
 
 
 class ShotFirstFramePromptAgent(AgentBase[ShotFramePromptResult]):
-    """镜头首帧提示词生成 Agent，输出可写入 ShotDetail.first_frame_prompt。"""
+    """Agent tạo prompt khung đầu của cảnh, đầu ra có thể ghi vào ShotDetail.first_frame_prompt."""
 
     @property
     def prompt_template(self) -> PromptTemplate:
@@ -229,7 +229,7 @@ class ShotFirstFramePromptAgent(AgentBase[ShotFramePromptResult]):
 
 
 class ShotLastFramePromptAgent(AgentBase[ShotFramePromptResult]):
-    """镜头尾帧提示词生成 Agent，输出可写入 ShotDetail.last_frame_prompt。"""
+    """Agent tạo prompt khung cuối của cảnh, đầu ra có thể ghi vào ShotDetail.last_frame_prompt."""
 
     @property
     def prompt_template(self) -> PromptTemplate:
@@ -261,7 +261,7 @@ class ShotLastFramePromptAgent(AgentBase[ShotFramePromptResult]):
 
 
 class ShotKeyFramePromptAgent(AgentBase[ShotFramePromptResult]):
-    """镜头关键帧提示词生成 Agent，输出可写入 ShotDetail.key_frame_prompt。"""
+    """Agent tạo prompt khung chính của cảnh, đầu ra có thể ghi vào ShotDetail.key_frame_prompt."""
 
     @property
     def prompt_template(self) -> PromptTemplate:

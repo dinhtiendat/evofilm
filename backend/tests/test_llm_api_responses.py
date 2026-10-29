@@ -1,4 +1,4 @@
-"""LLM 接口响应壳测试：聚焦 Provider CRUD 与生成能力选项。"""
+"""test response vỏ của API LLM:tập trung Provider CRUD và tùy chọn năng lực sinh."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from app.dependencies import get_db
 from app.models.llm import Model, ModelCategoryKey, ModelSettings, Provider, ProviderStatus
 from tests.support.llm_api_app import build_llm_only_app
 
-# 仅挂载 /api/v1/llm，避免导入 app.main 时连带加载 film 路由与 Celery。
+# Chỉ gắn /api/v1/llm, tránh khi import app.main thì liên lụy tải route film và Celery.
 llm_app = build_llm_only_app()
 
 
@@ -23,7 +23,7 @@ def client() -> Iterator[TestClient]:
 
 
 class _FakeLlmDB:
-    """最小 DB 替身：仅覆盖 Provider 路由测试所需行为。"""
+    """DB giả dạng tối thiểu: chỉ bao phủ hành vi cần cho test route Provider."""
 
     def __init__(self) -> None:
         self.providers: dict[str, Provider] = {}
@@ -72,7 +72,7 @@ def _seed_provider(db: _FakeLlmDB, provider_id: str = "p-1") -> Provider:
         base_url="https://api.openai.com/v1",
         api_key="secret",
         api_secret="",
-        description="说明",
+        description="Giải thích",
         status=ProviderStatus.testing,
         created_by="tester",
     )
@@ -96,7 +96,7 @@ def _seed_video_model(db: _FakeLlmDB, *, provider_id: str = "p-video", model_id:
 
 def _seed_image_model(db: _FakeLlmDB, *, provider_id: str = "p-image", model_id: str = "m-image") -> None:
     provider = _seed_provider(db, provider_id)
-    provider.name = "火山引擎"
+    provider.name = "Volcano Engine"
     db.models[model_id] = Model(
         id=model_id,
         name="seedream-4.0",
@@ -125,7 +125,7 @@ def test_create_provider_returns_created_envelope(client: TestClient) -> None:
                 "base_url": "https://api.openai.com/v1",
                 "api_key": "secret",
                 "api_secret": "",
-                "description": "说明",
+                "description": "Giải thích",
                 "status": "testing",
                 "created_by": "tester",
             },

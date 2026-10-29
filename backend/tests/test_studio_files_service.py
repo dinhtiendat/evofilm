@@ -29,13 +29,13 @@ async def _build_session() -> tuple[AsyncSession, object]:
 async def _seed_scope_graph(db: AsyncSession) -> None:
     project = Project(
         id="p1",
-        name="项目一",
+        name="Dự án 1",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
     )
-    chapter = Chapter(id="c1", project_id="p1", index=1, title="第一章")
-    shot = Shot(id="s1", chapter_id="c1", index=1, title="镜头一")
+    chapter = Chapter(id="c1", project_id="p1", index=1, title="Chương 1")
+    shot = Shot(id="s1", chapter_id="c1", index=1, title="Phân cảnh 1")
     db.add_all([project, chapter, shot])
     await db.commit()
 
@@ -46,15 +46,15 @@ async def test_list_files_paginated_filters_by_keyword() -> None:
     async with db:
         db.add_all(
             [
-                FileItem(id="f1", type=FileType.image, name="角色主图", thumbnail="", tags=[], storage_key="files/a.png"),
-                FileItem(id="f2", type=FileType.video, name="片段视频", thumbnail="", tags=[], storage_key="files/b.mp4"),
+                FileItem(id="f1", type=FileType.image, name="Ảnh chính nhân vật", thumbnail="", tags=[], storage_key="files/a.png"),
+                FileItem(id="f2", type=FileType.video, name="Video đoạn", thumbnail="", tags=[], storage_key="files/b.mp4"),
             ]
         )
         await db.commit()
 
         resp = await list_files_paginated(
             db,
-            q="角色",
+            q="Nhân vật",
             order="name",
             is_desc=False,
             page=1,
@@ -76,7 +76,7 @@ async def test_get_file_detail_includes_usages() -> None:
             FileItem(
                 id="f1",
                 type=FileType.image,
-                name="角色主图",
+                name="Ảnh chính nhân vật",
                 thumbnail="thumb",
                 tags=["hero"],
                 storage_key="files/a.png",
@@ -118,7 +118,7 @@ async def test_update_file_meta_updates_fields_and_upserts_usage() -> None:
             FileItem(
                 id="f1",
                 type=FileType.image,
-                name="旧名称",
+                name="Tên cũ",
                 thumbnail="old",
                 tags=["old"],
                 storage_key="files/a.png",
@@ -130,7 +130,7 @@ async def test_update_file_meta_updates_fields_and_upserts_usage() -> None:
             db,
             file_id="f1",
             body=FileUpdate(
-                name="新名称",
+                name="Tên mới",
                 thumbnail="new-thumb",
                 tags=["hero", "poster"],
                 usage={
@@ -157,7 +157,7 @@ async def test_update_file_meta_updates_fields_and_upserts_usage() -> None:
         )
         detail = await get_file_detail(db, file_id="f1")
 
-        assert updated.name == "新名称"
+        assert updated.name == "Tên mới"
         assert updated.thumbnail == "new-thumb"
         assert updated.tags == ["hero", "poster"]
         assert updated_again.id == "f1"

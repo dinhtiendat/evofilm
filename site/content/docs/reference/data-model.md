@@ -1,9 +1,9 @@
 ---
-title: "数据模型"
+title: "Mô hình dữ liệu"
 weight: 3
 ---
 
-当前主业务对象可以先从以下链路理解：
+Các đối tượng nghiệp vụ chính hiện tại có thể hiểu trước từ đường dẫn sau:
 
 - `Project`
 - `Chapter`
@@ -12,4 +12,4 @@ weight: 3
 - `PromptTemplate`
 - `FileItem`
 
-后续可以继续补充 ER 图和模型关系说明。
+Tiếp theo có thể bổ sung thêm sơ đồ ER và giải thích quan hệ mô hình.

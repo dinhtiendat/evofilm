@@ -92,7 +92,7 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
   if (loading && !project) {
     return (
       <div className="flex justify-center items-center py-16">
-        <Spin size="large" tip="加载中…" />
+        <Spin size="large" tip="Đang tải…" />
       </div>
     )
   }
@@ -140,30 +140,30 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
   const chapterTodoCards = [
     {
       key: 'edit_raw',
-      title: '待补原文',
+      title: 'Chờ bổ sung nguyên văn',
       count: chaptersNeedingRawText,
-      hint: '这些章节还没进入分镜流程',
+      hint: 'Những chương này chưa vào luồng phân cảnh',
       icon: <ClockCircleOutlined />,
     },
     {
       key: 'extract_shots',
-      title: '待提取分镜',
+      title: 'Phân cảnh chờ trích xuất',
       count: chaptersNeedingShotExtract,
-      hint: '已有原文，可直接进入分镜提取',
+      hint: 'Đã có nguyên văn, có thể vào trích xuất phân cảnh ngay',
       icon: <ClockCircleOutlined />,
     },
     {
       key: 'prepare_shots',
-      title: '待准备镜头',
+      title: 'Phân cảnh chờ chuẩn bị',
       count: chaptersNeedingShotPrep,
-      hint: '已有分镜，建议进入工作室继续处理',
+      hint: 'Đã có phân cảnh, đề nghị vào studio để tiếp tục xử lý',
       icon: <ClockCircleOutlined />,
     },
     {
       key: 'shoot',
-      title: '可继续拍摄',
+      title: 'Có thể tiếp tục quay',
       count: chaptersReadyForShoot,
-      hint: '这部分章节已具备继续拍摄条件',
+      hint: 'Phần chương này đã đủ điều kiện để tiếp tục quay',
       icon: <CheckCircleOutlined />,
     },
   ] as const
@@ -173,22 +173,22 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
       <Card size="small">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="min-w-0">
-            <div className="font-medium">当前推荐动作</div>
+            <div className="font-medium">hành động khuyến nghị hiện tại</div>
             <div className="text-xs text-gray-500">
               {recommendedChapter && recommendedState
-                ? `第${recommendedChapter.index}章 · ${recommendedState.hint}`
-                : '暂无章节，可先创建第一章'}
+                ? `Chương ${recommendedChapter.index} · ${recommendedState.hint}`
+                : 'Chưa có chương, có thể tạo chương đầu tiên trước'}
             </div>
           </div>
           <Space wrap>
-            <Button onClick={() => onSelectTab('chapters')}>进入章节管理</Button>
-            <Button onClick={() => projectId && navigate(getProjectEditorPath(projectId))}>进入后期剪辑</Button>
+            <Button onClick={() => onSelectTab('chapters')}>Vào quản lý chương</Button>
+            <Button onClick={() => projectId && navigate(getProjectEditorPath(projectId))}>Vào hậu kỳ dựng phim</Button>
             <Button
               type="primary"
               icon={recommendedState?.primaryIcon ?? <VideoCameraOutlined />}
               onClick={handleRecommendedAction}
             >
-              {recommendedChapter && recommendedState ? recommendedState.primaryAction : '创建第一章'}
+              {recommendedChapter && recommendedState ? recommendedState.primaryAction : 'Tạo chương một'}
             </Button>
           </Space>
         </div>
@@ -197,13 +197,13 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
           <Card size="small" className="h-full">
-            <Statistic title="未完成章节" value={incompleteCount} />
+            <Statistic title="Chương chưa hoàn thành" value={incompleteCount} />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card size="small" className="h-full">
             <Statistic
-              title="待确认分镜"
+              title="Phân cảnh chờ xác nhận"
               value={flowStats.pendingConfirmShots}
               suffix={flowStats.totalShots ? `/ ${flowStats.totalShots}` : undefined}
               loading={flowStatsLoading}
@@ -213,7 +213,7 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
         <Col xs={24} sm={12} lg={6}>
           <Card size="small" className="h-full">
             <Statistic
-              title="已就绪分镜"
+              title="Phân cảnh đã sẵn sàng"
               value={flowStats.readyShots}
               loading={flowStatsLoading}
               prefix={<CheckCircleOutlined />}
@@ -223,7 +223,7 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
         <Col xs={24} sm={12} lg={6}>
           <Card size="small" className="h-full">
             <Statistic
-              title="生成中分镜"
+              title="Phân cảnh đang tạo"
               value={flowStats.generatingShots}
               loading={flowStatsLoading}
               prefix={<ClockCircleOutlined />}
@@ -240,20 +240,20 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
       </Row>
 
       <Card
-        title="当前待办"
+        title="Công việc chờ hiện tại"
         size="small"
         extra={
           <Button type="link" onClick={() => projectId && navigate(getProjectChaptersPath(projectId))}>
-            查看全部
+            Xem tất cả
           </Button>
         }
       >
         <div className="flex gap-3 overflow-x-auto pb-2" style={{ minHeight: 140 }}>
           {chapters.length === 0 ? (
             <div className="flex-1 flex items-center justify-center text-gray-500 py-8">
-              还没有任何章节，
+              Chưa có chương nào cả,
               <Button type="link" className="p-0" onClick={() => onSelectTab('chapters')}>
-                立即创建第一章
+                Tạo chương đầu tiên ngay
               </Button>
             </div>
           ) : (
@@ -282,41 +282,41 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
 
       <Row gutter={[16, 16]}>
         <Col xs={24} md={14}>
-          <Card title="动态摘要" size="small">
+          <Card title="Tóm tắt động" size="small">
             <div className="space-y-3 text-sm">
               <div className="rounded-md border border-amber-100 bg-amber-50 px-3 py-2">
                 <div className="flex items-center gap-2 font-medium text-amber-800">
                   <ClockCircleOutlined />
-                  待确认压力最大
+                  Áp lực chờ xác nhận lớn nhất
                 </div>
                 <div className="mt-1 text-gray-700">
                   {topPendingChapter && topPendingChapter.pendingConfirmShots > 0
-                    ? `第${topPendingChapter.chapterIndex ?? '-'}章还有 ${topPendingChapter.pendingConfirmShots} 条分镜待确认，建议优先处理。`
-                    : '当前没有待确认分镜积压。'}
+                    ? `Chương ${topPendingChapter.chapterIndex ?? '-'} còn ${topPendingChapter.pendingConfirmShots} phân cảnh chờ xác nhận, nên ưu tiên xử lý.`
+                    : 'Hiện không có phân cảnh chờ xác nhận tồn đọng.'}
                 </div>
               </div>
 
               <div className="rounded-md border border-blue-100 bg-blue-50 px-3 py-2">
                 <div className="flex items-center gap-2 font-medium text-blue-800">
                   <VideoCameraOutlined />
-                  当前生成最活跃
+                  Hoạt động tạo mạnh nhất hiện nay
                 </div>
                 <div className="mt-1 text-gray-700">
                   {topGeneratingChapter && topGeneratingChapter.generatingShots > 0
-                    ? `第${topGeneratingChapter.chapterIndex ?? '-'}章有 ${topGeneratingChapter.generatingShots} 条分镜正在生成，可以继续关注结果。`
-                    : '当前没有分镜处于生成中。'}
+                    ? `Chương ${topGeneratingChapter.chapterIndex ?? '-'} có ${topGeneratingChapter.generatingShots} phân cảnh đang tạo dựng, có thể tiếp tục theo dõi kết quả.`
+                    : 'Hiện không có phân cảnh nào đang tạo.'}
                 </div>
               </div>
 
               <div className="rounded-md border border-emerald-100 bg-emerald-50 px-3 py-2">
                 <div className="flex items-center gap-2 font-medium text-emerald-800">
                   <CheckCircleOutlined />
-                  最适合继续推进
+                  Phù hợp nhất để tiếp tục triển khai
                 </div>
                 <div className="mt-1 text-gray-700">
                   {topReadyChapter && topReadyChapter.readyShots > 0
-                    ? `第${topReadyChapter.chapterIndex ?? '-'}章已有 ${topReadyChapter.readyShots} 条已就绪分镜，适合继续推进视频生成。`
-                    : '当前还没有明显可继续推进的视频生成批次。'}
+                    ? `Chương ${topReadyChapter.chapterIndex ?? '-'} đã có ${topReadyChapter.readyShots} phân cảnh sẵn sàng, phù hợp để tiếp tục tạo video.`
+                    : 'Hiện chưa có lô tạo video rõ ràng nào có thể tiếp tục.'}
                 </div>
               </div>
             </div>
@@ -326,31 +326,31 @@ export function DashboardTab({ onSelectTab }: { onSelectTab: (tab: TabKey) => vo
               icon={<FileSearchOutlined />}
               onClick={() => onSelectTab('chapters')}
             >
-              去章节里继续推进
+              Sang chương để tiếp tục triển khai
             </Button>
           </Card>
         </Col>
         <Col xs={24} md={10}>
-          <Card title="资产健康快照" size="small">
+          <Card title="Ảnh chụp trạng thái sức khỏe tài nguyên" size="small">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>角色</span>
-                <span className="text-gray-500">{project.stats.roles} 项</span>
+                <span>Nhân vật</span>
+                <span className="text-gray-500">{project.stats.roles} mục</span>
               </div>
               <Progress percent={80} size="small" showInfo={false} />
               <div className="flex justify-between text-sm">
-                <span>场景</span>
-                <span className="text-gray-500">{project.stats.scenes} 项</span>
+                <span>Cảnh</span>
+                <span className="text-gray-500">{project.stats.scenes} mục</span>
               </div>
               <Progress percent={60} size="small" showInfo={false} />
               <div className="flex justify-between text-sm">
-                <span>道具</span>
-                <span className="text-gray-500">{project.stats.props} 项</span>
+                <span>Đạo cụ</span>
+                <span className="text-gray-500">{project.stats.props} mục</span>
               </div>
               <Progress percent={75} size="small" showInfo={false} />
             </div>
             <Button type="link" className="p-0 mt-2" onClick={() => navigate('/assets')}>
-              管理资产
+              Quản lý tài nguyên
             </Button>
           </Card>
         </Col>

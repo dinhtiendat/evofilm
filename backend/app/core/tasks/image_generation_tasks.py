@@ -1,6 +1,6 @@
-"""图片生成任务（Task）：对接 OpenAI Images API 与火山引擎（方舟） ImageGenerations。
+"""Tác vụ tạo ảnh (Task): đối kết OpenAI Images API và Volcengine (方舟) ImageGenerations.
 
-供应商 HTTP 实现在 `app.core.integrations`；本模块保留 BaseTask 编排与 registry 分派。
+Thực hiện HTTP của nhà cung cấp nằm trong `app.core.integrations`; module này giữ lại điều phối BaseTask và điều phối registry.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from app.core.contracts.provider import ProviderConfig
 from app.core.tasks.registry import resolve_task_adapter
 from app.core.task_manager.types import BaseTask
 
-# 兼容：自本模块 re-export 类型，避免破坏 from app.core.tasks.image_generation_tasks import ...
+# Tương thích: re-export các type từ module này, tránh phá vỡ from app.core.tasks.image_generation_tasks import ...
 __all__ = [
     "ImageGenerationInput",
     "ImageGenerationResult",
@@ -36,7 +36,7 @@ __all__ = [
 
 
 class AbstractImageGenerationTask(BaseTask, ABC):
-    """图片生成抽象基类：子类实现 `_create_task` + `_poll_and_get_result`。"""
+    """Lớp trừu tượng tạo ảnh: subclass thực thi `_create_task` + `_poll_and_get_result`."""
 
     def __init__(
         self,
@@ -54,11 +54,11 @@ class AbstractImageGenerationTask(BaseTask, ABC):
 
     @abstractmethod
     async def _create_task(self) -> None:
-        """发起供应商请求（或委托 adapter）。"""
+        """Khởi tạo yêu cầu tới nhà cung cấp (hoặc ủy quyền cho adapter)."""
 
     @abstractmethod
     async def _poll_and_get_result(self) -> ImageGenerationResult:
-        """解析为统一结果。"""
+        """Phân tích thành kết quả thống nhất."""
 
     async def run(self, *args: Any, **kwargs: Any) -> AsyncIterator[Any] | None:  # type: ignore[override]
         try:
@@ -90,7 +90,7 @@ class AbstractImageGenerationTask(BaseTask, ABC):
 
 
 class OpenAIImageGenerationTask(AbstractImageGenerationTask):
-    """OpenAI Images：委托 `OpenAIImageApiAdapter`。"""
+    """OpenAI Images:ủy quyền cho `OpenAIImageApiAdapter`."""
 
     def __init__(
         self,
@@ -117,7 +117,7 @@ class OpenAIImageGenerationTask(AbstractImageGenerationTask):
 
 
 class VolcengineImageGenerationTask(AbstractImageGenerationTask):
-    """火山 ImageGenerations：委托 `VolcengineImageApiAdapter`。"""
+    """Volcengine ImageGenerations: ủy quyền cho `VolcengineImageApiAdapter`."""
 
     def __init__(
         self,
@@ -144,7 +144,7 @@ class VolcengineImageGenerationTask(AbstractImageGenerationTask):
 
 
 class ImageGenerationTask(BaseTask):
-    """按 provider 分派到 OpenAI / 火山实现；对外构造函数与原先一致。"""
+    """điều phối theo provider tới thực hiện OpenAI / Volcano; hàm dựng đối ngoại giữ nguyên như trước."""
 
     def __init__(
         self,

@@ -1,6 +1,6 @@
 baseURL: "/"
 languageCode: "zh-cn"
-title: "Jellyfish AI 短剧工厂"
+title: "Nhà máy kịch ngắn Jellyfish AI"
 defaultContentLanguage: "zh"
 hasCJKLanguage: true
 enableRobotsTXT: true
@@ -28,16 +28,16 @@ outputs:
 
 menu:
   main:
-    - name: 首页
+    - name: Trang chủ
       pageRef: /
       weight: 1
-    - name: 产品
+    - name: Sản phẩm
       pageRef: /product
       weight: 2
-    - name: 文档
+    - name: Tài liệu
       pageRef: /docs
       weight: 3
-    - name: 博客
+    - name: Blog
       pageRef: /blog
       weight: 4
     - name: GitHub
@@ -47,13 +47,13 @@ menu:
         icon: github
 
 params:
-  description: "从剧本到分镜、资产、视频生成与剪辑的一站式 AI 短剧生产平台。"
+  description: "nền tảng sản xuất short drama AI trọn gói từ kịch bản đến phân cảnh, tài nguyên, sinh video và dựng."
   keywords:
-    - AI短剧
-    - AI短剧工厂
-    - 短剧生产
-    - 分镜编辑
-    - AI视频生成
+    - AIkịch ngắn
+    - Nhà máy phim ngắn AI
+    - Sản xuất kịch ngắn
+    - Chỉnh sửa phân cảnh
+    - Tạo video AI
     - Jellyfish
   images:
     - /images/og-default.svg

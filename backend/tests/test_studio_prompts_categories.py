@@ -1,4 +1,4 @@
-"""PromptCategory 枚举接口测试。"""
+"""Kiểm thử interface enum PromptCategory."""
 
 from __future__ import annotations
 
@@ -46,9 +46,9 @@ def test_list_prompt_categories_returns_value_label_description(client: TestClie
         "costume_image_other",
         "combined",
     }
-    assert "首帧图片" in labels
-    assert "关键帧图片" in labels
-    assert "用于生成首帧图片的提示词" in descriptions
+    assert "Ảnh khung hình đầu" in labels
+    assert "Ảnh khung hình chính" in labels
+    assert "Prompt dùng để tạo ảnh khung hình đầu" in descriptions
 
 
 def test_prompt_category_mapping_is_complete() -> None:

@@ -1,4 +1,4 @@
-"""API 通用工具：列表过滤、排序、分页。"""
+"""Công cụ API dùng chung: lọc danh sách, sắp xếp, phân trang."""
 
 from __future__ import annotations
 

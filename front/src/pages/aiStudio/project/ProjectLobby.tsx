@@ -102,7 +102,7 @@ const ProjectLobby: React.FC = () => {
       id: p.id,
       name: p.name,
       description: p.description ?? '',
-      style: (p.style as Project['style']) ?? '现实主义',
+      style: (p.style as Project['style']) ?? 'Chủ nghĩa hiện thực',
       seed: p.seed ?? 0,
       unifyStyle: p.unify_style ?? true,
       progress: p.progress ?? 0,
@@ -168,10 +168,10 @@ const ProjectLobby: React.FC = () => {
       if (!chaptersByIndex.length) {
         return {
           key: 'create_first_chapter',
-          stageText: '待创建章节',
+          stageText: 'Chờ tạo chương',
           stageColor: 'default',
-          nextActionLabel: '创建第一章',
-          nextActionHint: '项目还没有章节，建议先创建第一章',
+          nextActionLabel: 'Tạo chương một',
+          nextActionHint: 'Dự án chưa có chương nào, nên tạo chương đầu tiên trước',
         }
       }
       const findByState = (key: ReturnType<typeof getChapterPreparationState>['key']) =>
@@ -188,7 +188,7 @@ const ProjectLobby: React.FC = () => {
         stageText: state.text,
         stageColor: state.color,
         nextActionLabel: state.primaryAction,
-        nextActionHint: `第${chapter.index}章 · ${state.hint}`,
+        nextActionHint: `Chương ${chapter.index} · ${state.hint}`,
         chapterId: chapter.id,
         storyboardCount: chapter.storyboardCount,
       }
@@ -361,9 +361,9 @@ const ProjectLobby: React.FC = () => {
         Array.isArray(prev) ? prev.filter((p) => !selectedIds.includes(p.id)) : prev
       )
       setSelectedIds([])
-      message.success('已批量删除选中项目')
+      message.success('Đã xóa hàng loạt các mục đã chọn')
     } catch {
-      message.error('批量删除失败')
+      message.error('Xóa hàng loạt thất bại')
     }
   }
 
@@ -410,12 +410,12 @@ const ProjectLobby: React.FC = () => {
       const created = res.data
       if (!created) throw new Error('empty project')
       const ui = toUIProject(created)
-      message.success('项目创建成功')
+      message.success('Tạo dự án thành công')
       setCreateModalOpen(false)
       setProjects((prev) => (Array.isArray(prev) ? [...prev, ui] : [ui]))
       navigate(`/projects/${ui.id}`)
     } catch {
-      message.error('创建失败')
+      message.error('Tạo thất bại')
     }
   }
 
@@ -460,32 +460,32 @@ const ProjectLobby: React.FC = () => {
       const updated = res.data
       if (!updated) throw new Error('empty project')
       const ui = toUIProject(updated)
-      message.success('项目已更新')
+      message.success('Đã cập nhật dự án')
       setEditModalOpen(false)
       setEditingProject(null)
       setProjects((prev) =>
         Array.isArray(prev) ? prev.map((x) => (x.id === ui.id ? ui : x)) : prev
       )
     } catch {
-      message.error('更新失败')
+      message.error('Cập nhật thất bại')
     }
   }
 
   const handleDelete = async (projectId: string) => {
     try {
       await StudioProjectsService.deleteProjectApiV1StudioProjectsProjectIdDelete({ projectId })
-      message.success('已删除')
+      message.success('Đã xóa')
       setProjects((prev) => (Array.isArray(prev) ? prev.filter((p) => p.id !== projectId) : []))
     } catch {
-      message.error('删除失败')
+      message.error('Xóa thất bại')
     }
   }
 
   const renderStatusTag = (p: ProjectView) => {
     const status = getProjectStatus(p)
-    if (status === 'completed') return <Tag color="green" className="mr-0 text-[11px] leading-4">已完成</Tag>
-    if (status === 'draft') return <Tag color="default" className="mr-0 text-[11px] leading-4">草稿</Tag>
-    return <Tag color="orange" className="mr-0 text-[11px] leading-4">进行中</Tag>
+    if (status === 'completed') return <Tag color="green" className="mr-0 text-[11px] leading-4">Đã hoàn thành</Tag>
+    if (status === 'draft') return <Tag color="default" className="mr-0 text-[11px] leading-4">Bản nháp</Tag>
+    return <Tag color="orange" className="mr-0 text-[11px] leading-4">Đang thực hiện</Tag>
   }
 
   const handlePrimaryAction = (project: ProjectView, stageSummary?: ProjectStageSummary) => {
@@ -522,7 +522,7 @@ const ProjectLobby: React.FC = () => {
   }
 
   /**
-   * 根据项目 ID 生成稳定的浅色渐变背景，避免深色背景。
+   * Sinh nền chuyển màu nhạt ổn định theo ID dự án, tránh nền tối.
    */
   const getLightGradientByProjectId = (id: string): string => {
     const gradients = [
@@ -552,7 +552,7 @@ const ProjectLobby: React.FC = () => {
     const flowStats = projectFlowStatsMap[p.id]
     const isCompact = viewMode === 'compact'
     const isLarge = viewMode === 'large'
-    const mainActionLabel = stageSummary?.nextActionLabel ?? (status === 'completed' ? '继续剪辑' : p.progress > 0 ? '继续拍摄' : '进入项目')
+    const mainActionLabel = stageSummary?.nextActionLabel ?? (status === 'completed' ? 'Tiếp tục dựng phim' : p.progress > 0 ? 'Tiếp tục quay' : 'Vào dự án')
 
     const isSelected = selectedProject && selectedProject.id === p.id
     const isChecked = selectedIds.includes(p.id)
@@ -616,28 +616,28 @@ const ProjectLobby: React.FC = () => {
 
         <div className={`mb-1.5 rounded border border-gray-100 bg-gray-50 ${isCompact ? 'px-2 py-1' : 'px-2 py-1.5'}`}>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] text-gray-500">当前阶段</span>
+            <span className="text-[11px] text-gray-500">Giai đoạn hiện tại</span>
             <Tag color={stageSummary?.stageColor ?? 'default'} className="mr-0 text-[11px] leading-4">
-              {stageSummary?.stageText ?? '待推进'}
+              {stageSummary?.stageText ?? 'Chờ xử lý'}
             </Tag>
           </div>
           <div className={`mt-1 text-[11px] text-gray-600 ${isLarge ? 'line-clamp-2 min-h-[2rem]' : 'line-clamp-1 min-h-0'}`}>
-            {stageSummary?.nextActionHint ?? '进入项目工作台后继续推进主流程'}
+            {stageSummary?.nextActionHint ?? 'Sau khi vào không gian làm việc dự án, tiếp tục thúc đẩy quy trình chính'}
           </div>
           {isCompact ? (
             <div className="mt-1 text-[11px] text-gray-500 truncate">
-              下一步：{stageSummary?.nextActionLabel ?? '进入项目'}
+              bước tiếp theo:{stageSummary?.nextActionLabel ?? 'vào dự án'}
             </div>
           ) : (
             <div className="mt-1.5 flex flex-wrap gap-1">
               <Tag bordered={false} color="gold" className="mr-0 text-[11px]">
-                待确认 {flowStats?.pendingConfirmShots ?? 0}
+                chờ xác nhận {flowStats?.pendingConfirmShots ?? 0}
               </Tag>
               <Tag bordered={false} color="green" className="mr-0 text-[11px]">
-                已就绪 {flowStats?.readyShots ?? 0}
+                Đã sẵn sàng {flowStats?.readyShots ?? 0}
               </Tag>
               <Tag bordered={false} color="processing" className="mr-0 text-[11px]">
-                生成中 {flowStats?.generatingShots ?? 0}
+                Đang tạo {flowStats?.generatingShots ?? 0}
               </Tag>
             </div>
           )}
@@ -646,7 +646,7 @@ const ProjectLobby: React.FC = () => {
         {!isCompact && (
           <div className="mb-1.5">
             <div className="flex justify-between text-[11px] mb-0.5 text-gray-500">
-              <span>进度</span>
+              <span>Tiến độ</span>
               <span>{p.progress}%</span>
             </div>
             <Progress
@@ -661,21 +661,21 @@ const ProjectLobby: React.FC = () => {
         {isLarge ? (
           <Row gutter={6} className="mb-1.5">
             <Col span={6}>
-              <Statistic title={<span className="text-[11px]">章节</span>} value={p.stats.chapters} valueStyle={{ fontSize: '13px' }} />
+              <Statistic title={<span className="text-[11px]">Chương</span>} value={p.stats.chapters} valueStyle={{ fontSize: '13px' }} />
             </Col>
             <Col span={6}>
-              <Statistic title={<span className="text-[11px]">角色</span>} value={p.stats.roles} valueStyle={{ fontSize: '13px' }} />
+              <Statistic title={<span className="text-[11px]">Nhân vật</span>} value={p.stats.roles} valueStyle={{ fontSize: '13px' }} />
             </Col>
             <Col span={6}>
-              <Statistic title={<span className="text-[11px]">场景</span>} value={p.stats.scenes} valueStyle={{ fontSize: '13px' }} />
+              <Statistic title={<span className="text-[11px]">Bối cảnh</span>} value={p.stats.scenes} valueStyle={{ fontSize: '13px' }} />
             </Col>
             <Col span={6}>
-              <Statistic title={<span className="text-[11px]">道具</span>} value={p.stats.props} valueStyle={{ fontSize: '13px' }} />
+              <Statistic title={<span className="text-[11px]">Đạo cụ</span>} value={p.stats.props} valueStyle={{ fontSize: '13px' }} />
             </Col>
           </Row>
         ) : (
           <div className="mb-1.5 text-[11px] text-gray-500 truncate">
-            章 {p.stats.chapters} · 角 {p.stats.roles} · 场 {p.stats.scenes} · 道 {p.stats.props}
+            Chương {p.stats.chapters} · Nhân vật {p.stats.roles} · Cảnh {p.stats.scenes} · Đạo cụ {p.stats.props}
           </div>
         )}
 
@@ -689,7 +689,7 @@ const ProjectLobby: React.FC = () => {
               onClick={() => handlePrimaryAction(p, stageSummary)}
               className="text-[11px]"
             >
-              {isCompact ? '进入' : mainActionLabel}
+              {isCompact ? 'Vào' : mainActionLabel}
             </Button>
             {!isCompact && (
               <>
@@ -701,11 +701,11 @@ const ProjectLobby: React.FC = () => {
                   className="text-[11px]"
                 />
                 <Popconfirm
-                  title="确定删除该项目？"
-                  description="删除后无法恢复，相关章节与素材将不再关联。"
+                  title="Xác nhận xóa dự án này?"
+                  description="Sau khi xóa không thể khôi phục, các chương và tài liệu liên quan sẽ không còn được liên kết."
                   onConfirm={() => handleDelete(p.id)}
-                  okText="删除"
-                  cancelText="取消"
+                  okText="Xóa"
+                  cancelText="Hủy"
                   okButtonProps={{ danger: true }}
                 >
                   <Button type="text" size="small" danger icon={<DeleteOutlined />} className="text-[11px]" />
@@ -725,7 +725,7 @@ const ProjectLobby: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Space wrap size="small" className="flex-1 min-w-[240px]">
             <Input.Search
-              placeholder="搜索项目名称或描述"
+              placeholder="Tìm kiếm tên dự án hoặc mô tả"
               allowClear
               size="small"
               className="w-64 max-w-full"
@@ -739,7 +739,7 @@ const ProjectLobby: React.FC = () => {
                 className="text-[11px]"
                 onClick={() => setFilterTab('all')}
               >
-                全部
+                Tất cả
               </Button>
               <Button
                 type={filterTab === 'editRaw' ? 'primary' : 'text'}
@@ -747,7 +747,7 @@ const ProjectLobby: React.FC = () => {
                 className="text-[11px]"
                 onClick={() => setFilterTab('editRaw')}
               >
-                待补原文
+                Chờ bổ sung nguyên văn
               </Button>
               <Button
                 type={filterTab === 'extractShots' ? 'primary' : 'text'}
@@ -755,7 +755,7 @@ const ProjectLobby: React.FC = () => {
                 className="text-[11px]"
                 onClick={() => setFilterTab('extractShots')}
               >
-                待提取分镜
+                Phân cảnh chờ trích xuất
               </Button>
               <Button
                 type={filterTab === 'prepareShots' ? 'primary' : 'text'}
@@ -763,7 +763,7 @@ const ProjectLobby: React.FC = () => {
                 className="text-[11px]"
                 onClick={() => setFilterTab('prepareShots')}
               >
-                待准备镜头
+                Phân cảnh chờ chuẩn bị
               </Button>
               <Button
                 type={filterTab === 'generating' ? 'primary' : 'text'}
@@ -771,7 +771,7 @@ const ProjectLobby: React.FC = () => {
                 className="text-[11px]"
                 onClick={() => setFilterTab('generating')}
               >
-                生成中
+                Đang tạo
               </Button>
               <Button
                 type={filterTab === 'ready' ? 'primary' : 'text'}
@@ -779,23 +779,23 @@ const ProjectLobby: React.FC = () => {
                 className="text-[11px]"
                 onClick={() => setFilterTab('ready')}
               >
-                可继续推进
+                Có thể tiếp tục
               </Button>
             </Space>
           </Space>
 
             <Space size="small" wrap>
             <Space size="small">
-              <span className="text-xs text-gray-500">排序</span>
+              <span className="text-xs text-gray-500">sắp xếp</span>
               <Select
                 size="small"
                 value={sortKey}
                 style={{ width: 128 }}
                 onChange={(value: SortKey) => setSortKey(value)}
                 options={[
-                  { label: '最近更新', value: 'updatedAt' },
-                  { label: '名称 A-Z', value: 'name' },
-                  { label: '章节数量', value: 'chapters' },
+                  { label: 'Cập nhật gần nhất', value: 'updatedAt' },
+                  { label: 'Tên A-Z', value: 'name' },
+                  { label: 'Số lượng chương', value: 'chapters' },
                 ]}
               />
               <Button
@@ -809,7 +809,7 @@ const ProjectLobby: React.FC = () => {
             </Space>
 
             <Space size="small">
-              <span className="text-xs text-gray-500">视图</span>
+              <span className="text-xs text-gray-500">khung nhìn</span>
               <Button
                 size="small"
                 type={viewMode === 'grid' ? 'primary' : 'text'}
@@ -840,27 +840,27 @@ const ProjectLobby: React.FC = () => {
                   setSelectedIds([])
                 }}
               >
-                批量
+                Hàng loạt
               </Button>
               {multiSelectMode && (
                 <Popconfirm
-                  title="批量删除项目"
-                  description="确定删除选中的所有项目？该操作不可恢复。"
+                  title="Xóa hàng loạt dự án"
+                  description="Xác nhận xóa tất cả mục dự án đã chọn? Thao tác này không thể hoàn tác."
                   onConfirm={handleBatchDelete}
-                  okText="删除"
-                  cancelText="取消"
+                  okText="Xóa"
+                  cancelText="Hủy"
                   okButtonProps={{ danger: true }}
                   disabled={!selectedIds.length}
                 >
                   <Button size="small" danger disabled={!selectedIds.length} className="text-[11px]">
-                    删除选中
+                    Xóa phần đã chọn
                   </Button>
                 </Popconfirm>
               )}
             </Space>
 
             <Button type="primary" size="small" className="text-[11px]" icon={<PlusOutlined />} onClick={handleOpenCreate}>
-              新建项目
+              Tạo dự án mới
             </Button>
           </Space>
         </div>
@@ -875,7 +875,7 @@ const ProjectLobby: React.FC = () => {
               <Col span={24}>
                 <Card>
                   <div className="text-center text-gray-500 py-8 text-sm">
-                    {search ? '没有匹配的项目' : '暂无项目，点击「新建项目」开始'}
+                    {search ? 'Không có dự án khớp' : 'Chưa có dự án, nhấn "Tạo dự án mới" để bắt đầu'}
                   </div>
                 </Card>
               </Col>
@@ -899,7 +899,7 @@ const ProjectLobby: React.FC = () => {
           <div className="h-full">
             <Card
               size="small"
-              title="项目速览"
+              title="Điểm qua dự án"
               className="mb-1.5"
               bodyStyle={{ padding: '10px' }}
               headStyle={{ minHeight: 36, paddingInline: 10 }}
@@ -907,21 +907,21 @@ const ProjectLobby: React.FC = () => {
               {selectedProject ? (
                 <div className="space-y-2">
                   <div>
-                    <div className="text-[11px] text-gray-500 mb-0.5">项目名称</div>
+                    <div className="text-[11px] text-gray-500 mb-0.5">Tên dự án</div>
                     <div className="font-medium">{selectedProject.name}</div>
                   </div>
                   <div>
-                    <div className="text-[11px] text-gray-500 mb-0.5">简介</div>
+                    <div className="text-[11px] text-gray-500 mb-0.5">Giới thiệu</div>
                     <div className="text-xs text-gray-600 line-clamp-2">
-                      {selectedProject.description || '暂无描述'}
+                      {selectedProject.description || 'Chưa có mô tả'}
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-[11px] text-gray-500">
-                    <span>视频风格：{selectedProject.style}</span>
-                    <span>种子：{selectedProject.seed}</span>
+                    <span>phong cách video:{selectedProject.style}</span>
+                    <span>Hạt giống: {selectedProject.seed}</span>
                   </div>
                   <div>
-                    <div className="text-[11px] text-gray-500 mb-0.5">进度</div>
+                    <div className="text-[11px] text-gray-500 mb-0.5">Tiến độ</div>
                     <Progress
                       percent={selectedProject.progress}
                       size="small"
@@ -929,7 +929,7 @@ const ProjectLobby: React.FC = () => {
                     />
                   </div>
                   <div className="text-[11px] text-gray-500">
-                    章 {selectedProject.stats.chapters} · 角 {selectedProject.stats.roles} · 场 {selectedProject.stats.scenes} · 道 {selectedProject.stats.props}
+                    Chương {selectedProject.stats.chapters} · Nhân vật {selectedProject.stats.roles} · Bối cảnh {selectedProject.stats.scenes} · Đạo cụ {selectedProject.stats.props}
                   </div>
                   <Button
                     type="primary"
@@ -939,12 +939,12 @@ const ProjectLobby: React.FC = () => {
                     onClick={() => navigate(`/projects/${selectedProject.id}`)}
                     className="text-[11px]"
                   >
-                    进入章节工作台
+                    Vào không gian làm việc chương
                   </Button>
                 </div>
               ) : (
                 <div className="text-gray-500 text-sm py-6 text-center">
-                  将鼠标悬停在项目卡片上查看详情
+                  Đưa chuột lên thẻ dự án để xem chi tiết
                 </div>
               )}
             </Card>
@@ -954,7 +954,7 @@ const ProjectLobby: React.FC = () => {
       </div>
 
       <Modal
-        title="新建短剧项目"
+        title="Tạo mới dự án kịch bản ngắn"
         open={createModalOpen}
         onCancel={() => setCreateModalOpen(false)}
         footer={null}
@@ -965,11 +965,11 @@ const ProjectLobby: React.FC = () => {
           layout="vertical"
           onFinish={handleCreateSubmit}
           initialValues={{
-            visual_style: projectStyleOptions.visualStyles[0]?.value ?? '现实',
+            visual_style: projectStyleOptions.visualStyles[0]?.value ?? 'thực tế',
             style:
               projectStyleOptions.defaultStyleByVisual?.[projectStyleOptions.visualStyles[0]?.value ?? '现实'] ??
               projectStyleOptions.stylesByVisual[projectStyleOptions.visualStyles[0]?.value ?? '现实']?.[0]?.value ??
-              '真人都市',
+              'Người thật đô thị',
             seed: Math.floor(Math.random() * 99999),
             unifyStyle: true,
             default_video_ratio: defaultVideoRatio,
@@ -977,38 +977,38 @@ const ProjectLobby: React.FC = () => {
         >
           <Form.Item
             name="name"
-            label="项目名称"
-            rules={[{ required: true, message: '请输入项目名称' }]}
+            label="Tên dự án"
+            rules={[{ required: true, message: 'vui lòng nhập tên dự án' }]}
           >
-            <Input placeholder="例如：现实都市爱情短剧" />
+            <Input placeholder="Ví dụ: ngắn kỳ tình yêu đô thị hiện thực" />
           </Form.Item>
-          <Form.Item name="description" label="项目简介（选填）">
-            <Input.TextArea rows={4} placeholder="项目简介与风格说明，建议 80–120 字" />
+          <Form.Item name="description" label="giới thiệu dự án (tùy chọn)">
+            <Input.TextArea rows={4} placeholder="Giới thiệu dự án và mô tả phong cách, khuyến nghị 80–120 chữ" />
           </Form.Item>
           <ProjectVisualStyleAndStyleFields form={form} options={projectStyleOptions} />
           <Form.Item
             name="seed"
-            label="全局种子值"
-            tooltip="固定种子可确保整部短剧视觉调性一致"
+            label="Giá trị hạt giống (seed) toàn cục"
+            tooltip="Cố định seed giúp đảm bảo tông trực quan của cả bộ phim ngắn nhất quán"
           >
             <InputNumber min={0} className="w-full" />
           </Form.Item>
-          <Form.Item name="default_video_ratio" label="默认视频比例">
-            <Select allowClear placeholder="未设置时由模型/供应商决定" options={videoRatioOptions} />
+          <Form.Item name="default_video_ratio" label="Tỷ lệ video mặc định">
+            <Select allowClear placeholder="Khi không đặt thì do mô hình/nhà cung cấp quyết định" options={videoRatioOptions} />
           </Form.Item>
           <Form.Item
             name="unifyStyle"
-            label="所有章节强制继承此风格"
+            label="Mọi chương bắt buộc kế thừa phong cách này"
             valuePropName="checked"
-            tooltip="开启后所有章节继承项目风格"
+            tooltip="Khi bật, tất cả chương kế thừa phong cách dự án"
           >
             <Switch />
           </Form.Item>
           <Form.Item className="mb-0">
             <Space>
-              <Button onClick={() => setCreateModalOpen(false)}>取消</Button>
+              <Button onClick={() => setCreateModalOpen(false)}>Hủy</Button>
               <Button type="primary" htmlType="submit">
-                创建并进入
+                Tạo và đi vào
               </Button>
             </Space>
           </Form.Item>
@@ -1016,7 +1016,7 @@ const ProjectLobby: React.FC = () => {
       </Modal>
 
       <Modal
-        title="编辑项目"
+        title="Chỉnh sửa dự án"
         open={editModalOpen}
         onCancel={() => { setEditModalOpen(false); setEditingProject(null) }}
         footer={null}
@@ -1028,26 +1028,26 @@ const ProjectLobby: React.FC = () => {
           onFinish={handleEditSubmit}
           initialValues={{ style: '真人都市', visual_style: '现实', unifyStyle: true }}
         >
-          <Form.Item name="name" label="项目名称" rules={[{ required: true, message: '请输入项目名称' }]}>
-            <Input placeholder="项目名称" />
+          <Form.Item name="name" label="Tên dự án" rules={[{ required: true, message: 'Vui lòng nhập tên dự án' }]}>
+            <Input placeholder="Tên dự án" />
           </Form.Item>
-          <Form.Item name="description" label="描述">
-            <Input.TextArea rows={3} placeholder="项目简介与风格说明" />
+          <Form.Item name="description" label="Mô tả">
+            <Input.TextArea rows={3} placeholder="Giới thiệu dự án và mô tả phong cách" />
           </Form.Item>
           <ProjectVisualStyleAndStyleFields form={editForm} options={projectStyleOptions} />
-          <Form.Item name="seed" label="全局种子值" tooltip="固定种子可确保整部短剧视觉调性一致">
+          <Form.Item name="seed" label="Giá trị seed toàn cục" tooltip="Cố định seed giúp đảm bảo tông hình ảnh nhất quán cho toàn bộ bộ phim ngắn">
             <InputNumber min={0} className="w-full" />
           </Form.Item>
-          <Form.Item name="default_video_ratio" label="默认视频比例">
-            <Select allowClear placeholder="未设置时由模型/供应商决定" options={videoRatioOptions} />
+          <Form.Item name="default_video_ratio" label="Tỷ lệ video mặc định">
+            <Select allowClear placeholder="Khi không đặt thì do mô hình/nhà cung cấp quyết định" options={videoRatioOptions} />
           </Form.Item>
-          <Form.Item name="unifyStyle" label="风格统一" valuePropName="checked" tooltip="开启后所有章节继承项目风格">
+          <Form.Item name="unifyStyle" label="Thống nhất phong cách" valuePropName="checked" tooltip="Khi bật, mọi chương sẽ kế thừa phong cách dự án">
             <Switch />
           </Form.Item>
           <Form.Item className="mb-0">
             <Space>
-              <Button onClick={() => { setEditModalOpen(false); setEditingProject(null) }}>取消</Button>
-              <Button type="primary" htmlType="submit">保存</Button>
+              <Button onClick={() => { setEditModalOpen(false); setEditingProject(null) }}>Hủy</Button>
+              <Button type="primary" htmlType="submit">Lưu</Button>
             </Space>
           </Form.Item>
         </Form>

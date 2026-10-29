@@ -58,7 +58,7 @@ async def test_create_divide_task_creates_task_and_link() -> None:
         result = await create_divide_task(
             db,
             chapter_id="chapter-1",
-            script_text="一段剧本",
+            script_text="Một đoạn kịch bản",
             write_to_db=True,
         )
 
@@ -99,13 +99,13 @@ async def test_create_divide_task_reuses_existing_active_task() -> None:
         first = await create_divide_task(
             db,
             chapter_id="chapter-1",
-            script_text="第一版",
+            script_text="Phiên bản một",
             write_to_db=True,
         )
         second = await create_divide_task(
             db,
             chapter_id="chapter-1",
-            script_text="第二版",
+            script_text="Phiên bản hai",
             write_to_db=True,
         )
 
@@ -142,7 +142,7 @@ async def test_request_cancel_marks_pending_task_cancelled_immediately() -> None
     async with SessionLocal() as db:
         store = SqlAlchemyTaskStore(db)
         task = await store.create(payload={"k": "v"}, mode=DeliveryMode.async_polling, task_kind="test_task")
-        rec = await store.request_cancel(task.id, "用户取消")
+        rec = await store.request_cancel(task.id, "Người dùng hủy")
         assert rec is not None
         assert rec.cancel_requested is True
         assert rec.status == TaskStatus.cancelled
@@ -345,7 +345,7 @@ async def test_create_consistency_task_creates_task_and_link() -> None:
         result = await create_consistency_task(
             db,
             relation_entity_id="chapter-1",
-            script_text="完整剧本",
+            script_text="Kịch bản hoàn chỉnh",
         )
 
         assert result.reused is False
@@ -382,12 +382,12 @@ async def test_create_consistency_task_reuses_existing_active_task() -> None:
         first = await create_consistency_task(
             db,
             relation_entity_id="chapter-1",
-            script_text="完整剧本 A",
+            script_text="Kịch bản hoàn chỉnh A",
         )
         second = await create_consistency_task(
             db,
             relation_entity_id="chapter-1",
-            script_text="完整剧本 B",
+            script_text="Kịch bản hoàn chỉnh B",
         )
 
         assert second.reused is True
@@ -494,7 +494,7 @@ async def test_create_character_portrait_task_creates_task_and_link() -> None:
             db,
             relation_entity_id="chapter-1",
             character_context=None,
-            character_description="人物描述",
+            character_description="mô tả nhân vật",
         )
         assert result.relation_type == CHARACTER_PORTRAIT_ANALYSIS_RELATION_TYPE
 
@@ -517,7 +517,7 @@ async def test_create_prop_info_task_creates_task_and_link() -> None:
             db,
             relation_entity_id="chapter-1",
             prop_context=None,
-            prop_description="道具描述",
+            prop_description="Mô tả đạo cụ",
         )
         assert result.relation_type == PROP_INFO_ANALYSIS_RELATION_TYPE
 
@@ -540,7 +540,7 @@ async def test_create_scene_info_task_creates_task_and_link() -> None:
             db,
             relation_entity_id="chapter-1",
             scene_context=None,
-            scene_description="场景描述",
+            scene_description="Mô tả bối cảnh",
         )
         assert result.relation_type == SCENE_INFO_ANALYSIS_RELATION_TYPE
 
@@ -563,7 +563,7 @@ async def test_create_costume_info_task_creates_task_and_link() -> None:
             db,
             relation_entity_id="chapter-1",
             costume_context=None,
-            costume_description="服装描述",
+            costume_description="Mô tả trang phục",
         )
         assert result.relation_type == COSTUME_INFO_ANALYSIS_RELATION_TYPE
 
@@ -585,7 +585,7 @@ async def test_create_script_optimization_task_creates_task_and_link() -> None:
         result = await create_script_optimization_task(
             db,
             relation_entity_id="chapter-1",
-            script_text="原始剧本",
+            script_text="Kịch bản gốc",
             consistency={"has_issues": True},
         )
         assert result.relation_type == SCRIPT_OPTIMIZATION_RELATION_TYPE
@@ -608,7 +608,7 @@ async def test_create_script_simplification_task_creates_task_and_link() -> None
         result = await create_script_simplification_task(
             db,
             relation_entity_id="chapter-1",
-            script_text="原始剧本",
+            script_text="Kịch bản gốc",
         )
         assert result.relation_type == SCRIPT_SIMPLIFICATION_RELATION_TYPE
 
@@ -663,7 +663,7 @@ async def test_run_extract_task_marks_cancelled_when_cancel_requested_before_sta
             refresh_cache=False,
         )
         store = SqlAlchemyTaskStore(db)
-        await store.request_cancel(created.task_id, "用户取消")
+        await store.request_cancel(created.task_id, "Người dùng hủy")
         await db.commit()
 
     monkeypatch.setattr("app.services.script_processing_worker.sync_session_maker", SyncSessionLocal)
@@ -707,7 +707,7 @@ async def test_run_extract_task_marks_cancelled_at_stage_boundary(monkeypatch, t
 
         store = SyncSqlAlchemyTaskStore(db)
         task_id = getattr(_cancel_during_sync, "task_id")
-        store.request_cancel(task_id, "阶段边界取消")
+        store.request_cancel(task_id, "Hủy tại ranh giới giai đoạn")
         db.commit()
 
     def _noop_dialog_sync(_db, chapter_id: str, draft) -> None:  # noqa: ANN001

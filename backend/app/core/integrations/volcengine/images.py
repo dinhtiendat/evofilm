@@ -1,4 +1,4 @@
-"""火山方舟 ImageGenerations。"""
+"""Volcano Ark ImageGenerations."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ from app.core.integrations.volcengine.image_capabilities import validate_volceng
 
 
 class VolcengineImageApiAdapter:
-    """火山图片生成 HTTP；无状态，可单测替换。"""
+    """HTTP tạo ảnh Volcano; không có trạng thái, có thể thay trong đơn kiểm thử."""
 
     async def generate(
         self,

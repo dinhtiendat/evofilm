@@ -1,4 +1,4 @@
-"""镜头分镜帧服务：ShotFrameImage 的分页查询与 CRUD。"""
+"""dịch vụ khung phân cảnh của shot:query phân trang và CRUD của ShotFrameImage."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ async def list_paginated(
     page_size: int,
     allow_fields: set[str],
 ) -> ApiResponse[PaginatedData[ShotFrameImageRead]]:
-    """分页查询镜头分镜帧图片。"""
+    """Truy vấn phân trang ảnh khung phân cảnh."""
     stmt = select(ShotFrameImage)
     if shot_detail_id is not None:
         stmt = stmt.where(ShotFrameImage.shot_detail_id == shot_detail_id)
@@ -56,7 +56,7 @@ async def create(
     *,
     body: ShotFrameImageCreate,
 ) -> ShotFrameImage:
-    """创建镜头分镜帧图片。"""
+    """Tạo ảnh khung phân cảnh của phân cảnh."""
     await require_entity(db, ShotDetail, body.shot_detail_id, detail=entity_not_found("ShotDetail"), status_code=400)
     return await create_and_refresh(db, ShotFrameImage(**body.model_dump()))
 
@@ -67,7 +67,7 @@ async def update(
     image_id: int,
     body: ShotFrameImageUpdate,
 ) -> ShotFrameImage:
-    """更新镜头分镜帧图片。"""
+    """Cập nhật ảnh khung phân cảnh của phân cảnh."""
     obj = await get_or_404(db, ShotFrameImage, image_id, detail=entity_not_found("ShotFrameImage"))
     patch_model(obj, body.model_dump(exclude_unset=True))
     return await flush_and_refresh(db, obj)
@@ -78,5 +78,5 @@ async def delete(
     *,
     image_id: int,
 ) -> None:
-    """删除镜头分镜帧图片。"""
+    """Xóa ảnh khung phân cảnh của phân cảnh."""
     await delete_if_exists(db, ShotFrameImage, image_id)

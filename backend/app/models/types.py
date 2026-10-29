@@ -4,9 +4,9 @@ from enum import Enum
 
 
 class ProjectStyle(str, Enum):
-    """项目题材/风格维度（不用于区分真人/动漫）。"""
+    """Chiều kích thể loại/phong cách dự án (không dùng để phân biệt live-action/anime)."""
 
-    # 真人：都市、科幻、古装；动漫：科幻、古装、3D、国漫、水墨画
+    # Người thật: đô thị, khoa học viễn tưởng, phục cổ; hoạt hình: khoa học viễn tưởng, phục cổ, 3D, hoạt hình Trung Quốc, tranh thủy mặc
     real_people_city = "真人都市"
     real_people_scifi = "真人科幻"
     real_people_ancient = "真人古装"
@@ -17,14 +17,14 @@ class ProjectStyle(str, Enum):
 
 
 class ProjectVisualStyle(str, Enum):
-    """画面表现形式维度：用于区分现实/动漫等。"""
+    """Chiều kích hình thức biểu diễn khung hình: dùng để phân biệt hiện thực/anime..."""
 
     live_action = "现实"
     anime = "动漫"
 
 
 class ChapterStatus(str, Enum):
-    """章节生产状态。"""
+    """Trạng thái sản xuất của chương.。"""
 
     draft = "draft"
     shooting = "shooting"
@@ -32,7 +32,7 @@ class ChapterStatus(str, Enum):
 
 
 class ShotStatus(str, Enum):
-    """镜头生成状态（更多是“生产流程”而非剧情状态）。"""
+    """Trạng thái tạo của phân cảnh (gần với “dòng sản xuất” hơn là trạng thái cốt truyện)."""
 
     pending = "pending"
     generating = "generating"
@@ -40,7 +40,7 @@ class ShotStatus(str, Enum):
 
 
 class ShotCandidateType(str, Enum):
-    """镜头提取候选类型。"""
+    """Kiểu ứng viên trích xuất phân cảnh.。"""
 
     character = "character"
     scene = "scene"
@@ -49,7 +49,7 @@ class ShotCandidateType(str, Enum):
 
 
 class ShotCandidateStatus(str, Enum):
-    """镜头提取候选确认状态。"""
+    """Trạng thái xác nhận ứng viên trích xuất phân cảnh.。"""
 
     pending = "pending"
     linked = "linked"
@@ -57,7 +57,7 @@ class ShotCandidateStatus(str, Enum):
 
 
 class ShotDialogueCandidateStatus(str, Enum):
-    """镜头对白提取候选确认状态。"""
+    """Trạng thái xác nhận ứng viên trích xuất thoại của phân cảnh.。"""
 
     pending = "pending"
     accepted = "accepted"
@@ -65,46 +65,46 @@ class ShotDialogueCandidateStatus(str, Enum):
 
 
 class CameraShotType(str, Enum):
-    """景别（与 `app.schemas.skills.common.ShotType` 对齐，存英文 code）。"""
+    """Cận (đồng bộ với `app.schemas.skills.common.ShotType`, lưu mã tiếng Anh)."""
 
-    ecu = "ECU"  # 大特写
-    cu = "CU"  # 特写
-    mcu = "MCU"  # 中近景
-    ms = "MS"  # 中景
-    mls = "MLS"  # 中远景
-    ls = "LS"  # 远景
-    els = "ELS"  # 大远景
+    ecu = "ECU"  # Cận cực đại
+    cu = "CU"  # Cận cảnh
+    mcu = "MCU"  # Cận giữa
+    ms = "MS"  # Trung cảnh
+    mls = "MLS"  # Viễn giữa
+    ls = "LS"  # Toàn cảnh
+    els = "ELS"  # Siêu toàn cảnh
 
 
 class CameraAngle(str, Enum):
-    """机位角度（与 `app.schemas.skills.common.CameraAngle` 对齐，存英文 code）。"""
+    """Góc máy (đồng bộ với `app.schemas.skills.common.CameraAngle`, lưu mã tiếng Anh)."""
 
-    eye_level = "EYE_LEVEL"  # 平视
-    high_angle = "HIGH_ANGLE"  # 高角度
-    low_angle = "LOW_ANGLE"  # 低角度
-    bird_eye = "BIRD_EYE"  # 鸟瞰
-    dutch = "DUTCH"  # 荷兰式
-    over_shoulder = "OVER_SHOULDER"  # 过肩
+    eye_level = "EYE_LEVEL"  # tầm mắt ngang
+    high_angle = "HIGH_ANGLE"  # góc cao
+    low_angle = "LOW_ANGLE"  # góc thấp
+    bird_eye = "BIRD_EYE"  # Nhìn từ trên cao
+    dutch = "DUTCH"  # Góc nghiêng Hà Lan (Dutch angle)
+    over_shoulder = "OVER_SHOULDER"  # Qua vai
 
 
 class CameraMovement(str, Enum):
-    """运镜方式（与 `app.schemas.skills.common.CameraMovement` 对齐，存英文 code）。"""
+    """Cách chuyển động máy (đồng bộ với `app.schemas.skills.common.CameraMovement`, lưu code tiếng Anh)."""
 
-    static = "STATIC"  # 静止
-    pan = "PAN"  # 平移
-    tilt = "TILT"  # 倾斜
-    dolly_in = "DOLLY_IN"  # 拉近
-    dolly_out = "DOLLY_OUT"  # 拉远
-    track = "TRACK"  # 轨道
-    crane = "CRANE"  # 摇臂
-    handheld = "HANDHELD"  # 手持
-    steadicam = "STEADICAM"  # 稳定器
+    static = "STATIC"  # đứng yên
+    pan = "PAN"  # Dịch ngang
+    tilt = "TILT"  # Nghiêng
+    dolly_in = "DOLLY_IN"  # Thu nhỏ (đẩy vào)
+    dolly_out = "DOLLY_OUT"  # thu xa
+    track = "TRACK"  # Ray trượt (track)
+    crane = "CRANE"  # Cẩu quay
+    handheld = "HANDHELD"  # Cầm tay
+    steadicam = "STEADICAM"  # gimble ổn định hình
     zoom_in = "ZOOM_IN"
-    zoom_out = "ZOOM_OUT"  # 拉近
+    zoom_out = "ZOOM_OUT"  # Thu nhỏ (đẩy vào)
 
 
 class AssetQualityLevel(str, Enum):
-    """资产精度等级（由低到高逐步补齐更多角度/细节图）。"""
+    """Cấp độ chi tiết tài nguyên (từ thấp đến cao, dần bổ sung thêm ảnh góc/mô tả)."""
 
     low = "LOW"
     medium = "MEDIUM"
@@ -113,7 +113,7 @@ class AssetQualityLevel(str, Enum):
 
 
 class AssetViewAngle(str, Enum):
-    """资产图片角度（用于多视图描述同一资产）。"""
+    """Góc ảnh của tài nguyên (dùng mô tả cùng một tài nguyên từ nhiều góc nhìn)."""
 
     front = "FRONT"
     left = "LEFT"
@@ -125,7 +125,7 @@ class AssetViewAngle(str, Enum):
 
 
 class ShotFrameType(str, Enum):
-    """镜头分镜帧类型：首帧/尾帧/关键帧。"""
+    """Loại khung phân cảnh của shot: khung hình đầu/khung hình cuối/khung hình chính."""
 
     first = "first"
     last = "last"
@@ -133,14 +133,14 @@ class ShotFrameType(str, Enum):
 
 
 class FileType(str, Enum):
-    """文件类型（用于素材库与时间线引用）。"""
+    """Loại tệp (dùng cho thư viện tư liệu và tham chiếu trục thời gian)."""
 
     image = "image"
     video = "video"
 
 
 class FileUsageKind(str, Enum):
-    """文件在项目业务链上的用途（file_usages.usage_kind）。"""
+    """mục đích của tệp trong chuỗi nghiệp vụ dự án(file_usages.usage_kind).（file_usages.usage_kind）。"""
 
     shot_frame = "shot_frame"
     generated_video = "generated_video"
@@ -152,41 +152,41 @@ class FileUsageKind(str, Enum):
 
 
 class TimelineClipType(str, Enum):
-    """时间线片段类型（视频/音频）。"""
+    """Loại phân mảnh trục thời gian (video/âm thanh)."""
 
     video = "video"
     audio = "audio"
 
 
 class DialogueLineMode(str, Enum):
-    """对白模式（与 `app.schemas.skills.common.DialogueLineMode` 对齐，存英文 code）。"""
+    """Chế độ thoại (đồng bộ với `app.schemas.skills.common.DialogueLineMode`, lưu code tiếng Anh)."""
 
-    dialogue = "DIALOGUE"  # 对白
-    voice_over = "VOICE_OVER"  # 旁白
-    off_screen = "OFF_SCREEN"  # 画外音
-    phone = "PHONE"  # 电话声
+    dialogue = "DIALOGUE"  # Lời thoại
+    voice_over = "VOICE_OVER"  # giọng ngoài hình
+    off_screen = "OFF_SCREEN"  # giọng ngoài khung hình
+    phone = "PHONE"  # Tiếng điện thoại
 
 
 class VFXType(str, Enum):
-    """视效类型（与 `app.schemas.skills.common.VFXType` 对齐，存英文 code）。"""
+    """Loại hiệu ứng đặc biệt (đồng bộ với `app.schemas.skills.common.VFXType`, lưu mã tiếng Anh)."""
 
-    none = "NONE"  # 无
-    particles = "PARTICLES"  # 粒子
-    volumetric_fog = "VOLUMETRIC_FOG"  # 体积雾
-    cg_double = "CG_DOUBLE"  # 数字替身
-    digital_environment = "DIGITAL_ENVIRONMENT"  # 数字场景
-    matte_painting = "MATTE_PAINTING"  # 绘景
-    fire_smoke = "FIRE_SMOKE"  # 烟火
-    water_sim = "WATER_SIM"  # 水效
-    destruction = "DESTRUCTION"  # 破碎/解算
-    energy_magic = "ENERGY_MAGIC"  # 能量/魔法
-    compositing_cleanup = "COMPOSITING_CLEANUP"  # 合成/修脏
-    slow_motion_time = "SLOW_MOTION_TIME"  # 升格/慢动作
-    other = "OTHER"  # 其他
+    none = "NONE"  # Không
+    particles = "PARTICLES"  # hạt
+    volumetric_fog = "VOLUMETRIC_FOG"  # Sương volumetric
+    cg_double = "CG_DOUBLE"  # người đại diện số
+    digital_environment = "DIGITAL_ENVIRONMENT"  # Bối cảnh số
+    matte_painting = "MATTE_PAINTING"  # Vẽ bối cảnh
+    fire_smoke = "FIRE_SMOKE"  # lửa khói
+    water_sim = "WATER_SIM"  # hiệu ứng nước
+    destruction = "DESTRUCTION"  # Vỡ vụn / mô phỏng vật lý
+    energy_magic = "ENERGY_MAGIC"  # Năng lượng / ma pháp
+    compositing_cleanup = "COMPOSITING_CLEANUP"  # Hợp thành/sửa bẩn
+    slow_motion_time = "SLOW_MOTION_TIME"  # phim tốc độ cao/hành động chậm
+    other = "OTHER"  # Khác
 
 
 class PromptCategory(str, Enum):
-    """提示词模板类别。"""
+    """Hạng mục mẫu prompt.。"""
 
     frame_head_image = "frame_head_image"
     frame_tail_image = "frame_tail_image"

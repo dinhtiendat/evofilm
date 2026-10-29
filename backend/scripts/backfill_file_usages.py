@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""一次性回填 file_usages（从现有业务表推导 project/chapter/shot）。
+"""Điền ngược file_usages một lần (suy ra project/chapter/shot từ bảng nghiệp vụ hiện có).
 
-用法（在项目根目录 backend 下）::
+Cách dùng (trong thư mục backend ở gốc dự án) ::
 
     uv run python scripts/backfill_file_usages.py
 
-需在配置好 DATABASE_URL 的环境中执行。
+Cần chạy trong môi trường đã cấu hình DATABASE_URL.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ from app.services.studio.file_usages import (
 
 async def main() -> None:
     async with async_session_maker() as session:
-        # 分镜帧
+        # Khung hình phân cảnh
         r1 = await session.execute(
             select(ShotFrameImage).where(ShotFrameImage.file_id.is_not(None))
         )
@@ -55,7 +55,7 @@ async def main() -> None:
                 source_ref=f"shot_frame_image:{row.id}",
             )
 
-        # 镜头生成视频
+        # Tạo video từ phân cảnh
         r2 = await session.execute(select(Shot).where(Shot.generated_video_file_id.is_not(None)))
         for shot in r2.scalars().all():
             fid = shot.generated_video_file_id
@@ -69,7 +69,7 @@ async def main() -> None:
                 source_ref=f"shot:{shot.id}:generated_video",
             )
 
-        # 角色图
+        # Hình nhân vật
         r3 = await session.execute(
             select(CharacterImage).where(CharacterImage.file_id.is_not(None))
         )
@@ -85,7 +85,7 @@ async def main() -> None:
                 source_ref=f"character_image:{ci.id}",
             )
 
-        # 资产图（取任意一条 project 链接）
+        # Đồ thị tài nguyên (lấy tùy ý một liên kết project)
         from app.models.studio import ActorImage, CostumeImage, PropImage, SceneImage
 
         for model, fk, first_fn, prefix in [

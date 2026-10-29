@@ -31,41 +31,41 @@ TASK_LINK_ORDER_FIELDS = {"updated_at", "created_at", "id", "status"}
 
 
 class GenerationTaskLinkBase(BaseModel):
-    """通用生成任务关联基础信息。"""
+    """Thông tin cơ sở dùng chung cho liên kết tác vụ tạo.。"""
 
-    task_id: str = Field(..., description="生成任务 ID")
-    resource_type: str = Field(..., description="生成资源类型（如 image/video/text/task_link）")
-    relation_type: str = Field(..., description="业务类型（如 prop/costume/scene 等）")
-    relation_entity_id: str = Field(..., description="关联业务实体 ID")
-    file_id: str | None = Field(None, description="关联产物文件 ID（files.id；适用于图片/音频/视频）")
-    status: str = Field(..., description="关联状态：accepted=已采用、todo=待操作、rejected=未采用")
+    task_id: str = Field(..., description="task_id: str = Field(..., description=tác vụ tạo ID) ID")
+    resource_type: str = Field(..., description="Loại tài nguyên tạo (như image/video/text/task_link)")
+    relation_type: str = Field(..., description="loại nghiệp vụ (như prop/costume/scene v.v.)")
+    relation_entity_id: str = Field(..., description="relation_entity_id: str = Field(..., description=thực thể liên kết ID) ID")
+    file_id: str | None = Field(None, description="ID tệp sản phẩm liên kết (files.id; áp dụng cho ảnh/âm thanh/video)")
+    status: str = Field(..., description="Trạng thái liên kết: accepted=đã dùng, todo=đang chờ thao tác, rejected=chưa dùng")
 
 
 class GenerationTaskLinkCreate(BaseModel):
-    """创建生成任务关联请求体。"""
+    """Thân yêu cầu tạo liên kết tác vụ.。"""
 
-    task_id: str = Field(..., description="生成任务 ID")
-    resource_type: str = Field(..., description="生成资源类型（如 image/video/text/task_link）")
-    relation_type: str = Field(..., description="业务类型（如 prop/costume/scene 等）")
-    relation_entity_id: str = Field(..., description="关联业务实体 ID")
-    file_id: str | None = Field(None, description="关联产物文件 ID（files.id；适用于图片/音频/视频）")
-    status: str = Field("todo", description="关联状态：accepted=已采用、todo=待操作、rejected=未采用；默认 todo")
+    task_id: str = Field(..., description="task_id: str = Field(..., description=tác vụ tạo ID) ID")
+    resource_type: str = Field(..., description="Loại tài nguyên tạo (như image/video/text/task_link)")
+    relation_type: str = Field(..., description="loại nghiệp vụ (như prop/costume/scene v.v.)")
+    relation_entity_id: str = Field(..., description="relation_entity_id: str = Field(..., description=thực thể liên kết ID) ID")
+    file_id: str | None = Field(None, description="ID tệp sản phẩm liên kết (files.id; áp dụng cho ảnh/âm thanh/video)")
+    status: str = Field("todo", description="Trạng thái liên kết: accepted=đã áp dụng, todo=chưa thao tác, rejected=không áp dụng; mặc định todo")
 
 
 class GenerationTaskLinkUpdate(BaseModel):
-    """更新生成任务关联请求体（不包含 is_adopted，采用状态由专用接口正向变更）。"""
+    """thân yêu cầu cập nhật liên kết tác vụ sinh (không chứa is_adopted, trạng thái áp dụng thay đổi một chiều bằng API riêng)."""
 
-    resource_type: str | None = Field(None, description="生成资源类型（如 image/video/text/task_link）")
-    relation_type: str | None = Field(None, description="业务类型（如 prop/costume/scene 等）")
-    relation_entity_id: str | None = Field(None, description="关联业务实体 ID")
-    file_id: str | None = Field(None, description="关联产物文件 ID（files.id；适用于图片/音频/视频）")
-    status: str | None = Field(None, description="关联状态：accepted=已采用、todo=待操作、rejected=未采用")
+    resource_type: str | None = Field(None, description="Loại tài nguyên tạo dựng (ví dụ image/video/text/task_link)")
+    relation_type: str | None = Field(None, description="Loại nghiệp vụ (như prop/costume/scene...)")
+    relation_entity_id: str | None = Field(None, description="relation_entity_id: str | None = Field(None, description=ID thực thể nghiệp vụ liên kết) ID")
+    file_id: str | None = Field(None, description="ID tệp sản phẩm liên kết (files.id; áp dụng cho ảnh/âm thanh/video)")
+    status: str | None = Field(None, description="Trạng thái liên kết: accepted=đã áp dụng, todo=chưa thao tác, rejected=không áp dụng")
 
 
 class GenerationTaskLinkRead(GenerationTaskLinkBase):
-    """生成任务关联返回体。"""
+    """Thân trả về liên kết tác vụ tạo.。"""
 
-    id: int = Field(..., description="关联行 ID")
+    id: int = Field(..., description="id: int = Field(..., description=ID hàng liên kết) ID")
 
     model_config = {"from_attributes": True}
 
@@ -73,17 +73,17 @@ class GenerationTaskLinkRead(GenerationTaskLinkBase):
 @router.get(
     "/tasks",
     response_model=ApiResponse[PaginatedData[TaskListItemRead]],
-    summary="全局任务列表（任务中心）",
+    summary="Danh sách tác vụ toàn cục (trung tâm tác vụ)",
 )
 async def list_tasks(
     db: AsyncSession = Depends(get_db),
-    statuses: list[TaskStatus] | None = Query(None, description="按任务状态过滤，可多选"),
-    task_kind: str | None = Query(None, description="按 task_kind 过滤"),
-    relation_type: str | None = Query(None, description="按 relation_type 过滤"),
-    relation_entity_id: str | None = Query(None, description="按 relation_entity_id 过滤"),
-    recent_seconds: int = Query(300, ge=0, le=86400, description="默认返回最近结束任务的时间窗口（秒）"),
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(20, ge=1, le=100, description="每页条数"),
+    statuses: list[TaskStatus] | None = Query(None, description="Lọc theo trạng thái tác vụ, được chọn nhiều"),
+    task_kind: str | None = Query(None, description="lọc theo task_kind"),
+    relation_type: str | None = Query(None, description="theo relation_type lọc"),
+    relation_entity_id: str | None = Query(None, description="theo relation_entity_id lọc"),
+    recent_seconds: int = Query(300, ge=0, le=86400, description="Cửa sổ thời gian (giây) mặc định trả về các tác vụ vừa kết thúc gần nhất"),
+    page: int = Query(1, ge=1, description="page: int = Query(1, ge=1, description=Số trang),"),
+    page_size: int = Query(20, ge=1, le=100, description="page_size: int = Query(20, ge=1, le=100, description=số dòng mỗi trang),"),
 ) -> ApiResponse[PaginatedData[TaskListItemRead]]:
     store = SqlAlchemyTaskStore(db)
     items, total = await store.list_task_views(
@@ -128,7 +128,7 @@ async def list_tasks(
 @router.get(
     "/tasks/{task_id}/status",
     response_model=ApiResponse[TaskStatusRead],
-    summary="查询任务状态/进度（轮询）",
+    summary="Truy vấn trạng thái/tiến độ tác vụ (truy vấn lặp)",
 )
 async def get_task_status(
     task_id: str,
@@ -155,7 +155,7 @@ async def get_task_status(
 @router.get(
     "/tasks/{task_id}/result",
     response_model=ApiResponse[TaskResultRead],
-    summary="获取任务结果",
+    summary="summary=Lấy kết quả tác vụ,",
 )
 async def get_task_result(
     task_id: str,
@@ -184,7 +184,7 @@ async def get_task_result(
 @router.post(
     "/tasks/{task_id}/cancel",
     response_model=ApiResponse[TaskCancelRead],
-    summary="请求取消任务",
+    summary="summary=Yêu cầu hủy tác vụ,",
 )
 async def cancel_task(
     task_id: str,
@@ -215,8 +215,8 @@ async def cancel_task(
 @router.patch(
     "/task-links/adopt",
     response_model=ApiResponse[TaskLinkAdoptRead],
-    summary="更新任务关联的采用状态（仅可正向变更）",
-    description="将指定任务链接的状态设为 accepted；已采用不可改为未采用。",
+    summary="Cập nhật trạng thái áp dụng liên quan tác vụ (chỉ cho phép chuyển theo chiều tiến)",
+    description="đặt trạng thái liên kết tác vụ được chỉ định thành accepted；đã áp dụng thì không đổi lại chưa áp dụng.",
 )
 async def adopt_task_link(
     body: TaskLinkAdoptRequest,
@@ -224,7 +224,7 @@ async def adopt_task_link(
 ) -> ApiResponse[TaskLinkAdoptRead]:
     target_type, entity_id = ensure_single_bind_target(body)
 
-    # 关联表已统一为 GenerationTaskLink，不再区分 project/chapter/shot，直接用 relation_entity_id 反查
+    # Bảng liên kết đã thống nhất thành GenerationTaskLink, không còn phân biệt project/chapter/shot, truy ngược trực tiếp bằng relation_entity_id
     stmt = select(GenerationTaskLink).where(
         GenerationTaskLink.task_id == body.task_id,
         GenerationTaskLink.relation_entity_id == entity_id,
@@ -238,7 +238,7 @@ async def adopt_task_link(
     if str(link.status) == "accepted":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="状态只可正向变更，已采用不可改为未采用",
+            detail="Trạng thái chỉ cho phép chuyển theo chiều tiến, đã áp dụng không thể đổi sang chưa áp dụng",
         )
 
     from app.models.task_links import GenerationTaskLinkStatus
@@ -259,19 +259,19 @@ async def adopt_task_link(
 @router.get(
     "/task-links",
     response_model=ApiResponse[PaginatedData[GenerationTaskLinkRead]],
-    summary="生成任务关联列表（分页，支持多条件过滤）",
+    summary="Danh sách liên kết tác vụ tạo (phân trang, hỗ trợ lọc đa điều kiện)",
 )
 async def list_task_links(
     db: AsyncSession = Depends(get_db),
-    resource_type: str | None = Query(None, description="按 resource_type 过滤"),
-    relation_type: str | None = Query(None, description="按 relation_type 过滤"),
-    relation_entity_id: str | None = Query(None, description="按 relation_entity_id 过滤"),
-    status: str | None = Query(None, description="按关联状态过滤（accepted/todo/rejected）"),
-    task_id: str | None = Query(None, description="按 task_id 过滤"),
-    order: str | None = Query(None, description="排序字段：updated_at/created_at/id/status"),
-    is_desc: bool = Query(True, description="是否倒序；默认 true"),
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页条数"),
+    resource_type: str | None = Query(None, description="Lọc theo resource_type"),
+    relation_type: str | None = Query(None, description="theo relation_type lọc"),
+    relation_entity_id: str | None = Query(None, description="theo relation_entity_id lọc"),
+    status: str | None = Query(None, description="status: str | None = Query(None, description=Lọc theo trạng thái liên kết (accepted/todo/rejected)),（accepted/todo/rejected）"),
+    task_id: str | None = Query(None, description="lọc theo task_id"),
+    order: str | None = Query(None, description="order: str | None = Query(None, description=Trường sắp xếp: updated_at/created_at/id/status),：updated_at/created_at/id/status"),
+    is_desc: bool = Query(True, description="Có sắp giảm dần; mặc định true"),
+    page: int = Query(1, ge=1, description="page: int = Query(1, ge=1, description=Số trang),"),
+    page_size: int = Query(10, ge=1, le=100, description="page_size: int = Query(10, ge=1, le=100, description=số dòng mỗi trang),"),
 ) -> ApiResponse[PaginatedData[GenerationTaskLinkRead]]:
     stmt = select(GenerationTaskLink)
     if resource_type is not None:
@@ -305,7 +305,7 @@ async def list_task_links(
     "/task-links",
     response_model=ApiResponse[GenerationTaskLinkRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建生成任务关联",
+    summary="summary=Tạo liên kết tác vụ tạo,",
 )
 async def create_task_link(
     body: GenerationTaskLinkCreate,
@@ -328,7 +328,7 @@ async def create_task_link(
 @router.get(
     "/task-links/{link_id}",
     response_model=ApiResponse[GenerationTaskLinkRead],
-    summary="获取生成任务关联详情",
+    summary="summary=Lấy chi tiết liên kết tác vụ tạo,",
 )
 async def get_task_link(
     link_id: int,
@@ -343,7 +343,7 @@ async def get_task_link(
 @router.patch(
     "/task-links/{link_id}",
     response_model=ApiResponse[GenerationTaskLinkRead],
-    summary="更新生成任务关联（不支持直接修改 is_adopted）",
+    summary="Cập nhật liên kết của tác vụ tạo (không hỗ trợ sửa trực tiếp is_adopted)"
 )
 async def update_task_link(
     link_id: int,
@@ -363,7 +363,7 @@ async def update_task_link(
 @router.delete(
     "/task-links/{link_id}",
     response_model=ApiResponse[None],
-    summary="删除生成任务关联",
+    summary="summary=Xóa liên kết tác vụ tạo,",
 )
 async def delete_task_link(
     link_id: int,

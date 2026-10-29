@@ -5,9 +5,9 @@ export function SettingsTab() {
   const navigate = useNavigate()
   return (
     <PlaceholderTab
-      title="项目设置"
-      description="项目基础信息、全局风格/种子、协作成员、删除项目等。"
-      actionLabel="前往系统设置"
+      title="Cài đặt dự án"
+      description="Thông tin cơ bản dự án, style/hạt giống toàn cục, thành viên cộng tác, xóa dự án v.v."
+      actionLabel="Đến cài đặt hệ thống"
       onAction={() => navigate('/settings')}
     />
   )

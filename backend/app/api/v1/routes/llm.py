@@ -1,4 +1,4 @@
-"""LLM 相关基础配置的 CRUD 接口：Provider / Model / ModelSettings。"""
+"""Giao diện CRUD cấu hình nền tảng liên quan LLM: Provider / Model / ModelSettings."""
 
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ from app.services.llm.manage import (
 
 router = APIRouter()
 
-# 列表排序允许的字段（避免注入）
+# Các trường cho phép sắp xếp danh sách (tránh tiêm)
 PROVIDER_ORDER_FIELDS = {"name", "created_at", "updated_at"}
 MODEL_ORDER_FIELDS = {"name", "category", "created_at", "updated_at"}
 DEFAULT_PAGE_SIZE = 10
@@ -54,15 +54,15 @@ MAX_PAGE_SIZE = 100
 @router.get(
     "/providers",
     response_model=ApiResponse[PaginatedData[ProviderRead]],
-    summary="列出模型供应商（分页）",
+    summary="Liệt kê nhà cung cấp mô hình (phân trang)",
 )
 async def list_providers(
     db: AsyncSession = Depends(get_db),
-    q: str | None = Query(None, description="关键字，过滤 name/description"),
-    order: str | None = Query(None, description="排序字段：name, created_at, updated_at"),
-    is_desc: bool = Query(False, description="是否倒序"),
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE, description="每页条数"),
+    q: str | None = Query(None, description="Từ khóa, lọc theo name/description"),
+    order: str | None = Query(None, description="Trường sắp xếp: name, created_at, updated_at"),
+    is_desc: bool = Query(False, description="Sắp xếp giảm dần hay không"),
+    page: int = Query(1, ge=1, description="Số trang"),
+    page_size: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE, description="Số mục mỗi trang"),
 ) -> ApiResponse[PaginatedData[ProviderRead]]:
     return await list_providers_paginated(
         db,
@@ -78,10 +78,10 @@ async def list_providers(
 @router.get(
     "/providers/supported",
     response_model=ApiResponse[list[ProviderSupportedRead]],
-    summary="列出系统支持的供应商能力",
+    summary="Liệt kê năng lực nhà cung cấp được hệ thống hỗ trợ",
 )
 async def list_supported_providers(
-    category: ModelCategoryKey | None = Query(None, description="按模型类别过滤：text/image/video"),
+    category: ModelCategoryKey | None = Query(None, description="Lọc theo hạng mục mô hình: text/image/video"),
 ) -> ApiResponse[list[ProviderSupportedRead]]:
     items = list_supported_providers_service(category=category)
     return success_response(items)
@@ -90,7 +90,7 @@ async def list_supported_providers(
 @router.get(
     "/image-generation-options",
     response_model=ApiResponse[ImageGenerationOptionsRead],
-    summary="获取当前默认图片模型的关键帧规格选项",
+    summary="Lấy tùy chọn quy cách khung hình chính của mô hình hình ảnh mặc định hiện tại",
 )
 async def get_image_generation_options(
     db: AsyncSession = Depends(get_db),
@@ -102,7 +102,7 @@ async def get_image_generation_options(
 @router.get(
     "/video-generation-options",
     response_model=ApiResponse[VideoGenerationOptionsRead],
-    summary="获取当前默认视频模型的动态比例选项",
+    summary="Lấy tùy chọn tỉ lệ động của mô hình video mặc định hiện tại",
 )
 async def get_video_generation_options(
     db: AsyncSession = Depends(get_db),
@@ -115,7 +115,7 @@ async def get_video_generation_options(
     "/providers",
     response_model=ApiResponse[ProviderRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建模型供应商",
+    summary="Tạo nhà cung cấp mô hình",
 )
 async def create_provider(
     body: ProviderCreate,
@@ -128,7 +128,7 @@ async def create_provider(
 @router.get(
     "/providers/{provider_id}",
     response_model=ApiResponse[ProviderRead],
-    summary="获取单个模型供应商",
+    summary="Lấy một nhà cung cấp mô hình",
 )
 async def get_provider(
     provider_id: str,
@@ -141,7 +141,7 @@ async def get_provider(
 @router.patch(
     "/providers/{provider_id}",
     response_model=ApiResponse[ProviderRead],
-    summary="更新模型供应商",
+    summary="Cập nhật nhà cung cấp mô hình",
 )
 async def update_provider(
     provider_id: str,
@@ -156,7 +156,7 @@ async def update_provider(
     "/providers/{provider_id}",
     response_model=ApiResponse[None],
     status_code=status.HTTP_200_OK,
-    summary="删除模型供应商",
+    summary="Xóa nhà cung cấp mô hình",
 )
 async def delete_provider(
     provider_id: str,
@@ -172,17 +172,17 @@ async def delete_provider(
 @router.get(
     "/models",
     response_model=ApiResponse[PaginatedData[ModelRead]],
-    summary="列出模型（分页）",
+    summary="Liệt kê mô hình (phân trang)",
 )
 async def list_models(
     db: AsyncSession = Depends(get_db),
-    provider_id: str | None = Query(None, description="按供应商过滤"),
-    category: ModelCategoryKey | None = Query(None, description="按模型类别过滤"),
-    q: str | None = Query(None, description="关键字，过滤 name/description"),
-    order: str | None = Query(None, description="排序字段：name, category, created_at, updated_at"),
-    is_desc: bool = Query(False, description="是否倒序"),
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE, description="每页条数"),
+    provider_id: str | None = Query(None, description="lọc theo nhà cung cấp"),
+    category: ModelCategoryKey | None = Query(None, description="Lọc theo hạng mục mô hình"),
+    q: str | None = Query(None, description="Từ khóa, lọc theo name/description"),
+    order: str | None = Query(None, description="Trường sắp xếp: name, category, created_at, updated_at"),
+    is_desc: bool = Query(False, description="Sắp xếp giảm dần hay không"),
+    page: int = Query(1, ge=1, description="Số trang"),
+    page_size: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE, description="Số mục mỗi trang"),
 ) -> ApiResponse[PaginatedData[ModelRead]]:
     return await list_models_paginated(
         db,
@@ -201,7 +201,7 @@ async def list_models(
     "/models",
     response_model=ApiResponse[ModelRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建模型",
+    summary="Tạo mô hình",
 )
 async def create_model(
     body: ModelCreate,
@@ -214,7 +214,7 @@ async def create_model(
 @router.get(
     "/models/{model_id}",
     response_model=ApiResponse[ModelRead],
-    summary="获取单个模型",
+    summary="Lấy một mô hình",
 )
 async def get_model(
     model_id: str,
@@ -227,7 +227,7 @@ async def get_model(
 @router.patch(
     "/models/{model_id}",
     response_model=ApiResponse[ModelRead],
-    summary="更新模型",
+    summary="Cập nhật mô hình",
 )
 async def update_model(
     model_id: str,
@@ -242,7 +242,7 @@ async def update_model(
     "/models/{model_id}",
     response_model=ApiResponse[None],
     status_code=status.HTTP_200_OK,
-    summary="删除模型",
+    summary="Xóa mô hình",
 )
 async def delete_model(
     model_id: str,
@@ -252,13 +252,13 @@ async def delete_model(
     return empty_response()
 
 
-# ---------- ModelSettings（单例） ----------
+# ---------- ModelSettings (đơn thể) ----------
 
 
 @router.get(
     "/model-settings",
     response_model=ApiResponse[ModelSettingsRead],
-    summary="获取模型全局设置（单例）",
+    summary="Lấy cài đặt toàn cục của mô hình (đơn lệ)",
 )
 async def get_model_settings(
     db: AsyncSession = Depends(get_db),
@@ -270,7 +270,7 @@ async def get_model_settings(
 @router.put(
     "/model-settings",
     response_model=ApiResponse[ModelSettingsRead],
-    summary="更新模型全局设置（单例）",
+    summary="Cập nhật cài đặt toàn cục của mô hình (đơn lệ)",
 )
 async def update_model_settings(
     body: ModelSettingsUpdate,

@@ -1,4 +1,4 @@
-"""文件素材相关路由：上传 / 下载 / 列表 / 详情。"""
+""" Route liên quan vật liệu tệp: tải lên / tải xuống / danh sách / chi tiết."""
 
 from __future__ import annotations
 
@@ -24,18 +24,18 @@ router = APIRouter()
 @router.get(
     "",
     response_model=ApiResponse[PaginatedData[FileRead]],
-    summary="文件列表（分页）",
+    summary="Danh sách tệp (phân trang)",
 )
 async def list_files_api(
     db: AsyncSession = Depends(get_db),
-    q: str | None = Query(None, description="关键字，过滤 name"),
+    q: str | None = Query(None, description="từ khóa, lọc name"),
     order: str | None = Query(None),
     is_desc: bool = Query(False),
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-    project_id: str | None = Query(None, description="按 file_usages 限定项目；提供后仅返回该项目下有关联记录的文件"),
-    chapter_title: str | None = Query(None, description="章节标题（精确匹配，与 project_id 联用）"),
-    shot_title: str | None = Query(None, description="镜头标题（精确匹配，与 project_id 联用）"),
+    project_id: str | None = Query(None, description="Giới hạn dự án theo file_usages; khi truyền chỉ trả về tệp có bản ghi liên kết trong dự án đó"),
+    chapter_title: str | None = Query(None, description="Tiêu đề chương (khớp chính xác, dùng cùng project_id)"),
+    shot_title: str | None = Query(None, description="Tiêu đề phân cảnh (khớp chính xác, dùng cùng project_id)"),
 ) -> ApiResponse[PaginatedData[FileRead]]:
     if chapter_title is not None or shot_title is not None:
         if not project_id:
@@ -76,16 +76,16 @@ async def list_files_api(
     "/upload",
     response_model=ApiResponse[FileRead],
     status_code=status.HTTP_201_CREATED,
-    summary="上传文件并创建 FileItem 记录",
+    summary="Tải tệp lên và tạo bản ghi FileItem",
 )
 async def upload_file_api(
-    file: UploadFile = File(..., description="要上传的二进制文件"),
+    file: UploadFile = File(..., description="file: UploadFile = File(..., description=Tệp nhị phân cần tải lên)"),
     name: str | None = None,
     db: AsyncSession = Depends(get_db),
-    project_id: str | None = Form(None, description="可选：写入 file_usages 的项目 ID"),
+    project_id: str | None = Form(None, description="Tùy chọn: ID dự án để ghi vào file_usages"),
     chapter_id: str | None = Form(None),
     shot_id: str | None = Form(None),
-    usage_kind: str | None = Form(None, description="与 project_id 同时提供时写入 file_usages"),
+    usage_kind: str | None = Form(None, description="Ghi vào file_usages khi cung cấp cùng lúc với project_id"),
     source_ref: str | None = Form(None),
 ) -> ApiResponse[FileRead]:
     obj = await upload_file(
@@ -103,7 +103,7 @@ async def upload_file_api(
 
 @router.get(
     "/{file_id}/download",
-    summary="下载文件二进制内容",
+    summary="summary=Tải xuống nội dung nhị phân của tệp,",
 )
 async def download_file_api(
     file_id: str,
@@ -115,7 +115,7 @@ async def download_file_api(
 @router.get(
     "/{file_id}/storage-info",
     response_model=ApiResponse[dict],
-    summary="获取对象存储详情（head_object）",
+    summary="summary=Lấy chi tiết object storage (head_object),（head_object）",
 )
 async def get_file_storage_info_api(
     file_id: str,
@@ -127,7 +127,7 @@ async def get_file_storage_info_api(
 @router.get(
     "/{file_id}",
     response_model=ApiResponse[FileDetailRead],
-    summary="获取文件详情（元信息 + file_usages）",
+    summary="Lấy chi tiết tệp (siêu dữ liệu + file_usages)",
 )
 async def get_file_detail(
     file_id: str,
@@ -139,7 +139,7 @@ async def get_file_detail(
 @router.patch(
     "/{file_id}",
     response_model=ApiResponse[FileRead],
-    summary="更新文件元信息",
+    summary="summary=Cập nhật siêu dữ liệu tệp,",
 )
 async def update_file_meta(
     file_id: str,
@@ -153,7 +153,7 @@ async def update_file_meta(
 @router.delete(
     "/{file_id}",
     response_model=ApiResponse[None],
-    summary="删除文件（记录 + 存储对象）",
+    summary="Xóa tệp (bản ghi + đối tượng lưu trữ)",
 )
 async def delete_file_api(
     file_id: str,

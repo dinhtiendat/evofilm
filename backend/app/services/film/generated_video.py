@@ -128,7 +128,7 @@ async def load_provider_config_by_model(db: AsyncSession, model: Model) -> Provi
 
 
 def _normalize_optional_text(value: str | None) -> str | None:
-    """归一化可选文本参数：空字符串视为未设置。"""
+    """Chuẩn hóa tham số văn bản tùy chọn: chuỗi rỗng coi là chưa đặt."""
     normalized = (value or "").strip()
     return normalized or None
 
@@ -136,7 +136,7 @@ def _normalize_optional_text(value: str | None) -> str | None:
 async def resolve_effective_video_options(
     requested_ratio: str | None,
 ) -> str:
-    """解析视频比例：请求参数为唯一主参数。"""
+    """Phân tích tỷ lệ video: tham số yêu cầu là tham số chính duy nhất."""
     req_ratio = _normalize_optional_text(requested_ratio)
     if not req_ratio:
         raise HTTPException(status_code=400, detail="ratio is required")

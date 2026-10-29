@@ -83,13 +83,13 @@ function snapButtonPosition(position: { x: number; y: number }) {
 function formatElapsedMs(elapsedMs?: number | null): string | null {
   if (elapsedMs == null || elapsedMs < 0) return null
   const totalSeconds = Math.floor(elapsedMs / 1000)
-  if (totalSeconds < 60) return `${totalSeconds} 秒`
+  if (totalSeconds < 60) return `${totalSeconds} giây`
   const minutes = Math.floor(totalSeconds / 60)
   const seconds = totalSeconds % 60
-  if (minutes < 60) return seconds > 0 ? `${minutes} 分 ${seconds} 秒` : `${minutes} 分`
+  if (minutes < 60) return seconds > 0 ? `${minutes} phút ${seconds} giây` : `${minutes} phút`
   const hours = Math.floor(minutes / 60)
   const remainMinutes = minutes % 60
-  return remainMinutes > 0 ? `${hours} 小时 ${remainMinutes} 分` : `${hours} 小时`
+  return remainMinutes > 0 ? `${hours} giờ ${remainMinutes} phút` : `${hours} giờ`
 }
 
 function formatStartedAt(startedAtTs?: number | null): string | null {
@@ -105,13 +105,13 @@ function formatStartedAt(startedAtTs?: number | null): string | null {
 }
 
 function taskTone(task: TaskUiItem): { color: string; label: string } {
-  if (task.cancelRequested) return { color: 'orange', label: '取消中' }
-  if (task.status === 'cancelled') return { color: 'orange', label: '已取消' }
-  if (task.status === 'failed') return { color: 'red', label: '失败' }
-  if (task.status === 'succeeded') return { color: 'green', label: '已完成' }
-  if (task.status === 'streaming') return { color: 'cyan', label: '处理中' }
-  if (task.status === 'running') return { color: 'blue', label: '运行中' }
-  return { color: 'default', label: '排队中' }
+  if (task.cancelRequested) return { color: 'orange', label: 'Đang hủy' }
+  if (task.status === 'cancelled') return { color: 'orange', label: 'Đã hủy' }
+  if (task.status === 'failed') return { color: 'red', label: 'Thất bại' }
+  if (task.status === 'succeeded') return { color: 'green', label: 'Đã hoàn thành' }
+  if (task.status === 'streaming') return { color: 'cyan', label: 'Đang xử lý' }
+  if (task.status === 'running') return { color: 'blue', label: 'Đang chạy' }
+  return { color: 'default', label: 'đang xếp hàng' }
 }
 
 export function TaskCenter() {
@@ -257,10 +257,10 @@ export function TaskCenter() {
         !['pending', 'running', 'streaming', 'succeeded', 'failed', 'cancelled'].includes(task.status),
     )
     return [
-      { key: 'current', title: currentTasks.length > 0 ? `当前页 ${currentTasks.length}` : null, tasks: currentTasks },
-      { key: 'active', title: activeTasks.length > 0 ? `运行中 ${activeTasks.length}` : null, tasks: activeTasks },
-      { key: 'settled', title: settledTasks.length > 0 ? `最近结束 ${settledTasks.length}` : null, tasks: settledTasks },
-      { key: 'all', title: otherTasks.length > 0 ? `全部 ${otherTasks.length}` : null, tasks: otherTasks },
+      { key: 'current', title: currentTasks.length > 0 ? `Trang hiện tại ${currentTasks.length}` : null, tasks: currentTasks },
+      { key: 'active', title: activeTasks.length > 0 ? `Đang chạy ${activeTasks.length}` : null, tasks: activeTasks },
+      { key: 'settled', title: settledTasks.length > 0 ? `Vừa kết thúc ${settledTasks.length}` : null, tasks: settledTasks },
+      { key: 'all', title: otherTasks.length > 0 ? `Tất cả ${otherTasks.length}` : null, tasks: otherTasks },
     ].filter((group) => group.tasks.length > 0)
   }, [activeContexts, effectiveScopeFilter, pagedTasks])
   const panelStyle = useMemo(() => {
@@ -349,12 +349,12 @@ export function TaskCenter() {
           style={{ left: panelStyle.left, top: panelStyle.top, width: panelStyle.width }}
         >
           <Card
-            title="任务中心"
+            title="Trung tâm tác vụ"
             size="small"
             className="shadow-lg"
             extra={
               <Button size="small" type="text" onClick={() => setOpen(false)}>
-                收起
+                Thu gọn
               </Button>
             }
             bodyStyle={{ maxHeight: 304, overflow: 'auto' }}
@@ -368,17 +368,17 @@ export function TaskCenter() {
                   setPage(1)
                 }}
                 options={[
-                  { label: '智能', value: 'auto' },
-                  { label: `当前页 ${summaryCounts.current}`, value: 'current' },
-                  { label: `运行中 ${summaryCounts.active}`, value: 'active' },
-                  { label: `最近结束 ${summaryCounts.settled}`, value: 'settled' },
-                  { label: '全部', value: 'all' },
+                  { label: 'Thông minh', value: 'auto' },
+                  { label: `Trang hiện tại ${summaryCounts.current}`, value: 'current' },
+                  { label: `Đang chạy ${summaryCounts.active}`, value: 'active' },
+                  { label: `Kết thúc gần đây ${summaryCounts.settled}`, value: 'settled' },
+                  { label: 'Tất cả', value: 'all' },
                 ]}
               />
               <Select
                 size="small"
                 allowClear
-                placeholder="按任务类型筛选"
+                placeholder="Lọc theo loại tác vụ"
                 value={taskKindFilter}
                 onChange={(value) => {
                   setTaskKindFilter(value)
@@ -387,11 +387,11 @@ export function TaskCenter() {
                 options={taskKindOptions}
               />
               <div className="text-[11px] text-gray-400">
-                默认优先：当前页 → 运行中 → 最近结束 → 全部 · 每页最多 3 条
+                Ưu tiên mặc định: trang hiện tại → đang chạy → kết thúc gần nhất → tất cả · mỗi trang tối đa 3 mục
               </div>
             </div>
             {filteredTasks.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="当前没有任务记录" />
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Hiện chưa có bản ghi tác vụ" />
             ) : (
               <div className="space-y-3">
                 {groupedTasks.map((group) => (
@@ -414,12 +414,12 @@ export function TaskCenter() {
                               <div className="font-medium text-sm truncate">{task.title}</div>
                               {task.sourceLabel ? <div className="mt-1 text-xs text-gray-500 truncate">{task.sourceLabel}</div> : null}
                               <div className="mt-1 flex flex-wrap gap-2 text-xs text-gray-500">
-                                {highlighted ? <Tag color="blue">当前页面</Tag> : null}
+                                {highlighted ? <Tag color="blue">Trang hiện tại</Tag> : null}
                                 <Tag color={tone.color}>{tone.label}</Tag>
-                                <span>进度 {Math.max(0, Math.min(100, Math.round(task.progress)))}%</span>
-                                {elapsed ? <span>耗时 {elapsed}</span> : null}
+                                <span>Tiến độ {Math.max(0, Math.min(100, Math.round(task.progress)))}%</span>
+                                {elapsed ? <span>thời gian {elapsed}</span> : null}
                               </div>
-                              {startedAt ? <div className="mt-1 text-xs text-gray-400">开始于 {startedAt}</div> : null}
+                              {startedAt ? <div className="mt-1 text-xs text-gray-400">Bắt đầu lúc {startedAt}</div> : null}
                             </div>
                             <div className="flex flex-col gap-2">
                               {task.onNavigate ? (
@@ -431,7 +431,7 @@ export function TaskCenter() {
                                     setOpen(false)
                                   }}
                                 >
-                                  查看
+                                  Xem
                                 </Button>
                               ) : null}
                               {task.onCancel ? (
@@ -442,7 +442,7 @@ export function TaskCenter() {
                                   disabled={task.cancelRequested}
                                   onClick={task.onCancel}
                                 >
-                                  {task.cancelRequested ? '正在取消' : '取消'}
+                                  {task.cancelRequested ? 'Đang hủy' : 'hủy'}
                                 </Button>
                               ) : task.status === 'pending' || task.status === 'running' || task.status === 'streaming' ? (
                                 <Button
@@ -454,7 +454,7 @@ export function TaskCenter() {
                                     void cancelTask(task.taskId)
                                   }}
                                 >
-                                  {task.cancelRequested ? '正在取消' : '取消'}
+                                  {task.cancelRequested ? 'Đang hủy' : 'hủy'}
                                 </Button>
                               ) : null}
                             </div>
@@ -516,7 +516,7 @@ export function TaskCenter() {
           className="shadow-lg pointer-events-auto touch-none select-none"
         >
           <span className="inline-flex items-center gap-1">
-            <span>{open ? '收起任务' : '任务中心'}</span>
+            <span>{open ? 'Thu gọn tác vụ' : 'Trung tâm tác vụ'}</span>
             <PushpinOutlined className="text-[11px] opacity-70" />
           </span>
         </Button>

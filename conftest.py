@@ -1,8 +1,8 @@
-"""仓库根级 pytest 入口适配。
+"""Thích ứng lối vào pytest ở cấp gốc repository.
 
-作用：
-- 从仓库根目录运行 pytest 时，自动将 backend/ 加入 sys.path
-- 避免只能在 backend/ 目录内执行测试配置才生效
+Tác dụng:
+- khi chạy pytest từ thư mục gốc repo, tự động thêm backend/ vào sys.path
+- Tránh việc cấu hình kiểm thử chỉ hiệu lực khi chạy trong thư mục backend/
 """
 
 from __future__ import annotations
@@ -22,18 +22,18 @@ if str(BACKEND_DIR) not in sys.path:
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    """根目录 pytest 运行时补齐 asyncio marker。"""
+    """Bù marker asyncio khi chạy pytest ở thư mục gốc."""
     config.addinivalue_line("markers", "asyncio: mark test as asyncio coroutine")
 
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_pyfunc_call(pyfuncitem: pytest.Function) -> bool | None:
-    """在仓库根目录运行时，为 async 测试提供轻量执行器。
+    """Khi chạy ở thư mục gốc kho, cung cấp bộ thực thi nhẹ cho kiểm thử async.
 
-    说明：
-    - backend/ 目录下通常会使用更完整的测试环境；
-    - 根目录 `uv run pytest backend/tests ...` 时，可能没有安装 pytest-asyncio；
-    - 这里用 asyncio.run 兜底执行 coroutine test，避免 async 用例被跳过。
+    Giải thích:
+    - Thư mục backend/ thường dùng môi trường kiểm thử đầy đủ hơn;
+    - Khi chạy `uv run pytest backend/tests ...` ở thư mục gốc, có thể pytest-asyncio chưa được cài;
+    - Dùng asyncio.run làm dự phòng để thực thi coroutine test, tránh ca không đồng bộ bị bỏ qua.
     """
 
     if not inspect.iscoroutinefunction(pyfuncitem.obj):

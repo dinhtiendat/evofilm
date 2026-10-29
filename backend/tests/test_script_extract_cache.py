@@ -1,4 +1,4 @@
-"""script-processing extract 缓存测试。"""
+"""Test cache extract của script-processing."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ def _build_result() -> StudioScriptExtractionDraft:
     return StudioScriptExtractionDraft(
         project_id="project-1",
         chapter_id="chapter-1",
-        script_text="测试文本",
+        script_text="Văn bản thử nghiệm",
         characters=[],
         scenes=[],
         props=[],

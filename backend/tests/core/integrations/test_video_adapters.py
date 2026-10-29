@@ -1,4 +1,4 @@
-"""视频 integrations：httpx MockTransport 单测。"""
+"""integrations video: unit test httpx MockTransport."""
 
 from __future__ import annotations
 
@@ -80,7 +80,7 @@ async def test_volcengine_video_create_and_get(monkeypatch: pytest.MonkeyPatch) 
     _patch_httpx_client(monkeypatch, httpx.MockTransport(handler))
     cfg = ProviderConfig(provider="volcengine", api_key="ak-test")
     inp = VideoGenerationInput.model_validate(
-        {"prompt": "舞", "ratio": "9:16", "seconds": 8, "seed": 7, "watermark": True}
+        {"prompt": "vũ", "ratio": "9:16", "seconds": 8, "seed": 7, "watermark": True}
     )
     tid = await VolcengineVideoApiAdapter().create_contents_task(cfg=cfg, input_=inp, timeout_s=30.0)
     assert tid == "t-1"
@@ -90,11 +90,11 @@ async def test_volcengine_video_create_and_get(monkeypatch: pytest.MonkeyPatch) 
 
 
 def test_video_input_seed_bounds_validation() -> None:
-    # 边界值应可通过：-1 以及 uint32 最大值
+    # Giá trị biên phải đạt: -1 và giá trị lớn nhất của uint32
     VideoGenerationInput.model_validate({"prompt": "ok", "ratio": "16:9", "seed": -1})
     VideoGenerationInput.model_validate({"prompt": "ok", "ratio": "16:9", "seed": 4294967295})
 
-    # 越界值应被拒绝：小于 -1 或大于 uint32 最大值
+    # Giá trị vượt ngoài phạm vi phải bị từ chối: nhỏ hơn -1 hoặc lớn hơn giá trị tối đa của uint32
     with pytest.raises(ValidationError):
         VideoGenerationInput.model_validate({"prompt": "bad", "ratio": "16:9", "seed": -2})
     with pytest.raises(ValidationError):

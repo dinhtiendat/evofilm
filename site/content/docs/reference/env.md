@@ -1,12 +1,12 @@
 ---
-title: "环境变量"
+title: "Biến môi trường"
 weight: 1
 ---
 
-建议按以下维度整理：
+Khuyến nghị sắp xếp theo các chiều sau:
 
-- 前端构建与运行时变量
-- 后端数据库与模型配置
-- Compose 部署变量
+- Biến build và runtime phía trước
+- Cấu hình CSDL và mô hình phía sau
+- Biến triển khai Compose
 
-第一版可以先以 `.env.example` 为基础逐步补充。
+Phiên bản đầu có thể bắt đầu từ `.env.example` rồi bổ sung dần.

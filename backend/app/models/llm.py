@@ -1,7 +1,7 @@
-"""LLM/供应商/Agent/模型配置相关的数据库模型。
+"""Mô hình CSDL liên quan đến cấu hình LLM/nhà cung cấp/Agent/mô hình.
 
-注释约定：
-- 只解释约束/设计取舍（例如单例表、敏感字段、级联策略），避免重复字段名含义。
+Quy ước chú thích:：
+- Chỉ giải thích ràng buộc/lựa chọn thiết kế (ví dụ bảng singleton, trường nhạy cảm, chiến lược cascade), tránh lặp lại ý nghĩa tên trường.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from app.models.base import TimestampMixin
 
 
 class AgentTypeKey(str, Enum):
-    """Agent 类型（用于工作流编排/能力分类）。"""
+    """Loại Agent (dùng để điều phối quy trình / phân loại năng lực)."""
 
     plot = "plot"
     character = "character"
@@ -27,7 +27,7 @@ class AgentTypeKey(str, Enum):
 
 
 class ProviderStatus(str, Enum):
-    """供应商启用状态。"""
+    """Trạng thái kích hoạt nhà cung cấp.。"""
 
     active = "active"
     testing = "testing"
@@ -35,7 +35,7 @@ class ProviderStatus(str, Enum):
 
 
 class ModelCategoryKey(str, Enum):
-    """模型类别：文本/图片/视频。"""
+    """Hạng mục mô hình: văn bản/ảnh/video."""
 
     text = "text"
     image = "image"
@@ -43,7 +43,7 @@ class ModelCategoryKey(str, Enum):
 
 
 class LogLevel(str, Enum):
-    """全局日志级别。"""
+    """Cấp nhật ký toàn cục.。"""
 
     debug = "debug"
     info = "info"
@@ -52,39 +52,39 @@ class LogLevel(str, Enum):
 
 
 class Provider(Base, TimestampMixin):
-    """模型供应商配置。
+    """Cấu hình nhà cung cấp mô hình.。
 
-    安全提示：
-    - `api_key` / `api_secret` 属敏感信息；如后续接入审计/日志，避免明文输出。
+    Lời nhắc an toàn:：
+    - `api_key` / `api_secret` là thông tin nhạy cảm; nếu sau này tích hợp kiểm toán/nhật ký, tránh in ra dưới dạng văn bản thuần.
     """
 
     __tablename__ = "providers"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="供应商 ID")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, comment="供应商名称")
-    base_url: Mapped[str] = mapped_column(String(1024), nullable=False, comment="文本/通用 API Base URL")
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="id: Mapped[str] = mapped_column(String(64), primary_key=True, comment=ID nhà cung cấp) ID")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, comment=Tên nhà cung cấp)")
+    base_url: Mapped[str] = mapped_column(String(1024), nullable=False, comment="Base URL API văn bản / dùng chung")
     image_base_url: Mapped[str | None] = mapped_column(
         String(1024),
         nullable=True,
         default=None,
-        comment="图片能力 API Base URL（可选覆盖）",
+        comment="Base URL của API khả năng tạo ảnh (có thể ghi đè tùy chọn)",
     )
     video_base_url: Mapped[str | None] = mapped_column(
         String(1024),
         nullable=True,
         default=None,
-        comment="视频能力 API Base URL（可选覆盖）",
+        comment="Base URL của API khả năng tạo video (có thể ghi đè tùy chọn)",
     )
-    api_key: Mapped[str] = mapped_column(String(4096), nullable=False, default="", comment="API Key（敏感）")
-    api_secret: Mapped[str] = mapped_column(String(4096), nullable=False, default="", comment="API Secret（敏感）")
-    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="说明")
+    api_key: Mapped[str] = mapped_column(String(4096), nullable=False, default="", comment="API Key（api_key: Mapped[str] = mapped_column(String(4096), nullable=False, default=, comment=API Key (nhạy cảm))）")
+    api_secret: Mapped[str] = mapped_column(String(4096), nullable=False, default="", comment="API Secret（api_secret: Mapped[str] = mapped_column(String(4096), nullable=False, default=, comment=API Secret (nhạy cảm))）")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="description: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả)")
     status: Mapped[ProviderStatus] = mapped_column(
         String(32),
         nullable=False,
         default=ProviderStatus.testing,
-        comment="状态",
+        comment="comment=Trạng thái,",
     )
-    created_by: Mapped[str] = mapped_column(String(64), nullable=False, default="", comment="创建人")
+    created_by: Mapped[str] = mapped_column(String(64), nullable=False, default="", comment="created_by: Mapped[str] = mapped_column(String(64), nullable=False, default=, comment=Người tạo)")
 
     models: Mapped[list["Model"]] = relationship(
         back_populates="provider",
@@ -99,23 +99,23 @@ class Provider(Base, TimestampMixin):
 
 
 class Model(Base, TimestampMixin):
-    """具体模型实例（绑定供应商、类别与参数）。"""
+    """Thảo luận cụ thể của mô hình (gắn với nhà cung cấp, hạng mục và tham số)."""
 
     __tablename__ = "models"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="模型 ID")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, comment="模型名称")
-    category: Mapped[ModelCategoryKey] = mapped_column(String(16), nullable=False, index=True, comment="模型类别")
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="id: Mapped[str] = mapped_column(String(64), primary_key=True, comment=ID mô hình) ID")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, comment=Tên mô hình)")
+    category: Mapped[ModelCategoryKey] = mapped_column(String(16), nullable=False, index=True, comment="category: Mapped[ModelCategoryKey] = mapped_column(String(16), nullable=False, index=True, comment=Hạng mục mô hình)")
     provider_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("providers.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属供应商 ID",
+        comment="comment=ID nhà cung cấp sở thuộc, ID",
     )
-    params: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict, comment="模型参数（JSON）")
-    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="说明")
-    created_by: Mapped[str] = mapped_column(String(64), nullable=False, default="", comment="创建人")
+    params: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict, comment="params: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict, comment=Tham số mô hình (JSON))（JSON）")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="description: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Mô tả)")
+    created_by: Mapped[str] = mapped_column(String(64), nullable=False, default="", comment="created_by: Mapped[str] = mapped_column(String(64), nullable=False, default=, comment=Người tạo)")
 
     provider: Mapped["Provider"] = relationship(back_populates="models")
 
@@ -125,36 +125,36 @@ class Model(Base, TimestampMixin):
 
 
 class ModelSettings(Base):
-    """模型管理全局设置（单例表）。
+    """Cài đặt toàn cục quản lý mô hình (bảng đơn thể).
 
-    说明：
-    - 通过“单表单行”实现全局默认值；应用层通常只读/更新 id=1。
-    - 外键使用 `SET NULL`，避免删除模型时导致设置表不可更新。
+    Giải thích:：
+    - Thiết lập giá trị mặc định toàn cục bằng "một bảng một dòng"; tầng ứng dụng thường chỉ đọc/cập nhật id=1.
+    - Khóa ngoại dùng `SET NULL`, tránh việc xóa mô hình làm bảng cấu hình không cập nhật được.
     """
 
     __tablename__ = "model_settings"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="设置行 ID（通常为 1）")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="ID dòng thiết lập (thường là 1)")
     default_text_model_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("models.id", ondelete="SET NULL"),
         nullable=True,
-        comment="默认文本模型 ID",
+        comment="comment=ID mô hình văn bản mặc định, ID",
     )
     default_image_model_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("models.id", ondelete="SET NULL"),
         nullable=True,
-        comment="默认图片模型 ID",
+        comment="comment=ID mô hình ảnh mặc định, ID",
     )
     default_video_model_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("models.id", ondelete="SET NULL"),
         nullable=True,
-        comment="默认视频模型 ID",
+        comment="comment=ID mô hình video mặc định, ID",
     )
-    api_timeout: Mapped[int] = mapped_column(Integer, nullable=False, default=30, comment="API 超时（秒）")
-    log_level: Mapped[LogLevel] = mapped_column(String(16), nullable=False, default=LogLevel.info, comment="日志级别")
+    api_timeout: Mapped[int] = mapped_column(Integer, nullable=False, default=30, comment="Hết thời gian API (giây)")
+    log_level: Mapped[LogLevel] = mapped_column(String(16), nullable=False, default=LogLevel.info, comment="log_level: Mapped[LogLevel] = mapped_column(String(16), nullable=False, default=LogLevel.info, comment=Cấp nhật ký)")
 
     default_text_model: Mapped["Model | None"] = relationship(foreign_keys=[default_text_model_id])
     default_image_model: Mapped["Model | None"] = relationship(foreign_keys=[default_image_model_id])

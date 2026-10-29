@@ -1,4 +1,4 @@
-"""通用 Agent 基类：固化 PromptTemplate + 输出模型，调用 LLM 并解析输出。"""
+"""Lớp base Agent chung: cố định PromptTemplate + mô hình đầu ra, gọi LLM và phân tích kết quả."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 def _extract_json_from_text(raw: str) -> str:
-    """从 LLM 原始输出中剥离 markdown 代码块并提取 JSON 字符串。"""
+    """Tách khối mã markdown khỏi đầu ra thô của LLM và lấy chuỗi JSON."""
     text = raw.strip()
     match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", text)
     if match:
@@ -28,7 +28,7 @@ def _extract_json_from_text(raw: str) -> str:
 
 
 def _extract_first_json_object(text: str) -> str | None:
-    """尽量从文本中提取第一个 JSON 对象/数组片段。"""
+    """Cố gắng lấy đoạn JSON object/array đầu tiên từ văn bản."""
 
     s = text.strip()
     for opener, closer in (("{", "}"), ("[", "]")):
@@ -40,13 +40,13 @@ def _extract_first_json_object(text: str) -> str | None:
 
 
 def _quote_unquoted_object_keys(text: str) -> str:
-    """为常见 JSON-like 输出补齐未加引号的对象键名。"""
+    """Bổ sung dấu nháy cho các tên key chưa có nháy trong output dạng JSON phổ biến."""
     pattern = re.compile(r'([{,]\s*)([A-Za-z_][A-Za-z0-9_-]*)(\s*:)')
     return pattern.sub(r'\1"\2"\3', text)
 
 
 def _replace_json_literals_for_python(text: str) -> str:
-    """将 JSON 字面量替换为 Python 字面量，便于 ast.literal_eval 解析。"""
+    """Thay các hằng JSON bằng hằng Python để ast.literal_eval phân tích được."""
     text = re.sub(r"(?<=[:\[,{\s])true(?=[,\]}\s])", "True", text)
     text = re.sub(r"(?<=[:\[,{\s])false(?=[,\]}\s])", "False", text)
     text = re.sub(r"(?<=[:\[,{\s])null(?=[,\]}\s])", "None", text)
@@ -54,17 +54,17 @@ def _replace_json_literals_for_python(text: str) -> str:
 
 
 def _repair_json_like(text: str) -> str:
-    """修复 LLM 常见 JSON 格式问题。"""
+    """Sửa các lỗi định dạng JSON thường gặp của LLM."""
     repaired = text.strip()
     repaired = repaired.replace("“", '"').replace("”", '"').replace("‘", "'").replace("’", "'")
     repaired = _quote_unquoted_object_keys(repaired)
-    # 去除尾逗号：{"a":1,} / [1,2,]
+    # Bỏ dấu phẩy cuối: {"a":1,} / [1,2,]
     repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
     return repaired
 
 
 def _parse_python_call_kwargs(text: str) -> dict[str, Any] | None:
-    """解析 `Foo(a=1, b='x')` / `dict(a=1)` 这类 kwargs 风格输出。"""
+    """Phân tích các đầu ra dạng kwargs như `Foo(a=1, b='x')` / `dict(a=1)`."""
     try:
         expr = ast.parse(text, mode="eval")
     except Exception:
@@ -85,7 +85,7 @@ def _parse_python_call_kwargs(text: str) -> dict[str, Any] | None:
 
 
 def _load_json_like(text: str) -> Any:
-    """尽量解析 LLM 返回的 JSON / JSON-like 文本。"""
+    """Cố gắng phân tích JSON / văn bản dạng JSON do LLM trả về."""
 
     candidates: list[str] = []
     stripped = text.strip()
@@ -131,7 +131,7 @@ def _load_json_like(text: str) -> Any:
 
 
 class AgentBase(ABC, Generic[T]):
-    """通用 Agent 基类：子类固化 prompt_template 与 output_model。"""
+    """Lớp base Agent chung: lớp con cố định prompt_template và output_model."""
 
     enable_thinking: bool = True
 
@@ -160,15 +160,15 @@ class AgentBase(ABC, Generic[T]):
 
     @property
     def system_prompt(self) -> str:
-        """子类可覆盖：系统提示词（作为 system message / 高优先级指令）。"""
+        """Lớp con có thể ghi đè: prompt hệ thống (đóng vai message system / chỉ thị ưu tiên cao)."""
         return ""
 
     def _normalize(self, data: dict[str, Any]) -> dict[str, Any]:
-        """子类可覆盖：将 LLM 返回的 dict 规范化为 output_model 所需结构。默认 identity。"""
+        """Lớp con có thể ghi đè: chuẩn hóa dict do LLM trả về thành cấu trúc mà output_model cần. Mặc định là identity."""
         return data
 
     def render_prompt(self, **kwargs: Any) -> str:
-        """渲染完整提示词（变量填充后的最终字符串）。"""
+        """Kết xuất prompt đầy đủ (chuỗi cuối cùng sau khi điền biến)."""
 
         prompt = self.prompt_template
         try:
@@ -176,8 +176,8 @@ class AgentBase(ABC, Generic[T]):
         except KeyError as e:
             missing = str(e).strip("'")
             raise ValueError(
-                f"render_prompt 缺少变量: {missing}. "
-                f"需要: {list(prompt.input_variables)}"
+                f"render_prompt thiếu biến: {missing}. "
+                f"Cần: {list(prompt.input_variables)}"
             ) from e
 
         sys = (self.system_prompt or "").strip()
@@ -186,19 +186,19 @@ class AgentBase(ABC, Generic[T]):
         return f"{sys}\n\n{user_prompt}".strip()
 
     def _render_user_prompt(self, **kwargs: Any) -> str:
-        """仅渲染用户提示词（不包含 system_prompt）。"""
+        """Chỉ kết xuất prompt người dùng (không gồm system_prompt)."""
         prompt = self.prompt_template
         try:
             return prompt.format(**kwargs)
         except KeyError as e:
             missing = str(e).strip("'")
             raise ValueError(
-                f"render_prompt 缺少变量: {missing}. "
-                f"需要: {list(prompt.input_variables)}"
+                f"render_prompt thiếu biến: {missing}. "
+                f"Cần: {list(prompt.input_variables)}"
             ) from e
 
     def _as_messages_input(self, **kwargs: Any) -> dict[str, Any]:
-        """将 kwargs 渲染为 LangChain agent 所需的 messages 输入形状。"""
+        """Đổi kwargs thành dạng input messages mà agent LangChain cần."""
         return {
             "messages": [
                 {
@@ -211,14 +211,14 @@ class AgentBase(ABC, Generic[T]):
     @staticmethod
     def _last_message_content(state: Any) -> str:
         """
-        从 create_agent 返回的 state 中提取最后一条消息的 content。
-        若不是标准 state，则尽量退化为 str(state)。
+        Lấy content của tin nhắn cuối cùng từ state do create_agent trả về.
+        Nếu không phải state chuẩn, cố gắng rút về str(state).
         """
         if isinstance(state, dict):
             messages = state.get("messages")
             if isinstance(messages, list) and messages:
                 last = messages[-1]
-                # 兼容 dict message 与 BaseMessage
+                # Tương thích cả dict message lẫn BaseMessage
                 if isinstance(last, dict):
                     content = last.get("content")
                     if content is not None:
@@ -231,8 +231,8 @@ class AgentBase(ABC, Generic[T]):
 
     def _extract_structured_response(self, state: Any) -> Any:
         """
-        从 create_agent 返回的 state 中提取 structured_response。
-        LangChain 文档约定：structured response 放在 state['structured_response']。
+        Lấy structured_response từ state do create_agent trả về.
+        Theo quy ước trong tài liệu LangChain: structured response nằm ở state['structured_response'].
         """
         if isinstance(state, dict) and "structured_response" in state:
             return state.get("structured_response")
@@ -240,10 +240,10 @@ class AgentBase(ABC, Generic[T]):
 
     def create_agent(self, *, structured_output: type[BaseModel] | None = None) -> Runnable:
         """
-        生成可执行 runnable：
-        - 优先使用 `langchain.agents.create_agent`，把 `system_prompt` 作为系统提示词传入
-        - structured_output 不为 None 时，通过 `response_format=ToolStrategy(structured_output)` 让模型输出结构化结果
-        - 若当前环境未安装 langchain，则降级为：RunnableLambda(render_user_prompt) | model（structured 时用 with_structured_output）
+        Tạo runnable có thể chạy:
+        - Ưu tiên dùng `langchain.agents.create_agent`, truyền `system_prompt` làm prompt hệ thống
+        - Khi structured_output khác None, dùng `response_format=ToolStrategy(structured_output)` để model ra kết quả có cấu trúc
+        - Nếu môi trường chưa cài langchain, hạ cấp về: RunnableLambda(render_user_prompt) | model (với structured thì dùng with_structured_output)
         """
 
         # --- preferred path: langchain create_agent + ToolStrategy ---
@@ -258,7 +258,7 @@ class AgentBase(ABC, Generic[T]):
                 system_prompt=(self.system_prompt or ""),
                 **kwargs,
             )
-            # create_agent 接受 {"messages": [...]} 作为输入
+            # create_agent nhận {"messages": [...]} làm input
             return RunnableLambda(lambda inputs: self._as_messages_input(**inputs)) | cast(Runnable, agent)
         except Exception:
             # --- fallback path: no langchain available ---
@@ -275,12 +275,12 @@ class AgentBase(ABC, Generic[T]):
                             ),
                         )
                     except NotImplementedError:
-                        # 某些 BaseChatModel 子类（如测试 mock）不实现 with_structured_output；退回原始输出解析。
+                        # Một số lớp con của BaseChatModel (như mock trong test) không có with_structured_output; quay về phân tích đầu ra thô.
                         pass
             return RunnableLambda(lambda inputs: self._render_user_prompt(**inputs)) | llm
 
     def _build_structured_chain(self) -> Runnable | None:
-        """构建 structured output chain（优先 ToolStrategy；缺 langchain 时退回 with_structured_output）。"""
+        """Dựng structured output chain (ưu tiên ToolStrategy; thiếu langchain thì dùng with_structured_output)."""
         return self.create_agent(structured_output=self.output_model)
 
     def _get_structured_chain(self) -> Runnable | None:
@@ -290,19 +290,19 @@ class AgentBase(ABC, Generic[T]):
         return self._structured_chain
 
     def run(self, **kwargs: Any) -> str:
-        """调用 agent，返回原始字符串（通常为 JSON）。"""
+        """Gọi agent, trả về chuỗi thô (thường là JSON)."""
         chain: Runnable = self.create_agent()
         result = chain.invoke(kwargs)
         return self._last_message_content(result)
 
     async def arun(self, **kwargs: Any) -> str:
-        """异步调用 agent。"""
+        """Gọi agent async."""
         chain: Runnable = self.create_agent()
         result = await chain.ainvoke(kwargs)
         return self._last_message_content(result)
 
     def format_output(self, raw: str) -> T:
-        """将 agent 原始输出解析为结构化结果（JSON → 规范化 → Pydantic）。"""
+        """Phân tích đầu ra thô của agent thành kết quả có cấu trúc (JSON → chuẩn hóa → Pydantic)."""
         output_model = self.output_model
         json_str = _extract_json_from_text(raw)
         data = _load_json_like(json_str)
@@ -311,7 +311,7 @@ class AgentBase(ABC, Generic[T]):
         return output_model.model_validate(data)
 
     def extract(self, **kwargs: Any) -> T:
-        """执行：优先 with_structured_output，否则 run + format_output。"""
+        """Thực thi: ưu tiên with_structured_output, không thì run + format_output."""
         chain = self._get_structured_chain()
         if chain is not None:
             try:
@@ -327,7 +327,7 @@ class AgentBase(ABC, Generic[T]):
         return self.format_output(self.run(**kwargs))
 
     async def aextract(self, **kwargs: Any) -> T:
-        """异步执行。"""
+        """Thực thi async."""
         chain = self._get_structured_chain()
         if chain is not None:
             try:

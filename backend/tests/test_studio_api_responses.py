@@ -1,4 +1,4 @@
-"""Studio 主链路接口响应壳测试：projects / chapters / shots。"""
+"""Test vỏ phản hồi của đường link chính Studio: projects / chapters / shots."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from app.models.studio import (
 
 
 class _FakeStudioDB:
-    """最小 Studio DB 替身：仅覆盖项目/章节/镜头接口测试所需行为。"""
+    """thay thế Studio DB tối giản:chỉ bao phủ hành vi cần thiết cho test API dự án/chương/shot."""
 
     def __init__(self) -> None:
         self.projects: dict[str, Project] = {}
@@ -89,8 +89,8 @@ def _seed_project(db: _FakeStudioDB, project_id: str = "proj-1") -> Project:
     now = datetime.now(UTC)
     obj = Project(
         id=project_id,
-        name="测试项目",
-        description="项目说明",
+        name="Dự án thử",
+        description="Giải thích dự án",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
         seed=7,
@@ -115,10 +115,10 @@ def _seed_chapter(
         id=chapter_id,
         project_id=project_id,
         index=1,
-        title="第一章",
-        summary="章节摘要",
-        raw_text="原文",
-        condensed_text="精简原文",
+        title="Chương 1",
+        summary="Tóm tắt chương",
+        raw_text="Nguyên văn",
+        condensed_text="Nguyên văn rút gọn",
         storyboard_count=0,
         status=ChapterStatus.draft,
     )
@@ -139,10 +139,10 @@ def _seed_shot(
         id=shot_id,
         chapter_id=chapter_id,
         index=1,
-        title="镜头一",
+        title="Phân cảnh 1",
         thumbnail="",
         status=ShotStatus.pending,
-        script_excerpt="剧本摘录",
+        script_excerpt="Trích dẫn kịch bản",
         generated_video_file_id=None,
     )
     obj.created_at = now
@@ -159,8 +159,8 @@ def test_create_project_returns_created_envelope(client: TestClient) -> None:
             "/api/v1/studio/projects",
             json={
                 "id": "proj-create",
-                "name": "新项目",
-                "description": "说明",
+                "name": "Dự án mới",
+                "description": "Giải thích",
                 "style": "真人都市",
                 "visual_style": "现实",
                 "seed": 1,
@@ -177,7 +177,7 @@ def test_create_project_returns_created_envelope(client: TestClient) -> None:
     assert body["code"] == 201
     assert body["message"] == "success"
     assert body["data"]["id"] == "proj-create"
-    assert body["data"]["name"] == "新项目"
+    assert body["data"]["name"] == "Dự án mới"
 
 
 def test_project_style_options_returns_grouped_choices(client: TestClient) -> None:
@@ -186,6 +186,7 @@ def test_project_style_options_returns_grouped_choices(client: TestClient) -> No
     body = response.json()
     assert body["code"] == 200
     assert "视觉" in body["data"]["visual_styles"][0]["label"] or body["data"]["visual_styles"][0]["value"] in {"现实", "动漫"}
+    assert "thực tế" not in body["data"]["styles_by_visual_style"]
     assert "现实" in body["data"]["styles_by_visual_style"]
     assert "动漫" in body["data"]["styles_by_visual_style"]
     assert "video_ratios" not in body["data"]
@@ -200,8 +201,8 @@ def test_create_project_rejects_invalid_style_combo(client: TestClient) -> None:
             "/api/v1/studio/projects",
             json={
                 "id": "proj-invalid-style",
-                "name": "新项目",
-                "description": "说明",
+                "name": "Dự án mới",
+                "description": "Giải thích",
                 "style": "真人都市",
                 "visual_style": "动漫",
                 "seed": 1,
@@ -254,10 +255,10 @@ def test_create_chapter_returns_created_envelope(client: TestClient) -> None:
                 "id": "ch-create",
                 "project_id": "proj-chapter",
                 "index": 1,
-                "title": "第一章",
-                "summary": "摘要",
-                "raw_text": "原文",
-                "condensed_text": "精简原文",
+                "title": "Chương 1",
+                "summary": "Tóm tắt",
+                "raw_text": "Nguyên văn",
+                "condensed_text": "Nguyên văn tóm gọn",
                 "storyboard_count": 0,
                 "status": "draft",
             },
@@ -282,7 +283,7 @@ def test_create_chapter_missing_project_returns_api_response(client: TestClient)
                 "id": "ch-fail",
                 "project_id": "proj-missing",
                 "index": 1,
-                "title": "第一章",
+                "title": "Chương 1",
                 "summary": "",
                 "raw_text": "",
                 "condensed_text": "",
@@ -321,10 +322,10 @@ def test_create_shot_returns_created_envelope(client: TestClient) -> None:
                 "id": "shot-create",
                 "chapter_id": "ch-shot",
                 "index": 1,
-                "title": "镜头一",
+                "title": "Phân cảnh 1",
                 "thumbnail": "",
                 "status": "pending",
-                "script_excerpt": "镜头内容",
+                "script_excerpt": "Nội dung phân cảnh",
                 "generated_video_file_id": None,
             },
         )
@@ -374,7 +375,7 @@ def test_create_shot_validation_error_returns_api_response(client: TestClient) -
             "/api/v1/studio/shots",
             json={
                 "id": "shot-invalid",
-                "title": "缺字段镜头",
+                "title": "Phân cảnh thiếu trường",
             },
         )
     finally:

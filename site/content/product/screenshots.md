@@ -1,13 +1,13 @@
 ---
-title: "截图展示"
+title: "Ảnh chụp màn hình"
 weight: 3
-description: "快速浏览当前产品界面的核心样貌。"
+description: "Dò nhanh diện mạo cốt lõi của giao diện sản phẩm hiện tại."
 ---
 
-## 项目概览
+## Tổng quan dự án
 
-![项目概览](/images/screenshots/project.png)
+![Tổng quan dự án](/images/screenshots/project.png)
 
-## 资产管理
+## Quản lý tài nguyên
 
-![资产管理](/images/screenshots/assets.png)
+![Quản lý tài nguyên](/images/screenshots/assets.png)

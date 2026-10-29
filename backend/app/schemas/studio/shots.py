@@ -1,4 +1,4 @@
-"""镜头相关 schemas：Shot / ShotDetail / ShotDialogLine / Link 表。"""
+"""Các schemas liên quan phân cảnh: Shot / ShotDetail / ShotDialogLine / bảng Link."""
 
 from __future__ import annotations
 
@@ -23,17 +23,17 @@ from app.models.studio import (
 
 
 class ShotBase(BaseModel):
-    id: str = Field(..., description="镜头 ID")
-    chapter_id: str = Field(..., description="所属章节 ID")
-    index: int = Field(..., description="镜头序号（章节内唯一）")
-    title: str = Field(..., description="镜头标题")
-    thumbnail: str = Field("", description="缩略图 URL/路径")
-    status: ShotStatus = Field(ShotStatus.pending, description="镜头状态")
-    skip_extraction: bool = Field(False, description="是否明确跳过信息提取")
-    script_excerpt: str = Field("", description="剧本摘录")
+    id: str = Field(..., description="ID shot")
+    chapter_id: str = Field(..., description="ID chương sở thuộc")
+    index: int = Field(..., description="Thứ tự của phân cảnh (duy nhất trong chương)")
+    title: str = Field(..., description="Tiêu đề phân cảnh")
+    thumbnail: str = Field("", description="Ảnh thu nhỏ URL/Đường")
+    status: ShotStatus = Field(ShotStatus.pending, description="trạng thái phân cảnh")
+    skip_extraction: bool = Field(False, description="liệu bỏ qua trích xuất thông tin hay không")
+    script_excerpt: str = Field("", description="Trích đoạn kịch bản")
     generated_video_file_id: str | None = Field(
         None,
-        description="已生成视频关联的文件 ID（files.id，type=video）",
+        description="ID tệp liên kết video đã sinh(files.id, type=video)",
     )
 
 
@@ -44,13 +44,13 @@ class ShotExtractionSummaryRead(BaseModel):
         "extracted_pending",
         "extracted_resolved",
         "skipped",
-    ] = Field(..., description="镜头提取确认状态摘要")
-    has_extracted: bool = Field(..., description="是否已执行过提取")
-    last_extracted_at: datetime | None = Field(None, description="最近一次提取完成时间")
-    asset_candidate_total: int = Field(0, description="资产候选总数")
-    dialogue_candidate_total: int = Field(0, description="对白候选总数")
-    pending_asset_count: int = Field(0, description="待确认资产候选数")
-    pending_dialogue_count: int = Field(0, description="待确认对白候选数")
+    ] = Field(..., description="Tóm tắt trạng thái xác nhận trích xuất của phân cảnh")
+    has_extracted: bool = Field(..., description="Đã thực thi trích xuất chưa")
+    last_extracted_at: datetime | None = Field(None, description="Thời điểm hoàn tất trích xuất gần nhất")
+    asset_candidate_total: int = Field(0, description="Tổng số ứng viên tài nguyên")
+    dialogue_candidate_total: int = Field(0, description="tổng số ứng viên thoại")
+    pending_asset_count: int = Field(0, description="Số ứng viên tài nguyên chờ xác nhận")
+    pending_dialogue_count: int = Field(0, description="số ứng viên thoại chờ xác nhận")
 
 
 class ShotCreate(ShotBase):
@@ -69,88 +69,88 @@ class ShotUpdate(BaseModel):
 
 
 class ShotRead(ShotBase):
-    last_extracted_at: datetime | None = Field(None, description="最近一次完成信息提取的时间")
-    extraction: ShotExtractionSummaryRead = Field(..., description="镜头提取状态摘要")
+    last_extracted_at: datetime | None = Field(None, description="Thời điểm gần nhất hoàn tất trích xuất thông tin")
+    extraction: ShotExtractionSummaryRead = Field(..., description="Tóm tắt trạng thái trích xuất phân cảnh")
     model_config = ConfigDict(from_attributes=True)
 
 
 class ShotSkipExtractionUpdate(BaseModel):
-    skip: bool = Field(..., description="是否明确跳过信息提取")
+    skip: bool = Field(..., description="Có rõ ràng bỏ qua việc trích xuất thông tin không")
 
 
 class ShotExtractedCandidateLinkRequest(BaseModel):
-    linked_entity_id: str = Field(..., description="确认关联到的实体 ID")
+    linked_entity_id: str = Field(..., description="ID thực thể đã xác nhận liên kết")
 
 
 class ShotExtractedCandidateRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int = Field(..., description="候选项 ID")
-    shot_id: str = Field(..., description="所属镜头 ID")
-    candidate_type: ShotCandidateType = Field(..., description="候选类型")
-    candidate_name: str = Field(..., description="提取出的候选名称")
-    candidate_status: ShotCandidateStatus = Field(..., description="候选确认状态")
-    linked_entity_id: str | None = Field(None, description="已关联实体 ID")
-    source: str = Field(..., description="候选来源")
-    payload: dict = Field(default_factory=dict, description="候选附加信息")
-    confirmed_at: datetime | None = Field(None, description="确认时间")
-    created_at: datetime = Field(..., description="创建时间")
-    updated_at: datetime = Field(..., description="更新时间")
+    id: int = Field(..., description="ID mục ứng viên")
+    shot_id: str = Field(..., description="phân cảnh thuộc ID")
+    candidate_type: ShotCandidateType = Field(..., description="loại ứng viên")
+    candidate_name: str = Field(..., description="Tên ứng viên đã trích xuất")
+    candidate_status: ShotCandidateStatus = Field(..., description="Trạng thái xác nhận ứng viên")
+    linked_entity_id: str | None = Field(None, description="ID thực thể đã liên kết")
+    source: str = Field(..., description="nguồn ứng viên")
+    payload: dict = Field(default_factory=dict, description="thông tin bổ trợ cho ứng viên")
+    confirmed_at: datetime | None = Field(None, description="Thời điểm xác nhận")
+    created_at: datetime = Field(..., description="Thời gian tạo")
+    updated_at: datetime = Field(..., description="Thời gian cập nhật")
 
 
 class ShotExtractedDialogueCandidateAcceptRequest(BaseModel):
-    index: int | None = Field(None, description="写入对白行时使用的排序；为空则使用候选排序")
-    text: str | None = Field(None, description="接受时可覆盖对白文本")
-    line_mode: DialogueLineMode | None = Field(None, description="接受时可覆盖对白模式")
-    speaker_name: str | None = Field(None, description="接受时可覆盖说话角色名称")
-    target_name: str | None = Field(None, description="接受时可覆盖听者角色名称")
+    index: int | None = Field(None, description="Thứ tự dùng khi ghi dòng thoại; để trống thì dùng thứ tự ứng viên")
+    text: str | None = Field(None, description="Khi chấp nhận có thể ghi đè văn bản thoại")
+    line_mode: DialogueLineMode | None = Field(None, description="Có thể ghi đè chế độ thoại khi chấp nhận")
+    speaker_name: str | None = Field(None, description="khi chấp nhận có thể ghi đè tên nhân vật nói")
+    target_name: str | None = Field(None, description="khi chấp nhận có thể ghi đè tên nhân vật nghe")
 
 
 class ShotExtractedDialogueCandidateRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int = Field(..., description="对白候选项 ID")
-    shot_id: str = Field(..., description="所属镜头 ID")
-    index: int = Field(..., description="镜头内对白候选排序")
-    text: str = Field(..., description="提取出的对白文本")
-    line_mode: DialogueLineMode = Field(..., description="对白模式")
-    speaker_name: str | None = Field(None, description="说话角色名称")
-    target_name: str | None = Field(None, description="听者角色名称")
-    candidate_status: ShotDialogueCandidateStatus = Field(..., description="对白候选确认状态")
-    linked_dialog_line_id: int | None = Field(None, description="已接受后关联的对白行 ID")
-    source: str = Field(..., description="候选来源")
-    payload: dict = Field(default_factory=dict, description="候选附加信息")
-    confirmed_at: datetime | None = Field(None, description="确认时间")
-    created_at: datetime = Field(..., description="创建时间")
-    updated_at: datetime = Field(..., description="更新时间")
+    id: int = Field(..., description="ID ứng viên thoại")
+    shot_id: str = Field(..., description="phân cảnh thuộc ID")
+    index: int = Field(..., description="thứ tự ứng viên thoại trong shot")
+    text: str = Field(..., description="văn bản thoại đã trích xuất")
+    line_mode: DialogueLineMode = Field(..., description="chế độ thoại")
+    speaker_name: str | None = Field(None, description="tên nhân vật nói")
+    target_name: str | None = Field(None, description="Tên nhân vật người nghe")
+    candidate_status: ShotDialogueCandidateStatus = Field(..., description="Trạng thái xác nhận ứng viên lời thoại")
+    linked_dialog_line_id: int | None = Field(None, description="ID dòng thoại được liên kết sau khi chấp nhận")
+    source: str = Field(..., description="nguồn ứng viên")
+    payload: dict = Field(default_factory=dict, description="thông tin bổ trợ cho ứng viên")
+    confirmed_at: datetime | None = Field(None, description="Thời điểm xác nhận")
+    created_at: datetime = Field(..., description="Thời gian tạo")
+    updated_at: datetime = Field(..., description="Thời gian cập nhật")
 
 
 class ShotDetailBase(BaseModel):
-    id: str = Field(..., description="镜头 ID（与 shots.id 共享主键）")
-    camera_shot: CameraShotType = Field(..., description="景别")
-    angle: CameraAngle = Field(..., description="机位角度")
-    movement: CameraMovement = Field(..., description="运镜方式")
-    scene_id: str | None = Field(None, description="关联场景 ID（可空）")
-    duration: int = Field(0, description="时长（秒）")
-    override_video_ratio: str | None = Field(None, description="分镜级视频比例覆盖；为空表示继承项目默认")
-    mood_tags: list[str] = Field(default_factory=list, description="情绪标签")
-    atmosphere: str = Field("", description="氛围描述")
-    follow_atmosphere: bool = Field(True, description="是否沿用氛围")
-    has_bgm: bool = Field(False, description="是否包含 BGM")
-    vfx_type: VFXType = Field(VFXType.none, description="视效类型")
-    vfx_note: str = Field("", description="视效说明")
-    action_beats: list[str] = Field(default_factory=list, description="动作拍点（按时间顺序排列）")
+    id: str = Field(..., description="ID phân cảnh (chia sẻ khóa chính với shots.id)")
+    camera_shot: CameraShotType = Field(..., description="Cận (độ rộng shot)")
+    angle: CameraAngle = Field(..., description="Góc máy")
+    movement: CameraMovement = Field(..., description="Chuyển động máy")
+    scene_id: str | None = Field(None, description="ID bối cảnh liên kết (để trống được)")
+    duration: int = Field(0, description="thời lượng(giây)")
+    override_video_ratio: str | None = Field(None, description="Ghi đè tỷ lệ video cấp phân cảnh; để trống nghĩa là kế thừa mặc định của dự án")
+    mood_tags: list[str] = Field(default_factory=list, description="Nhãn cảm xúc")
+    atmosphere: str = Field("", description="Mô tả không khí")
+    follow_atmosphere: bool = Field(True, description="Có kế thừa không khí không")
+    has_bgm: bool = Field(False, description="Có chứa BGM không")
+    vfx_type: VFXType = Field(VFXType.none, description="Loại hiệu ứng đặc biệt")
+    vfx_note: str = Field("", description="giải thích effect hình ảnh")
+    action_beats: list[str] = Field(default_factory=list, description="Các mốc hành động (sắp xếp theo trình tự thời gian)")
     first_frame_prompt: str = Field(
         "",
-        description="镜头分镜首帧提示词",
+        description="Prompt khung hình đầu của phân cảnh shot",
     )
     last_frame_prompt: str = Field(
         "",
-        description="镜头分镜尾帧提示词",
+        description="Prompt khung hình cuối của phân cảnh shot",
     )
     key_frame_prompt: str = Field(
         "",
-        description="镜头分镜关键帧提示词",
+        description="Prompt khung hình chính của phân cảnh shot",
     )
 
 
@@ -182,15 +182,15 @@ class ShotDetailRead(ShotDetailBase):
 
 
 class ShotDialogLineBase(BaseModel):
-    id: int = Field(..., description="对话行 ID")
-    shot_detail_id: str = Field(..., description="所属镜头细节 ID")
-    index: int = Field(0, description="行号（镜头内排序）")
-    text: str = Field(..., description="台词内容")
-    line_mode: DialogueLineMode = Field(DialogueLineMode.dialogue, description="对白模式")
-    speaker_character_id: str | None = Field(None, description="说话角色 ID")
-    target_character_id: str | None = Field(None, description="听者角色 ID")
-    speaker_name: str | None = Field(None, description="说话角色名称（用于回填关联；可空）")
-    target_name: str | None = Field(None, description="听者角色名称（用于回填关联；可空）")
+    id: int = Field(..., description="ID dòng hội thoại")
+    shot_detail_id: str = Field(..., description="chi tiết phân cảnh thuộc ID")
+    index: int = Field(0, description="số dòng(thứ tự trong shot)")
+    text: str = Field(..., description="Nội dung lời thoại")
+    line_mode: DialogueLineMode = Field(DialogueLineMode.dialogue, description="Chế độ lời thoại")
+    speaker_character_id: str | None = Field(None, description="ID nhân vật nói")
+    target_character_id: str | None = Field(None, description="ID nhân vật người nghe")
+    speaker_name: str | None = Field(None, description="Tên nhân vật nói (dùng để ghi ngược liên kết; null được)")
+    target_name: str | None = Field(None, description="Tên nhân vật người nghe (dùng để ghi ngược liên kết; null được)")
 
 
 class ShotDialogLineCreate(BaseModel):
@@ -219,10 +219,10 @@ class ShotDialogLineRead(ShotDialogLineBase):
 
 
 class ProjectLinkBase(BaseModel):
-    id: int = Field(..., description="关联行 ID")
-    project_id: str = Field(..., description="项目 ID")
-    chapter_id: str | None = Field(None, description="章节 ID（可空）")
-    shot_id: str | None = Field(None, description="镜头 ID（可空）")
+    id: int = Field(..., description="ID hàng liên kết")
+    project_id: str = Field(..., description="ID dự án")
+    chapter_id: str | None = Field(None, description="ID chương (để trống được)")
+    shot_id: str | None = Field(None, description="ID phân cảnh (có thể để trống)")
 
 
 class ProjectAssetLinkCreate(BaseModel):
@@ -236,38 +236,38 @@ class ProjectActorLinkRead(ProjectLinkBase):
     model_config = ConfigDict(from_attributes=True)
 
     actor_id: str
-    thumbnail: str = Field("", description="演员缩略图下载地址")
+    thumbnail: str = Field("", description="URL tải về ảnh thu nhỏ diễn viên")
 
 
 class ProjectSceneLinkRead(ProjectLinkBase):
     model_config = ConfigDict(from_attributes=True)
 
     scene_id: str
-    thumbnail: str = Field("", description="场景缩略图下载地址")
+    thumbnail: str = Field("", description="URL tải về ảnh thu nhỏ bối cảnh")
 
 
 class ProjectPropLinkRead(ProjectLinkBase):
     model_config = ConfigDict(from_attributes=True)
 
     prop_id: str
-    thumbnail: str = Field("", description="道具缩略图下载地址")
+    thumbnail: str = Field("", description="URL tải về ảnh thu nhỏ đạo cụ")
 
 
 class ProjectCostumeLinkRead(ProjectLinkBase):
     model_config = ConfigDict(from_attributes=True)
 
     costume_id: str
-    thumbnail: str = Field("", description="服装缩略图下载地址")
+    thumbnail: str = Field("", description="URL tải về ảnh thu nhỏ trang phục")
 
 
 class ShotFrameImageBase(BaseModel):
-    id: int = Field(..., description="图片行 ID")
-    shot_detail_id: str = Field(..., description="所属镜头细节 ID")
-    frame_type: ShotFrameType = Field(..., description="帧类型：first/last/key")
-    file_id: str | None = Field(None, description="关联的 FileItem ID（可为空，允许先创建占位）")
-    width: int | None = Field(None, description="宽(px)")
-    height: int | None = Field(None, description="高(px)")
-    format: str = Field("png", description="格式")
+    id: int = Field(..., description="dòng hình ảnh ID")
+    shot_detail_id: str = Field(..., description="chi tiết phân cảnh thuộc ID")
+    frame_type: ShotFrameType = Field(..., description="Loại khung hình: first/last/key")
+    file_id: str | None = Field(None, description="ID FileItem liên kết (có thể để trống, cho phép tạo giữ chỗ trước)")
+    width: int | None = Field(None, description="Rộng(px)")
+    height: int | None = Field(None, description="Cao(px)")
+    format: str = Field("png", description="Định dạng")
 
 
 class ShotFrameImageCreate(BaseModel):
@@ -295,54 +295,54 @@ ShotLinkedAssetType = Literal["character", "prop", "scene", "costume"]
 
 
 class ShotLinkedAssetItem(BaseModel):
-    """按分镜聚合返回的关联资产条目（角色/道具/场景/服装）。"""
+    """Mục tài nguyên liên kết được tổng hợp theo phân cảnh để trả về (nhân vật/đạo cụ/bối cảnh/trang phục)."""
 
-    type: ShotLinkedAssetType = Field(..., description="实体类型：character/prop/scene/costume")
-    id: str = Field(..., description="实体 ID（如 character_id/prop_id/scene_id/costume_id）")
+    type: ShotLinkedAssetType = Field(..., description="Loại thực thể: character/prop/scene/costume")
+    id: str = Field(..., description="thực thể ID( character_id/prop_id/scene_id/costume_id)")
     image_id: int | None = Field(
         None,
-        description="最佳缩略图对应的 image 行 ID（如 PropImage.id）；无图则为 null",
+        description="ID của dòng image ứng với ảnh thu nhỏ tốt nhất (ví dụ PropImage.id); null nếu không có ảnh",
     )
     file_id: str | None = Field(
         None,
-        description="最佳缩略图对应的文件 ID（files.id）；用于参考图输入；无图则为 null",
+        description="File ID của ảnh thu nhỏ tối ưu (files.id); dùng cho đầu vào ảnh tham chiếu; không có ảnh thì null",
     )
-    name: str = Field(..., description="实体名称")
-    thumbnail: str = Field("", description="缩略图下载地址（/api/v1/studio/files/{file_id}/download）")
+    name: str = Field(..., description="Tên thực thể")
+    thumbnail: str = Field("", description="Đường dẫn tải ảnh thu nhỏ (/api/v1/studio/files/{file_id}/download)")
 
 
 class ShotFramePromptMappingRead(BaseModel):
-    """关键帧提示词渲染后的图片映射关系。"""
+    """Quan hệ ánh xạ ảnh sau khi render prompt khung hình chính."""
 
-    token: str = Field(..., description="提示词中的图片占位 token，如 图1 / 图2")
-    type: ShotLinkedAssetType = Field(..., description="实体类型：character/prop/scene/costume")
-    id: str = Field(..., description="实体 ID（如 character_id/prop_id/scene_id/costume_id）")
-    name: str = Field(..., description="实体名称")
-    file_id: str = Field(..., description="本次渲染与生成使用的文件 ID")
+    token: str = Field(..., description="token giữ chỗ cho ảnh trong prompt, như 图1 / 图2")
+    type: ShotLinkedAssetType = Field(..., description="Loại thực thể: character/prop/scene/costume")
+    id: str = Field(..., description="thực thể ID( character_id/prop_id/scene_id/costume_id)")
+    name: str = Field(..., description="Tên thực thể")
+    file_id: str = Field(..., description="File ID dùng cho lần kết xuất và tạo này")
 
 
 class FrameGuidanceDecisionRead(BaseModel):
-    """分镜帧 guidance 的保留/压缩决策结果。"""
+    """Kết quả quyết định giữ lại/nén guidance của khung hình phân cảnh."""
 
-    text: str = Field(..., description="guidance 原文")
-    category: str = Field(..., description="guidance 分类，如 summary / continuity / composition / screen")
-    reason_tag: str = Field("", description="简短原因标签，如 首帧保空间 / 关键帧保轴线")
-    reason: str = Field(..., description="该 guidance 被保留或压缩的原因说明")
+    text: str = Field(..., description="Nguyên văn guidance")
+    category: str = Field(..., description="Hạng mục guidance, ví dụ summary / continuity / composition / screen")
+    reason_tag: str = Field("", description="nhãn lý do ngắn gọn, như Giữ không gian ở khung đầu / Giữ trục kịch ở khung chính")
+    reason: str = Field(..., description="giải thích lý do guidance này được giữ lại hay nén")
 
 
 class RenderedShotFramePromptRead(BaseModel):
-    """关键帧最终生成提示词渲染结果。"""
+    """Kết quả render prompt tạo cuối cùng của khung hình chính."""
 
-    base_prompt: str = Field(..., description="原始基础提示词（不含图片映射说明）")
-    rendered_prompt: str = Field(..., description="最终提交给模型的提示词（含图片映射说明）")
-    selected_guidance: list[str] = Field(default_factory=list, description="最终 prompt 实际保留的 guidance 列表")
-    dropped_guidance: list[str] = Field(default_factory=list, description="本次渲染中被压缩掉的 guidance 列表")
-    selected_guidance_details: list[FrameGuidanceDecisionRead] = Field(default_factory=list, description="最终保留 guidance 的决策详情")
-    dropped_guidance_details: list[FrameGuidanceDecisionRead] = Field(default_factory=list, description="被压缩 guidance 的决策详情")
-    images: list[str] = Field(default_factory=list, description="最终参考图 file_id 列表，顺序与 mappings 一致")
+    base_prompt: str = Field(..., description="prompt cơ sở gốc (không bao gồm diễn giải ánh xạ hình ảnh)")
+    rendered_prompt: str = Field(..., description="Prompt cuối cùng gửi cho mô hình (kèm giải thích ánh xạ hình ảnh)")
+    selected_guidance: list[str] = Field(default_factory=list, description="Danh sách guidance thực sự giữ lại trong prompt cuối cùng")
+    dropped_guidance: list[str] = Field(default_factory=list, description="Danh sách guidance bị nén bớt trong lần kết xuất này")
+    selected_guidance_details: list[FrameGuidanceDecisionRead] = Field(default_factory=list, description="Chi tiết quyết định của guidance giữ lại cuối cùng")
+    dropped_guidance_details: list[FrameGuidanceDecisionRead] = Field(default_factory=list, description="Chi tiết quyết định của guidance bị nén bớt")
+    images: list[str] = Field(default_factory=list, description="Danh sách file_id ảnh tham chiếu cuối cùng, thứ tự khớp với mappings")
     mappings: list[ShotFramePromptMappingRead] = Field(
         default_factory=list,
-        description="图片与实体名称的映射关系，顺序与 images 完全一致",
+        description="quan hệ ánh xạ giữa ảnh và tên thực thể, thứ tự hoàn toàn nhất quán với images",
     )
 
 
@@ -350,37 +350,37 @@ ShotAssetOverviewSource = Literal["linked", "candidate", "both"]
 
 
 class ShotAssetOverviewItem(BaseModel):
-    """分镜资产总览项：统一返回已关联资产与提取候选的合并视图。"""
+    """Mục tổng quan tài nguyên phân cảnh: thống nhất trả về view hợp nhất của tài nguyên đã liên kết và ứng viên trích xuất."""
 
-    key: str = Field(..., description="合并键：type:name")
-    type: ShotLinkedAssetType = Field(..., description="实体类型：character/prop/scene/costume")
-    name: str = Field(..., description="资产名称")
-    description: str | None = Field(None, description="候选描述（来自 extraction payload）")
-    thumbnail: str | None = Field(None, description="缩略图")
-    file_id: str | None = Field(None, description="缩略图或参考图文件 ID")
+    key: str = Field(..., description="Khóa gộp: type:name")
+    type: ShotLinkedAssetType = Field(..., description="Loại thực thể: character/prop/scene/costume")
+    name: str = Field(..., description="Tên tài nguyên")
+    description: str | None = Field(None, description="Mô tả ứng viên (lấy từ payload trích xuất)")
+    thumbnail: str | None = Field(None, description="Ảnh thu nhỏ")
+    file_id: str | None = Field(None, description="ID tệp ảnh thu nhỏ hoặc ảnh tham chiếu")
 
-    source: ShotAssetOverviewSource = Field(..., description="来源：linked/candidate/both")
-    candidate_id: int | None = Field(None, description="候选项 ID")
-    candidate_status: ShotCandidateStatus | None = Field(None, description="候选确认状态")
+    source: ShotAssetOverviewSource = Field(..., description="Nguồn: linked/candidate/both")
+    candidate_id: int | None = Field(None, description="ID ứng viên")
+    candidate_status: ShotCandidateStatus | None = Field(None, description="Trạng thái xác nhận ứng viên")
 
-    linked_entity_id: str | None = Field(None, description="当前已关联实体 ID")
-    linked_image_id: int | None = Field(None, description="当前已关联实体的 image 行 ID")
-    is_linked: bool = Field(..., description="当前是否已关联到镜头")
+    linked_entity_id: str | None = Field(None, description="ID thực thể đã liên kết hiện tại")
+    linked_image_id: int | None = Field(None, description="ID dòng image của thực thể đã liên kết hiện tại")
+    is_linked: bool = Field(..., description="Hiện tại đã được liên kết tới phân cảnh chưa")
 
 
 class ShotAssetsOverviewSummary(BaseModel):
-    linked_count: int = Field(..., description="已关联项数量")
-    pending_count: int = Field(..., description="待确认候选数量")
-    ignored_count: int = Field(..., description="已忽略候选数量")
-    total_count: int = Field(..., description="总项数（含 ignored）")
+    linked_count: int = Field(..., description="Số mục đã liên kết")
+    pending_count: int = Field(..., description="Số lượng ứng viên chờ xác nhận")
+    ignored_count: int = Field(..., description="Số lượng ứng viên đã bỏ qua")
+    total_count: int = Field(..., description="Tổng số mục (gồm cả ignored)")
 
 
 class ShotAssetsOverviewRead(BaseModel):
-    shot_id: str = Field(..., description="镜头 ID")
-    skip_extraction: bool = Field(..., description="是否明确跳过提取")
-    status: ShotStatus = Field(..., description="镜头流程状态")
-    summary: ShotAssetsOverviewSummary = Field(..., description="总览统计")
-    items: list[ShotAssetOverviewItem] = Field(default_factory=list, description="资产总览项")
+    shot_id: str = Field(..., description="ID phân cảnh")
+    skip_extraction: bool = Field(..., description="Có rõ ràng bỏ qua trích xuất không")
+    status: ShotStatus = Field(..., description="Trạng thái quy trình của phân cảnh")
+    summary: ShotAssetsOverviewSummary = Field(..., description="Thống kê tổng quan")
+    items: list[ShotAssetOverviewItem] = Field(default_factory=list, description="Mục tổng quan tài nguyên")
 
 
 class ShotPreparationLinkEntityType(str, Enum):
@@ -391,39 +391,39 @@ class ShotPreparationLinkEntityType(str, Enum):
 
 
 class ShotPreparationLinkRequest(BaseModel):
-    project_id: str = Field(..., description="项目 ID")
-    chapter_id: str = Field(..., description="章节 ID")
-    entity_type: ShotPreparationLinkEntityType = Field(..., description="准备页关联的实体类型")
-    linked_entity_id: str = Field(..., description="要关联的实体 ID")
+    project_id: str = Field(..., description="ID dự án")
+    chapter_id: str = Field(..., description="ID chương")
+    entity_type: ShotPreparationLinkEntityType = Field(..., description="Loại thực thể liên kết của trang chuẩn bị")
+    linked_entity_id: str = Field(..., description="ID thực thể cần liên kết")
 
 
 class ActionBeatPhaseRead(BaseModel):
-    """动作拍点的轻量阶段推断结果。"""
+    """Kết quả suy luận giai đoạn nhẹ của mốc hành động."""
 
-    text: str = Field(..., description="动作拍点原文")
-    phase: Literal["trigger", "peak", "aftermath"] = Field(..., description="推断阶段：触发 / 峰值 / 收束")
+    text: str = Field(..., description="nguyên văn mốc hành động")
+    phase: Literal["trigger", "peak", "aftermath"] = Field(..., description="Giai đoạn suy luận: kích hoạt / đỉnh / khép lại")
 
 
 class ShotPreparationStateRead(BaseModel):
-    """分镜准备页聚合状态。"""
+    """Trạng thái tổng hợp trang chuẩn bị phân cảnh."""
 
-    shot: ShotRead = Field(..., description="当前镜头最新状态")
-    assets_overview: ShotAssetsOverviewRead = Field(..., description="资产确认区聚合状态")
+    shot: ShotRead = Field(..., description="Trạng thái mới nhất của phân cảnh hiện tại")
+    assets_overview: ShotAssetsOverviewRead = Field(..., description="Trạng thái tổng hợp khu vực xác nhận tài nguyên")
     dialogue_candidates: list[ShotExtractedDialogueCandidateRead] = Field(
         default_factory=list,
-        description="当前待处理/已存在的对白候选",
+        description="Ứng viên thoại đang chờ xử lý/đã tồn tại hiện tại",
     )
     saved_dialogue_lines: list[ShotDialogLineRead] = Field(
         default_factory=list,
-        description="当前已保存的对白行",
+        description="Dòng lời thoại đã lưu hiện tại",
     )
-    pending_confirm_count: int = Field(..., description="当前仍待确认的总数量（资产 + 对白）")
-    basic_info_ready: bool = Field(..., description="标题与剧本摘录是否已补齐")
-    semantic_defaults_ready: bool = Field(..., description="镜头语言默认值是否已确认")
-    action_beats_ready: bool = Field(..., description="动作拍点是否已确认")
-    action_beats_count: int = Field(0, description="当前已确认动作拍点数量")
-    action_beat_phases: list[ActionBeatPhaseRead] = Field(default_factory=list, description="当前动作拍点的阶段推断结果")
-    ready_for_generation: bool = Field(..., description="当前镜头是否已完成准备，可进入后续生成")
+    pending_confirm_count: int = Field(..., description="Tổng số mục vẫn chờ xác nhận hiện tại (tài nguyên + thoại)")
+    basic_info_ready: bool = Field(..., description="liệu tiêu đề và trích đoạn kịch bản đã được bổ sung đủ hay chưa")
+    semantic_defaults_ready: bool = Field(..., description="Giá trị mặc định ngôn ngữ điện ảnh đã được xác nhận chưa")
+    action_beats_ready: bool = Field(..., description="liệu mốc hành động đã được xác nhận hay chưa")
+    action_beats_count: int = Field(0, description="số mốc hành động đã xác nhận hiện tại")
+    action_beat_phases: list[ActionBeatPhaseRead] = Field(default_factory=list, description="Kết quả suy luận giai đoạn của mốc hành động hiện tại")
+    ready_for_generation: bool = Field(..., description="Phân cảnh hiện tại đã hoàn tất chuẩn bị, có thể vào khâu tạo tiếp theo chưa")
 
 
 class ShotPreparationMutationAction(str, Enum):
@@ -436,88 +436,88 @@ class ShotPreparationMutationAction(str, Enum):
 
 
 class ShotPreparationMutationResultRead(BaseModel):
-    """准备页命令执行后的统一响应。"""
+    """Phản hồi thống nhất sau khi thực thi lệnh của trang chuẩn bị."""
 
-    action: ShotPreparationMutationAction = Field(..., description="本次执行的准备页动作")
-    state: ShotPreparationStateRead = Field(..., description="动作完成后的最新准备页聚合状态")
+    action: ShotPreparationMutationAction = Field(..., description="Thao tác trang chuẩn bị được thực thi lần này")
+    state: ShotPreparationStateRead = Field(..., description="Trạng thái tổng hợp mới nhất của trang chuẩn bị sau khi thao tác hoàn tất")
 
 
 class ShotPromptAssetRef(BaseModel):
-    """用于提示词渲染的镜头资产引用。"""
+    """Tham chiếu tài nguyên của phân cảnh dùng cho render prompt."""
 
-    type: ShotLinkedAssetType = Field(..., description="资产类型")
-    name: str = Field(..., description="资产名称")
-    description: str = Field("", description="资产描述或提取候选描述")
-    file_id: str | None = Field(None, description="可作为参考图的文件 ID")
-    thumbnail: str | None = Field(None, description="缩略图")
+    type: ShotLinkedAssetType = Field(..., description="Loại tài nguyên")
+    name: str = Field(..., description="Tên tài nguyên")
+    description: str = Field("", description="Mô tả tài nguyên hoặc mô tả ứng viên trích xuất")
+    file_id: str | None = Field(None, description="ID tệp có thể dùng làm ảnh tham chiếu")
+    thumbnail: str | None = Field(None, description="Ảnh thu nhỏ")
 
 
 class ShotPromptCameraInfo(BaseModel):
-    """用于提示词渲染的镜头语言信息。"""
+    """Thông tin ngôn ngữ điện ảnh dùng cho render prompt."""
 
-    camera_shot: str = Field("", description="景别")
-    angle: str = Field("", description="机位角度")
-    movement: str = Field("", description="运镜方式")
-    duration: int | None = Field(None, description="镜头时长（秒）")
+    camera_shot: str = Field("", description="cận (độ rộng shot)")
+    angle: str = Field("", description="góc máy")
+    movement: str = Field("", description="cách vận camera")
+    duration: int | None = Field(None, description="Thời lượng phân cảnh (giây)")
 
 
 class ShotVideoPromptPackRead(BaseModel):
-    """视频提示词渲染前的标准上下文包。"""
+    """Gói ngữ cảnh chuẩn trước khi render prompt video."""
 
-    shot_id: str = Field(..., description="镜头 ID")
-    title: str = Field("", description="镜头标题")
-    script_excerpt: str = Field("", description="剧本摘录")
-    action_beats: list[str] = Field(default_factory=list, description="动作/场景要点")
-    action_beat_phases: list[ActionBeatPhaseRead] = Field(default_factory=list, description="动作拍点的阶段推断结果")
-    previous_shot_summary: str = Field("", description="上一镜头摘要，用于提示词连续性约束")
-    next_shot_goal: str = Field("", description="下一镜头目标，用于提示词连续性约束")
-    continuity_guidance: str = Field("", description="当前镜头与相邻镜头的承接建议")
-    composition_anchor: str = Field("", description="当前镜头的构图与空间锚点建议")
-    screen_direction_guidance: str = Field("", description="当前镜头的人物朝向、视线与左右轴线建议")
-    dialogue_summary: str = Field("", description="对白摘要")
-    characters: list[ShotPromptAssetRef] = Field(default_factory=list, description="角色引用")
-    scene: ShotPromptAssetRef | None = Field(None, description="场景引用")
-    props: list[ShotPromptAssetRef] = Field(default_factory=list, description="道具引用")
-    costumes: list[ShotPromptAssetRef] = Field(default_factory=list, description="服装引用")
-    camera: ShotPromptCameraInfo = Field(default_factory=ShotPromptCameraInfo, description="镜头语言")
-    atmosphere: str = Field("", description="氛围描述")
-    visual_style: str = Field("", description="项目视觉风格")
-    style: str = Field("", description="项目题材/风格")
-    negative_prompt: str = Field("", description="默认负面提示词")
+    shot_id: str = Field(..., description="ID phân cảnh")
+    title: str = Field("", description="tiêu đề shot")
+    script_excerpt: str = Field("", description="Trích đoạn kịch bản")
+    action_beats: list[str] = Field(default_factory=list, description="Điểm chính của hành động/bối cảnh")
+    action_beat_phases: list[ActionBeatPhaseRead] = Field(default_factory=list, description="Kết quả suy luận giai đoạn của mốc hành động")
+    previous_shot_summary: str = Field("", description="Tóm tắt phân cảnh trước, dùng cho ràng buộc liên tục của prompt")
+    next_shot_goal: str = Field("", description="mục tiêu phân cảnh tiếp theo, dùng cho ràng buộc liên tục của prompt")
+    continuity_guidance: str = Field("", description="gợi ý tiếp nối giữa phân cảnh hiện tại và phân cảnh liền kề")
+    composition_anchor: str = Field("", description="gợi ý mỏ neo bố cục và không gian của phân cảnh hiện tại")
+    screen_direction_guidance: str = Field("", description="Gợi ý hướng nhìn, tầm mắt và trục trái-phải của nhân vật trong phân cảnh hiện tại")
+    dialogue_summary: str = Field("", description="Tóm tắt thoại")
+    characters: list[ShotPromptAssetRef] = Field(default_factory=list, description="Tham chiếu nhân vật")
+    scene: ShotPromptAssetRef | None = Field(None, description="tham chiếu bối cảnh")
+    props: list[ShotPromptAssetRef] = Field(default_factory=list, description="Tham chiếu đạo cụ")
+    costumes: list[ShotPromptAssetRef] = Field(default_factory=list, description="Tham chiếu trang phục")
+    camera: ShotPromptCameraInfo = Field(default_factory=ShotPromptCameraInfo, description="Ngôn ngữ điện ảnh")
+    atmosphere: str = Field("", description="Mô tả không khí")
+    visual_style: str = Field("", description="Phong cách thị giác của dự án")
+    style: str = Field("", description="thể loại/phong cách dự án")
+    negative_prompt: str = Field("", description="Prompt tiêu cực mặc định")
 
 
 class ShotVideoPromptPreviewRead(BaseModel):
-    """视频提示词预览结果。"""
+    """Kết quả xem trước prompt video."""
 
-    shot_id: str = Field(..., description="镜头 ID")
-    template_id: str | None = Field(None, description="使用的提示词模板 ID")
-    template_name: str | None = Field(None, description="使用的提示词模板名称")
-    rendered_prompt: str = Field(..., description="渲染后的提示词")
-    pack: ShotVideoPromptPackRead = Field(..., description="渲染上下文包")
-    warnings: list[str] = Field(default_factory=list, description="渲染时发现的非阻塞提示")
+    shot_id: str = Field(..., description="ID phân cảnh")
+    template_id: str | None = Field(None, description="ID mẫu prompt đang sử dụng")
+    template_name: str | None = Field(None, description="tên mẫu prompt đang sử dụng")
+    rendered_prompt: str = Field(..., description="Prompt sau khi kết xuất")
+    pack: ShotVideoPromptPackRead = Field(..., description="gói ngữ cảnh kết xuất")
+    warnings: list[str] = Field(default_factory=list, description="Thông báo không chặn phát hiện khi kết xuất")
 
 
 class ShotVideoReadinessCheck(BaseModel):
-    """单项视频生成准备度检查结果。"""
+    """Kết quả kiểm tra một mục độ sẵn sàng tạo video."""
 
-    key: str = Field(..., description="检查项 key")
-    ok: bool = Field(..., description="是否通过")
-    message: str = Field(..., description="面向前端展示的说明")
+    key: str = Field(..., description="key mục kiểm tra")
+    ok: bool = Field(..., description="có đạt không")
+    message: str = Field(..., description="Mô tả hiển thị cho phía trước")
 
 
 class ShotVideoReadinessRead(BaseModel):
-    """镜头视频生成准备度。"""
+    """Độ sẵn sàng tạo video phân cảnh."""
 
-    shot_id: str = Field(..., description="镜头 ID")
-    reference_mode: str = Field(..., description="参考模式")
-    ready: bool = Field(..., description="是否满足当前 reference_mode 下的视频生成条件")
-    checks: list[ShotVideoReadinessCheck] = Field(default_factory=list, description="准备度检查项")
+    shot_id: str = Field(..., description="ID phân cảnh")
+    reference_mode: str = Field(..., description="Chế độ tham chiếu")
+    ready: bool = Field(..., description="Có thỏa điều kiện tạo video theo reference_mode hiện tại không")
+    checks: list[ShotVideoReadinessCheck] = Field(default_factory=list, description="Mục kiểm tra độ sẵn sàng")
 
 
 class ShotRuntimeSummaryRead(BaseModel):
-    shot_id: str = Field(..., description="镜头 ID")
-    has_active_tasks: bool = Field(..., description="是否存在进行中的关联任务")
-    has_active_video_tasks: bool = Field(..., description="是否存在进行中的视频任务")
-    has_active_prompt_tasks: bool = Field(..., description="是否存在进行中的提示词任务")
-    has_active_frame_tasks: bool = Field(..., description="是否存在进行中的分镜帧图片任务")
-    active_task_count: int = Field(..., description="进行中的唯一任务数")
+    shot_id: str = Field(..., description="ID phân cảnh")
+    has_active_tasks: bool = Field(..., description="liệu có tác vụ liên kết đang thực hiện hay không")
+    has_active_video_tasks: bool = Field(..., description="Có tồn tại tác vụ video đang chạy không")
+    has_active_prompt_tasks: bool = Field(..., description="Có tồn tại tác vụ prompt đang chạy không")
+    has_active_frame_tasks: bool = Field(..., description="Có tồn tại tác vụ ảnh khung phân cảnh đang chạy không")
+    active_task_count: int = Field(..., description="Số tác vụ duy nhất đang chạy")

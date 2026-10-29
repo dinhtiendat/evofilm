@@ -1,29 +1,29 @@
 ---
-title: "Docker 部署"
+title: "Cài đặt Docker"
 weight: 3
-description: "通过 Docker Compose 拉起完整依赖与服务。"
+description: "khởi động toàn bộ phụ thuộc và dịch vụ bằng Docker Compose."
 ---
 
-## 服务组成
+## Cấu thành dịch vụ
 
 - Front
 - Backend
 - MySQL
 - RustFS
 
-## 启动方式
+## Cách khởi động
 
 ```bash
 cp deploy/compose/.env.example deploy/compose/.env
 docker compose --env-file deploy/compose/.env -f deploy/compose/docker-compose.yml up --build
 ```
 
-## 默认访问地址
+## Địa chỉ truy cập mặc định
 
-- 前端：`http://localhost:7788`
-- 后端：`http://localhost:8000`
+- Phía trước: `http://localhost:7788`
+- Backend:`http://localhost:8000`
 - RustFS Console：`http://localhost:9001`
 
-## 说明
+## Mô tả
 
-首次启动会自动初始化数据库，并导入提示词模板数据。
+Lần khởi động đầu tiên sẽ tự khởi tạo cơ sở dữ liệu và nạp dữ liệu mẫu prompt.

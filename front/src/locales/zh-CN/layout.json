@@ -1,16 +1,16 @@
 {
   "title": "Jellyfish",
-  "subtitle": "AI 短剧工作台",
-  "welcome": "欢迎使用 Jellyfish",
+  "subtitle": "Bàn làm việc kịch ngắn AI",
+  "welcome": "Chào mừng bạn sử dụng Jellyfish",
   "menu": {
-    "settings": "系统设置"
+    "settings": "Cài đặt hệ thống"
   },
   "user": {
-    "profile": "个人中心",
-    "logout": "退出登录"
+    "profile": "Trang cá nhân",
+    "logout": "Đăng xuất"
   },
   "lang": {
-    "zh": "简体中文",
+    "zh": "Tiếng Trung giản thể",
     "en": "English"
   }
 }

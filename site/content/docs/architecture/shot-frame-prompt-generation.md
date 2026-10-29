@@ -1,197 +1,197 @@
 ---
-title: "分镜基础提示词生成"
-description: "说明镜头首帧、关键帧、尾帧基础提示词的当前生成上下文与风格继承规则。"
+title: "Tạo prompt cơ bản phân cảnh"
+description: "giải thích ngữ cảnh sinh hiện tại và quy tắc kế thừa phong cách của prompt nền khung đầu, khung chính, khung cuối của shot."
 weight: 9
 ---
 
-> 本文属于“当前架构”文档，描述当前已经生效的基础提示词生成规则。
+> Bài này thuộc tài liệu "Kiến trúc hiện tại", mô tả các quy tắc tạo prompt cơ bản đang có hiệu lực.
 
-## 核心结论
+## Kết luận cốt lõi
 
-镜头首帧、关键帧、尾帧的 AI 生成结果，当前统一定义为：
-
-```text
-基础提示词
-```
-
-也就是：
-
-- 只描述画面本身
-- 不包含 `图1 / 图2`
-- 不包含 `## 图片内容说明`
-- 不直接承担最终图片映射说明
-
-最终提交给图片模型的提示词，由后续 `frame-render-prompt` 再基于：
-
-- 基础提示词
-- 当前帧职责 guidance
-- 当前参考图顺序
-
-进行二次渲染。
-
-## 当前输入上下文
-
-基础提示词任务当前会综合以下信息：
-
-- 镜头标题
-- 剧本摘录
-- 镜头补充描述
-- 景别 / 机位 / 运镜 / 时长
-- 氛围 / 情绪标签 / 视效说明
-- 对白摘要
-- 已确认动作拍点（`action_beats`）
-- 项目级 `visual_style`
-- 项目级 `style`
-- 项目级 `unify_style`
-- 镜头已确认角色及其描述
-- 镜头已确认场景及其描述
-- 镜头已确认道具及其描述
-- 镜头已确认服装及其描述
-- 上一镜头标题、剧本摘录与结尾状态摘要
-- 下一镜头标题、剧本摘录与起始目标摘要
-- 当前镜头与相邻镜头的连续性建议
-
-其中，角色上下文除角色自身描述外，还会尽量带入：
-
-- 角色绑定的演员形象
-- 角色默认服装
-
-用于增强跨镜头一致性。
-
-## 项目级风格继承规则
-
-基础提示词生成时，项目级风格不是“弱提示”，而是显式约束：
-
-- 必须继承项目级 `visual_style`
-- 必须继承项目级 `style`
-- 若 `unify_style = true`
-  - 镜头信息不足时，应优先向项目既有风格收敛
-  - 不应自由发散到其他视觉风格
-
-这意味着：
+Kết quả AI tạo ra cho khung hình đầu, khung hình chính, khung hình cuối của phân cảnh, hiện được định nghĩa thống nhất là:
 
 ```text
-项目风格
-→ 基础提示词
-→ 最终渲染提示词
-→ 图片生成
+Prompt cơ sở
 ```
 
-是一条连续链路。
+Tức là:
 
-## 已确认实体的作用
+- Chỉ mô tả bản thân khung hình
+- Không chứa `Hình 1 / Hình 2`
+- Không chứa `## Diễn giải nội dung hình ảnh`
+- Không trực tiếp chịu trách nhiệm diễn giải ánh xạ ảnh cuối
 
-基础提示词生成不会只依赖剧本摘录里的自然语言描述。
+Prompt cuối cùng gửi cho mô hình ảnh, do `frame-render-prompt` ở bước sau tiếp tục dựa trên:
 
-当前还会显式读取镜头已确认的：
+- Prompt cơ sở
+- Hướng dẫn trách nhiệm của khung hiện tại
+- Thứ tự ảnh tham chiếu hiện tại
 
-- 角色
-- 场景
-- 道具
-- 服装
+thực hiện kết xuất lần hai.
 
-这些实体名称必须在生成结果中原样保留，不应被改写、翻译或替换为同义词。
+## Ngữ cảnh đầu vào hiện tại
 
-如果镜头信息不完整，模型应优先使用这些已确认实体来补足画面，而不是凭空新增主要主体。
+Tác vụ prompt cơ bản hiện tổng hợp các thông tin sau:
 
-## 输出口径
+- Tiêu đề phân cảnh
+- Trích dẫn kịch bản
+- Mô tả bổ sung phân cảnh
+- Cận / góc máy / chuyển động máy / thời lượng
+- Không khí / Nhãn cảm xúc / Diễn giải hiệu ứng đặc biệt
+- Tóm tắt thoại
+- Mốc hành động đã xác nhận (`action_beats`)
+- `visual_style` cấp dự án
+- `style` cấp dự án
+- `unify_style` cấp dự án
+- Nhân vật đã xác nhận của phân cảnh và mô tả của nó
+- Bối cảnh đã xác nhận của phân cảnh và mô tả của nó
+- Đạo cụ đã xác nhận của phân cảnh và mô tả của nó
+- Trang phục đã xác nhận của phân cảnh và mô tả của nó
+- Tiêu đề phân cảnh trước, trích đoạn kịch bản và bản tóm tắt trạng thái kết
+- Tiêu đề phân cảnh sau, trích đoạn kịch bản và bản tóm tắt mục tiêu đầu
+- Gợi ý tính liên tục giữa phân cảnh hiện tại và phân cảnh lân cận
 
-当前基础提示词的目标是保持统一的描述结构，优先按以下顺序组织：
+Trong đó, ngữ cảnh nhân vật ngoài mô tả bản thân nhân vật còn cố gắng đưa thêm:
 
-1. 景别 / 机位 / 运镜
-2. 场景环境
-3. 主体人物或关键对象
-4. 动作与状态
-5. 氛围与情绪
-6. 必要的风格收束
+Hình tượng diễn viên gắn với nhân vật
+- Trang phục mặc định của nhân vật
 
-这条口径用于降低同项目不同镜头之间的提示词漂移。
+Dùng để tăng tính nhất quán giữa các phân cảnh.
 
-当前系统还会为基础提示词追加一层“连续性约束”：
+## Quy tắc kế thừa phong cách cấp dự án
 
-- 若存在上一镜头，当前画面应优先承接上一镜头的动作、视线、情绪或空间方向
-- 若存在下一镜头，当前画面应形成可自然过渡到下一镜头的收束状态
-- 尽量明确主体位置、朝向与动作峰值，减少镜头切换时的突兀感
+Khi tạo prompt nền tảng, phong cách cấp dự án không phải “gợi ý yếu” mà là ràng buộc tường minh:
 
-当前系统还会追加“构图与空间锚点建议”：
+- Bắt buộc kế thừa `visual_style` cấp dự án
+- Phải kế thừa `style` cấp dự án
+- Nếu `unify_style = true`
+  - Khi thông tin phân cảnh thiếu, nên ưu tiên hội tụ về phong cách có sẵn của dự án
+  - Không nên tự do phát tán sang phong cách thị giác khác
 
-- 根据当前景别与运镜判断应优先突出主体还是环境
-- 同场景连续镜头优先保持空间轴线与人物朝向稳定
-- 若存在主场景和主角色，会显式提示模型锁定场景锚点与主体视线逻辑
+Điều này có nghĩa là:
 
-当前系统还会追加“朝向与视线建议”：
+```text
+Phong cách dự án
+→ Prompt cơ sở
+→ Prompt kết xuất cuối cùng
+→ Tạo hình ảnh
+```
 
-- 对话或对视场景优先保持说话者与受话者的视线关系连续
-- 同场景相邻镜头优先保持人物左右面向稳定，减少反打跳轴
-- 过肩镜头优先保持前景肩部位置与被看对象方向稳定
+Là một đường dẫn liên tục.
 
-同时，系统会额外向模型提供一条“主体优先级建议”，帮助模型避免平均铺陈所有信息：
+## Vai trò của thực thể đã xác nhận
 
-- 优先写主角色
-- 优先建立主场景
-- 道具仅在进入主动作或构图焦点时重点写入
-- 服装主要用于保证人物外观一致性，不要求每次都成为画面中心
+Tạo prompt nền không chỉ dựa vào mô tả ngôn ngữ tự nhiên trong trích đoạn kịch bản.
 
-当前系统还会按帧类型补充专项建议：
+Hiện còn đọc rõ những gì phân cảnh đã xác nhận:
 
-- 首帧：优先建立空间、主体初始站位和第一眼视觉印象；若剧本存在连续反应链，优先使用“刚开始 / 尚未完成 / 被打断”的未完成态表达，不直接写成后续完成动作或最终姿态
-- 关键帧：优先锁定动作峰值、情绪爆点或信息密度最高的瞬间
-- 尾帧：优先强调动作收束、情绪余韵和下一镜头可承接的停留点
+- Nhân vật
+- Bối cảnh
+- Đạo cụ
+- Trang phục
 
-若镜头已经在准备阶段确认了 `action_beats`，当前链路会优先消费这组动作拍点：
+Những tên thực thể này phải được giữ nguyên trong kết quả tạo, không được viết lại, dịch hoặc thay bằng từ đồng nghĩa.
 
-- 首帧优先围绕 `trigger`（触发 / 起始反应）拍点组织画面
-- 关键帧优先围绕 `peak`（动作峰值 / 戏剧张力最高阶段）拍点组织画面
-- 尾帧优先围绕 `aftermath`（结果态 / 收束阶段）拍点组织画面
+nếu thông tin shot không đầy đủ, mô hình nên ưu tiên dùng các thực thể đã xác nhận này để bổ sung khung, không nên tự thêm chủ thể chính.
 
-当前这一层仍然是轻量启发式，不要求 `action_beats` 先存成结构化对象：
+## Khẩu độ đầu ra
 
-- 继续使用 `list[str]`
-- 后端会基于关键词和相对位置推断 `trigger / peak / aftermath`
-- 因此首帧、关键帧、尾帧现在会更稳定地消费同一组动作拍点，但各自抓取不同阶段
-- 这组阶段信息当前也会进入关键帧基础提示词任务的 `debug_context`
-  - 前端关键帧预览会直接展示“动作拍点阶段”和“当前帧优先消费”
-  - 因此编辑页看到的阶段标签与关键帧链实际使用的阶段信息现在保持一致
+Mục tiêu của prompt nền tảng hiện tại là giữ cấu trúc mô tả thống nhất, ưu tiên tổ chức theo thứ tự sau:
 
-只有在镜头尚未确认 `action_beats` 时，系统才继续主要依赖 `script_excerpt + shot_description` 的自然语言切片。
+1. Cận / Góc máy / Chuyển động máy
+2. Môi trường bối cảnh
+3. Nhân vật chính hoặc đối tượng then chốt
+4. Hành động và trạng thái
+5. Không khí và cảm xúc
+6. Khép lại phong cách cần thiết
 
-其中首帧当前还有一层轻量启发式：
+Tiêu chí này dùng để giảm trôi dạt prompt giữa các phân cảnh khác nhau trong cùng dự án.
 
-- 若 `script_excerpt + shot_description` 中同时出现明显的连续反应链关键词
-  - 例如：`突然 / 下意识 / 脱手 / 蹲下 / 转身 / 回头`
-- 系统会额外追加更硬的时间切片约束
-- 目标是让首帧更稳定地落在“触发后最早的可见瞬间”，而不是直接落到反应完成态
+Hệ thống hiện tại còn thêm vào prompt nền một lớp “ràng buộc liên tục”:
 
-当前系统还会进一步把上述 guidance 压缩成 `director_command_summary`：
+- Nếu có phân cảnh trước đó, hình ảnh hiện tại nên ưu tiên tiếp nối hành động, ánh mắt, cảm xúc hoặc hướng không gian của phân cảnh trước
+- Nếu có phân cảnh tiếp theo, khung hình hiện tại nên tạo thành trạng thái khép lại có thể chuyển tự nhiên sang phân cảnh tiếp theo
+- Cố gắng làm rõ vị trí, hướng và đỉnh hành động của chủ thể, giảm cảm giác đột ngột khi chuyển phân cảnh
 
-- 这不是简单拼接，而是会按帧类型重新排序
-- 若镜头存在同场景连续关系、对白或明显对视风险
-  - `screen_direction_guidance` 会被自动上提
-  - 更早进入 `必须` 级约束
-- 因此首帧、关键帧、尾帧看到的“必须 / 优先”摘要并不完全相同
-- 目标是让模型先守住最容易导致突兀感的事项，例如：
-  - 同场景镜头的左右轴线
-  - 对话关系中的视线连续
-  - 推进镜头中的构图重心
+Hệ thống hiện còn bổ sung "gợi ý bố cục và mỏ neo không gian":
 
-## 任务结果可观察性
+- Căn cứ cận và chuyển động máy hiện tại để xác định nên làm nổi chủ thể hay bối cảnh trước
+- Các phân cảnh liên tiếp cùng bối cảnh ưu tiên giữ ổn định trục không gian và hướng nhân vật
+- Nếu có bối cảnh chính và nhân vật chính, sẽ tường minh nhắc mô hình khóa mỏ neo bối cảnh và logic hướng nhìn chủ thể
 
-基础提示词任务在成功后，除了返回最终 `prompt`，还会在任务结果中附带：
+Hệ thống hiện còn bổ sung "gợi ý hướng nhìn và ánh mắt":
+
+- Trong cảnh trò chuyện hoặc đối diện, ưu tiên giữ quan hệ đường nhìn giữa người nói và người nghe liên tục
+- Phân cảnh lân cận cùng bối cảnh ưu tiên giữ ổn định hướng trái/phải của nhân vật, giảm nhảy trục cảnh phản
+- Phân cảnh over-the-shoulder ưu tiên giữ ổn định vị trí vai ở tiền cảnh và hướng của đối tượng được nhìn
+
+Đồng thời, hệ thống sẽ cung cấp thêm cho mô hình một "gợi ý độ ưu tiên chủ thể", giúp mô hình tránh dàn đều mọi thông tin:
+
+- Ưu tiên viết nhân vật chính
+- Ưu tiên xây dựng bối cảnh chính
+- Đạo cụ chỉ được ghi trọng điểm khi vào hành động chính hoặc điểm trọng tâm bố cục
+- Trang phục chủ yếu dùng để đảm bảo nhất quán ngoại hình nhân vật, không yêu cầu lần nào cũng là trung tâm khung hình
+
+Hệ thống hiện còn bổ sung gợi ý chuyên biệt theo loại khung hình:
+
+- Khung hình đầu: ưu tiên thiết lập không gian, vị trí đứng ban đầu của chủ thể và ấn tượng thị giác khoảnh khắc đầu; nếu kịch bản có chuỗi phản ứng liên tục, ưu tiên dùng cách diễn đạt chưa hoàn tất "vừa bắt đầu / chưa hoàn tất / bị ngắt ngang", không viết trực tiếp thành hành động hoàn tất phía sau hoặc tư thế cuối cùng
+- Khung hình chính: ưu tiên khóa khoảnh khắc đỉnh hành động, điểm bùng nổ cảm xúc hoặc mật độ thông tin cao nhất
+- Khung hình cuối: ưu tiên nhấn mạnh khép lại hành động, dư âm cảm xúc và điểm dừng để phân cảnh tiếp theo có thể tiếp nối
+
+nếu shot đã xác nhận `action_beats` ở giai đoạn chuẩn bị, chuỗi hiện tại sẽ ưu tiên tiêu thụ bộ mốc hành động này:
+
+- Khung hình đầu ưu tiên bố trí hình ảnh quanh mốc `trigger` (kích hoạt / phản ứng khởi đầu)
+- Khung hình chính ưu tiên bố trí hình ảnh quanh mốc `peak` (đỉnh hành động / giai đoạn căng thẳng kịch tính cao nhất)
+- Khung hình cuối ưu tiên bố trí hình ảnh quanh mốc `aftermath` (trạng thái kết quả / giai đoạn khép lại)
+
+hiện lớp này vẫn là heuristic nhẹ, không yêu cầu `action_beats` phải lưu thành đối tượng có cấu trúc trước:
+
+- Tiếp tục dùng `list[str]`
+- phía sau sẽ suy luận `trigger / peak / aftermath` dựa trên từ khóa và vị trí tương đối
+- Vì vậy khung hình đầu, khung hình chính, khung hình cuối nay sẽ dùng ổn định hơn cùng một nhóm mốc hành động, nhưng mỗi loại lấy một giai đoạn khác
+- bộ thông tin giai đoạn này hiện cũng đi vào `debug_context` của tác vụ prompt nền khung hình chính
+  - Preview khung hình chính ở frontend sẽ hiển thị trực tiếp “giai đoạn mốc hành động” và “khung hình hiện tại được tiêu thụ ưu tiên”
+  - Do đó nhãn giai đoạn mà trang chỉnh sửa nhìn thấy và thông tin giai đoạn mà chuỗi khung hình chính thực sự dùng giờ đã khớp nhau
+
+Chỉ khi phân cảnh chưa xác nhận `action_beats`, hệ thống mới tiếp tục chủ yếu dựa vào lát cắt ngôn ngữ tự nhiên của `script_excerpt + shot_description`.
+
+Trong đó khung hình đầu hiện còn một lớp suy đoán nhẹ:
+
+- Nếu trong `script_excerpt + shot_description` xuất hiện đồng thời từ khóa chuỗi phản ứng liên tiếp rõ ràng
+  - Ví dụ: `đột ngột / bản năng / rớt khỏi tay / khụy xuống / quay người / quay đầu lại`
+- Hệ thống sẽ bổ sung thêm ràng buộc lát cắt thời gian cứng hơn
+- Mục tiêu là để khung hình đầu rơi ổn định hơn vào "thời điểm nhìn thấy sớm nhất sau kích hoạt", thay vì rơi thẳng vào trạng thái phản ứng hoàn thành
+
+Hệ thống hiện tại còn thu gọn guidance nói trên thành `director_command_summary`:
+
+- Không phải nối ghép đơn thuần, mà sẽ sắp xếp lại theo loại khung hình
+- Nếu phân cảnh có quan hệ liên tiếp cùng bối cảnh, lời thoại hoặc rủi ro đối diện rõ ràng
+  - `screen_direction_guidance` sẽ được tự động nâng lên
+  - Sớm hơn đi vào ràng buộc cấp `bắt buộc`
+- Do đó tóm tắt “bắt buộc / ưu tiên” mà khung hình đầu, khung hình chính, khung hình cuối nhìn thấy không hoàn toàn giống nhau
+- Mục tiêu là để mô hình trước tiên giữ vững các việc dễ gây cảm giác đứt gãy nhất, ví dụ:
+  - Trục kịch trái/phải của các phân cảnh cùng bối cảnh
+  - Tính liên tục của ánh mắt trong mối quan hệ thoại
+  - Trọng tâm bố cục của phân cảnh đang tiến hành
+
+## Quan sát được kết quả tác vụ
+
+Tác vụ prompt cơ bản sau khi thành công, ngoài trả về `prompt` cuối cùng, còn đính kèm trong kết quả tác vụ:
 
 - `debug_context`
 - `quality_checks`
 
-其中包含本次生成实际使用的：
+Trong đó có những thứ lần tạo này thực sự dùng đến:
 
-- 项目风格字段
-- 镜头语言字段
-- 已确认实体上下文
+- Trường phong cách dự án
+- Trường ngôn ngữ điện ảnh
+- Ngữ cảnh thực thể đã xác nhận
 
-用于排查“为什么生成成这样”这一类问题。
+Dùng để gỡ lỗi loại vấn đề "tại sao tạo ra thành thế này".
 
-当前任务执行链还会做一层轻量质量闸：
+Chuỗi thực hiện tác vụ hiện còn có thêm một lớp cổng chất lượng nhẹ:
 
-- 若结果混入 `图1 / 图2` 或 `## 图片内容说明`
-- 若结果遗漏主角色名称
+- Nếu kết quả lẫn `hình 1 / hình 2` hoặc `## Diễn giải nội dung hình ảnh`
+- Nếu kết quả thiếu tên nhân vật chính
 
-系统会先自动带着修正要求重试一次，再决定最终落库结果。
+Hệ thống trước hết tự động thử lại một lần kèm yêu cầu sửa, rồi mới quyết định kết quả ghi vào DB cuối cùng.

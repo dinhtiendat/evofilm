@@ -1,56 +1,56 @@
 # Jellyfish Site
 
-Jellyfish 官网与文档站基于 Hugo + Hextra 构建。
+Trang chủ và trang tài liệu của Jellyfish xây dựng trên Hugo + Hextra.
 
-## 本地开发要求
+## Yêu cầu phát triển cục bộ
 
 - Hugo extended `>= 0.146.0`
 - Go `>= 1.22`
 
-## 安装主题模块
+## Cài đặt module theme
 
 ```bash
 cd site
 hugo mod tidy
 ```
 
-## 本地预览
+## Xem trước cục bộ
 
 ```bash
 cd site
 hugo server --buildDrafts --disableFastRender
 ```
 
-本地开发默认访问：
+Truy cập cục bộ mặc định:
 
 - `http://localhost:1313/`
 
-## 构建
+## Xây dựng
 
 ```bash
 cd site
 hugo --minify
 ```
 
-GitHub Pages 发布时会在 CI 中显式传入生产环境的 `baseURL`。
+khi phát hành GitHub Pages sẽ truyền `baseURL` môi trường production rõ trong CI.
 
-当前仓库不保存 Hextra 主题源码，开发和 CI 都通过 Hugo Modules 即时拉取主题。
+Kho hiện tại không lưu mã nguồn theme Hextra; cả phát triển và CI đều lấy theme qua Hugo Modules theo thời gian thực.
 
-## 模块依赖约定
+## Quy ước phụ thuộc module
 
-- 本地更新或新增主题模块时，使用 `hugo mod tidy`
-- GitHub CI 中只执行模块下载与校验，不在发布时重写依赖锁文件
-- `go.mod` 与 `go.sum` 需要随模块变更一并提交
+- Khi cập nhật hoặc thêm module theme cục bộ, dùng `hugo mod tidy`
+- CI GitHub chỉ thực thi tải module và xác minh, không viết lại tệp khóa phụ thuộc khi phát hành
+- `go.mod` và `go.sum` cần được commit cùng với thay đổi module
 
-## 目录说明
+## Giải thích thư mục
 
-- `content/`：官网与文档内容
-- `layouts/`：首页等自定义模板
-- `data/`：首页文案块等结构化数据
-- `static/`：logo、截图等静态资源
+- `content/`: Nội dung trang chủ và tài liệu
+- `layouts/`: Mẫu tùy chỉnh như trang chủ
+- `data/`: Dữ liệu có cấu trúc như khối nội dung trang chủ
+- `static/`: logo, ảnh chụp màn hình và các tài nguyên tĩnh khác
 
-## SEO 与分享图
+## SEO và ảnh chia sẻ
 
-- 默认分享图：`static/images/og-default.svg`
-- 站点级元信息：`hugo.yaml`
-- 自定义 head 补充：`layouts/_partials/custom/head-end.html`
+- Ảnh chia sẻ mặc định: `static/images/og-default.svg`
+- Siêu dữ liệu cấp trang web: `hugo.yaml`
+- Bổ sung đầu tùy chỉnh: `layouts/_partials/custom/head-end.html`

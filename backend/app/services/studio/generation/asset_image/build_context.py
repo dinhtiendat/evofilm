@@ -5,7 +5,7 @@ from app.services.studio.generation.shared.types import GenerationContext
 
 
 class AssetImageContext(GenerationContext):
-    """资产图片生成的动态上下文。"""
+    """Bối cảnh động dùng cho tạo ảnh tài nguyên."""
 
     kind: str = "asset_image"
     entity_type: str

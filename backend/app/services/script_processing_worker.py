@@ -1,4 +1,4 @@
-"""给 Celery worker 使用的同步任务执行服务。"""
+"""Dịch vụ thực thi tác vụ đồng bộ cho Celery worker."""
 
 from __future__ import annotations
 
@@ -71,7 +71,7 @@ class ExtractResultGenerator(AbstractLLMResultGenerator):
             refresh_cache=bool(run_args.get("refresh_cache")),
         )
 
-    def generate_with_llm(self, llm, run_args: dict[str, Any]) -> Any:  # pragma: no cover - 不直接走这里
+    def generate_with_llm(self, llm, run_args: dict[str, Any]) -> Any:  # pragma: no cover - không trực tiếp qua đây
         raise NotImplementedError
 
 
@@ -311,7 +311,7 @@ def apply_extraction_result(
     chapter_id: str,
     draft: Any,
 ) -> None:
-    """将提取草稿同步为候选与镜头语言默认值。"""
+    """Đồng bộ bản nháp trích xuất thành ứng viên và giá trị mặc định của ngôn ngữ phân cảnh."""
 
     sync_shot_extracted_candidates_from_draft_sync(db, chapter_id=chapter_id, draft=draft)
     sync_shot_extracted_dialogue_candidates_from_draft_sync(db, chapter_id=chapter_id, draft=draft)

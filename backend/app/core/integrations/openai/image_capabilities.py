@@ -1,4 +1,4 @@
-"""OpenAI 图片能力声明与覆盖注册。"""
+""""Khai báo và đăng ký ghi đè năng lực ảnh OpenAI."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ _OPENAI_DEFAULT = ImageModelCapability(
     supports_watermark=True,
 )
 
-# key: 模型前缀（小写）
+# key: tiền tố mô hình (chữ thường)
 _OPENAI_MODEL_OVERRIDES: dict[str, ImageModelCapability] = {}
 
 
@@ -46,7 +46,7 @@ def resolve_openai_image_capability(model: str | None) -> ImageModelCapability:
 
 
 def validate_openai_image_options(input_: ImageGenerationInput) -> None:
-    """OpenAI 能力校验入口（避免调用侧传 provider 字面量）。"""
+    """OpenAI Điểm vào xác thực khả năng (tránh để phía gọi truyền provider chuỗi cứng)."""
     from app.core.contracts.image_generation import ImageGenerationInput
     from app.core.integrations.image_capabilities import validate_image_options
 

@@ -1,4 +1,4 @@
-"""FastAPI 依赖注入。"""
+"""Dependency injection cho FastAPI."""
 
 from collections.abc import AsyncGenerator
 
@@ -11,7 +11,7 @@ from app.services.llm.resolver import build_default_text_llm
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """提供异步数据库会话。"""
+    """Cung cấp phiên database async."""
     async with async_session_maker() as session:
         try:
             yield session
@@ -24,16 +24,16 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def get_llm(db: AsyncSession = Depends(get_db)) -> BaseChatModel:
-    """提供默认文本 LLM（ChatOpenAI）。"""
+    """Cung cấp LLM văn bản mặc định (ChatOpenAI)."""
     return await build_default_text_llm(db, thinking=True)
 
 async def get_nothinking_llm(db: AsyncSession = Depends(get_db)) -> BaseChatModel:
-    """提供默认文本 LLM（ChatOpenAI，禁用 thinking）。"""
+    """Cung cấp LLM văn bản mặc định (ChatOpenAI, tắt thinking)."""
     return await build_default_text_llm(db, thinking=False)
 
 
 class _ImageHttpRunnable:
-    """最小图片生成 runnable：从环境变量读取配置，通过 HTTP 调用外部图片生成服务。"""
+    """Runnable sinh ảnh tối giản: đọc cấu hình từ biến môi trường, gọi HTTP tới service sinh ảnh bên ngoài."""
 
     def __init__(self, *, base_url: str, api_key: str, timeout_s: float = 60.0) -> None:
         self._base_url = base_url.rstrip("/")

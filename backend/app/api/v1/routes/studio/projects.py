@@ -64,7 +64,7 @@ def _validate_project_style_combo(*, visual_style: ProjectVisualStyle, style: Pr
 @router.get(
     "/style-options",
     response_model=ApiResponse[ProjectStyleOptionsRead],
-    summary="获取项目风格候选项",
+    summary="Lấy ứng viên phong cách của dự án",
 )
 async def get_project_style_options(
 ) -> ApiResponse[ProjectStyleOptionsRead]:
@@ -83,13 +83,13 @@ async def get_project_style_options(
 @router.get(
     "",
     response_model=ApiResponse[PaginatedData[ProjectRead]],
-    summary="项目列表（分页）",
+    summary="Danh sách dự án (phân trang)",
 )
 async def list_projects(
     db: AsyncSession = Depends(get_db),
-    q: str | None = Query(None, description="关键字，过滤 name/description"),
-    order: str | None = Query(None, description="排序字段"),
-    is_desc: bool = Query(False, description="是否倒序"),
+    q: str | None = Query(None, description="Từ khóa, lọc theo name/description"),
+    order: str | None = Query(None, description="Trường sắp xếp"),
+    is_desc: bool = Query(False, description="Sắp xếp giảm dần hay không"),
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
 ) -> ApiResponse[PaginatedData[ProjectRead]]:
@@ -104,7 +104,7 @@ async def list_projects(
     "",
     response_model=ApiResponse[ProjectRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建项目",
+    summary="Tạo dự án",
 )
 async def create_project(
     body: ProjectCreate,
@@ -127,7 +127,7 @@ async def create_project(
 @router.get(
     "/{project_id}",
     response_model=ApiResponse[ProjectRead],
-    summary="获取项目",
+    summary="Lấy dự án",
 )
 async def get_project(
     project_id: str,
@@ -140,7 +140,7 @@ async def get_project(
 @router.patch(
     "/{project_id}",
     response_model=ApiResponse[ProjectRead],
-    summary="更新项目",
+    summary="Cập nhật dự án",
 )
 async def update_project(
     project_id: str,
@@ -164,7 +164,7 @@ async def update_project(
 @router.delete(
     "/{project_id}",
     response_model=ApiResponse[None],
-    summary="删除项目",
+    summary="Xóa dự án",
 )
 async def delete_project(
     project_id: str,

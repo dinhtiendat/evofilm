@@ -11,16 +11,16 @@ export default function ModelManagement() {
     <Layout className="h-full flex flex-col" style={{ minHeight: 0 }}>
       <div className="flex-shrink-0 px-4 py-3 border-b border-gray-200 bg-white space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="font-semibold text-gray-800">模型管理</span>
+          <span className="font-semibold text-gray-800">Quản lý mô hình</span>
         </div>
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
           size="small"
           items={[
-            { key: 'providers', label: '供应商' },
-            { key: 'models', label: '模型' },
-            { key: 'settings', label: '设置' },
+            { key: 'providers', label: 'Nhà cung cấp' },
+            { key: 'models', label: 'Mô hình' },
+            { key: 'settings', label: 'Cài đặt' },
           ]}
         />
       </div>

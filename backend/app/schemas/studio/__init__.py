@@ -1,4 +1,4 @@
-"""Studio 模块 schemas。"""
+"""schemas của module Studio."""
 
 from app.schemas.studio.files import (
     FileCreate,

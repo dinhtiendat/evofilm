@@ -1,4 +1,4 @@
-"""shot extracted candidates 接口响应壳测试。"""
+"""Test vỏ phản ứng interface shot extracted candidates."""
 
 from __future__ import annotations
 
@@ -38,11 +38,11 @@ def _fake_preparation_state() -> ShotPreparationStateRead:
             id="shot-1",
             chapter_id="chapter-1",
             index=1,
-            title="镜头一",
+            title="Phân cảnh 1",
             thumbnail="",
             status=ShotStatus.ready,
             skip_extraction=False,
-            script_excerpt="摘录",
+            script_excerpt="Trích đoạn",
             generated_video_file_id=None,
             last_extracted_at=None,
             extraction=ShotExtractionSummaryRead(
@@ -75,9 +75,9 @@ def _fake_preparation_state() -> ShotPreparationStateRead:
         action_beats_ready=True,
         action_beats_count=3,
         action_beat_phases=[
-            ActionBeatPhaseRead(text="听到异响骤然僵住", phase="trigger"),
-            ActionBeatPhaseRead(text="修枝剪脱手下坠", phase="peak"),
-            ActionBeatPhaseRead(text="蹲下后呼吸急促", phase="aftermath"),
+            ActionBeatPhaseRead(text="nghe tiếng động lạ, chợt cứng đờ", phase="trigger"),
+            ActionBeatPhaseRead(text="kìm cắt tuột tay rơi xuống", phase="peak"),
+            ActionBeatPhaseRead(text="cúi xuống, thở gấp", phase="aftermath"),
         ],
         ready_for_generation=True,
     )
@@ -90,7 +90,7 @@ def test_get_shot_extracted_candidates_returns_success_envelope(client: TestClie
         id = 1
         shot_id = "shot-1"
         candidate_type = ShotCandidateType.character
-        candidate_name = "仙女A"
+        candidate_name = "Tiên nữ A"
         candidate_status = ShotCandidateStatus.pending
         linked_entity_id = None
         source = "extraction"
@@ -113,7 +113,7 @@ def test_get_shot_extracted_candidates_returns_success_envelope(client: TestClie
     body = response.json()
     assert body["code"] == 200
     assert body["message"] == "success"
-    assert body["data"][0]["candidate_name"] == "仙女A"
+    assert body["data"][0]["candidate_name"] == "Tiên nữ A"
     assert body["data"][0]["candidate_status"] == "pending"
 
 
@@ -124,11 +124,11 @@ def test_update_shot_skip_extraction_returns_success_envelope(client: TestClient
         id = "shot-1"
         chapter_id = "chapter-1"
         index = 1
-        title = "镜头一"
+        title = "Phân cảnh 1"
         thumbnail = ""
         status = ShotStatus.ready
         skip_extraction = True
-        script_excerpt = "摘录"
+        script_excerpt = "Trích đoạn"
         generated_video_file_id = None
 
     async def _fake_set_skip(*_args, **_kwargs):
@@ -166,7 +166,7 @@ def test_link_extracted_candidate_returns_success_envelope(client: TestClient, m
         id = 2
         shot_id = "shot-1"
         candidate_type = ShotCandidateType.scene
-        candidate_name = "河边"
+        candidate_name = "Bên bờ sông"
         candidate_status = ShotCandidateStatus.linked
         linked_entity_id = "scene-1"
         source = "extraction"
@@ -207,7 +207,7 @@ def test_ignore_extracted_candidate_returns_success_envelope(client: TestClient,
         id = 3
         shot_id = "shot-1"
         candidate_type = ShotCandidateType.prop
-        candidate_name = "银斧头"
+        candidate_name = "Rìu bạc"
         candidate_status = ShotCandidateStatus.ignored
         linked_entity_id = None
         source = "extraction"
@@ -296,9 +296,9 @@ def test_get_shot_extracted_dialogue_candidates_returns_success_envelope(
         id = 4
         shot_id = "shot-1"
         index = 1
-        text = "你终于来了。"
+        text = "Cuối cùng bạn cũng đến."
         line_mode = "DIALOGUE"
-        speaker_name = "男子"
+        speaker_name = "Đàn ông"
         target_name = None
         candidate_status = ShotDialogueCandidateStatus.pending
         linked_dialog_line_id = None
@@ -321,7 +321,7 @@ def test_get_shot_extracted_dialogue_candidates_returns_success_envelope(
     assert response.status_code == 200
     body = response.json()
     assert body["code"] == 200
-    assert body["data"][0]["text"] == "你终于来了。"
+    assert body["data"][0]["text"] == "Cuối cùng bạn cũng đến."
     assert body["data"][0]["candidate_status"] == "pending"
 
 
@@ -331,13 +331,13 @@ def test_preview_shot_video_prompt_returns_success_envelope(client: TestClient, 
     class _Preview:
         shot_id = "shot-1"
         template_id = "tpl-1"
-        template_name = "视频模板"
-        rendered_prompt = "视频提示词"
+        template_name = "Mẫu video"
+        rendered_prompt = "Prompt video"
         warnings = []
         pack = {
             "shot_id": "shot-1",
-            "title": "镜头一",
-            "script_excerpt": "摘录",
+            "title": "Phân cảnh 1",
+            "script_excerpt": "Trích đoạn",
             "action_beats": [],
             "dialogue_summary": "",
             "characters": [],
@@ -369,8 +369,8 @@ def test_preview_shot_video_prompt_returns_success_envelope(client: TestClient, 
     assert response.status_code == 200
     body = response.json()
     assert body["code"] == 200
-    assert body["data"]["rendered_prompt"] == "视频提示词"
-    assert body["data"]["pack"]["title"] == "镜头一"
+    assert body["data"]["rendered_prompt"] == "Prompt video"
+    assert body["data"]["pack"]["title"] == "Phân cảnh 1"
 
 
 def test_get_shot_video_readiness_returns_success_envelope(client: TestClient, monkeypatch) -> None:
@@ -384,7 +384,7 @@ def test_get_shot_video_readiness_returns_success_envelope(client: TestClient, m
             {
                 "key": "extraction_ready",
                 "ok": True,
-                "message": "信息提取确认已完成",
+                "message": "Xác nhận trích xuất thông tin đã hoàn tất",
             }
         ]
 
@@ -444,9 +444,9 @@ def test_accept_extracted_dialogue_candidate_returns_success_envelope(
         id = 5
         shot_id = "shot-1"
         index = 1
-        text = "你终于来了。"
+        text = "Cuối cùng bạn cũng đến."
         line_mode = "DIALOGUE"
-        speaker_name = "男子"
+        speaker_name = "Đàn ông"
         target_name = None
         candidate_status = ShotDialogueCandidateStatus.accepted
         linked_dialog_line_id = 11
@@ -491,9 +491,9 @@ def test_ignore_extracted_dialogue_candidate_returns_success_envelope(
         id = 6
         shot_id = "shot-1"
         index = 1
-        text = "你终于来了。"
+        text = "Cuối cùng bạn cũng đến."
         line_mode = "DIALOGUE"
-        speaker_name = "男子"
+        speaker_name = "Đàn ông"
         target_name = None
         candidate_status = ShotDialogueCandidateStatus.ignored
         linked_dialog_line_id = None

@@ -24,16 +24,16 @@ from app.services.studio.shot_semantic_defaults import apply_shot_semantic_defau
 
 
 async def _seed_async_graph(db: AsyncSession) -> str:
-    """构造最小项目/章节/镜头图，便于验证镜头语言默认值写回。"""
+    """Dựng đồ thị dự án/chương/phân cảnh tối thiểu, thuận tiện xác thực ghi ngược giá trị mặc định ngôn ngữ phân cảnh."""
 
     project = Project(
         id="project-1",
-        name="项目一",
+        name="Dự án 1",
         style=ProjectStyle.guoman,
         visual_style=ProjectVisualStyle.anime,
     )
-    chapter = Chapter(id="chapter-1", project_id=project.id, index=1, title="章节一")
-    shot = Shot(id="shot-1", chapter_id=chapter.id, index=1, title="镜头一", script_excerpt="原始摘录")
+    chapter = Chapter(id="chapter-1", project_id=project.id, index=1, title="Chương 1")
+    shot = Shot(id="shot-1", chapter_id=chapter.id, index=1, title="Cảnh 1", script_excerpt="Trích dẫn gốc")
     detail = ShotDetail(
         id=shot.id,
         camera_shot=CameraShotType.ms,
@@ -47,16 +47,16 @@ async def _seed_async_graph(db: AsyncSession) -> str:
 
 
 def _seed_sync_graph(db: Session) -> str:
-    """同步版本的最小项目/章节/镜头图。"""
+    """Đồ thị tối thiểu dự án/chương/phân cảnh của phiên bản đồng bộ."""
 
     project = Project(
         id="project-1",
-        name="项目一",
+        name="Dự án 1",
         style=ProjectStyle.guoman,
         visual_style=ProjectVisualStyle.anime,
     )
-    chapter = Chapter(id="chapter-1", project_id=project.id, index=1, title="章节一")
-    shot = Shot(id="shot-1", chapter_id=chapter.id, index=1, title="镜头一", script_excerpt="原始摘录")
+    chapter = Chapter(id="chapter-1", project_id=project.id, index=1, title="Chương 1")
+    shot = Shot(id="shot-1", chapter_id=chapter.id, index=1, title="Cảnh 1", script_excerpt="Trích dẫn gốc")
     detail = ShotDetail(
         id=shot.id,
         camera_shot=CameraShotType.ms,
@@ -70,12 +70,12 @@ def _seed_sync_graph(db: Session) -> str:
 
 
 def _build_semantic_draft() -> StudioScriptExtractionDraft:
-    """构造带镜头语言默认建议的提取草稿。"""
+    """Xây dựng bản nháp trích xuất kèm gợi ý mặc định ngôn ngữ điện ảnh."""
 
     return StudioScriptExtractionDraft(
         project_id="project-1",
         chapter_id="chapter-1",
-        script_text="测试文本",
+        script_text="Văn bản thử nghiệm",
         characters=[],
         scenes=[],
         props=[],
@@ -83,20 +83,20 @@ def _build_semantic_draft() -> StudioScriptExtractionDraft:
         shots=[
             StudioShotDraft(
                 index=1,
-                title="镜头一",
-                script_excerpt="摘录",
+                title="Phân cảnh 1",
+                script_excerpt="Trích đoạn",
                 scene_name=None,
                 character_names=[],
                 prop_names=[],
                 costume_names=[],
                 dialogue_lines=[],
-                actions=["听到声音后僵住"],
+                actions=["Đóng băng sau khi nghe thấy tiếng"],
                 semantic_suggestion=ShotSemanticSuggestion(
                     camera_shot=CameraShotType.cu,
                     angle=CameraAngle.low_angle,
                     movement=CameraMovement.track,
                     duration=6,
-                    action_beats=["听到异响骤然僵住", "修枝剪脱手下坠"],
+                    action_beats=["Đúng lúc nghe tiếng động lạ thì cứng đơ", "Kìm cắt cành tuột tay rơi xuống"],
                 ),
             )
         ],
@@ -125,7 +125,7 @@ async def test_apply_shot_semantic_defaults_from_draft_updates_shot_detail() -> 
         assert detail.angle == CameraAngle.low_angle
         assert detail.movement == CameraMovement.track
         assert detail.duration == 6
-        assert detail.action_beats == ["听到异响骤然僵住", "修枝剪脱手下坠"]
+        assert detail.action_beats == ["Đúng lúc nghe tiếng động lạ thì cứng đơ", "Kìm cắt cành tuột tay rơi xuống"]
 
     await engine.dispose()
 
@@ -176,6 +176,6 @@ def test_apply_extraction_result_sync_updates_shot_detail() -> None:
         assert detail.angle == CameraAngle.low_angle
         assert detail.movement == CameraMovement.track
         assert detail.duration == 6
-        assert detail.action_beats == ["听到异响骤然僵住", "修枝剪脱手下坠"]
+        assert detail.action_beats == ["Đúng lúc nghe tiếng động lạ thì cứng đơ", "Kìm cắt cành tuột tay rơi xuống"]
 
     engine.dispose()

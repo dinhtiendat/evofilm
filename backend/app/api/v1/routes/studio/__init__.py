@@ -1,4 +1,4 @@
-"""Studio 模块路由聚合（按子模块拆分，避免单文件过大）。"""
+"""Gom route module Studio (chia theo module con, tránh một file quá lớn)."""
 
 from fastapi import APIRouter
 

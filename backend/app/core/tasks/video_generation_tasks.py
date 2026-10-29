@@ -1,6 +1,6 @@
-"""视频生成任务（Task）：对接 OpenAI Videos API 与火山方舟内容生成。
+"""tác vụ sinh video (Task): nối OpenAI Videos API và sinh nội dung của Volcano Ark.
 
-HTTP 细节在 `app.core.integrations`；本模块保留轮询节奏与 BaseTask 契约。
+Chi tiết HTTP nằm trong `app.core.integrations`; module này giữ nhịp truy vấn lặp và hợp đồng BaseTask.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ __all__ = [
 
 
 class AbstractVideoGenerationTask(BaseTask, ABC):
-    """视频生成任务基类：公共状态与 run/status/is_done/get_result。"""
+    """Lớp cơ sở của tác vụ tạo video: trạng thái chung và run/status/is_done/get_result."""
 
     def __init__(
         self,
@@ -50,11 +50,11 @@ class AbstractVideoGenerationTask(BaseTask, ABC):
 
     @abstractmethod
     async def _create_task(self) -> None:
-        """发起供应商创建任务请求，并设置 self._provider_task_id。"""
+        """Khởi tạo yêu cầu tạo tác vụ của nhà cung cấp, và đặt self._provider_task_id."""
 
     @abstractmethod
     async def _poll_and_get_result(self) -> VideoGenerationResult:
-        """轮询至终态并解析为 VideoGenerationResult。"""
+        """Truy vấn lặp đến trạng thái cuối rồi phân tích thành VideoGenerationResult."""
 
     async def run(self, *args: Any, **kwargs: Any) -> AsyncIterator[Any] | None:  # type: ignore[override]
         try:
@@ -86,7 +86,7 @@ class AbstractVideoGenerationTask(BaseTask, ABC):
 
 
 class OpenAIVideoGenerationTask(AbstractVideoGenerationTask):
-    """OpenAI Videos：adapter 负责 HTTP，Task 负责轮询间隔。"""
+    """OpenAI Videos:adapter phụ trách HTTP, Task phụ trách chu kỳ poll."""
 
     def __init__(
         self,
@@ -142,7 +142,7 @@ class OpenAIVideoGenerationTask(AbstractVideoGenerationTask):
 
 
 class VolcengineVideoGenerationTask(AbstractVideoGenerationTask):
-    """火山内容生成任务：adapter 负责 HTTP，Task 负责轮询。"""
+    """tác vụ sinh nội dung Volcano:adapter phụ trách HTTP, Task phụ trách poll."""
 
     def __init__(
         self,
@@ -207,7 +207,7 @@ class VolcengineVideoGenerationTask(AbstractVideoGenerationTask):
 
 
 class VideoGenerationTask(BaseTask):
-    """按 provider 分派到 OpenAI / 火山实现；对外构造函数签名保持不变。"""
+    """điều phối theo provider tới thực hiện OpenAI / Volcano; ký hiệu hàm dựng đối ngoại giữ nguyên."""
 
     def __init__(
         self,

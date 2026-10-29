@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Studio 图片任务的数据层能力。"""
+"""Năng lực tầng dữ liệu của tác vụ ảnh Studio."""
 
 import base64
 import mimetypes
@@ -19,7 +19,7 @@ from app.services.llm.provider_resolver import resolve_provider_config
 
 
 async def resolve_image_model(db: AsyncSession, model_id: str | None) -> Model:
-    """根据显式 model_id 或默认图片模型解析 Model。"""
+    """Phân tích Model từ model_id tường minh hoặc mô hình ảnh mặc định."""
     try:
         return await get_model_by_category(
             db,
@@ -34,7 +34,7 @@ async def resolve_image_model(db: AsyncSession, model_id: str | None) -> Model:
                 detail=f"Configured model_id not found in DB: {model_id}",
             ) from e
         if e.status_code == status.HTTP_503_SERVICE_UNAVAILABLE and not model_id:
-            # 保持既有行为：未传 model_id 时，仅允许读取 ModelSettings.default_image_model_id。
+            # Giữ hành vi có sẵn: khi chưa truyền model_id, chỉ cho phép đọc ModelSettings.default_image_model_id.
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="No image model configured in DB (missing explicit model_id and ModelSettings.default_image_model_id)",
@@ -48,7 +48,7 @@ async def resolve_image_model(db: AsyncSession, model_id: str | None) -> Model:
 
 
 async def load_provider_config(db: AsyncSession, provider_id: str) -> ProviderConfig:
-    """根据 provider_id 从 DB 解析 ProviderConfig。"""
+    """phân tích ProviderConfig từ DB theo provider_id."""
     resolved = await resolve_provider_config(
         db,
         provider_id=provider_id,
@@ -80,10 +80,10 @@ def map_view_angle_for_prompt(view_angle: AssetViewAngle | str | None) -> str:
         return ""
     raw = view_angle.value if isinstance(view_angle, AssetViewAngle) else str(view_angle)
     view_angle_map = {
-        "RIGH": "纯右側面,严格右侧面，90度纯侧面轮廓，耳朵清晰可见",
-        "RIGHT": "纯右側面,严格右侧面，90度纯侧面轮廓，耳朵清晰可见",
-        "LEFT": "纯左侧面,严格左侧面，90度纯侧面轮廓，耳朵清晰可见",
-        "BACK": "正后方,正后方视角，完全背对镜头，只能看到后脑勺和后背",
+        "RIGH": "Phía phải hoàn toàn, profile phải nghiêm ngặt, profile 90 độ hoàn toàn, tai rõ",
+        "RIGHT": "Phía phải hoàn toàn, profile phải nghiêm ngặt, profile 90 độ hoàn toàn, tai rõ",
+        "LEFT": "Phía trái hoàn toàn, profile trái nghiêm ngặt, profile 90 độ hoàn toàn, tai rõ",
+        "BACK": "Đằng sau hoàn toàn, góc nhìn phía sau, quay lưng hoàn toàn với máy quay, chỉ thấy gáy và lưng",
     }
     return view_angle_map.get(raw, raw)
 
@@ -201,7 +201,7 @@ async def resolve_ordered_image_refs(
     parent_id: str,
     view_angles: tuple[AssetViewAngle, ...],
 ) -> list[dict[str, str]]:
-    """按指定 view_angles 顺序，解析参考图（data url）。"""
+    """theo thứ tự view_angles được chỉ định, phân tích ảnh tham chiếu [data url]."""
     parent_field = getattr(image_model, parent_field_name)
     stmt = (
         select(image_model)

@@ -1,4 +1,4 @@
-"""OpenAI Videos API：创建与查询。"""
+"""OpenAI Videos API: tạo và truy vấn."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from app.core.contracts.video_generation import VideoGenerationInput
 
 
 class OpenAIVideoApiAdapter:
-    """OpenAI 视频：POST /videos 与 GET /videos/{id}。"""
+    """OpenAI video:POST /videos và GET /videos/{id}."""
 
     async def create_video(
         self,

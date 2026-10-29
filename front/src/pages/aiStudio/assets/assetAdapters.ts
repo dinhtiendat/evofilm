@@ -23,8 +23,8 @@ function normalizeUpdateImagePayload(payload: UpdateImagePayload): UpdateImagePa
 
 export const assetAdapters = {
   character: {
-    missingAssetIdText: '缺少 character_id',
-    assetDisplayName: '角色',
+    missingAssetIdText: 'Thiếu character_id',
+    assetDisplayName: 'Nhân vật',
     backTo: '/projects',
     relationType: 'character_image',
     getAsset: async (id: string) => {
@@ -65,8 +65,8 @@ export const assetAdapters = {
     },
   } satisfies AdapterConfig<any, any>,
   actor: {
-    missingAssetIdText: '缺少 actor_id',
-    assetDisplayName: '演员',
+    missingAssetIdText: 'Thiếu actor_id',
+    assetDisplayName: 'Diễn viên',
     backTo: '/assets?tab=actor',
     relationType: 'actor_image',
     getAsset: async (id: string) => {
@@ -107,8 +107,8 @@ export const assetAdapters = {
     },
   } satisfies AdapterConfig<any, any>,
   scene: {
-    missingAssetIdText: '缺少 scene_id',
-    assetDisplayName: '场景',
+    missingAssetIdText: 'Thiếu scene_id',
+    assetDisplayName: 'Bối cảnh',
     backTo: '/assets?tab=scene',
     relationType: 'scene_image',
     getAsset: async (id: string) => {
@@ -151,8 +151,8 @@ export const assetAdapters = {
     },
   } satisfies AdapterConfig<any, any>,
   prop: {
-    missingAssetIdText: '缺少 prop_id',
-    assetDisplayName: '道具',
+    missingAssetIdText: 'Thiếu prop_id',
+    assetDisplayName: 'Đạo cụ',
     backTo: '/assets?tab=prop',
     relationType: 'prop_image',
     getAsset: async (id: string) => {
@@ -195,8 +195,8 @@ export const assetAdapters = {
     },
   } satisfies AdapterConfig<any, any>,
   costume: {
-    missingAssetIdText: '缺少 costume_id',
-    assetDisplayName: '服装',
+    missingAssetIdText: 'Thiếu costume_id',
+    assetDisplayName: 'Trang phục',
     backTo: '/assets?tab=costume',
     relationType: 'costume_image',
     getAsset: async (id: string) => {

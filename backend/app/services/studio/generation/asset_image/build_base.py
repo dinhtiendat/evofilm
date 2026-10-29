@@ -37,7 +37,7 @@ from app.services.studio.image_tasks import (
 
 
 class AssetImageBaseDraft(GenerationBaseDraft):
-    """资产图片生成的基础真值。"""
+    """Giá trị thật cơ bản cho tạo ảnh tài nguyên."""
 
     kind: str = "asset_image"
     entity_type: str

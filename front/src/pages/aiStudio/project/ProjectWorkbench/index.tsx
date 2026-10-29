@@ -57,16 +57,16 @@ const ProjectWorkbench: React.FC = () => {
   const primaryCta = (() => {
     if (!projectId) {
       return {
-        label: '创建第一章',
-        hint: '先创建章节，再进入分镜准备流程',
+        label: 'Tạo chương 1',
+        hint: 'Tạo chương trước, sau đó vào quy trình chuẩn bị phân cảnh',
         icon: <PlusOutlined />,
         onClick: () => {},
       }
     }
     if (!recommendedChapter) {
       return {
-        label: '创建第一章',
-        hint: '先创建章节，再进入分镜准备流程',
+        label: 'Tạo chương 1',
+        hint: 'Tạo chương trước, sau đó vào quy trình chuẩn bị phân cảnh',
         icon: <PlusOutlined />,
         onClick: () => {
           setTabInUrl('chapters')
@@ -82,11 +82,11 @@ const ProjectWorkbench: React.FC = () => {
       }
     }
     const state = getChapterPreparationState(recommendedChapter)
-    const chapterLabel = `第${recommendedChapter.index}章`
+    const chapterLabel = `Chương ${recommendedChapter.index}`
     if (state.key === 'edit_raw') {
       return {
-        label: `编辑${chapterLabel}原文`,
-        hint: `${chapterLabel}还没有原文内容，建议先补章节原文`,
+        label: `Chỉnh sửa nguyên văn ${chapterLabel}`,
+        hint: `${chapterLabel}chưa có nội dung nguyên văn, nên bổ sung nguyên văn chương trước`,
         icon: state.primaryIcon,
         onClick: () => {
           setTabInUrl('chapters')
@@ -104,23 +104,23 @@ const ProjectWorkbench: React.FC = () => {
     }
     if (state.key === 'extract_shots') {
       return {
-        label: `提取${chapterLabel}分镜`,
-        hint: `${chapterLabel}已有原文，下一步更适合先提取分镜`,
+        label: `Trích xuất phân cảnh ${chapterLabel}`,
+        hint: `${chapterLabel}đã có nguyên văn, bước tiếp theo phù hợp là trích xuất phân cảnh trước`,
         icon: state.primaryIcon,
         onClick: () => navigate(getChapterShotsPath(projectId, recommendedChapter.id)),
       }
     }
     if (state.key === 'prepare_shots') {
       return {
-        label: `进入${chapterLabel}分镜工作室`,
-        hint: `${chapterLabel}已有分镜，建议继续补齐镜头准备`,
+        label: `Vào studio phân cảnh ${chapterLabel}`,
+        hint: `${chapterLabel}đã có phân cảnh, nên tiếp tục bổ sung chuẩn bị phân cảnh`,
         icon: state.primaryIcon,
         onClick: () => navigate(getChapterStudioPath(projectId, recommendedChapter.id)),
       }
     }
     return {
-      label: `进入${chapterLabel}拍摄`,
-      hint: `${chapterLabel}已具备分镜，可继续进入拍摄流程`,
+      label: `Vào quay ${chapterLabel}`,
+      hint: `${chapterLabel}đã có phân cảnh, có thể tiếp tục vào quy trình quay`,
       icon: state.primaryIcon,
       onClick: () =>
         ensureHasShotsBeforeShooting({
@@ -132,7 +132,7 @@ const ProjectWorkbench: React.FC = () => {
     }
   })()
 
-  // 与 URL 中的 tab 同步：URL 变化时更新 activeTab；初次或无效 tab 时写回 URL
+  // Đồng bộ với tab trong URL: URL thay đổi thì cập nhật activeTab; lần đầu hoặc tab không hợp lệ thì ghi ngược vào URL
   useEffect(() => {
     if (tabFromUrl !== null && isTabKey(tabFromUrl)) {
       setActiveTab(tabFromUrl)
@@ -160,21 +160,21 @@ const ProjectWorkbench: React.FC = () => {
   }
 
   const moreMenuItems: MenuProps['items'] = [
-    { key: 'newActor', label: '关联演员', onClick: () => setTabInUrl('actors') },
-    { key: 'newRole', label: '新建角色', onClick: () => setTabInUrl('roles') },
-    { key: 'upload', label: '上传素材', onClick: () => navigate('/assets') },
-    { key: 'newScene', label: '新建场景', onClick: () => setTabInUrl('scenes') },
-    { key: 'newProp', label: '新建道具', onClick: () => setTabInUrl('props') },
-    { key: 'newCostume', label: '新建服装', onClick: () => setTabInUrl('costumes') },
+    { key: 'newActor', label: 'Liên kết diễn viên', onClick: () => setTabInUrl('actors') },
+    { key: 'newRole', label: 'Tạo mới nhân vật', onClick: () => setTabInUrl('roles') },
+    { key: 'upload', label: 'Tải lên nguyên liệu', onClick: () => navigate('/assets') },
+    { key: 'newScene', label: 'Tạo mới bối cảnh', onClick: () => setTabInUrl('scenes') },
+    { key: 'newProp', label: 'Tạo mới đạo cụ', onClick: () => setTabInUrl('props') },
+    { key: 'newCostume', label: 'Tạo trang phục mới', onClick: () => setTabInUrl('costumes') },
   ]
 
   if (!project && !projectLoading) {
     return (
       <Card>
-        <Empty description="项目不存在" />
+        <Empty description="Dự án không tồn tại" />
         <Link to="/projects">
           <Button type="link" icon={<ArrowLeftOutlined />}>
-            返回项目列表
+            Quay lại danh sách dự án
           </Button>
         </Link>
       </Card>
@@ -212,10 +212,10 @@ const ProjectWorkbench: React.FC = () => {
               {primaryCta.label}
             </Button>
             <Button icon={<VideoCameraFilled />} onClick={() => projectId && navigate(getProjectEditorPath(projectId))}>
-              进入后期剪辑
+              Vào giai đoạn biên tập hậu kỳ
             </Button>
             <Dropdown menu={{ items: moreMenuItems }} placement="bottomRight">
-              <Button icon={<EllipsisOutlined />}>更多</Button>
+              <Button icon={<EllipsisOutlined />}>thêm nữa</Button>
             </Dropdown>
           </Space>
         </div>

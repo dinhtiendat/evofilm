@@ -1,4 +1,4 @@
-"""Studio 实体图片 CRUD。"""
+"""CRUD ảnh thực thể Studio."""
 
 from __future__ import annotations
 

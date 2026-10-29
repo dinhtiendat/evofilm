@@ -1,11 +1,11 @@
-"""镜头动作拍点辅助服务。
+"""Dịch vụ phụ trợ mốc hành động phân cảnh.。
 
-该模块负责对 `ShotDetail.action_beats` 做轻量阶段推断，帮助关键帧与视频链
-在不引入复杂结构化模型的前提下，更稳定地区分：
+Module này chịu trách nhiệm suy luận giai đoạn nhẹ cho `ShotDetail.action_beats`, hỗ trợ khung hình chính và đường link video
+Không đưa vào mô hình cấu trúc phức tạp, vẫn phân biệt ổn định hơn:
 
-- trigger：触发 / 起始反应
-- peak：动作峰值 / 戏剧张力最高阶段
-- aftermath：结果态 / 收束阶段
+- trigger: Kích hoạt / phản ứng ban đầu
+- peak: Đỉnh hành động / giai đoạn kịch tính cao nhất
+- aftermath: Trạng thái kết quả / giai đoạn khép lại
 """
 
 from __future__ import annotations
@@ -17,82 +17,84 @@ from typing import Literal
 ActionBeatPhase = Literal["trigger", "peak", "aftermath"]
 
 _TRIGGER_KEYWORDS = (
-    "听到",
-    "看到",
-    "看见",
-    "发现",
-    "察觉",
-    "突然",
-    "骤然",
-    "刚",
-    "开始",
-    "初次",
-    "异响",
-    "咔嚓",
-    "响起",
-    "推门",
-    "转头",
-    "回头",
+    "nghe thấy",
+    "nhìn thấy",
+    "thấy",
+    "phát hiện",
+    "nhận ra",
+    "đột ngột",
+    "đột nhiên",
+    "vừa",
+    "bắt đầu",
+    "lần đầu",
+    "tiếng lạ",
+    "tách",
+    "vang lên",
+    "đẩy cửa",
+    "quay đầu",
+    "quay lại",
 )
 
 _AFTERMATH_KEYWORDS = (
-    "呼吸急促",
-    "喘",
-    "余韵",
-    "停留",
-    "停住",
-    "站定",
-    "蹲着",
-    "倒在",
-    "保持",
-    "恢复",
-    "看向",
-    "余波",
-    "收束",
+    "thở gấp",
+    "thở dốc",
+    "dư âm",
+    "dừng lại",
+    "dừng",
+    "đứng yên",
+    "cúi",
+    "ngã",
+    "giữ",
+    "khôi phục",
+    "nhìn về",
+    "sóng sau",
+    "khép lại",
 )
 
 _PEAK_KEYWORDS = (
-    "脱手",
-    "下坠",
-    "落地",
-    "捂住",
-    "捂耳",
-    "蹲下",
-    "扑",
-    "冲",
-    "举起",
-    "挥",
-    "对峙",
-    "爆发",
-    "僵住",
-    "下沉",
+    "rơi khỏi tay",
+    "rơi",
+    "áp dụng",
+    "che",
+    "che tai",
+    "quỳ xuống",
+    "vồ tới",
+    "xông",
+    "giơ lên",
+    "vung",
+    "đối đầu",
+    "bùng nổ",
+    "đơ cứng",
+    "chìm xuống",
+    "hạ xuống",
 )
 
 
 @dataclass(frozen=True, slots=True)
 class ActionBeatPhaseItem:
-    """单条动作拍点的阶段推断结果。"""
+    """Kết quả suy luận giai đoạn của một mốc hành động.。"""
 
     text: str
     phase: ActionBeatPhase
 
 
 def _count_hits(text: str, keywords: tuple[str, ...]) -> int:
-    """统计一段文本中命中的阶段关键词数量。"""
-    return sum(1 for keyword in keywords if keyword in text)
+    """Đếm số từ khóa giai đoạn khớp trong một đoạn văn bản (không phân biệt hoa thường)."""
+    lowered = str(text or "").lower()
+    return sum(1 for keyword in keywords if keyword.lower() in lowered)
 
 
 def infer_action_beat_phase(*, text: str, index: int, total: int) -> ActionBeatPhase:
-    """为单条动作拍点推断阶段。
+    """Suy luận giai đoạn cho một mốc hành động đơn lẻ.。
 
-    规则优先级：
-    1. 明显的 aftermath 关键词
-    2. 明显的 trigger 关键词
-    3. 明显的 peak 关键词
-    4. 按位置兜底：
-       - 首条默认 trigger
-       - 尾条默认 aftermath（总数 >= 3）
-       - 其余默认 peak
+    Thứ tự ưu tiên quy tắc:：
+    1. Từ khóa aftermath rõ ràng
+    2. Từ khóa trigger rõ ràng
+    3. Từ khóa peak rõ ràng
+    4. 4. Dự phòng theo vị trí:：
+       - - Mặc định: điều đầu tiên là trigger trigger
+       - Mốc cuối mặc định aftermath (tổng số >= 3)
+       - - Phần còn lại mặc định peak peak
     """
 
     normalized = str(text or "").strip()
@@ -118,7 +120,7 @@ def infer_action_beat_phase(*, text: str, index: int, total: int) -> ActionBeatP
 
 
 def infer_action_beat_sequence(action_beats: list[str] | None) -> list[ActionBeatPhaseItem]:
-    """将动作拍点列表转换为带阶段信息的序列。"""
+    """Chuyển danh sách mốc hành động thành chuỗi có thông tin giai đoạn.。"""
     beats = [str(item).strip() for item in list(action_beats or []) if str(item).strip()]
     total = len(beats)
     return [
@@ -131,7 +133,7 @@ def infer_action_beat_sequence(action_beats: list[str] | None) -> list[ActionBea
 
 
 def pick_action_beat_for_frame(frame_type: str, action_beats: list[str] | None) -> ActionBeatPhaseItem | None:
-    """按帧类型挑选最适合作为当前帧主拍点的动作项。"""
+    """Chọn theo loại khung hình hành động phù hợp nhất làm mốc hành động chính của khung hình hiện tại.。"""
     sequence = infer_action_beat_sequence(action_beats)
     if not sequence:
         return None

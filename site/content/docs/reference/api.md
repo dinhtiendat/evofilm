@@ -1,9 +1,9 @@
 ---
-title: "接口说明"
+title: "Mô tả giao diện"
 weight: 2
 ---
 
-后端默认提供：
+Backend mặc định cung cấp:
 
 - `/health`
 - `/docs`
@@ -11,4 +11,4 @@ weight: 2
 - `/api/v1/llm/*`
 - `/api/v1/studio/*`
 
-更详细的接口说明可基于 OpenAPI 文档继续完善。
+Có thể tiếp tục bổ sung mô tả interface chi tiết hơn dựa trên tài liệu OpenAPI.

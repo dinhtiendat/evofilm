@@ -1,4 +1,4 @@
-"""镜头视频生成准备度聚合服务。"""
+"""Dịch vụ tổng hợp độ sẵn sàng tạo video của phân cảnh."""
 
 from __future__ import annotations
 
@@ -82,9 +82,9 @@ async def _reference_frames_ready(
 ) -> ShotVideoReadinessCheck:
     required_frames = REQUIRED_FRAMES_BY_MODE.get(reference_mode)
     if required_frames is None:
-        return _check("reference_frames_ready", False, f"未知参考模式：{reference_mode}")
+        return _check("reference_frames_ready", False, f"Chế độ tham chiếu không rõ: {reference_mode}")
     if not required_frames:
-        return _check("reference_frames_ready", True, "当前参考模式不需要参考帧")
+        return _check("reference_frames_ready", True, "Chế độ tham chiếu hiện tại không cần khung hình tham chiếu")
 
     stmt = select(ShotFrameImage).where(
         ShotFrameImage.shot_detail_id == shot_id,
@@ -94,8 +94,8 @@ async def _reference_frames_ready(
     frame_map = {row.frame_type: row for row in rows}
     missing = [frame.value for frame in required_frames if not frame_map.get(frame) or not frame_map[frame].file_id]
     if missing:
-        return _check("reference_frames_ready", False, f"缺少参考帧：{', '.join(missing)}")
-    return _check("reference_frames_ready", True, "参考帧已就绪")
+        return _check("reference_frames_ready", False, f"Thiếu khung hình tham chiếu: {', '.join(missing)}")
+    return _check("reference_frames_ready", True, "Khung hình tham chiếu đã sẵn sàng")
 
 
 async def _video_model_and_provider_ready(db: AsyncSession) -> tuple[ShotVideoReadinessCheck, ShotVideoReadinessCheck]:
@@ -103,34 +103,34 @@ async def _video_model_and_provider_ready(db: AsyncSession) -> tuple[ShotVideoRe
     model_id = settings.default_video_model_id if settings else None
     if not model_id:
         return (
-            _check("video_model_ready", False, "未配置默认视频模型"),
-            _check("provider_ready", False, "未配置默认视频模型，无法检查供应商"),
+            _check("video_model_ready", False, "chưa cấu hình mô hình video mặc định"),
+            _check("provider_ready", False, "Chưa cấu hình mô hình video mặc định, không thể kiểm tra nhà cung cấp"),
         )
     model = await db.get(Model, model_id)
     if model is None:
         return (
-            _check("video_model_ready", False, f"默认视频模型不存在：{model_id}"),
-            _check("provider_ready", False, "默认视频模型不存在，无法检查供应商"),
+            _check("video_model_ready", False, f"Mô hình video mặc định không tồn tại: {model_id}"),
+            _check("provider_ready", False, "Mô hình video mặc định không tồn tại, không thể kiểm tra nhà cung cấp"),
         )
     if model.category != ModelCategoryKey.video:
         return (
-            _check("video_model_ready", False, f"默认模型不是视频类别：{model_id}"),
-            _check("provider_ready", False, "默认模型不是视频类别，无法检查供应商"),
+            _check("video_model_ready", False, f"Mô hình mặc định không thuộc hạng mục video: {model_id}"),
+            _check("provider_ready", False, "Mô hình mặc định không phải loại video, không thể kiểm tra nhà cung cấp"),
         )
     provider = await db.get(Provider, model.provider_id)
     if provider is None:
         return (
-            _check("video_model_ready", True, "默认视频模型可用"),
-            _check("provider_ready", False, f"视频模型供应商不存在：{model.provider_id}"),
+            _check("video_model_ready", True, "Mô hình video mặc định khả dụng"),
+            _check("provider_ready", False, f"Nhà cung cấp mô hình video không tồn tại: {model.provider_id}"),
         )
     if not (provider.api_key or "").strip():
         return (
-            _check("video_model_ready", True, "默认视频模型可用"),
-            _check("provider_ready", False, f"视频模型供应商缺少 api_key：{provider.id}"),
+            _check("video_model_ready", True, "Mô hình video mặc định khả dụng"),
+            _check("provider_ready", False, f"Nhà cung cấp mô hình video thiếu api_key: {provider.id}"),
         )
     return (
-        _check("video_model_ready", True, "默认视频模型可用"),
-        _check("provider_ready", True, "视频模型供应商可用"),
+        _check("video_model_ready", True, "Mô hình video mặc định khả dụng"),
+        _check("provider_ready", True, "nhà cung cấp mô hình video khả dụng"),
     )
 
 
@@ -140,7 +140,7 @@ async def get_shot_video_readiness(
     shot_id: str,
     reference_mode: str,
 ) -> ShotVideoReadinessRead:
-    """实时聚合镜头视频生成准备度，不写入数据库状态。"""
+    """Tổng hợp thời gian thực độ sẵn sàng tạo video của phân cảnh, không ghi trạng thái vào CSDL."""
     shot = await db.get(Shot, shot_id)
     if shot is None:
         raise ValueError(entity_not_found("Shot"))
@@ -151,18 +151,18 @@ async def get_shot_video_readiness(
         shot.last_extracted_at is not None and pending_assets == 0 and pending_dialogues == 0
     )
     if extraction_ok:
-        extraction_msg = "信息提取确认已完成" if not shot.skip_extraction else "当前镜头已标记为无需提取"
+        extraction_msg = "Xác nhận trích xuất thông tin đã hoàn tất" if not shot.skip_extraction else "Phân cảnh hiện tại đã được đánh dấu là không cần trích xuất"
     else:
-        extraction_msg = f"仍有待确认项：资产 {pending_assets} 项，对白 {pending_dialogues} 项"
+        extraction_msg = f"Còn các mục chờ xác nhận: tài nguyên {pending_assets} mục, thoại {pending_dialogues} mục"
 
     if detail is None:
-        duration_check = _check("duration_ready", False, "缺少镜头详情，无法读取时长")
+        duration_check = _check("duration_ready", False, "Thiếu chi tiết phân cảnh, không đọc được thời lượng")
     else:
         duration = int(detail.duration or 0)
         duration_check = _check(
             "duration_ready",
             duration > 0,
-            "镜头时长已配置" if duration > 0 else "请先配置镜头时长",
+            "đã cấu hình thời lượng shot" if duration > 0 else "vui lòng cấu hình thời lượng shot trước",
         )
 
     try:
@@ -177,10 +177,10 @@ async def get_shot_video_readiness(
             ),
         )
         prompt_ok = bool(preview.rendered_prompt.strip())
-        prompt_message = "视频提示词可用" if prompt_ok else "视频提示词为空"
+        prompt_message = "Prompt video khả dụng" if prompt_ok else "Prompt video đang trống"
     except Exception as exc:  # noqa: BLE001
         prompt_ok = False
-        prompt_message = f"视频提示词渲染失败：{exc}"
+        prompt_message = f"Render prompt video thất bại: {exc}"
 
     active_video_task = await _has_active_video_task(db, shot_id=shot_id)
     model_check, provider_check = await _video_model_and_provider_ready(db)
@@ -194,7 +194,7 @@ async def get_shot_video_readiness(
         _check(
             "no_active_video_task",
             not active_video_task,
-            "当前没有进行中的视频任务" if not active_video_task else "当前已有视频生成任务进行中",
+            "Không có tác vụ video nào đang chạy" if not active_video_task else "Đã có tác vụ tạo video đang chạy",
         ),
     ]
     return ShotVideoReadinessRead(

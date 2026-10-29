@@ -4,7 +4,7 @@ from app.services.studio.generation.shared.types import GenerationBaseDraft
 
 
 class VideoBaseDraft(GenerationBaseDraft):
-    """视频生成的基础真值。"""
+    """Giá trị thật cơ bản cho tạo video."""
 
     kind: str = "video"
     shot_id: str

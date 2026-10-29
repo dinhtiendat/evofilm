@@ -4,7 +4,7 @@ export function encodeWorkbenchAssetEditReturnTo(projectId: string, tab: Workben
   return encodeURIComponent(`/projects/${projectId}?tab=${tab}`)
 }
 
-/** 仅允许站内 `/projects/...` 路径，避免开放重定向 */
+/** Chỉ cho phép đường dẫn trong trang `/projects/...`, tránh open redirect */
 export function decodeAssetEditReturnTo(searchReturnTo: string | null, fallback: string): string {
   if (!searchReturnTo?.trim()) return fallback
   try {

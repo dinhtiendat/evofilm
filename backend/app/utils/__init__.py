@@ -1,4 +1,4 @@
 from __future__ import annotations
 
-"""通用工具函数包。"""
+"""Gói hàm công cụ dùng chung."""
 

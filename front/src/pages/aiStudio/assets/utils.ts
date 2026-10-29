@@ -22,8 +22,8 @@ export function resolveAssetUrl(value?: string | null): string | undefined {
     return trimmed
   }
 
-  // 后端有些缩略图字段可能直接返回 file_id（不包含 / 或 :）。
-  // 这种情况下需要拼接下载地址，否则 new URL 会生成错误路径。
+  // Một số trường thumbnail phía backend có thể trả thẳng file_id (không chứa / hoặc :).
+  // Trường hợp này cần nối đường dẫn tải xuống, nếu không new URL sẽ sinh đường dẫn sai.
   if (!trimmed.includes('/') && !trimmed.includes(':')) {
     return buildFileDownloadUrl(trimmed)
   }

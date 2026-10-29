@@ -8,14 +8,14 @@ from app.core.task_manager.types import DeliveryMode, TaskStatus
 
 
 class TaskCreate(BaseModel):
-    mode: DeliveryMode = Field(..., description="交付方式")
-    payload: dict[str, Any] = Field(default_factory=dict, description="任务参数（JSON）")
+    mode: DeliveryMode = Field(..., description="Phương thức giao")
+    payload: dict[str, Any] = Field(default_factory=dict, description="Tham số tác vụ (JSON)")
 
 
 class TaskStatusRead(BaseModel):
     id: str
     status: TaskStatus
-    progress: int = Field(..., ge=0, le=100, description="进度 0-100")
+    progress: int = Field(..., ge=0, le=100, description="tiến độ 0-100")
     result: dict[str, Any] | None = None
     error: str = ""
     started_at_ts: float | None = None

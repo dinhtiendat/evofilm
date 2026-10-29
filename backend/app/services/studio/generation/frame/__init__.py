@@ -1,4 +1,4 @@
-"""分镜帧生成准备服务。"""
+"""Dịch vụ chuẩn bị tạo khung phân cảnh."""
 
 from app.services.studio.generation.frame.build_base import FrameBaseDraft, build_frame_base_draft
 from app.services.studio.generation.frame.build_context import (

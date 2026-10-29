@@ -42,7 +42,7 @@ async def test_run_video_generation_task_marks_cancelled_before_execute(monkeypa
             mode=DeliveryMode.async_polling,
             task_kind="video_generation",
         )
-        await store.request_cancel(task.id, "用户取消")
+        await store.request_cancel(task.id, "Người dùng hủy")
         await db.commit()
 
     monkeypatch.setattr("app.services.film.generated_video.async_session_maker", session_local)
@@ -79,7 +79,7 @@ async def test_run_image_generation_task_marks_cancelled_before_execute(monkeypa
             mode=DeliveryMode.async_polling,
             task_kind="image_generation",
         )
-        await store.request_cancel(task.id, "用户取消")
+        await store.request_cancel(task.id, "Người dùng hủy")
         await db.commit()
 
     monkeypatch.setattr("app.services.studio.image_task_runner.async_session_maker", session_local)
@@ -116,7 +116,7 @@ async def test_run_shot_frame_prompt_task_marks_cancelled_before_execute(monkeyp
             mode=DeliveryMode.async_polling,
             task_kind="shot_frame_prompt",
         )
-        await store.request_cancel(task.id, "用户取消")
+        await store.request_cancel(task.id, "Người dùng hủy")
         await db.commit()
 
     monkeypatch.setattr("app.services.film.shot_frame_prompt_tasks.async_session_maker", session_local)
@@ -148,23 +148,23 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
             [
                 Project(
                     id="project-1",
-                    name="项目一",
+                    name="Dự án 1",
                     description="",
                     style=ProjectStyle.real_people_city,
                     visual_style=ProjectVisualStyle.live_action,
                 ),
-                Chapter(id="chapter-1", project_id="project-1", index=1, title="第一章"),
-                Shot(id="shot-1", chapter_id="chapter-1", index=1, title="镜头一", script_excerpt="主角回头。"),
+                Chapter(id="chapter-1", project_id="project-1", index=1, title="Chương 1"),
+                Shot(id="shot-1", chapter_id="chapter-1", index=1, title="Cảnh 1", script_excerpt="Nhân vật chính quay đầu."),
                 ShotDetail(
                     id="shot-1",
                     camera_shot=CameraShotType.ms,
                     angle=CameraAngle.eye_level,
                     movement=CameraMovement.static,
                     duration=3,
-                    atmosphere="紧张",
-                    mood_tags=["紧张"],
+                    atmosphere="Căng thẳng",
+                    mood_tags=["Căng thẳng"],
                     vfx_type=VFXType.none,
-                    vfx_note="无",
+                    vfx_note="Không có",
                 ),
             ]
         )
@@ -175,7 +175,7 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
                 "run_args": {
                     "shot_id": "shot-1",
                     "frame_type": "first",
-                    "input": {"script_excerpt": "主角回头。", "visual_style": "现实"},
+                    "input": {"script_excerpt": "Nhân vật chính quay lại.", "visual_style": "现实"},
                 },
             },
             mode=DeliveryMode.async_polling,
@@ -188,7 +188,7 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
             pass
 
         async def aextract(self, **_kwargs):
-            return type("Result", (), {"prompt": "中景，主角警惕地回头。", "model_dump": lambda self: {"prompt": "中景，主角警惕地回头。"}})()
+            return type("Result", (), {"prompt": "Cận cảnh, nhân vật chính cảnh giác quay đầu.", "model_dump": lambda self: {"prompt": "Cận cảnh, nhân vật chính cảnh giác quay đầu."}})()
 
     monkeypatch.setattr("app.services.film.shot_frame_prompt_tasks.async_session_maker", session_local)
     monkeypatch.setattr("app.services.film.shot_frame_prompt_tasks.build_default_text_llm_sync", lambda *_args, **_kwargs: object())
@@ -199,7 +199,7 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
         run_args={
             "shot_id": "shot-1",
             "frame_type": "first",
-            "input": {"script_excerpt": "主角回头。", "visual_style": "现实", "character_context": "- 主角：警惕"},
+            "input": {"script_excerpt": "Nhân vật chính quay đầu.", "visual_style": "现实", "character_context": "- nhân vật chính: cảnh giác"},
         },
     )
 
@@ -209,13 +209,13 @@ async def test_run_shot_frame_prompt_task_persists_debug_context(monkeypatch, tm
         assert row is not None
         assert row.status == GenerationTaskStatus.succeeded
         assert isinstance(row.result, dict)
-        assert row.result["prompt"] == "中景，主角警惕地回头。"
+        assert row.result["prompt"] == "Cận cảnh, nhân vật chính cảnh giác quay đầu."
         assert row.result["debug_context"]["visual_style"] == "现实"
-        assert row.result["debug_context"]["character_context"] == "- 主角：警惕"
+        assert row.result["debug_context"]["character_context"] == "- nhân vật chính: cảnh giác"
         assert row.result["quality_checks"]["passed"] is True
         assert row.result["quality_checks"]["issues"] == []
         assert detail is not None
-        assert detail.first_frame_prompt == "中景，主角警惕地回头。"
+        assert detail.first_frame_prompt == "Cận cảnh, nhân vật chính cảnh giác quay đầu."
 
     await engine.dispose()
 
@@ -236,23 +236,23 @@ async def test_run_shot_frame_prompt_task_retries_when_result_contains_mapping_t
             [
                 Project(
                     id="project-1",
-                    name="项目一",
+                    name="Dự án 1",
                     description="",
                     style=ProjectStyle.real_people_city,
                     visual_style=ProjectVisualStyle.live_action,
                 ),
-                Chapter(id="chapter-1", project_id="project-1", index=1, title="第一章"),
-                Shot(id="shot-1", chapter_id="chapter-1", index=1, title="镜头一", script_excerpt="主角回头。"),
+                Chapter(id="chapter-1", project_id="project-1", index=1, title="Chương 1"),
+                Shot(id="shot-1", chapter_id="chapter-1", index=1, title="Cảnh 1", script_excerpt="Nhân vật chính quay đầu."),
                 ShotDetail(
                     id="shot-1",
                     camera_shot=CameraShotType.ms,
                     angle=CameraAngle.eye_level,
                     movement=CameraMovement.static,
                     duration=3,
-                    atmosphere="紧张",
-                    mood_tags=["紧张"],
+                    atmosphere="Căng thẳng",
+                    mood_tags=["Căng thẳng"],
                     vfx_type=VFXType.none,
-                    vfx_note="无",
+                    vfx_note="Không có",
                 ),
             ]
         )
@@ -263,7 +263,7 @@ async def test_run_shot_frame_prompt_task_retries_when_result_contains_mapping_t
                 "run_args": {
                     "shot_id": "shot-1",
                     "frame_type": "first",
-                    "input": {"script_excerpt": "主角回头。", "character_context": "- 主角：警惕"},
+                    "input": {"script_excerpt": "Nhân vật chính quay đầu.", "character_context": "- nhân vật chính: cảnh giác"},
                 },
             },
             mode=DeliveryMode.async_polling,
@@ -284,7 +284,7 @@ async def test_run_shot_frame_prompt_task_retries_when_result_contains_mapping_t
                     "Result",
                     (),
                     {
-                        "prompt": "## 图片内容说明\n图1: 主角\n## 生成内容\n图1警惕地回头。",
+                        "prompt": "## Diễn giải nội dung hình ảnh\n图1: nhân vật chính\n## Nội dung tạo dựng\n图1 quay lại nhìn cảnh giác.",
                         "model_dump": lambda self: {"prompt": self.prompt},
                     },
                 )()
@@ -292,7 +292,7 @@ async def test_run_shot_frame_prompt_task_retries_when_result_contains_mapping_t
                 "Result",
                 (),
                 {
-                    "prompt": "中景，主角警惕地回头。",
+                    "prompt": "Cận trung, nhân vật chính quay đầu cảnh giác",
                     "model_dump": lambda self: {"prompt": self.prompt},
                 },
             )()
@@ -306,7 +306,7 @@ async def test_run_shot_frame_prompt_task_retries_when_result_contains_mapping_t
         run_args={
             "shot_id": "shot-1",
             "frame_type": "first",
-            "input": {"script_excerpt": "主角回头。", "character_context": "- 主角：警惕"},
+            "input": {"script_excerpt": "Nhân vật chính quay đầu.", "character_context": "- nhân vật chính: cảnh giác"},
         },
     )
 
@@ -316,12 +316,12 @@ async def test_run_shot_frame_prompt_task_retries_when_result_contains_mapping_t
         assert row is not None
         assert row.status == GenerationTaskStatus.succeeded
         assert isinstance(row.result, dict)
-        assert row.result["prompt"] == "中景，主角警惕地回头。"
+        assert row.result["prompt"] == "Cận trung, nhân vật chính quay đầu cảnh giác"
         assert row.result["debug_context"]["retry_guidance"]
         assert row.result["quality_checks"]["passed"] is True
         assert row.result["quality_checks"]["issues"] == []
         assert detail is not None
-        assert detail.first_frame_prompt == "中景，主角警惕地回头。"
+        assert detail.first_frame_prompt == "Cận trung, nhân vật chính quay đầu cảnh giác"
 
     assert len(_FakeAgent.calls) == 2
     assert _FakeAgent.calls[1]["retry_guidance"]

@@ -1,7 +1,7 @@
 ---
-title: "社区与贡献"
+title: "Cộng đồng và đóng góp"
 weight: 4
-description: "贡献方式、提交规范与常见问题。"
+description: "Cách đóng góp, quy tắc commit và câu hỏi thường gặp."
 ---
 
-欢迎通过 Issue、PR 和文档改进一起完善 Jellyfish。
+Mời bạn cùng hoàn thiện Jellyfish qua Issue, PR và cải thiện tài liệu.

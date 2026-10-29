@@ -1,4 +1,4 @@
-"""由镜头关联（project_*_link、ShotCharacterLink、演员表等）拼装 StudioScriptExtractionDraft。"""
+"""Ghép StudioScriptExtractionDraft từ các liên kết phân cảnh (project_*_link, ShotCharacterLink, bảng diễn viên...)."""
 
 from __future__ import annotations
 
@@ -123,13 +123,13 @@ async def build_script_extraction_draft_for_shot(db: AsyncSession, shot_id: str)
                 index=index_by_character_id.get(ch.id),
                 name=ch.name,
                 description=ch.description or "",
-                tags=[],  # Character 表无 tags，占位与导入草稿对齐
+                tags=[],  # Bảng Character không có tags, giữ chỗ khớp với bản nháp import
                 costume_name=costume_name,
                 prop_names=prop_names,
             )
         )
 
-    # ---------- ProjectActorLink（镜头级演员）：补充未由分镜角色覆盖的演员 ----------
+    # ---------- ProjectActorLink (diễn viên cấp phân cảnh): bổ sung các diễn viên chưa được phủ bởi nhân vật phân cảnh ----------
     pa_actor_ids = (
         (
             await db.execute(
@@ -165,7 +165,7 @@ async def build_script_extraction_draft_for_shot(db: AsyncSession, shot_id: str)
                 )
             )
 
-    # ---------- Project*Link @ shot（保序去重） ----------
+    # ---------- Project*Link @ shot (giữ thứ tự, khử trùng) ----------
     psl_rows = (
         (
             await db.execute(
@@ -295,7 +295,7 @@ async def build_script_extraction_draft_for_shot(db: AsyncSession, shot_id: str)
             )
         costume_drafts.sort(key=lambda x: x.name)
 
-    # ---------- 对白 ----------
+    # ---------- Lời thoại ----------
     id_to_name: dict[str, str] = {c.id: c.name for c in ordered_chars}
     dialogue_lines: list[StudioShotDraftDialogueLine] = []
     if detail is not None:
@@ -327,7 +327,7 @@ async def build_script_extraction_draft_for_shot(db: AsyncSession, shot_id: str)
                 )
             )
 
-    # ---------- 单镜 StudioShotDraft ----------
+    # ---------- nháp StudioShotDraft shot đơn ----------
     scene_name: str | None = None
     if detail is not None and detail.scene_id:
         sc = await db.get(Scene, detail.scene_id)

@@ -1,6 +1,6 @@
 ---
-title: "Jellyfish AI 短剧工厂"
-description: "面向短剧生产的 AI 工作台"
+title: "Nhà máy kịch ngắn Jellyfish AI"
+description: "Đài làm việc AI dành cho sản xuất kịch ngắn"
 type: "home"
 images:
   - /images/og-default.svg

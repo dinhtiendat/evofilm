@@ -1,4 +1,4 @@
-"""时间线相关路由（占位壳，后续补齐 CRUD）。"""
+"""Các route liên quan trục thời gian (vỏ giữ chỗ, bổ sung CRUD về sau)."""
 
 from fastapi import APIRouter
 

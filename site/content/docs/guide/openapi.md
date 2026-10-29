@@ -1,31 +1,31 @@
 ---
 title: "OpenAPI"
 weight: 4
-description: "理解前后端接口生成与同步流程。"
+description: "Hiểu quy trình sinh và đồng bộ API giữa frontend và backend."
 ---
 
-前端请求函数和类型由后端 OpenAPI 文档生成。
+Hàm yêu cầu và kiểu phía frontend được tạo từ tài liệu OpenAPI phía backend.
 
-## 生成目录
+## Thư mục tạo
 
 - `front/openapi.json`
 - `front/src/services/generated/`
 
-## 更新命令
+## Lệnh cập nhật
 
 ```bash
 cd front
 pnpm run openapi:update
 ```
 
-## 生成流程
+## Quy trình tạo
 
-1. 先从后端拉取 `/openapi.json`
-2. 写入 `front/openapi.json`
-3. 再生成 `front/src/services/generated/`
+1. Trước tiên kéo `/openapi.json` từ backend
+2. Ghi vào `front/openapi.json`
+3. Sinh lại `front/src/services/generated/`
 
-## 什么时候需要更新
+## Khi nào cần cập nhật
 
-- 后端新增路由
-- 后端修改请求或响应模型
-- 前端需要消费新的接口字段
+- Thêm route phía sau
+- Sửa mô hình yêu cầu hoặc phản hồi phía sau
+- Phía trước cần dùng các trường giao diện mới

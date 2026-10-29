@@ -1,11 +1,11 @@
-"""镜头流程状态计算服务。
+"""Dịch vụ tính trạng thái quy trình phân cảnh.
 
-当前 `shot.status` 只表达“信息提取确认”是否闭环：
+`shot.status` hiện tại chỉ diễn đạt việc “xác nhận trích xuất thông tin” có khép kín hay chưa:
 
-- pending：资产/对白候选仍有未确认项
-- ready：候选已确认完成，或明确跳过提取
+- pending: Ứng viên tài nguyên/thoại vẫn còn mục chưa xác nhận
+- ready: Ứng viên đã xác nhận xong, hoặc bỏ qua trích xuất rõ ràng
 
-运行中的生成任务不再写入 `shot.status`，而应由任务系统单独表达。
+Tác vụ tạo đang chạy không còn ghi vào `shot.status` nữa, mà do hệ thống tác vụ diễn đạt riêng.
 """
 
 from __future__ import annotations
@@ -26,10 +26,10 @@ from app.services.common import entity_not_found
 
 
 async def _count_candidates(db: AsyncSession, *, shot_id: str) -> tuple[int, int]:
-    """统计镜头候选项总数和未处理数量。
+    """Thống kê tổng số và số chưa xử lý các ứng viên của phân cảnh.
 
-    这里显式走 SQL 计数，避免在异步场景下访问 relationship
-    触发隐式懒加载。
+    Ở đây chủ động đếm bằng SQL, tránh truy cập relationship trong ngữ cảnh không đồng bộ
+    Kích hoạt nạp chậm ẩn thức.
     """
     total_stmt = select(func.count(ShotExtractedCandidate.id)).where(
         ShotExtractedCandidate.shot_id == shot_id
@@ -45,7 +45,7 @@ async def _count_candidates(db: AsyncSession, *, shot_id: str) -> tuple[int, int
 
 
 async def _count_dialogue_candidates(db: AsyncSession, *, shot_id: str) -> tuple[int, int]:
-    """统计镜头对白候选项总数和未处理数量。"""
+    """Đếm tổng số và số chưa xử lý ứng viên lời thoại của phân cảnh."""
     total_stmt = select(func.count(ShotExtractedDialogueCandidate.id)).where(
         ShotExtractedDialogueCandidate.shot_id == shot_id
     )
@@ -60,7 +60,7 @@ async def _count_dialogue_candidates(db: AsyncSession, *, shot_id: str) -> tuple
 
 
 async def recompute_shot_status(db: AsyncSession, *, shot_id: str) -> ShotStatus:
-    """按镜头候选确认状态重新计算流程状态。"""
+    """Tính lại trạng thái quy trình theo trạng thái xác nhận ứng viên của phân cảnh."""
     shot = await db.get(Shot, shot_id)
     if shot is None:
         raise ValueError(entity_not_found("Shot"))
@@ -88,10 +88,10 @@ async def recompute_shot_status(db: AsyncSession, *, shot_id: str) -> ShotStatus
 
 
 async def mark_shot_generating(db: AsyncSession, *, shot_id: str) -> ShotStatus:
-    """兼容旧调用点：生成任务启动后只重算静态状态，不再写入 generating。
+    """tương thích điểm gọi cũ:sau khi khởi động tác vụ sinh chỉ tính lại trạng thái tĩnh, không ghi generating nữa.
 
-    这里保留函数，是为了避免在任务创建链路上到处改接口。
-    后续可在所有调用点迁移完成后再删除。
+    Giữ lại hàm ở đây để tránh phải sửa interface khắp nơi trên chuỗi tạo tác vụ.
+    Có thể xóa sau khi di trú xong tại tất cả điểm gọi.
     """
     return await recompute_shot_status(db, shot_id=shot_id)
 

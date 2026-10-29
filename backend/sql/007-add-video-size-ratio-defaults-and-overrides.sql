@@ -8,7 +8,7 @@ SET @has_projects_default_video_ratio = (
 
 SET @add_projects_default_video_ratio = IF(
   @has_projects_default_video_ratio = 0,
-  "ALTER TABLE projects ADD COLUMN default_video_ratio VARCHAR(16) NULL COMMENT '项目级默认视频比例（可为空；分镜未覆盖时使用）'",
+  "ALTER TABLE projects ADD COLUMN default_video_ratio VARCHAR(16) NULL COMMENT 'Tỷ lệ video mặc định cấp dự án (được để trống; dùng khi phân cảnh không phủ ghi)'",
   'SELECT 1'
 );
 PREPARE stmt_add_projects_default_video_ratio FROM @add_projects_default_video_ratio;
@@ -25,7 +25,7 @@ SET @has_shot_details_override_video_ratio = (
 
 SET @add_shot_details_override_video_ratio = IF(
   @has_shot_details_override_video_ratio = 0,
-  "ALTER TABLE shot_details ADD COLUMN override_video_ratio VARCHAR(16) NULL COMMENT '分镜级视频比例覆盖（为空表示继承项目默认）'",
+  "ALTER TABLE shot_details ADD COLUMN override_video_ratio VARCHAR(16) NULL COMMENT 'Phủ ghi tỷ lệ video cấp phân cảnh (để trống nghĩa là kế thừa mặc định của dự án)'",
   'SELECT 1'
 );
 PREPARE stmt_add_shot_details_override_video_ratio FROM @add_shot_details_override_video_ratio;

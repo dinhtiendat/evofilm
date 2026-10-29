@@ -1,1 +1,1 @@
-"""业务逻辑层（可在此接入 DB、LangChain 等）。"""
+"""Tầng logic nghiệp vụ (có thể nối DB, LangChain, v.v. tại đây)."""

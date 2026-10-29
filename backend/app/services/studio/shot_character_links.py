@@ -1,4 +1,4 @@
-"""镜头角色关联服务：封装阵容查询与 upsert 规则。"""
+""" Dịch vụ liên kết nhân vật của phân cảnh: đóng gói truy vấn dàn nhân vật và quy tắc upsert."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ async def list_by_shot(
     *,
     shot_id: str,
 ) -> list[ShotCharacterLink]:
-    """按镜头查询角色关联列表。"""
+    """Truy danh sách nhân vật liên kết theo phân cảnh."""
     await require_entity(db, Shot, shot_id, detail=entity_not_found("Shot"))
 
     stmt = (
@@ -32,7 +32,7 @@ async def upsert(
     *,
     body: ShotCharacterLinkCreate,
 ) -> ShotCharacterLink:
-    """按镜头与角色 upsert 阵容关系，并处理 index 冲突。"""
+    """Upsert quan hệ dàn diễn viên theo phân cảnh và nhân vật, xử lý xung đột index."""
     shot = await require_entity(db, Shot, body.shot_id, detail=entity_not_found("Shot"))
     chapter = await require_entity(
         db,

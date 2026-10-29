@@ -1,8 +1,8 @@
-"""Studio 业务服务。"""
+"""Dịch vụ nghiệp vụ Studio."""
 
-# 说明：
-# - 新的生成准备编排主入口已迁移到 `app.services.studio.generation.*`
-# - `shot_video_prompt_pack` 仍保留为视频模板渲染底层组件，不再承担编排入口职责
+# Giải thích:
+# - Đường vào xếp đặt chuẩn bị tạo mới đã di trú sang `app.services.studio.generation.*`
+# - `shot_video_prompt_pack` vẫn được giữ làm thành phần cơ sở kết xuất mẫu video, không còn chịu trách nhiệm đường vào xếp đặt
 
 from app.services.studio.shot_character_links import (
     list_by_shot as list_shot_character_links,
@@ -228,8 +228,8 @@ __all__ = [
     "upsert_shot_character_link",
 ]
 
-# image_tasks 依赖存储/第三方 SDK（如 boto3）；在某些轻量环境中可能未安装。
-# 为了让不依赖该能力的模块（如 entities / shots）可正常导入，这里做可选导入。
+# image_tasks phụ thuộc bộ lưu trữ/SDK bên thứ ba (như boto3); ở một số môi trường nhẹ có thể chưa cài đặt.
+# để các module không phụ thuộc năng lực này (như entities / shots) import được bình thường, làm import tùy chọn ở đây.
 try:
     from app.services.studio.image_tasks import (  # noqa: F401
         asset_prompt_category,

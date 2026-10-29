@@ -1,4 +1,4 @@
-"""影视抽取/分镜相关的结构化输出模型（API 暴露用）。"""
+"""Mô hình đầu ra có cấu trúc liên quan trích xuất/phân cảnh điện ảnh (dùng để lộ ra API)."""
 
 from __future__ import annotations
 
@@ -22,117 +22,117 @@ from app.schemas.skills.common import (
 
 # ---------- Entities ----------
 class Character(BaseModel):
-    """从小说中抽取的角色：主名、别名、外貌与性格、服装描述、首次出场证据及抽取置信度。"""
+    """nhân vật trích từ tiểu thuyết: tên chính, tên khác, ngoại hình & tính cách, mô tả trang phục, bằng chứng lần xuất hiện đầu và độ tin cậy trích xuất."""
 
     model_config = ConfigDict(extra="forbid")
 
-    id: str = Field(..., description="稳定ID，例如 char_001")
-    name: str = Field(..., description="主名称（尽量取原文最常用的称呼）")
-    normalized_name: Optional[str] = Field(None, description="归一化主名，如将「王二/二哥/王二哥」统一为同一主名（来自文本）")
-    aliases: List[str] = Field(default_factory=list, description="别名/称呼（原文出现过的）")
-    description: Optional[str] = Field(None, description="外貌/身份/气质（忠实原文，与服装区分）")
+    id: str = Field(..., description="ID ổn định, ví dụ char_001")
+    name: str = Field(..., description="Tên chính (ưu tiên lấy cách gọi phổ biến nhất trong nguyên văn)")
+    normalized_name: Optional[str] = Field(None, description="Tên chính sau chuẩn hóa, ví dụ gộp「Vương Nhị / Nhị ca / Vương Nhị ca」về cùng một tên chính (từ văn bản)")
+    aliases: List[str] = Field(default_factory=list, description="Tên khác/cách gọi (đã xuất hiện trong nguyên văn)")
+    description: Optional[str] = Field(None, description="Ngoại hình/địa vị/tố chất (trung thành nguyên văn, phân biệt với trang phục)")
     costume_note: Optional[str] = Field(
         None,
-        description="从原文抽取的服装/造型描述（如款式、颜色、配饰），与 description 区分，便于后续关联服装资产",
+        description="Mô tả trang phục / kiểu dáng trích xuất từ nguyên văn (như kiểu dáng, màu sắc, phụ kiện), phân biệt với description, tiện cho việc liên kết tài nguyên trang phục về sau",
     )
-    traits: List[str] = Field(default_factory=list, description="性格/特征词（尽量来自原文）")
-    confidence: Optional[float] = Field(None, ge=0, le=1, description="抽取确定度 0-1（模型输出）")
+    traits: List[str] = Field(default_factory=list, description="Tính cách/từ chỉ đặc điểm (càng bám sát nguyên văn càng tốt)")
+    confidence: Optional[float] = Field(None, ge=0, le=1, description="Độ tin cậy trích xuất 0-1 (đầu ra mô hình)")
     first_appearance: Optional[EvidenceSpan] = None
 
 
 class Location(BaseModel):
-    """从小说中抽取的地点：名称、类型、场景描写及首次出场证据、置信度。"""
+    """Địa điểm rút từ tiểu thuyết: tên, loại, mô tả bối cảnh cùng bằng chứng xuất hiện đầu tiên, độ tin cậy."""
 
     model_config = ConfigDict(extra="forbid")
 
-    id: str = Field(..., description="稳定ID，例如 loc_001")
-    name: str = Field(..., description="地点名称（原文）")
-    normalized_name: Optional[str] = Field(None, description="归一化名称（来自文本）")
-    type: Optional[str] = Field(None, description="地点类型：房间/街道/森林/车厢等（可选）")
-    description: Optional[str] = Field(None, description="场景描写（忠实原文，简短）")
-    confidence: Optional[float] = Field(None, ge=0, le=1, description="抽取确定度 0-1（模型输出）")
+    id: str = Field(..., description="ID ổn định, ví dụ loc_001")
+    name: str = Field(..., description="tên địa điểm(nguyên văn)")
+    normalized_name: Optional[str] = Field(None, description="Tên chuẩn hóa (từ văn bản)")
+    type: Optional[str] = Field(None, description="Loại địa điểm: phòng/phố/rừng/toa tàu, v.v. (tùy chọn)")
+    description: Optional[str] = Field(None, description="Mô tả bối cảnh (trung thành nguyên văn, ngắn)")
+    confidence: Optional[float] = Field(None, ge=0, le=1, description="Độ tin cậy trích xuất 0-1 (đầu ra mô hình)")
     first_appearance: Optional[EvidenceSpan] = None
 
 
 class Prop(BaseModel):
-    """从小说中抽取的道具：名称、类别、外观/用途、归属角色及首次出场证据、置信度。"""
+    """đạo cụ trích từ tiểu thuyết:tên, hạng mục, ngoại hình/mục đích dùng, nhân vật sở hữu và bằng chứng lần xuất hiện đầu, độ tin cậy."""
 
     model_config = ConfigDict(extra="forbid")
 
-    id: str = Field(..., description="稳定ID，例如 prop_001")
-    name: str = Field(..., description="道具名称（原文）")
-    normalized_name: Optional[str] = Field(None, description="归一化名称（来自文本）")
-    category: Optional[str] = Field(None, description="可选：weapon/document/vehicle/clothing/device/magic_item/other")
-    description: Optional[str] = Field(None, description="外观/用途（忠实原文）")
-    owner_character_id: Optional[str] = Field(None, description="拥有者（如果明确）")
-    confidence: Optional[float] = Field(None, ge=0, le=1, description="抽取确定度 0-1（模型输出）")
+    id: str = Field(..., description="ID ổn định, ví dụ prop_001")
+    name: str = Field(..., description="tên đạo cụ(nguyên văn)")
+    normalized_name: Optional[str] = Field(None, description="Tên chuẩn hóa (từ văn bản)")
+    category: Optional[str] = Field(None, description="Tùy chọn: weapon/document/vehicle/clothing/device/magic_item/other")
+    description: Optional[str] = Field(None, description="Ngoại hình / công dụng (trung thành nguyên văn)")
+    owner_character_id: Optional[str] = Field(None, description="Chủ sở hữu (nếu rõ ràng)")
+    confidence: Optional[float] = Field(None, ge=0, le=1, description="Độ tin cậy trích xuất 0-1 (đầu ra mô hình)")
     first_appearance: Optional[EvidenceSpan] = None
 
 
 # ---------- Story / Scenes ----------
 class Scene(BaseModel):
-    """场景：内/外景、时间、关联地点与人物/道具，含原文标题与系统格式化标题。"""
+    """bối cảnh:nội/thoại cảnh, thời điểm, địa điểm & nhân vật/đạo cụ liên kết, kèm tiêu đề nguyên văn và tiêu đề định dạng hệ thống."""
 
     model_config = ConfigDict(extra="forbid")
 
-    id: str = Field(..., description="例如 scene_001")
-    raw_title: Optional[str] = Field(None, description="来自原文的场景标题（若存在）")
-    formatted_title: Optional[str] = Field(None, description="系统生成的影视格式标题，如 INT. 地点 - TIME")
+    id: str = Field(..., description="ví dụ scene_001")
+    raw_title: Optional[str] = Field(None, description="Tiêu đề bối cảnh từ nguyên văn (nếu có)")
+    formatted_title: Optional[str] = Field(None, description="Tiêu đề theo định dạng kịch do hệ thống sinh ra, ví dụ INT. Địa điểm - THỜI GIAN")
     interior: SceneInterior = "UNKNOWN"
     time_of_day: SceneTime = "UNKNOWN"
 
-    location_id: Optional[str] = Field(None, description="loc_xxx，如可判定")
-    summary: Optional[str] = Field(None, description="场景发生了什么（忠实原文，短）")
+    location_id: Optional[str] = Field(None, description="loc_xxx, nếu có thể xác định")
+    summary: Optional[str] = Field(None, description="Điều gì đã xảy ra trong bối cảnh (trung thành nguyên văn, ngắn)")
 
-    character_ids: List[str] = Field(default_factory=list, description="该场景出现的人物ID")
-    prop_ids: List[str] = Field(default_factory=list, description="该场景关键道具ID")
-    evidence: List[EvidenceSpan] = Field(default_factory=list, description="支持该场景的证据片段（可多条）")
+    character_ids: List[str] = Field(default_factory=list, description="ID nhân vật xuất hiện trong bối cảnh này")
+    prop_ids: List[str] = Field(default_factory=list, description="ID đạo cụ trọng yếu của bối cảnh này")
+    evidence: List[EvidenceSpan] = Field(default_factory=list, description="Đoạn dẫn chứng hỗ trợ bối cảnh này (có thể nhiều mục)")
 
 
 class Shot(BaseModel):
-    """单镜头：景别/机位/运镜、时长与画面描述、对白列表、音效与视效、关联角色与道具。"""
+    """shot đơn:cận/góc máy/vận camera, thời lượng & mô tả khung, danh sách thoại, sound effect và VFX, nhân vật & đạo cụ liên kết."""
 
     model_config = ConfigDict(extra="forbid")
 
-    id: str = Field(..., description="例如 shot_001_003（scene_001 第3镜）")
-    scene_id: str = Field(..., description="所属 scene_xxx")
-    order: int = Field(..., ge=1, description="场景内镜头序号，从1开始")
+    id: str = Field(..., description="ví dụ shot_001_003 (phân cảnh số 3 của scene_001)")
+    scene_id: str = Field(..., description="Thuộc về scene_xxx")
+    order: int = Field(..., ge=1, description="Thứ tự phân cảnh trong bối cảnh, bắt đầu từ 1")
 
     shot_type: ShotType
     camera_angle: CameraAngle = "EYE_LEVEL"
     camera_movement: CameraMovement = "STATIC"
 
-    # 可拍性/执行信息
-    duration_sec: Optional[float] = Field(None, ge=0.5, le=30, description="建议时长（可选）")
-    description: str = Field(..., description="镜头里发生的动作/画面（行业口吻，简短可拍）")
+    # Thông tin có thể quay/thực thi
+    duration_sec: Optional[float] = Field(None, ge=0.5, le=30, description="Thời lượng đề xuất (tùy chọn)")
+    description: str = Field(..., description="Hành động / hình ảnh diễn ra trong phân cảnh (giọng ngành, ngắn gọn, quay được)")
 
     character_ids: List[str] = Field(default_factory=list)
     prop_ids: List[str] = Field(default_factory=list)
 
     vfx: List[VFXNote] = Field(default_factory=list)
-    sfx: List[str] = Field(default_factory=list, description="音效提示，如 footsteps, rain, explosion（可选）")
+    sfx: List[str] = Field(default_factory=list, description="Gợi ý âm thanh, ví dụ footsteps, rain, explosion (tùy chọn)")
     dialogue_lines: List[DialogueLine] = Field(
         default_factory=list,
-        description="该镜头内的对白列表（结构化：说话人、对象、情绪、旁白/电话等、时间点）",
+        description="Danh sách thoại trong phân cảnh này (cấu trúc: người nói, đối tượng, cảm xúc, voice-over/điện thoại, v.v., thời điểm)",
     )
-    dialogue: Optional[str] = Field(None, description="[兼容] 若该镜头承载关键对白，可摘录/概述（可选）")
+    dialogue: Optional[str] = Field(None, description="[Tương thích] Nếu phân cảnh này mang lời thoại quan trọng, có thể trích dẫn/tóm tắt (tùy chọn)")
 
-    evidence: List[EvidenceSpan] = Field(default_factory=list, description="对应原文依据（可选）")
+    evidence: List[EvidenceSpan] = Field(default_factory=list, description="Căn cứ nguyên văn tương ứng (tùy chọn)")
 
 
 class ProjectCinematicBreakdown(BaseModel):
-    """从小说抽取的完整影视分镜：元信息、实体表、场景表、镜头表、转场表及不确定项。"""
+    """toàn bộ phân cảnh điện ảnh trích từ tiểu thuyết:thông tin meta, bảng thực thể, bảng bối cảnh, bảng shot, bảng chuyển cảnh và các mục chưa rõ."""
 
     model_config = ConfigDict(extra="forbid")
 
-    source_id: str = Field(..., description="小说/章节标识，例如 novel_x_ch05")
-    source_title: Optional[str] = Field(None, description="书名/章节名（从书名页或章节头抽取）")
-    source_author: Optional[str] = Field(None, description="作者（若可从文本抽取）")
-    language: Optional[str] = Field(None, description="如 zh、en，便于后续提示词与分词")
-    extraction_version: Optional[str] = Field(None, description="本次抽取器版本，便于回溯差异")
-    schema_version: Optional[str] = Field(None, description="本输出使用的 schema 版本")
+    source_id: str = Field(..., description="tiểu thuyết/định danh tiểu thuyết/chương, ví dụ novel_x_ch05")
+    source_title: Optional[str] = Field(None, description="Tên sách/tên chương (trích từ trang tên sách hoặc tiêu đề chương)")
+    source_author: Optional[str] = Field(None, description="Tác giả (nếu trích được từ văn bản)")
+    language: Optional[str] = Field(None, description="Ví dụ zh, en, tiện cho prompt và tách từ sau này")
+    extraction_version: Optional[str] = Field(None, description="Phiên bản bộ trích xuất lần này, thuận tiện truy vết sự khác biệt")
+    schema_version: Optional[str] = Field(None, description="Phiên bản schema sử dụng cho đầu ra này")
 
-    chunks: List[str] = Field(default_factory=list, description="本次处理的 chunk_id 列表")
+    chunks: List[str] = Field(default_factory=list, description="xử lý trong lần này chunk_id danh sách")
 
     characters: List[Character] = Field(default_factory=list)
     locations: List[Location] = Field(default_factory=list)
@@ -142,49 +142,49 @@ class ProjectCinematicBreakdown(BaseModel):
     shots: List[Shot] = Field(default_factory=list)
     transitions: List[Transition] = Field(default_factory=list)
 
-    notes: List[str] = Field(default_factory=list, description="全局备注/不确定点（可选）")
+    notes: List[str] = Field(default_factory=list, description="Ghi chú chung/điểm chưa chắc chắn (tùy chọn)")
     uncertainties: List[Uncertainty] = Field(
         default_factory=list,
-        description="结构化不确定项：field_path、reason、evidence",
+        description="mục chưa rõ cấu trúc:field_path, reason, evidence",
     )
 
 
 # ---------- Skill Results (API-level) ----------
 class TextChunk(BaseModel):
-    """输入的文本块。chunk_id 会写入 EvidenceSpan.chunk_id 用于回查。"""
+    """Khối văn bản đầu vào. chunk_id được viết vào EvidenceSpan.chunk_id để truy vấn lại."""
 
     model_config = ConfigDict(extra="forbid")
 
-    chunk_id: str = Field(..., description="例如 chapter1_p03 / ch05_para12")
-    text: str = Field(..., description="该 chunk 的原文文本")
+    chunk_id: str = Field(..., description="Ví dụ chapter1_p03 / ch05_para12")
+    text: str = Field(..., description="Văn bản nguyên của chunk này")
 
 
 class FilmEntityExtractionResult(BaseModel):
-    """实体抽取结果（复用 Character/Location/Prop/Uncertainty）。"""
+    """Kết quả trích xuất thực thể (tái dụng Character/Location/Prop/Uncertainty)."""
 
     model_config = ConfigDict(extra="forbid")
 
-    source_id: str = Field(..., description="小说/章节标识，例如 novel_x_ch05")
-    language: Optional[str] = Field(None, description="如 zh/en（可选）")
-    extraction_version: Optional[str] = Field(None, description="抽取器版本（可选）")
-    schema_version: Optional[str] = Field(None, description="schemas 版本（可选）")
+    source_id: str = Field(..., description="tiểu thuyết/định danh tiểu thuyết/chương, ví dụ novel_x_ch05")
+    language: Optional[str] = Field(None, description="như zh/en (tùy chọn)")
+    extraction_version: Optional[str] = Field(None, description="Phiên bộ trích xuất (tùy chọn)")
+    schema_version: Optional[str] = Field(None, description="Phiên bản schemas (tùy chọn)")
 
-    chunks: List[str] = Field(default_factory=list, description="本次处理的 chunk_id 列表")
+    chunks: List[str] = Field(default_factory=list, description="xử lý trong lần này chunk_id danh sách")
 
     characters: List[Character] = Field(default_factory=list)
     locations: List[Location] = Field(default_factory=list)
     props: List[Prop] = Field(default_factory=list)
 
-    notes: List[str] = Field(default_factory=list, description="全局备注（可选）")
-    uncertainties: List[Uncertainty] = Field(default_factory=list, description="结构化不确定项")
+    notes: List[str] = Field(default_factory=list, description="Ghi chú toàn cục (tùy chọn)")
+    uncertainties: List[Uncertainty] = Field(default_factory=list, description="Các mục không chắc chắn có cấu trúc")
 
 
 class FilmShotlistResult(BaseModel):
-    """分镜输出（直接复用 ProjectCinematicBreakdown）。"""
+    """xuất phân cảnh(dùng lại trực tiếp ProjectCinematicBreakdown)."""
 
     model_config = ConfigDict(extra="forbid")
 
-    breakdown: ProjectCinematicBreakdown = Field(..., description="影视化拆解结果")
+    breakdown: ProjectCinematicBreakdown = Field(..., description="Kết quả phân tích thành phim")
 
 
 __all__ = [

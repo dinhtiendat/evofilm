@@ -1,4 +1,4 @@
-"""仅挂载 LLM 路由的 FastAPI 应用，避免在轻量测试环境中导入完整 app（含 Celery/film 等）。"""
+"""Ứng dụng FastAPI chỉ gắn các route LLM, tránh import app đầy đủ (bao gồm Celery/film, v.v.) trong môi trường test nhẹ."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ async def _lifespan(app: FastAPI):
 
 
 def build_llm_only_app() -> FastAPI:
-    """与主应用相同的错误壳与 /api/v1/llm 前缀，仅不含 film/studio 等路由。"""
+    """Vỏ lỗi cùng với ứng dụng chính và tiền tố /api/v1/llm, chỉ không chứa các route như film/studio."""
     application = FastAPI(
         title=settings.app_name,
         version="0.1.0",

@@ -44,7 +44,7 @@ const { Header, Content } = Layout
 type ShotListFilter = 'all' | 'pending' | 'generating' | 'ready'
 
 function getErrorMessage(e: unknown) {
-  if (!e) return '请求失败'
+  if (!e) return 'Yêu cầu thất bại'
   if (typeof e === 'string') return e
   if (typeof e === 'object') {
     const maybeAny = e as any
@@ -53,7 +53,7 @@ function getErrorMessage(e: unknown) {
     const msg = maybeAny?.message
     if (typeof msg === 'string' && msg.trim()) return msg
   }
-  return '请求失败'
+  return 'Yêu cầu thất bại'
 }
 
 function statusTag(status?: ShotStatus) {
@@ -79,26 +79,26 @@ type ShotRuntimeState = {
 function getShotPreparationState(shot: ShotRead, runtime?: ShotRuntimeState): ShotPreparationState {
   if (runtime?.has_active_tasks) {
     return {
-      text: '生成中',
+      text: 'Đang tạo',
       color: 'processing',
-      hint: `当前镜头有 ${runtime.active_task_count} 个运行中任务`,
+      hint: `Phân cảnh hiện tại có ${runtime.active_task_count} tác vụ đang chạy`,
     }
   }
   if (shot.status === 'ready') {
     return {
-      text: '已就绪',
+      text: 'Đã sẵn sàng',
       color: 'green',
       hint: shot.skip_extraction
-        ? '当前镜头已标记为无需提取，可继续进入视频生成流程'
-        : '信息提取已确认完成，可继续进入视频生成流程',
+        ? 'Phân cảnh hiện tại đã được đánh dấu không cần trích xuất, có thể tiếp tục vào quy trình tạo video'
+        : 'Xác nhận trích xuất thông tin đã xong, có thể tiếp tục quy trình tạo video',
     }
   }
   return {
-    text: '待确认',
+    text: 'Chờ xác nhận',
     color: 'gold',
     hint: shot.skip_extraction
-      ? '当前镜头已标记为无需提取，等待系统同步最新流程状态'
-      : '请先完成信息提取确认，再进入视频生成流程',
+      ? 'Phân cảnh hiện tại đã được đánh dấu không cần trích xuất, đang chờ hệ thống đồng bộ trạng thái quy trình mới nhất'
+      : 'Vui lòng hoàn tất xác nhận trích xuất thông tin trước, rồi mới vào quy trình tạo video',
   }
 }
 
@@ -159,7 +159,7 @@ export function ChapterShotsPage() {
       )
       setSelectedRowKeys([])
     } catch {
-      message.error('加载分镜失败')
+      message.error('Tải phân cảnh thất bại')
     } finally {
       setLoading(false)
     }
@@ -201,7 +201,7 @@ export function ChapterShotsPage() {
         setChapterCondensedText(c?.condensed_text?.trim?.() ? c.condensed_text.trim() : '')
       })
       .catch(() => {
-        message.error('章节加载失败')
+        message.error('Nạp chương thất bại')
       })
       .finally(() => {
         setLoadingChapter(false)
@@ -267,12 +267,12 @@ export function ChapterShotsPage() {
       const created = res.data
       if (created) {
         setShots((prev) => [...prev, created].sort((a, b) => a.index - b.index))
-        message.success('已创建分镜')
+        message.success('Đã tạo phân cảnh')
         closeCreate()
       }
     } catch (e: unknown) {
       if (e && typeof e === 'object' && 'errorFields' in e) return
-      message.error('创建失败')
+      message.error('Tạo thất bại')
     } finally {
       setCreateSubmitting(false)
     }
@@ -282,7 +282,7 @@ export function ChapterShotsPage() {
     if (!chapterId) return
     const scriptText = (chapterCondensedText || chapterRawText).trim()
     if (!scriptText) {
-      message.error('章节没有可用文本（condensed/raw 为空）')
+      message.error('chương không có văn bản khả dụng (condensed/raw rỗng)')
       return
     }
     setExtracting(true)
@@ -299,11 +299,11 @@ export function ChapterShotsPage() {
         trackTaskData,
         startedMessage: taskCopy.startedMessage,
         reusedMessage: taskCopy.reusedMessage,
-        fallbackErrorMessage: '启动分镜提取失败',
+        fallbackErrorMessage: 'Khởi động trích xuất phân cảnh thất bại',
         getErrorMessage: (error) => getErrorMessage(error),
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setExtracting(false)
     }
@@ -315,14 +315,14 @@ export function ChapterShotsPage() {
     try {
       await executeTaskCancel({
         taskId: chapterDivisionTask.taskId,
-        reason: '用户在分镜列表页取消分镜提取',
+        reason: 'Người dùng hủy trích xuất phân cảnh tại trang danh sách phân cảnh',
         applyCancelData,
         cancelledImmediatelyMessage: taskCopy.cancelledImmediatelyMessage,
         cancelRequestedMessage: taskCopy.cancelRequestedMessage,
-        fallbackErrorMessage: '取消任务失败',
+        fallbackErrorMessage: 'Hủy tác vụ thất bại',
       })
     } catch {
-      // executeTaskCancel 已统一处理错误提示
+      // executeTaskCancel đã xử lý thống nhất thông báo lỗi
     } finally {
       setChapterDivisionTaskLoading(false)
     }
@@ -332,7 +332,7 @@ export function ChapterShotsPage() {
     task: chapterDivisionTask,
     settledTask: chapterDivisionSettledTask,
     title: taskCopy.title,
-    sourceLabel: chapterTitle ? `章节：${chapterTitle}` : '分镜管理页',
+    sourceLabel: chapterTitle ? `Chương: ${chapterTitle}` : 'Trang quản lý phân cảnh',
     runningDescription: taskCopy.runningDescription,
     cancellingDescription: taskCopy.cancellingDescription,
     successDescription: taskCopy.successDescription,
@@ -352,9 +352,9 @@ export function ChapterShotsPage() {
         await StudioShotsService.deleteShotApiV1StudioShotsShotIdDelete({ shotId })
         setShots((prev) => prev.filter((s) => s.id !== shotId))
         setSelectedRowKeys((prev) => prev.filter((k) => String(k) !== shotId))
-        message.success('已删除')
+        message.success('Đã xóa')
       } catch {
-        message.error('删除失败')
+        message.error('Xóa thất bại')
       } finally {
         setDeletingId(null)
       }
@@ -385,11 +385,11 @@ export function ChapterShotsPage() {
     }
 
     if (ok > 0 && fail === 0) {
-      message.success(`已删除 ${ok} 条`)
+      message.success(`Đã xóa ${ok} mục`)
     } else if (ok > 0 && fail > 0) {
-      message.warning(`已删除 ${ok} 条，失败 ${fail} 条`)
+      message.warning(`đã xóa ${ok} dòng, thất bại ${fail} dòng`)
     } else if (ok === 0 && fail > 0) {
-      message.error(`删除失败（共 ${fail} 条）`)
+      message.error(`Xóa thất bại (tổng cộng ${fail} mục)`)
     }
   }, [selectedShotIds])
 
@@ -406,14 +406,14 @@ export function ChapterShotsPage() {
   const columns: TableColumnsType<ShotRead> = useMemo(
     () => [
       {
-        title: '序号',
+        title: 'Số thứ tự',
         dataIndex: 'index',
         key: 'index',
         width: 72,
         align: 'center',
       },
       {
-        title: '标题',
+        title: 'Tiêu đề',
         dataIndex: 'title',
         key: 'title',
         width: 200,
@@ -428,14 +428,14 @@ export function ChapterShotsPage() {
         },
       },
       {
-        title: '状态',
+        title: 'Trạng thái',
         dataIndex: 'status',
         key: 'status',
         width: 120,
         render: (_: unknown, r) => statusTag(r.status),
       },
       {
-        title: '准备度',
+        title: 'Độ sẵn sàng',
         key: 'preparation',
         width: 168,
         render: (_: unknown, r) => {
@@ -449,7 +449,7 @@ export function ChapterShotsPage() {
         },
       },
       {
-        title: '剧本摘录',
+        title: 'Trích đoạn kịch bản',
         dataIndex: 'script_excerpt',
         key: 'script_excerpt',
         width: 280,
@@ -465,7 +465,7 @@ export function ChapterShotsPage() {
         },
       },
       {
-        title: '操作',
+        title: 'Thao tác',
         key: 'actions',
         width: 170,
         render: (_: unknown, r) => (
@@ -482,12 +482,12 @@ export function ChapterShotsPage() {
                 navigate(getChapterShotEditPath(projectId, chapterId, r.id))
               }
             >
-              编辑
+              Chỉnh sửa
             </Button>
             <Popconfirm
-              title="确定删除该分镜？"
-              okText="删除"
-              cancelText="取消"
+              title="Xác nhận xóa phân cảnh này?"
+              okText="Xóa"
+              cancelText="Hủy"
               onConfirm={() => void handleDelete(r.id)}
               okButtonProps={{ loading: extracting || deletingId === r.id, disabled: extracting }}
               cancelButtonProps={{ disabled: extracting }}
@@ -500,7 +500,7 @@ export function ChapterShotsPage() {
                 loading={extracting || deletingId === r.id}
                 disabled={extracting}
               >
-                删除
+                Xóa
               </Button>
             </Popconfirm>
           </Space>
@@ -512,9 +512,9 @@ export function ChapterShotsPage() {
 
   const tableEmpty =
     !loading && shots.length === 0 ? (
-      <Empty description="暂无分镜" />
+      <Empty description="Chưa có phân cảnh" />
     ) : !loading && filteredShots.length === 0 ? (
-      <Empty description="没有匹配的分镜" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      <Empty description="Không có phân cảnh phù hợp" image={Empty.PRESENTED_IMAGE_SIMPLE} />
     ) : undefined
 
   const tableScrollY = 'calc(100vh - 320px)'
@@ -540,7 +540,7 @@ export function ChapterShotsPage() {
           to={`/projects/${projectId}?tab=chapters`}
           className="text-gray-600 hover:text-blue-600 flex items-center gap-1"
         >
-          <ArrowLeftOutlined /> 返回章节列表
+          <ArrowLeftOutlined /> Quay lại danh sách chương
         </Link>
         <Divider type="vertical" />
 
@@ -550,14 +550,14 @@ export function ChapterShotsPage() {
             className="truncate block"
             style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
           >
-            {chapterIndex !== null ? `第${chapterIndex}章 · ${chapterTitle || '未命名'}` : chapterTitle || '章节'}
+            {chapterIndex !== null ? `Tập${chapterIndex}chương · ${chapterTitle || 'Chưa đặt tên'}` : chapterTitle || 'chương'}
           </Typography.Text>
           <Typography.Text
             type="secondary"
             className="text-xs truncate block"
             style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
           >
-            {loadingChapter ? '加载中…' : '分镜列表'}
+            {loadingChapter ? 'Đang tải…' : 'Danh sách phân cảnh'}
           </Typography.Text>
         </div>
 
@@ -568,13 +568,13 @@ export function ChapterShotsPage() {
               icon={<FileSearchOutlined />}
               onClick={() => navigate(getChapterStudioPath(projectId, chapterId))}
             >
-              进入分镜工作室
+              Vào studio phân cảnh
             </Button>
             <Button
               icon={<VideoCameraOutlined />}
               onClick={() => navigate(getChapterStudioPath(projectId, chapterId))}
             >
-              继续当前镜头
+              Tiếp tục phân cảnh hiện tại
             </Button>
           </Space>
         ) : null}
@@ -592,10 +592,10 @@ export function ChapterShotsPage() {
         <Card
           title={
             <div className="flex flex-wrap items-center gap-3">
-              <span>分镜</span>
+              <span>Phân cảnh</span>
               {shots.length > 0 ? (
                 <Tag color="warning" className="!mr-0">
-                  当前章节已存在分镜，若要重新提取，请先删除现有分镜
+                  Chương hiện tại đã có phân cảnh, nếu trích xuất lại vui lòng xóa phân cảnh hiện có trước
                 </Tag>
               ) : null}
             </div>
@@ -613,17 +613,17 @@ export function ChapterShotsPage() {
             <Space wrap>
               {selectedRowKeys.length > 0 ? (
                 <>
-                  <span className="text-gray-500 text-sm">已选 {selectedRowKeys.length} 项</span>
+                  <span className="text-gray-500 text-sm">Đã chọn {selectedRowKeys.length} mục</span>
                   <Popconfirm
-                    title={`确定删除选中的 ${selectedRowKeys.length} 条分镜？`}
-                    okText="删除"
-                    cancelText="取消"
+                    title={`xác nhận xóa ${selectedRowKeys.length} phân cảnh được chọn?`}
+                    okText="Xóa"
+                    cancelText="Hủy"
                     onConfirm={() => void handleBatchDelete()}
                     okButtonProps={{ danger: true, loading: batchDeleting, disabled: extracting || batchDeleting }}
                     cancelButtonProps={{ disabled: extracting || batchDeleting }}
                   >
                     <Button danger icon={<DeleteOutlined />} loading={batchDeleting} disabled={extracting || batchDeleting}>
-                      批量删除
+                      Xóa hàng loạt
                     </Button>
                   </Popconfirm>
                 </>
@@ -631,9 +631,9 @@ export function ChapterShotsPage() {
               <Tooltip
                 title={
                   chapterDivisionTask
-                    ? '当前章节已有分镜提取任务在运行'
+                    ? 'Chương hiện tại đã có tác vụ trích xuất phân cảnh đang chạy'
                     : shots.length > 0
-                      ? '已存在分镜时不允许同步分镜，需先清空分镜'
+                      ? 'Khi đã có phân cảnh không cho phép đồng bộ, phải xóa hết phân cảnh trước'
                       : undefined
                 }
               >
@@ -645,12 +645,12 @@ export function ChapterShotsPage() {
                     disabled={extracting || shots.length > 0 || !!chapterDivisionTask}
                     onClick={() => void handleOneClickExtract()}
                   >
-                    {chapterDivisionTask ? '分镜提取中' : shots.length === 0 ? '一键提取分镜' : '重新提取需先清空分镜'}
+                    {chapterDivisionTask ? 'Đang trích xuất phân cảnh' : shots.length === 0 ? 'Trích xuất phân cảnh một chạm' : 'Trích xuất lại cần xóa toàn bộ phân cảnh trước'}
                   </Button>
                 </span>
               </Tooltip>
               <Button icon={<PlusOutlined />} onClick={openCreate} loading={extracting} disabled={extracting}>
-                创建分镜
+                Tạo phân cảnh
               </Button>
               <Button
                 icon={<ReloadOutlined />}
@@ -658,7 +658,7 @@ export function ChapterShotsPage() {
                 disabled={extracting || batchDeleting}
                 onClick={() => void refresh()}
               >
-                刷新
+                Làm mới
               </Button>
               {chapterDivisionTask ? (
                 <Button
@@ -668,7 +668,7 @@ export function ChapterShotsPage() {
                   disabled={chapterDivisionTask.cancelRequested || chapterDivisionTaskLoading}
                   onClick={() => void handleCancelChapterDivisionTask()}
                 >
-                  {chapterDivisionTask.cancelRequested ? '正在取消' : '取消提取'}
+                  {chapterDivisionTask.cancelRequested ? 'Đang hủy' : 'Hủy trích xuất'}
                 </Button>
               ) : null}
             </Space>
@@ -677,7 +677,7 @@ export function ChapterShotsPage() {
           <div className="flex flex-col gap-3 flex-1 min-h-0">
             <Input.Search
               allowClear
-              placeholder="搜索序号、标题或剧本摘录…"
+              placeholder="Tìm thứ tự, tiêu đề hoặc trích đoạn kịch bản…"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
@@ -687,10 +687,10 @@ export function ChapterShotsPage() {
                 value={listFilter}
                 onChange={(value) => setListFilter(value as ShotListFilter)}
                 options={[
-                  { label: `全部 ${shotFilterCounts.all}`, value: 'all' },
-                  { label: `待确认 ${shotFilterCounts.pending}`, value: 'pending' },
-                  { label: `生成中 ${shotFilterCounts.generating}`, value: 'generating' },
-                  { label: `已就绪 ${shotFilterCounts.ready}`, value: 'ready' },
+                  { label: `Tất cả ${shotFilterCounts.all}`, value: 'all' },
+                  { label: `Chờ xác nhận ${shotFilterCounts.pending}`, value: 'pending' },
+                  { label: `Đang tạo ${shotFilterCounts.generating}`, value: 'generating' },
+                  { label: `Sẵn sàng ${shotFilterCounts.ready}`, value: 'ready' },
                 ]}
               />
               {selectedRowKeys.length > 0 ? (
@@ -700,14 +700,14 @@ export function ChapterShotsPage() {
                     disabled={extracting || batchDeleting}
                     onClick={handleOpenSelectedInStudio}
                   >
-                    处理首个已选
+                    Xử lý mục đầu tiên được chọn
                   </Button>
                   <Button
                     type="text"
                     disabled={extracting || batchDeleting}
                     onClick={() => setSelectedRowKeys([])}
                   >
-                    清空选择
+                    Xóa hết lựa chọn
                   </Button>
                 </Space>
               ) : null}
@@ -729,7 +729,7 @@ export function ChapterShotsPage() {
                 pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [10, 20, 50, 100] }}
                 scroll={{ x: 1180, y: tableScrollY }}
                 locale={{
-                  emptyText: tableEmpty ?? <Empty description="暂无数据" image={Empty.PRESENTED_IMAGE_SIMPLE} />,
+                  emptyText: tableEmpty ?? <Empty description="Chưa có dữ liệu" image={Empty.PRESENTED_IMAGE_SIMPLE} />,
                 }}
               />
             </div>
@@ -738,7 +738,7 @@ export function ChapterShotsPage() {
       </Content>
 
       <Modal
-        title="创建分镜"
+        title="Tạo phân cảnh"
         open={createOpen}
         onCancel={extracting ? undefined : closeCreate}
         onOk={() => void submitCreate()}
@@ -752,11 +752,11 @@ export function ChapterShotsPage() {
         width={520}
       >
         <Form form={createForm} layout="vertical" preserve={false}>
-          <Form.Item name="title" label="标题" rules={[{ required: true, message: '请填写标题' }]}>
-            <Input placeholder="分镜标题" />
+          <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
+            <Input placeholder="Tiêu đề phân cảnh" />
           </Form.Item>
-          <Form.Item name="script_excerpt" label="剧本摘录">
-            <Input.TextArea rows={8} placeholder="可选" />
+          <Form.Item name="script_excerpt" label="trích đoạn kịch bản">
+            <Input.TextArea rows={8} placeholder="tùy chọn" />
           </Form.Item>
         </Form>
       </Modal>

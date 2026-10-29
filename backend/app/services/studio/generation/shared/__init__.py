@@ -1,2 +1,2 @@
-"""生成准备共享类型与辅助能力。"""
+"""Loại và khả năng phụ trợ dùng chung cho chuẩn bị tạo."""
 

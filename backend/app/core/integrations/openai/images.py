@@ -22,7 +22,7 @@ from app.core.integrations.openai.image_capabilities import validate_openai_imag
 
 
 class OpenAIImageApiAdapter:
-    """OpenAI 图片生成 HTTP；无状态，可单测替换。"""
+    """HTTP tạo hình ảnh OpenAI; không trạng thái, thay thế được khi kiểm thử đơn."""
 
     async def generate(
         self,

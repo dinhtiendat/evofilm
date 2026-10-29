@@ -7,7 +7,7 @@ export function ScenesTab() {
 
   return (
     <AssetTypeTab
-      label="场景"
+      label="Bối cảnh"
       tabKey="scene"
       listAssets={async ({ q, page, pageSize }) => {
         const res = await StudioEntitiesApi.list('scene', { q: q ?? null, page, pageSize })

@@ -1,104 +1,104 @@
-# 快速开始指南
+# Hướng dẫn bắt đầu nhanh
 
-## 项目初始化
+## Khởi tạo dự án
 
-### 1. 安装依赖
+### 1. Cài đặt phụ thuộc
 
 ```bash
 cd /Users/extreme/Projects/github.com/jellyfish
 npm install
 ```
 
-### 2. 启动开发服务器
+### 2. Khởi động máy chủ phát triển
 
 ```bash
 npm run dev
 ```
 
-浏览器将自动打开 `http://localhost:5173`
+Trình duyệt sẽ tự mở `http://localhost:5173`
 
-### 3. 构建生产版本
+### 3. Dựng phiên bản production
 
 ```bash
 npm run build
 ```
 
-构建后的文件在 `dist/` 目录
+Tệp sau khi xây dựng nằm trong thư mục `dist/`
 
-## 项目文件说明
+## Mô tả tệp dự án
 
-### 核心配置文件
+### Tệp cấu hình cốt lõi
 
-| 文件 | 说明 |
+| Tệp | Mô tả |
 |------|------|
-| `package.json` | 项目依赖和脚本 |
-| `vite.config.ts` | Vite 构建工具配置 |
-| `tsconfig.json` | TypeScript 编译配置 |
-| `tailwind.config.js` | Tailwind CSS 配置 |
-| `postcss.config.js` | PostCSS 配置 |
-| `.eslintrc.json` | ESLint 代码检查配置 |
-| `.prettierrc` | Prettier 代码格式化配置 |
+| `package.json` | Phụ thuộc và script của dự án |
+| `vite.config.ts` | Cấu hình công cụ build Vite |
+| `tsconfig.json` | Cấu hình biên dịch TypeScript |
+| `tailwind.config.js` | cấu hình Tailwind CSS |
+| `postcss.config.js` | Cấu hình PostCSS |
+| `.eslintrc.json` | Cấu hình kiểm tra code ESLint |
+| `.prettierrc` | Cấu hình định dạng code Prettier |
 
-### 源代码目录
+### Thư mục mã nguồn
 
 ```
 src/
-├── main.tsx          # 应用入口，挂载到 DOM
-├── App.tsx           # 主应用组件，包含示例代码
-├── index.css         # 全局样式（Tailwind + 自定义）
-├── App.css           # App 组件特定样式
-└── components/       # 可复用组件库
-    ├── CustomButton.tsx    # 自定义按钮组件
-    ├── CustomCard.tsx      # 自定义卡片组件
-    └── index.ts           # 组件导出索引
+├── main.tsx          # Cổng vào ứng dụng, gắn vào DOM
+├── App.tsx           # Component ứng dụng chính, chứa mã mẫu
+├── index.css         # style toàn cục(Tailwind + tùy chỉnh)
+├── App.css           # Style riêng của component App
+└── components/       # Thư viện thành phần tái sử dụng
+    ├── CustomButton.tsx    # Thành phần nút tùy chỉnh
+    ├── CustomCard.tsx      # Thành phần thẻ tùy chỉnh
+    └── index.ts           # Chỉ mục xuất thành phần
 ```
 
-## 技术栈详解
+## Chi tiết bộ công nghệ
 
 ### Vite (Next Generation Frontend Tooling)
 
-- **极速冷启动** - 基于 ES modules 的开发服务器
-- **HMR 热更新** - 修改代码立即在浏览器更新，保持应用状态
-- **优化的构建** - 预配置的 Rollup 构建
+- **Khởi động lạnh cực nhanh** - Máy chủ phát triển dựa trên ES modules
+- **Cập nhật nóng HMR** - Sửa code là lập tức cập nhật trên trình duyệt, giữ nguyên trạng thái ứng dụng
+- **Build tối ưu** - Rollup build được cấu hình sẵn
 
 ### React 18 + TypeScript
 
-- **完整的类型支持** - 提升代码质量和开发体验
-- **函数式组件** - 使用 Hooks 编写现代化组件
-- **最佳实践** - 严格模式和 ESLint 规则
+- **Hỗ trợ kiểu đầy đủ** - Nâng cao chất lượng mã và trải nghiệm phát triển
+- **Thành phần hàm** - Viết thành phần hiện đại bằng Hooks
+- **Thực hành tốt nhất** - Chế độ nghiêm ngặt và quy tắc ESLint
 
 ### Tailwind CSS
 
-- **实用工具优先** - 直接在 HTML 中编写样式类
-- **响应式设计** - 内置响应式断点
-- **与 Ant Design 兼容** - 配置中禁用了 preflight 避免冲突
+- **Công cụ tiện dụng trước** - Viết lớp style trực tiếp trong HTML
+- **Thiết kế phản hồi** - Có sẵn breakpoint phản hồi
+- **tương thích với Ant Design** - trong cấu hình đã tắt preflight để tránh xung đột
 
 ### Ant Design (antd)
 
-- **丰富的组件** - Button, Card, Table, Form, Modal 等
-- **企业级设计** - 专业的 UI 设计系统
-- **国际化支持** - 多语言支持
+- **component phong phú** - Button, Card, Table, Form, Modal v.v.
+- **Thiết kế cấp doanh nghiệp** - Hệ thống thiết kế UI chuyên nghiệp
+- **Hỗ trợ quốc tế hóa** - Đa ngôn ngữ
 
-## 常见开发任务
+## Nhiệm vụ phát triển thường gặp
 
-### 更新前端 OpenAPI 请求函数与类型
+### Cập nhật hàm yêu cầu và kiểu OpenAPI phía frontend
 
-后端开发服务启动后（默认 `http://127.0.0.1:8000`），在前端目录执行：
+sau khi khởi động dịch vụ dev backend (mặc định `http://127.0.0.1:8000`), thực thi trong thư mục frontend:
 
 ```bash
 pnpm run openapi:update
 ```
 
-生成目录：
+Thư mục tạo:
 
-- `src/services/generated/`：生成的请求函数与类型定义
-- `openapi.json`：从后端拉取的 OpenAPI 文档缓存
+- `src/services/generated/`: hàm request và định nghĩa loại được sinh ra
+- `openapi.json`: cache tài liệu OpenAPI kéo từ backend
 
-默认请求基础地址为同源 `/api`（见 `src/services/openapi.ts`），如需直连本地后端，可在应用启动时调用 `initOpenAPI('http://127.0.0.1:8000')`。
+Đường dẫn cơ bản của yêu cầu mặc định là `/api` cùng nguồn (xem `src/services/openapi.ts`); nếu cần nối trực tiếp tới backend cục bộ, có thể gọi `initOpenAPI('http://127.0.0.1:8000')` khi ứng dụng khởi động.
 
-### 创建新组件
+### Tạo component mới
 
-在 `src/components/` 目录创建新组件文件：
+Tạo tệp thành phần mới trong thư mục `src/components/`:
 
 ```tsx
 // src/components/MyComponent.tsx
@@ -115,13 +115,13 @@ const MyComponent: FC<Props> = ({ title }) => {
 export default MyComponent
 ```
 
-然后在 `src/components/index.ts` 中导出：
+Sau đó xuất trong `src/components/index.ts`:
 
 ```ts
 export { default as MyComponent } from './MyComponent'
 ```
 
-### 使用 Ant Design 组件
+### Sử dụng bộ thành phần Ant Design
 
 ```tsx
 import { Button, Card, Form, Input } from 'antd'
@@ -141,7 +141,7 @@ function MyForm() {
 }
 ```
 
-### 使用 Tailwind CSS
+### Sử dụng Tailwind CSS
 
 ```tsx
 function MyComponent() {
@@ -159,85 +159,85 @@ function MyComponent() {
 }
 ```
 
-### 环境变量
+### Biến môi trường
 
-创建 `.env` 或 `.env.local` 文件：
+Tạo tệp `.env` hoặc `.env.local`:
 
 ```
 VITE_API_URL=https://api.example.com
 VITE_APP_NAME=MyApp
 ```
 
-在代码中使用：
+Sử dụng trong code:
 
 ```tsx
 const apiUrl = import.meta.env.VITE_API_URL
 const appName = import.meta.env.VITE_APP_NAME
 ```
 
-## 代码规范
+## Quy tắc mã nguồn
 
-### 运行 ESLint 检查
+### Chạy kiểm tra ESLint
 
 ```bash
 npm run lint
 ```
 
-### 代码格式化
+### Định dạng mã nguồn
 
-使用 Prettier 格式化代码（推荐使用 IDE 扩展自动格式化）：
+Định dạng code bằng Prettier (khuyến nghị dùng extension IDE để định dạng tự động):
 
 ```bash
 npm install -D prettier
 npx prettier --write src/
 ```
 
-## 性能优化建议
+## Gợi ý tối ưu hiệu năng
 
-1. **代码分割** - 使用动态导入分割代码
-2. **懒加载组件** - React.lazy + Suspense
-3. **图片优化** - 使用合适的图片格式和大小
-4. **依赖优化** - 定期检查和更新依赖
-5. **构建分析** - 使用 `npm install -D rollup-plugin-visualizer` 分析包大小
+1. **Tách mã** - Dùng import động để tách mã
+2. **Component tải chậm** - React.lazy + Suspense
+3. **Tối ưu ảnh** - Dùng định dạng và kích thước ảnh phù hợp
+4. **Tối ưu phụ thuộc** - Kiểm tra và cập nhật phụ thuộc định kỳ
+5. **Phân tích build** - dùng `npm install -D rollup-plugin-visualizer` để phân tích kích thước gói
 
-## 常见问题排查
+## Khắc phục sự cố thường gặp
 
-### Q: 开发时样式不生效？
-A: 确保在 `index.css` 中导入了 Tailwind CSS（@tailwind 指令），并在 `main.tsx` 中导入了 `index.css`。
+### H: Khi phát triển, kiểu không có hiệu lực?
+A: Đảm bảo Tailwind CSS (@tailwind directives) được import trong `index.css`, và `index.css` được import trong `main.tsx`.
 
-### Q: Ant Design 和 Tailwind 样式冲突？
-A: `tailwind.config.js` 中已设置 `corePlugins: { preflight: false }` 来避免冲突。
+### H: Xung đột style giữa Ant Design và Tailwind?
+A: Trong `tailwind.config.js` đã đặt `corePlugins: { preflight: false }` để tránh xung đột.
 
-### Q: 如何调整 Ant Design 主题色？
-A: 使用 Ant Design 的 ConfigProvider 或自定义 CSS 变量。
+### H: Chỉnh màu chủ đề Ant Design thế nào?
+A: dùng ConfigProvider của Ant Design hoặc biến CSS tùy chỉnh.
 
-## 部署
+## Triển khai
 
-### 构建优化的生产版本
+### Build bản production được tối ưu
 
 ```bash
 npm run build
 ```
 
-### 预览生产版本
+### Xem trước bản production
 
 ```bash
 npm run preview
 ```
 
-### 部署到服务器
+### Triển khai lên máy chủ
 
-将 `dist/` 目录的内容部署到 Web 服务器（Nginx、Apache 等）。
+deploy nội dung thư mục `dist/` lên web server (Nginx, Apache...).
 
-## 扩展阅读
+## Đọc thêm
 
-- [Vite 官方文档](https://vitejs.dev)
-- [React 官方文档](https://react.dev)
-- [TypeScript 官方文档](https://www.typescriptlang.org)
-- [Tailwind CSS 文档](https://tailwindcss.com)
-- [Ant Design 文档](https://ant.design)
+- [Vite tài liệu chính thức](https://vitejs.dev)
+- [React tài liệu chính thức](https://react.dev)
+- [TypeScript tài liệu chính thức](https://www.typescriptlang.org)
+- [Tailwind CSS tài liệu](https://tailwindcss.com)
+- [Ant Design tài liệu](https://ant.design)
 
 ---
 
-祝你开发愉快！🚀
+Chúc bạn phát triển vui vẻ! 🚀
 

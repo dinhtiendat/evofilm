@@ -1,4 +1,4 @@
-"""生成能力共享的供应商类型契约。"""
+"""Hợp đồng loại nhà cung cấp dùng chung cho khả năng tạo."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ ProviderKey = Literal["openai", "volcengine"]
 
 @dataclass(frozen=True, slots=True)
 class ProviderConfig:
-    """执行生成任务时需要的供应商配置。"""
+    """Cấu hình nhà cung cấp cần khi thực thi tác vụ tạo."""
 
     provider: ProviderKey
     api_key: str

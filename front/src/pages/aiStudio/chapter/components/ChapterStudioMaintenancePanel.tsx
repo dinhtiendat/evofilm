@@ -27,27 +27,27 @@ export function ChapterStudioMaintenancePanel({
   return (
     <div>
       <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-500">
-        这里放的是次级维护动作，例如修改标题、补备注、隐藏或删除分镜。生成主线仍然建议优先使用“视频生成”“关键帧与参考图”“生成参数”这些模块。
+        Ở đây đặt các thao tác bảo trì cấp phụ, ví dụ sửa tiêu đề, bổ sung ghi chú, ẩn hoặc xóa phân cảnh. Luồng tạo chính vẫn khuyến khích ưu tiên dùng các module “Tạo video”, “Khung hình chính và ảnh tham chiếu”, “Tham số tạo”.
       </div>
 
       <div className="cs-group">
         <div className="cs-group-title">
-          <EditOutlined /> 基本维护
+          <EditOutlined /> Bảo trì cơ bản
         </div>
         <div className="space-y-3">
           <div>
-            <div className="text-gray-500 text-xs mb-1">分镜标题</div>
+            <div className="text-gray-500 text-xs mb-1">Tiêu đề phân cảnh</div>
             <Input
               value={opsTitleDraft}
-              placeholder="分镜标题…"
+              placeholder="Tiêu đề phân cảnh…"
               onChange={(e) => onChangeTitle(e.target.value)}
               onBlur={onBlurTitle}
             />
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm font-medium">隐藏此分镜</div>
-              <div className="text-xs text-gray-500">隐藏后将不参与预览整章与导出</div>
+              <div className="text-sm font-medium">ẩn phân cảnh này</div>
+              <div className="text-xs text-gray-500">Sau khi ẩn sẽ không tham gia xem trước cả chương và xuất</div>
             </div>
             <Switch checked={hideShot} onChange={onToggleHidden} />
           </div>
@@ -56,12 +56,12 @@ export function ChapterStudioMaintenancePanel({
 
       <div className="cs-group">
         <div className="cs-group-title">
-          <FileTextOutlined /> 维护备注
+          <FileTextOutlined /> Duy trì ghi chú
         </div>
         <Input.TextArea
           rows={3}
           value={opsNoteDraft}
-          placeholder="备注…"
+          placeholder="Ghi chú…"
           onChange={(e) => onChangeNote(e.target.value)}
           onBlur={onBlurNote}
         />
@@ -69,9 +69,9 @@ export function ChapterStudioMaintenancePanel({
 
       <div className="cs-group">
         <div className="cs-group-title">
-          <AppstoreOutlined /> 高风险操作
+          <AppstoreOutlined /> Thao tác rủi ro cao
         </div>
-        <div className="text-xs text-gray-500 mb-3">删除属于维护动作，不影响当前生成主线；如非必要，建议保留分镜并继续生成准备。</div>
+        <div className="text-xs text-gray-500 mb-3">Xóa là thao tác bảo trì, không ảnh hưởng đến luồng tạo dựng hiện tại; nếu không thật sự cần, nên giữ phân cảnh và tiếp tục chuẩn bị tạo dựng.</div>
         <Space wrap>
           <Button
             type="text"
@@ -79,7 +79,7 @@ export function ChapterStudioMaintenancePanel({
             icon={<DeleteOutlined />}
             onClick={onRequestDelete}
           >
-            删除
+            Xóa
           </Button>
         </Space>
       </div>

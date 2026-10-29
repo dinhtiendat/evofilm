@@ -1,4 +1,4 @@
-"""火山图片能力声明与覆盖注册。"""
+"""Khai báo và đăng ký ghi đè khả năng tạo ảnh Volcano."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ _VOLCENGINE_DEFAULT = ImageModelCapability(
     ratio_size_profiles=_VOLCENGINE_RATIO_SIZE_PROFILES,
 )
 
-# key: 模型前缀（小写）
+# key: tiền tố mô hình (chữ thường)
 _VOLCENGINE_MODEL_OVERRIDES: dict[str, ImageModelCapability] = {}
 
 
@@ -65,7 +65,7 @@ def resolve_volcengine_image_capability(model: str | None) -> ImageModelCapabili
 
 
 def validate_volcengine_image_options(input_: ImageGenerationInput) -> None:
-    """火山能力校验入口（避免调用侧传 provider 字面量）。"""
+    """Điểm vào xác thực khả năng Volcano (tránh để phía gọi truyền provider chuỗi cứng)."""
     from app.core.contracts.image_generation import ImageGenerationInput
     from app.core.integrations.image_capabilities import validate_image_options
 

@@ -27,15 +27,15 @@ export function ChapterStudioBatchToolbar({
   return (
     <div className="cs-group m-3 mt-0 mb-2">
       <div className="cs-group-title mb-1 flex items-center gap-2">
-        <AppstoreOutlined /> 批量操作
+        <AppstoreOutlined /> Thao tác hàng loạt
       </div>
       <div className="mb-2 text-xs text-gray-500">
-        正在批量处理 {selectedCount} 条分镜，可继续按{' '}
-        <span className="font-medium text-gray-700">Command/Ctrl + 点击</span>{' '}
-        调整选择
+        Đang xử lý hàng loạt {selectedCount} phân cảnh, có thể tiếp tục theo{' '}
+        <span className="font-medium text-gray-700">Command/Ctrl + nhấp chuột</span>{' '}
+        Điều chỉnh lựa chọn
       </div>
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-gray-600">已选 {selectedCount} 项</span>
+        <span className="text-xs text-gray-600">Đã chọn {selectedCount} mục</span>
         <Button
           size="small"
           icon={<VideoCameraOutlined />}
@@ -43,7 +43,7 @@ export function ChapterStudioBatchToolbar({
           disabled={batchVideoReadinessLoading}
           onClick={onBatchInspectVideoReadiness}
         >
-          批量视频准备度
+          Độ sẵn sàng tạo video hàng loạt
         </Button>
         <Button
           size="small"
@@ -51,11 +51,11 @@ export function ChapterStudioBatchToolbar({
           loading={generating}
           onClick={onBatchGenerate}
         >
-          批量生成
+          Tạo hàng loạt
         </Button>
         <Dropdown menu={{ items: maintenanceMenuItems }} trigger={['click']}>
           <Button size="small" icon={<SettingOutlined />}>
-            更多维护
+            Bảo trì khác
           </Button>
         </Dropdown>
       </div>

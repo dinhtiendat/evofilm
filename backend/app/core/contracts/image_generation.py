@@ -1,4 +1,4 @@
-"""图片生成共享输入输出契约。"""
+"""Hợp đồng đầu vào/đầu ra dùng chung cho tạo ảnh.。"""
 
 from __future__ import annotations
 
@@ -15,85 +15,85 @@ ImagePurpose = Literal["generic", "video_reference", "asset_image"]
 
 
 class InputImageRef(BaseModel):
-    """参考图片引用：统一映射到 OpenAI images[*] 与火山 image[]。"""
+    """Tham chiếu ảnh tham chiếu: ánh xạ thống nhất vào OpenAI images[*] và Volcano image[]."""
 
     model_config = ConfigDict(extra="forbid")
 
     file_id: Optional[str] = Field(
         None,
-        description="文件 ID（用于 OpenAI File API；火山可忽略）",
+        description="ID tệp(dùng cho OpenAI File API; Volcano có thể bỏ qua)",
     )
     image_url: Optional[str] = Field(
         None,
-        description="完整 URL 或 base64 data URL；火山 image[] 建议使用该字段",
+        description="URL đầy đủ hoặc base64 data URL; mảng image[] của Volcengine nên dùng trường này",
     )
 
     @model_validator(mode="after")
     def _require_one(self) -> "InputImageRef":
         if not self.file_id and not self.image_url:
-            raise ValueError("InputImageRef 需提供 file_id 或 image_url 至少其一")
+            raise ValueError("InputImageRef cần cung cấp file_id hoặc image_url, ít nhất một trong hai")
         return self
 
 
 class ImageGenerationInput(BaseModel):
-    """图片生成输入：文本 prompt 为必填，其余参数透传给供应商。"""
+    """Đầu vào tạo ảnh: prompt văn bản bắt buộc, các tham số khác truyền thẳng cho nhà cung cấp."""
 
     model_config = ConfigDict(extra="forbid")
 
-    prompt: str = Field(..., description="文本提示词")
+    prompt: str = Field(..., description="prompt: str = Field(..., description=prompt văn bản)")
     images: list[InputImageRef] = Field(
         default_factory=list,
-        description="参考图片列表：存在时 OpenAI 走 /images/edits，火山映射为 image[]",
+        description="danh sách ảnh tham chiếu: khi có thì OpenAI đi /images/edits, Volcengine ánh xạ thành image[]",
     )
-    model: Optional[str] = Field(None, description="模型名称（如 gpt-image-1.5 / doubao-seedream-*）")
+    model: Optional[str] = Field(None, description="Tên mô hình (ví dụ gpt-image-1.5 / doubao-seedream-*)")
     target_ratio: ImageTargetRatio | None = Field(
         None,
-        description="目标画幅比例，用于视频参考帧等需要与视频构图对齐的场景",
+        description="tỷ lệ khung hình đích, dùng cho các cảnh cần đối chiếu bố cục video như khung tham chiếu video",
     )
     resolution_profile: ImageResolutionProfile | None = Field(
         None,
-        description="输出分辨率档位，如 standard / high；由供应商适配层映射为最终 size",
+        description="Cấp độ độ phân giải đầu ra, ví dụ standard / high; lớp thích ứng của nhà cung cấp sẽ ánh xạ thành size cuối cùng",
     )
     purpose: ImagePurpose = Field(
         "generic",
-        description="生成用途，如 generic / video_reference / asset_image",
+        description="mục đích tạo, như generic / video_reference / asset_image",
     )
     size: Optional[str] = Field(
         None,
-        description="分辨率，如 1024x1024 / 1024x1536 等；不同供应商可选项不同",
+        description="Độ phân giải, ví dụ 1024x1024 / 1024x1536; tùy chọn khác nhau giữa các nhà cung cấp",
     )
     n: int = Field(
         1,
         ge=1,
         le=10,
-        description="生成图片数量；部分模型仅支持 n=1（调用方需结合文档约束）",
+        description="số lượng ảnh sinh; một số mô hình chỉ hỗ trợ n=1 (phía gọi cần đối chiếu ràng buộc trong tài liệu)",
     )
     seed: Optional[int] = Field(
         None,
-        description="随机种子；火山 ImageGenerations 支持该参数，OpenAI 目前忽略",
+        description="Seed ngẫu nhiên; Volcengine ImageGenerations hỗ trợ tham số này, OpenAI hiện bỏ qua",
     )
     watermark: Optional[bool] = Field(
         None,
-        description="是否包含水印，供应商/模型可能有差异",
+        description="Có bao gồm watermark không, nhà cung cấp/mô hình có thể khác nhau",
     )
     response_format: ResponseFormat = Field(
         "url",
-        description="返回格式：url 或 b64_json（OpenAI 语义）；火山引擎可忽略或仅支持 url",
+        description="định dạng trả về: url hoặc b64_json (ngữ nghĩa OpenAI); Volcengine có thể bỏ qua hoặc chỉ hỗ trợ url",
     )
 
     @model_validator(mode="after")
     def _strip_and_validate_prompt(self) -> "ImageGenerationInput":
         self.prompt = self.prompt.strip()
         if not self.prompt:
-            raise ValueError("prompt 不能为空")
+            raise ValueError("prompt raise ValueError(prompt không được để trống)")
         return self
 
 
 class ImageItem(BaseModel):
-    """单张图片结果。"""
+    """Kết quả một ảnh đơn.。"""
 
-    url: Optional[str] = Field(None, description="图片 URL")
-    b64_json: Optional[str] = Field(None, description="base64 编码内容（不含 data URI 前缀）")
+    url: Optional[str] = Field(None, description="url: Optional[str] = Field(None, description=URL của ảnh) URL")
+    b64_json: Optional[str] = Field(None, description="Nội dung mã hóa base64 (không gồm tiền tố data URI)")
 
     model_config = ConfigDict(extra="ignore")
 
@@ -105,23 +105,23 @@ class ImageItem(BaseModel):
 
 
 class ImageGenerationResult(BaseModel):
-    """图片生成统一结果。"""
+    """Kết quả thống nhất tạo hình ảnh.。"""
 
     model_config = ConfigDict(extra="ignore")
 
-    images: list[ImageItem] = Field(..., description="图片列表")
-    provider: ProviderKey = Field(..., description="供应商标识：openai | volcengine")
+    images: list[ImageItem] = Field(..., description="images: list[ImageItem] = Field(..., description=Danh sách ảnh)")
+    provider: ProviderKey = Field(..., description="provider: ProviderKey = Field(..., description=Nhận diện nhà cung cấp: openai | volcengine)：openai | volcengine")
     provider_task_id: Optional[str] = Field(
         None,
-        description="供应商内部任务 ID（若存在），用于调试/追踪",
+        description="ID tác vụ nội bộ của nhà cung cấp (nếu có), dùng để gỡ lỗi/truy vết",
     )
     status: Optional[str] = Field(
         None,
-        description="供应商任务状态（同步接口通常为 succeeded/created 等）",
+        description="Trạng thái tác vụ của nhà cung cấp (giao diện đồng bộ thường là succeeded/created, v.v.)",
     )
 
     @model_validator(mode="after")
     def _require_images(self) -> "ImageGenerationResult":
         if not self.images:
-            raise ValueError("images 不能为空")
+            raise ValueError("images raise ValueError(images không được để trống)")
         return self

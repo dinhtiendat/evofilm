@@ -1,4 +1,4 @@
-"""生成任务共享契约导出。"""
+"""Xuất hợp đồng dùng chung của tác vụ tạo."""
 
 from app.core.contracts.image_generation import (
     ImageGenerationInput,

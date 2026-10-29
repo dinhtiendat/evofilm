@@ -1,4 +1,4 @@
-"""服装信息缺失分析：结构化输出 schema。"""
+"""Phân tích thiếu thông tin trang phục: schema đầu ra có cấu trúc."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class CostumeInfoAnalysisResult(BaseModel):
-    """根据原文服装/造型描述，分析缺少的信息，并给出优化后的可生成服装描述。"""
+    """dựa theo mô tả trang phục/đạo cụ nguyên văn, phân tích thông tin thiếu, và đưa ra mô tả trang phục có thể sinh sau tối ưu."""
 
     model_config = ConfigDict(extra="forbid")
 

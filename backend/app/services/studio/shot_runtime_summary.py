@@ -1,4 +1,4 @@
-"""镜头运行时任务态聚合。"""
+"""Tổng hợp trạng thái tác vụ runtime của phân cảnh."""
 
 from __future__ import annotations
 

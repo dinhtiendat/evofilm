@@ -22,7 +22,7 @@ export function DisplayImageCard({
   title,
   imageUrl,
   imageAlt,
-  placeholder = '暂无图片',
+  placeholder = 'Chưa có ảnh',
   extra,
   actions,
   meta,

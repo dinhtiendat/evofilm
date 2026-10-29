@@ -7,9 +7,9 @@ export function EditTab() {
   const { projectId } = useParams<{ projectId: string }>()
   return (
     <PlaceholderTab
-      title="后期剪辑"
-      description="时间线编辑器，或从可剪辑章节列表进入。"
-      actionLabel="进入后期剪辑"
+      title="Cắt ghép hậu kỳ"
+      description="Trình biên tập trục thời gian, hoặc vào từ danh sách chương có thể cắt dựng."
+      actionLabel="Vào biên tập hậu kỳ"
       onAction={() => projectId && navigate(getProjectEditorPath(projectId))}
     />
   )

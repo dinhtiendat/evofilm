@@ -1,7 +1,7 @@
 [project]
 name = "jellyfish-backend"
 version = "0.1.0"
-description = "Jellyfish AI 短剧工厂 - 后端 API"
+description = "Jellyfish AI nhà máy short drama - API phía sau"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -59,8 +59,8 @@ venvPath = "."
 venv = ".venv"
 executionEnvironments = [{ root = "." }]
 
-# Pylint：与常见开源 Python 项目一致（行宽、Python 版本、关闭噪声规则），便于本地与 CI 统一执行 `uv run pylint app`
-# 参考：https://pylint.readthedocs.io/en/stable/user_guide/configuration/all-options.html
+# Pylint: thống nhất với các dự án Python mã nguồn mở phổ biến (chiều rộng dòng, phiên bản Python, tắt các rule gây nhiễu), thuận tiện chạy thống nhất `uv run pylint app` ở local và CI
+# Tham khảo: https://pylint.readthedocs.io/en/stable/user_guide/configuration/all-options.html
 [tool.pylint.main]
 py-version = "3.11"
 jobs = 1
@@ -70,7 +70,7 @@ source-roots = ["."]
 max-line-length = 100
 
 [tool.pylint.messages_control]
-# SQLAlchemy func.* 在静态分析下常被误报为 not-callable
+# func.* của SQLAlchemy dưới phân tích tĩnh thường bị báo nhầm not-callable
 disable = [
     "not-callable",
     "missing-module-docstring",
@@ -120,7 +120,7 @@ disable = [
 ]
 
 [tool.pylint.similarities]
-# 长提示词/模板字符串易触发跨文件相似度误报
+# Chuỗi prompt/mẫu dài dễ gây báo sai độ giống liên tệp
 min-similarity-lines = 12
 ignore-comments = true
 ignore-docstrings = true

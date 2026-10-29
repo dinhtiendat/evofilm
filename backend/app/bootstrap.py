@@ -1,10 +1,10 @@
-"""应用级注册入口：统一初始化供应商能力与任务执行器（均幂等）。"""
+"""Điểm vào đăng ký cấp ứng dụng: khởi tạo thống nhất năng lực provider và task executor (đều idempotent)."""
 
 from __future__ import annotations
 
 
 def bootstrap_all_registries() -> None:
-    """启动时或惰性路径中调用一次即可；顺序固定为 provider 先于 task adapter。"""
+    """Chỉ cần gọi một lần khi khởi động hoặc trong đường dẫn lazy; thứ tự cố định: provider trước task adapter."""
     from app.core.tasks.bootstrap import bootstrap_task_adapters
     from app.services.llm.provider_bootstrap import bootstrap_builtin_providers
 

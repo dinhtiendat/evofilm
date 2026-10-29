@@ -1,1 +1,1 @@
-"""火山引擎（方舟）API 适配。"""
+"""Thích ứng API Volcano Engine (Ark)."""

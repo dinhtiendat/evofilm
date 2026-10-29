@@ -32,8 +32,8 @@ export function ChapterShotPreparationGuide({
   )
 
   const summaryText = statusReady
-    ? '已完成准备，可进入工作室继续生成。'
-    : `还有 ${warningCount} 项待处理，建议先继续完成准备。`
+    ? 'Đã hoàn tất chuẩn bị, có thể vào studio tiếp tục tạo.'
+    : `Còn ${warningCount} mục chờ xử lý, nên tiếp tục hoàn thành chuẩn bị trước.`
 
   return (
     <div
@@ -47,7 +47,7 @@ export function ChapterShotPreparationGuide({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <Tag color={statusReady ? 'green' : 'gold'} className="m-0">
-              {statusReady ? '准备完成' : '待继续准备'}
+              {statusReady ? 'Chuẩn bị hoàn tất' : 'Chờ chuẩn bị tiếp'}
             </Tag>
             <span className="text-sm font-medium text-slate-900">{nextStepTitle}</span>
           </div>
@@ -60,15 +60,15 @@ export function ChapterShotPreparationGuide({
             icon={expanded ? <UpOutlined /> : <DownOutlined />}
             onClick={() => setExpanded((value) => !value)}
           >
-            {expanded ? '收起' : '详情'}
+            {expanded ? 'Thu gọn' : 'Chi tiết'}
           </Button>
-          <Tooltip title={statusReady ? '进入分镜工作室继续关键帧、图片和视频生成。' : '可以先进入工作室查看视频准备度；如需真正继续生成，建议先完成当前准备项。'}>
+          <Tooltip title={statusReady ? 'Vào studio phân cảnh để tiếp tục khung hình chính, ảnh và tạo video.' : 'Có thể vào studio xem độ sẵn sàng tạo video trước; nếu muốn tiếp tục tạo dựng thật, nên hoàn tất mục chuẩn bị hiện tại trước.'}>
             <Button
               type={statusReady ? 'primary' : 'default'}
               size="small"
               onClick={onGoToStudio}
             >
-              进入工作室
+              Vào studio
             </Button>
           </Tooltip>
         </div>
@@ -77,7 +77,7 @@ export function ChapterShotPreparationGuide({
       {expanded ? (
         <div className="mt-2 space-y-2 border-t border-slate-200/70 pt-2">
           <div className="rounded-lg border border-slate-200 bg-white/70 px-3 py-2 text-xs text-slate-600">
-            这里负责当前镜头的准备工作：提取并确认资产、对白和基础信息。准备完成后，再进入分镜工作室继续关键帧、图片和视频生成。
+            Ở đây chịu trách nhiệm chuẩn bị cho phân cảnh hiện tại: trích xuất và xác nhận tài nguyên, thoại và thông tin cơ bản. Sau khi chuẩn bị xong, vào studio phân cảnh để tiếp tục khung hình chính, ảnh và tạo video.
           </div>
 
           <div className="flex flex-wrap gap-2">

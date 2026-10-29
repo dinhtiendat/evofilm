@@ -42,7 +42,7 @@
   border-color: #40a9ff;
 }
 
-/* Project workbench: tab 选中态主色下划线 */
+/* Bàn làm việc dự án: gạch chân màu chính ở trạng thái tab đang chọn */
 .project-workbench-tabs.ant-tabs .ant-tabs-ink-bar {
   background: #6366f1;
   height: 3px;

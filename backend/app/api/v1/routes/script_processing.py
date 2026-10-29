@@ -1,4 +1,4 @@
-"""脚本处理 API 接口：分镜、信息提取、实体合并、变体分析、一致性检查、输出编译。"""
+"""API xử lý kịch bản:phân cảnh, trích xuất thông tin, ghép thực thể, phân tích biến thể, kiểm tra nhất quán, biên dịch xuất."""
 
 from __future__ import annotations
 
@@ -87,16 +87,16 @@ router = APIRouter(prefix="/script-processing", tags=["script-processing"])
 
 
 # ============================================================================
-# 1. ScriptDividerAgent - 剧本分镜
+# 1. ScriptDividerAgent - # 1. ScriptDividerAgent - phân cảnh kịch bản
 # ============================================================================
 
 class ScriptDividerRequest(BaseModel):
-    """剧本分镜请求。"""
-    script_text: str = Field(..., description="完整剧本文本", min_length=1)
-    write_to_db: bool = Field(False, description="是否将分镜写入数据库（AI Studio shots 表）")
+    """Yêu cầu phân cảnh kịch bản.。"""
+    script_text: str = Field(..., description="script_text: str = Field(..., description=Văn bản kịch bản đầy đủ, min_length=1)", min_length=1)
+    write_to_db: bool = Field(False, description="Có ghi phân cảnh vào cơ sở dữ liệu (bảng shots của AI Studio) hay không")
     chapter_id: str | None = Field(
         None,
-        description="章节 ID（write_to_db=true 时必填）",
+        description="ID chương(bắt buộc khi write_to_db=true)",
         min_length=1,
     )
 
@@ -104,8 +104,8 @@ class ScriptDividerRequest(BaseModel):
 @router.post(
     "/divide-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步将剧本分割为多个镜头",
-    description="创建章节分镜提取任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="summary=Không đồng bộ tách kịch bản thành nhiều phân cảnh,",
+    description="Tạo tác vụ trích xuất phân cảnh chương và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def divide_script_async(
     request: ScriptDividerRequest,
@@ -137,12 +137,12 @@ async def divide_script_async(
 @router.post(
     "/divide",
     response_model=ApiResponse[ScriptDivisionResult],
-    summary="将剧本分割为多个镜头",
+    summary="Tách kịch bản thành nhiều phân cảnh",
     description=(
-        "输入完整剧本文本，输出分镜列表（index/start_line/end_line/script_excerpt/"
-        "shot_name/time_of_day）。"
-        "注意：此阶段不强制稳定ID，角色以“称呼/名字”弱信息输出，稳定ID在合并阶段统一分配。"
-        "当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 divide-async。"
+        "Nhập toàn bộ văn bản kịch bản, xuất danh sách phân cảnh (index/start_line/end_line/script_excerpt/"
+        "shot_name/time_of_day)."
+        "Lưu ý: giai đoạn này không ép ID ổn định, nhân vật xuất dưới dạng thông tin yếu (cách gọi/tên), ID ổn định được phân bổ thống nhất ở giai đoạn ghép."
+        "API đồng bộ hiện tại chủ yếu dùng để tương thích gọi cũ và điều phối; luồng chính của trang ưu tiên dùng divide-async."
     )
 )
 async def divide_script(
@@ -151,15 +151,15 @@ async def divide_script(
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[ScriptDivisionResult]:
     """
-    将完整剧本文本自动分割为多个镜头。
+    Tự động chia văn bản kịch bản hoàn chỉnh thành nhiều phân cảnh.。
     
-    请求体：
-    - script_text: 完整剧本文本
+    Thân yêu cầu:：
+    - script_text: - script_text: Văn bản kịch bản đầy đủ
     
-    返回：ScriptDivisionResult
-    - shots: 分镜列表，包含每个镜头的 index、起止行号、shot_name、script_excerpt、time_of_day
-    - total_shots: 总镜头数
-    - notes: 拆分说明（可选）
+    Trả về: ScriptDivisionResult：ScriptDivisionResult
+    - shots: danh sách phân cảnh, gồm index của từng phân cảnh, số dòng đầu/cuối, shot_name, script_excerpt, time_of_day
+    - total_shots: - total_shots: Tổng số phân cảnh
+    - notes: Giải thích tách (tùy chọn)
     """
     try:
         agent = ScriptDividerAgent(llm)
@@ -186,40 +186,40 @@ async def divide_script(
 
 
 # ============================================================================
-# 2. EntityMergerAgent - 实体合并
+# 2. EntityMergerAgent - # 2. EntityMergerAgent - hợp nhất thực thể
 # ============================================================================
 
 class EntityMergerRequest(BaseModel):
-    """实体合并请求。"""
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
+    """Yêu cầu gộp thực thể.。"""
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
     all_shot_extractions: list[dict[str, Any]] = Field(
         ...,
-        description="所有镜头提取结果（ShotElementExtractionResult 的序列化形式）"
+        description="Kết quả trích xuất của tất cả phân cảnh (dạng serialize của ShotElementExtractionResult)"
     )
     historical_library: dict[str, Any] | None = Field(
         None,
-        description="历史实体库（可选，用于增量合并）"
+        description="Kho thực thể lịch sử (tùy chọn, dùng cho hợp nhất tăng phân)"
     )
     script_division: dict[str, Any] | None = Field(
         None,
-        description="脚本分镜结果（可选；ScriptDivisionResult 序列化），用于定位与统计",
+        description="Kết quả phân cảnh của kịch bản (tùy chọn; serialize của ScriptDivisionResult), dùng để định vị và thống kê",
     )
     previous_merge: dict[str, Any] | None = Field(
         None,
-        description="上一次合并结果（可选；EntityMergeResult 序列化），用于冲突重试合并",
+        description="Kết quả gộp trước (tùy chọn; EntityMergeResult đã serialize), dùng để thử lại gộp khi xung đột",
     )
     conflict_resolutions: list[dict[str, Any]] | None = Field(
         None,
-        description="冲突解决建议列表（可选；用于冲突重试合并）",
+        description="Danh sách gợi ý giải quyết xung đột (tùy chọn; dùng cho gộp lại khi thử lại xung đột)",
     )
 
 
 @router.post(
     "/merge-entities-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步合并多镜头的实体信息",
-    description="创建实体合并任务并立即返回 task_id；当前保留为预备能力，尚无真实前端入口。",
+    summary="Không đồng bộ gộp thông tin thực thể của nhiều phân cảnh",
+    description="Tạo tác vụ gộp thực thể và trả về task_id ngay; hiện giữ làm năng lực dự bị, chưa có entry frontend thực nào.",
 )
 async def merge_entities_async(
     request: EntityMergerRequest,
@@ -255,13 +255,13 @@ async def merge_entities_async(
 @router.post(
     "/merge-entities",
     response_model=ApiResponse[EntityMergeResult],
-    summary="合并多镜头的实体信息",
+    summary="summary=Gộp thông tin thực thể của nhiều phân cảnh,",
     description=(
-        "输入全部分镜提取结果（可选带上脚本分镜与历史实体库），输出合并后的实体库："
-        "角色库/地点库/场景库/道具库（静态画像 + 变体列表）。"
-        "该步骤会统一分配稳定ID（如 char_001/loc_001/prop_001/scene_001）。"
-        "当提供 previous_merge 与 conflict_resolutions 时，将进行冲突重试合并，优先消解 conflicts 并尽量保持 ID 稳定。"
-        "当前接口保留为预备能力，尚无真实前端入口。"
+        "Nhập toàn bộ kết quả trích xuất phân cảnh (có thể kèm phân cảnh kịch bản và kho thực thể lịch sử), xuất kho thực thể đã gộp:"
+        "Kho nhân vật/kho địa điểm/kho bối cảnh/kho đạo cụ (hồ sơ tĩnh + danh sách biến thể)."
+        """Bước này sẽ gán ID ổn định thống nhất (như char_001/loc_001/prop_001/scene_001)."""
+        "Khi được cung cấp previous_merge và conflict_resolutions, sẽ thực hiện gộp lại khi thử lại xung đột, ưu tiên giải tỏa conflicts và giữ ID ổn định chừng nào có thể."
+        "Giao diện hiện tại được giữ làm năng lực dự bị, chưa có lối vào phía trước thực tế."
     )
 )
 async def merge_entities(
@@ -269,20 +269,20 @@ async def merge_entities(
     llm: BaseChatModel = Depends(get_llm),
 ) -> ApiResponse[EntityMergeResult]:
     """
-    将多个镜头的提取结果合并，统一实体定义。
+    Gộp kết quả trích xuất của nhiều phân cảnh, thống nhất định nghĩa thực thể.
     
-    请求体：
-    - all_shot_extractions: 所有镜头的提取结果
-    - historical_library: 历史实体库（可选，用于增量更新）
-    - script_division: 脚本分镜结果（可选，用于定位与统计）
-    - previous_merge: 上一次合并结果（可选；用于冲突重试合并）
-    - conflict_resolutions: 冲突解决建议列表（可选；用于冲突重试合并）
+    Thân yêu cầu:：
+    - all_shot_extractions: - all_shot_extractions: kết quả trích xuất của tất cả phân cảnh
+    - historical_library: kho thực thể lịch sử (tùy chọn, dùng cho cập nhật tăng dần)
+    - script_division: kết quả phân cảnh kịch bản (tùy chọn, dùng để định vị và thống kê)
+    - previous_merge: kết quả gộp lần trước (tùy chọn; dùng cho gộp lại khi thử lại xung đột)
+    - conflict_resolutions: danh sách đề xuất giải quyết xung đột (tùy chọn; dùng cho ghép lại khi thử lại xung đột)
     
-    返回：EntityMergeResult
-    - merged_library: 合并后的实体库（characters/locations/scenes/props，含 variants）
-    - merge_stats: 合并统计信息
-    - conflicts: 发现的冲突/待处理项
-    - notes: 合并说明（可选）
+    Trả về: EntityMergeResult：EntityMergeResult
+    - merged_library: thư viện thực thể sau hợp nhất (characters/locations/scenes/props, gồm variants)
+    - merge_stats: - merge_stats: Thông tin thống kê gộp
+    - conflicts: Xung đột đã phát hiện/mục chờ xử lý
+    - notes: Giải thích gộp (tùy chọn)
     """
     try:
         agent = EntityMergerAgent(llm)
@@ -303,32 +303,32 @@ async def merge_entities(
 
 
 # ============================================================================
-# 4. VariantAnalyzerAgent - 变体分析
+# 4. VariantAnalyzerAgent - # 4. VariantAnalyzerAgent - phân tích biến thể
 # ============================================================================
 
 class VariantAnalysisRequest(BaseModel):
-    """变体分析请求。"""
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
+    """Yêu cầu phân tích biến thể.。"""
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
     merged_library: dict[str, Any] = Field(
         ...,
-        description="合并后的实体库（EntityLibrary 的序列化形式；来自 EntityMerger 输出的 merged_library）"
+        description="Thư viện thực thể đã gộp (dạng chuỗi hoá của EntityLibrary; lấy từ merged_library trong đầu ra của EntityMerger)"
     )
     all_shot_extractions: list[dict[str, Any]] = Field(
         ...,
-        description="所有镜头提取结果"
+        description="description=Kết quả trích xuất của mọi phân cảnh"
     )
     script_division: dict[str, Any] | None = Field(
         None,
-        description="脚本分镜结果（可选；ScriptDivisionResult 序列化），用于章节/段落分组",
+        description="kết quả phân cảnh kịch bản (tùy chọn; chuỗi hóa ScriptDivisionResult), dùng để nhóm chương/đoạn",
     )
 
 
 @router.post(
     "/analyze-variants-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步分析服装/外形变体",
-    description="创建变体分析任务并立即返回 task_id；当前保留为预备能力，尚无真实前端入口。",
+    summary="Phân tích biến thể trang phục/hình dáng không đồng bộ",
+    description="Tạo tác vụ phân tích biến thể và trả về task_id ngay; hiện giữ làm năng lực dự bị, chưa có entry frontend thực nào.",
 )
 async def analyze_variants_async(
     request: VariantAnalysisRequest,
@@ -362,26 +362,26 @@ async def analyze_variants_async(
 @router.post(
     "/analyze-variants",
     response_model=ApiResponse[VariantAnalysisResult],
-    summary="分析服装/外形变体",
-    description="检测角色服装/外形变化，构建演变时间线，生成章节变体建议列表与变体建议。当前接口保留为预备能力，尚无真实前端入口。"
+    summary="Phân tích biến thể trang phục/hình dáng",
+    description="Phát hiện thay đổi trang phục / ngoại hình của nhân vật, xây dựng trục thời gian biến đổi, tạo danh sách đề xuất biến thể chương và đề xuất biến thể. API hiện tại giữ làm năng lực dự bị, chưa có cổng frontend thực."
 )
 async def analyze_variants(
     request: VariantAnalysisRequest,
     llm: BaseChatModel = Depends(get_llm),
 ) -> ApiResponse[VariantAnalysisResult]:
     """
-    分析实体的变体（特别是角色服装变化）。
+    Phân tích biến thể của thực thể (đặc biệt là thay đổi trang phục nhân vật).
     
-    请求体：
-    - merged_library: 合并后的实体库
-    - all_shot_extractions: 所有镜头提取结果
-    - script_division: 脚本分镜结果（可选，用于章节/段落分组）
+    Thân yêu cầu:：
+    - merged_library: - merged_library: thư viện thực thể sau gộp
+    - all_shot_extractions: - all_shot_extractions: kết quả trích xuất của toàn bộ phân cảnh
+    - script_division: kết quả phân cảnh kịch bản (tùy chọn, dùng để nhóm theo chương/đoạn)
     
-    返回：VariantAnalysisResult
-    - costume_timelines: 各角色的服装演变时间线
-    - variant_suggestions: 变体建议列表
-    - chapter_variants: 按章节整理的变体信息
-    - notes: 分析说明（可选）
+    Trả về: VariantAnalysisResult：VariantAnalysisResult
+    - costume_timelines: - costume_timelines: trục thời gian diễn biến trang phục của từng nhân vật
+    - variant_suggestions: - variant_suggestions: danh sách gợi ý biến thể
+    - chapter_variants: - chapter_variants: thông tin biến thể được sắp xếp theo chương
+    - notes: Giải thích phân tích (tùy chọn)
     """
     try:
         agent = VariantAnalyzerAgent(llm)
@@ -400,21 +400,21 @@ async def analyze_variants(
 
 
 # ============================================================================
-# 5. ConsistencyCheckerAgent - 一致性检查（新流程：基于原文）
+# 5. ConsistencyCheckerAgent - kiểm tra tính nhất quán (luồng mới:dựa trên nguyên văn)
 # ============================================================================
 
 class ScriptConsistencyCheckRequest(BaseModel):
-    """一致性检查请求（角色混淆）。"""
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
-    script_text: str = Field(..., description="完整剧本文本", min_length=1)
+    """Yêu cầu kiểm tra tính nhất quán (nhầm lẫn nhân vật)."""
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
+    script_text: str = Field(..., description="script_text: str = Field(..., description=Văn bản kịch bản đầy đủ, min_length=1)", min_length=1)
 
 
 @router.post(
     "/check-consistency-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步检查角色混淆一致性（基于原文）",
-    description="创建一致性检查任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="Kiểm tra nhất quán nhầm lẫn nhân vật bất đồng bộ (dựa trên nguyên văn)",
+    description="Tạo tác vụ kiểm tra nhất quán và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def check_consistency_async(
     request: ScriptConsistencyCheckRequest,
@@ -446,23 +446,23 @@ async def check_consistency_async(
 @router.post(
     "/check-consistency",
     response_model=ApiResponse[ScriptConsistencyCheckResult],
-    summary="检查角色混淆一致性（基于原文）",
-    description="检测同一角色在不同段落/镜头被赋予不同身份/行为主体导致混淆，并给出修改建议。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 check-consistency-async。"
+    summary="Kiểm tra nhất quán nhầm lẫn nhân vật (dựa trên nguyên văn)",
+    description="Phát hiện cùng một nhân vật bị gán thân phận / chủ thể hành vi khác nhau ở các đoạn / phân cảnh khác nhau gây nhầm lẫn, và đưa ra gợi ý chỉnh sửa. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng check-consistency-async."
 )
 async def check_consistency(
     request: ScriptConsistencyCheckRequest,
     llm: BaseChatModel = Depends(get_llm),
 ) -> ApiResponse[ScriptConsistencyCheckResult]:
     """
-    检查实体定义与分镜内容的一致性。
+    Kiểm tra tính nhất quán giữa định nghĩa thực thể và nội dung phân cảnh.。
     
-    请求体：
-    - script_text: 完整剧本文本
+    Thân yêu cầu:：
+    - script_text: - script_text: Văn bản kịch bản đầy đủ
     
-    返回：ScriptConsistencyCheckResult
-    - issues: 角色混淆问题列表（含 description/suggestion/affected_lines）
-    - has_issues: 是否发现问题
-    - summary: 总结（可选）
+    Trả về: ScriptConsistencyCheckResult：ScriptConsistencyCheckResult
+    - issues: danh sách vấn đề nhầm lẫn nhân vật (chứa description/suggestion/affected_lines)
+    - has_issues: - has_issues: Có phát hiện vấn đề không
+    - summary: Kết luận (tùy chọn)
     """
     try:
         agent = ConsistencyCheckerAgent(llm)
@@ -477,26 +477,26 @@ async def check_consistency(
 
 
 # ============================================================================
-# 5b. CharacterPortraitAnalysisAgent - 人物画像缺失信息分析
+# 5b. CharacterPortraitAnalysisAgent - # 5b. CharacterPortraitAnalysisAgent - phân tích thiếu thông tin hồ sơ nhân vật
 # ============================================================================
 class CharacterPortraitAnalysisRequest(BaseModel):
-    """人物画像缺失信息分析请求。"""
+    """Yêu cầu phân tích thông tin thiếu của chân dung nhân vật.。"""
 
-    relation_entity_id: str | None = Field(None, description="任务关联实体 ID（资产页恢复任务可选）")
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
+    relation_entity_id: str | None = Field(None, description="ID thực thể liên kết của tác vụ (tùy chọn khi khôi phục tác vụ ở trang tài nguyên)")
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
     character_context: str | None = Field(
         None,
-        description="原文人物上下文（可为空；用于提供额外背景，帮助判断缺失信息）",
+        description="bối cảnh nhân vật nguyên văn (có thể rỗng; dùng để cung cấp thêm bối cảnh, hỗ trợ phán đoán thông tin thiếu)",
     )
-    character_description: str = Field(..., description="原文人物描述", min_length=1)
+    character_description: str = Field(..., description="character_description: str = Field(..., description=Mô tả nhân vật trong nguyên văn, min_length=1)", min_length=1)
 
 
 @router.post(
     "/analyze-character-portrait-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步分析人物画像缺失信息",
-    description="创建人物画像分析任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="summary=Không đồng bộ phân tích thông tin thiếu trong chân dung nhân vật,",
+    description="Tạo tác vụ phân tích chân dung nhân vật và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def analyze_character_portrait_async(
     request: CharacterPortraitAnalysisRequest,
@@ -531,8 +531,8 @@ async def analyze_character_portrait_async(
 @router.post(
     "/analyze-character-portrait",
     response_model=ApiResponse[CharacterPortraitAnalysisResult],
-    summary="分析人物画像缺失信息",
-    description="根据原文人物上下文与人物描述，判断缺少哪些关键信息，并给出优化后的人物画像描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-character-portrait-async。",
+    summary="summary=Phân tích thông tin thiếu của chân dung nhân vật,",
+    description="Dựa trên ngữ cảnh nhân vật trong văn bản gốc và mô tả nhân vật, xác định đang thiếu thông tin quan trọng nào và đưa ra hồ sơ nhân vật sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-character-portrait-async.",
 )
 async def analyze_character_portrait(
     request: CharacterPortraitAnalysisRequest,
@@ -554,26 +554,26 @@ async def analyze_character_portrait(
 
 
 # ============================================================================
-# 5c. PropInfoAnalysisAgent - 道具信息缺失分析
+# 5c. PropInfoAnalysisAgent - # 5c. PropInfoAnalysisAgent - Phân tích thiếu thông tin đạo cụ
 # ============================================================================
 class PropInfoAnalysisRequest(BaseModel):
-    """道具信息缺失分析请求。"""
+    """Yêu cầu phân tích thiếu thông tin đạo cụ.。"""
 
-    relation_entity_id: str | None = Field(None, description="任务关联实体 ID（资产页恢复任务可选）")
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
+    relation_entity_id: str | None = Field(None, description="ID thực thể liên kết của tác vụ (tùy chọn khi khôi phục tác vụ ở trang tài nguyên)")
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
     prop_context: str | None = Field(
         None,
-        description="原文道具上下文（可为空；用于提供额外背景，帮助判断缺失信息）",
+        description="bối cảnh đạo cụ nguyên văn (có thể rỗng; dùng để cung cấp thêm bối cảnh, hỗ trợ phán đoán thông tin thiếu)",
     )
-    prop_description: str = Field(..., description="原文道具描述", min_length=1)
+    prop_description: str = Field(..., description="prop_description: str = Field(..., description=Mô tả đạo cụ trong nguyên văn, min_length=1)", min_length=1)
 
 
 @router.post(
     "/analyze-prop-info-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步分析道具信息缺失项",
-    description="创建道具信息分析任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="summary=Phân tích mục thiếu thông tin đạo cụ không đồng bộ,",
+    description="Tạo tác vụ phân tích thông tin đạo cụ và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def analyze_prop_info_async(
     request: PropInfoAnalysisRequest,
@@ -608,8 +608,8 @@ async def analyze_prop_info_async(
 @router.post(
     "/analyze-prop-info",
     response_model=ApiResponse[PropInfoAnalysisResult],
-    summary="分析道具信息缺失项",
-    description="根据原文道具上下文与道具描述，判断缺少哪些关键信息，并给出优化后的可生成道具描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-prop-info-async。",
+    summary="summary=Phân tích mục thiếu thông tin đạo cụ,",
+    description="Dựa trên ngữ cảnh đạo cụ trong văn bản gốc và mô tả đạo cụ, xác định đang thiếu thông tin quan trọng nào và đưa ra mô tả đạo cụ khả năng tạo dựng sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-prop-info-async.",
 )
 async def analyze_prop_info(
     request: PropInfoAnalysisRequest,
@@ -631,26 +631,26 @@ async def analyze_prop_info(
 
 
 # ============================================================================
-# 5d. SceneInfoAnalysisAgent - 场景信息缺失分析
+# 5d. SceneInfoAnalysisAgent - # 5d. SceneInfoAnalysisAgent - Phân tích thiếu thông tin bối cảnh
 # ============================================================================
 class SceneInfoAnalysisRequest(BaseModel):
-    """场景信息缺失分析请求。"""
+    """Yêu cầu phân tích thiếu thông tin bối cảnh.。"""
 
-    relation_entity_id: str | None = Field(None, description="任务关联实体 ID（资产页恢复任务可选）")
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
+    relation_entity_id: str | None = Field(None, description="ID thực thể liên kết của tác vụ (tùy chọn khi khôi phục tác vụ ở trang tài nguyên)")
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
     scene_context: str | None = Field(
         None,
-        description="原文场景上下文（可为空；用于提供额外背景，帮助判断缺失信息）",
+        description="bối cảnh bối cảnh nguyên văn (có thể rỗng; dùng để cung cấp thêm bối cảnh, hỗ trợ phán đoán thông tin thiếu)",
     )
-    scene_description: str = Field(..., description="原文场景描述", min_length=1)
+    scene_description: str = Field(..., description="scene_description: str = Field(..., description=Mô tả bối cảnh trong nguyên văn, min_length=1)", min_length=1)
 
 
 @router.post(
     "/analyze-scene-info-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步分析场景信息缺失项",
-    description="创建场景信息分析任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="summary=Phân tích mục thiếu thông tin bối cảnh không đồng bộ,",
+    description="Tạo tác vụ phân tích thông tin bối cảnh và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def analyze_scene_info_async(
     request: SceneInfoAnalysisRequest,
@@ -685,8 +685,8 @@ async def analyze_scene_info_async(
 @router.post(
     "/analyze-scene-info",
     response_model=ApiResponse[SceneInfoAnalysisResult],
-    summary="分析场景信息缺失项",
-    description="根据原文场景上下文与场景描述，判断缺少哪些关键信息，并给出优化后的可生成场景描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-scene-info-async。",
+    summary="summary=Phân tích mục thiếu thông tin bối cảnh,",
+    description="Dựa trên ngữ cảnh bối cảnh trong văn bản gốc và mô tả bối cảnh, xác định đang thiếu thông tin quan trọng nào và đưa ra mô tả bối cảnh khả năng tạo dựng sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-scene-info-async.",
 )
 async def analyze_scene_info(
     request: SceneInfoAnalysisRequest,
@@ -708,26 +708,26 @@ async def analyze_scene_info(
 
 
 # ============================================================================
-# 5e. CostumeInfoAnalysisAgent - 服装信息缺失分析
+# 5e. CostumeInfoAnalysisAgent - # 5e. CostumeInfoAnalysisAgent - phân tích thiếu thông tin trang phục
 # ============================================================================
 class CostumeInfoAnalysisRequest(BaseModel):
-    """服装信息缺失分析请求。"""
+    """Yêu cầu phân tích thiếu thông tin trang phục.。"""
 
-    relation_entity_id: str | None = Field(None, description="任务关联实体 ID（资产页恢复任务可选）")
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
+    relation_entity_id: str | None = Field(None, description="ID thực thể liên kết của tác vụ (tùy chọn khi khôi phục tác vụ ở trang tài nguyên)")
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
     costume_context: str | None = Field(
         None,
-        description="原文服装上下文（可为空；用于提供额外背景，帮助判断缺失信息）",
+        description="bối cảnh trang phục nguyên văn (có thể rỗng; dùng để cung cấp thêm bối cảnh, hỗ trợ phán đoán thông tin thiếu)",
     )
-    costume_description: str = Field(..., description="原文服装描述", min_length=1)
+    costume_description: str = Field(..., description="costume_description: str = Field(..., description=Mô tả trang phục trong nguyên văn, min_length=1)", min_length=1)
 
 
 @router.post(
     "/analyze-costume-info-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步分析服装信息缺失项",
-    description="创建服装信息分析任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="summary=Phân tích mục thiếu thông tin trang phục không đồng bộ,",
+    description="Tạo tác vụ phân tích thông tin trang phục và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def analyze_costume_info_async(
     request: CostumeInfoAnalysisRequest,
@@ -762,8 +762,8 @@ async def analyze_costume_info_async(
 @router.post(
     "/analyze-costume-info",
     response_model=ApiResponse[CostumeInfoAnalysisResult],
-    summary="分析服装信息缺失项",
-    description="根据原文服装上下文与服装描述，判断缺少哪些关键信息，并给出优化后的可生成服装描述。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 analyze-costume-info-async。",
+    summary="summary=Phân tích mục thiếu thông tin trang phục,",
+    description="Dựa trên ngữ cảnh trang phục trong văn bản gốc và mô tả trang phục, xác định đang thiếu thông tin quan trọng nào và đưa ra mô tả trang phục khả năng tạo dựng sau tối ưu. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng analyze-costume-info-async.",
 )
 async def analyze_costume_info(
     request: CostumeInfoAnalysisRequest,
@@ -785,30 +785,30 @@ async def analyze_costume_info(
 
 
 # ============================================================================
-# 6. ScriptOptimizerAgent - 剧本优化（非主线，按需触发）
+# 6. ScriptOptimizerAgent - tối ưu kịch bản (không thuộc luồng chính, kích hoạt theo cần)
 # ============================================================================
 
 class ScriptOptimizeRequest(BaseModel):
-    """剧本优化请求（基于一致性检查结果）。"""
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
-    script_text: str = Field(..., description="原文剧本文本", min_length=1)
-    consistency: dict[str, Any] = Field(..., description="一致性检查输出（ScriptConsistencyCheckResult 序列化）")
+    """Yêu cầu tối ưu kịch bản (dựa trên kết quả kiểm tra nhất quán)."""
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
+    script_text: str = Field(..., description="script_text: str = Field(..., description=Văn bản kịch bản gốc, min_length=1)", min_length=1)
+    consistency: dict[str, Any] = Field(..., description="Đầu ra kiểm tra tính nhất quán (ScriptConsistencyCheckResult dạng serialized)")
 
 
 class ScriptSimplifyRequest(BaseModel):
-    """智能精简剧本请求。"""
+    """Yêu cầu rút gọn thông minh kịch bản.。"""
 
-    project_id: str | None = Field(None, description="项目 ID（异步任务关联可选）")
-    chapter_id: str | None = Field(None, description="章节 ID（异步任务关联可选）")
-    script_text: str = Field(..., description="原文剧本文本", min_length=1)
+    project_id: str | None = Field(None, description="ID dự án (tùy chọn: liên kết tác vụ không đồng bộ)")
+    chapter_id: str | None = Field(None, description="ID chương (tùy chọn: liên kết tác vụ không đồng bộ)")
+    script_text: str = Field(..., description="script_text: str = Field(..., description=Văn bản kịch bản gốc, min_length=1)", min_length=1)
 
 
 @router.post(
     "/optimize-script-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步基于一致性检查优化剧本",
-    description="创建剧本优化任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="summary=Không đồng bộ tối ưu kịch bản dựa trên kiểm tra nhất quán,",
+    description="Tạo tác vụ tối ưu kịch bản và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def optimize_script_async(
     request: ScriptOptimizeRequest,
@@ -842,15 +842,15 @@ async def optimize_script_async(
 @router.post(
     "/optimize-script",
     response_model=ApiResponse[ScriptOptimizationResult],
-    summary="基于一致性检查优化剧本",
-    description="将一致性检查输出及原文作为输入，生成优化后的剧本（尽量少改，只改与角色混淆 issues 相关段落）。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 optimize-script-async。"
+    summary="summary=Tối ưu kịch bản dựa trên kiểm tra tính nhất quán,",
+    description="Lấy đầu vào là kết quả kiểm tra tính nhất quán và văn bản gốc, sinh kịch bản sau tối ưu (càng ít sửa càng tốt, chỉ sửa các đoạn liên quan đến issues nhầm lẫn nhân vật). API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng optimize-script-async."
 )
 async def optimize_script(
     request: ScriptOptimizeRequest,
     llm: BaseChatModel = Depends(get_llm),
 ) -> ApiResponse[ScriptOptimizationResult]:
     """
-    输入原文 + 一致性检查输出，生成优化后的剧本。
+    Đưa nguyên văn + đầu ra kiểm tra nhất quán vào, tạo kịch bản đã tối ưu.
     """
     try:
         agent = ScriptOptimizerAgent(llm)
@@ -870,14 +870,14 @@ async def optimize_script(
 @router.post(
     "/simplify-script",
     response_model=ApiResponse[ScriptSimplificationResult],
-    summary="智能精简剧本",
-    description="在保留剧情主体并保证剧情连续的前提下精简剧本文本。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 simplify-script-async。",
+    summary="summary=Rút gọn thông minh kịch bản,",
+    description="Rút gọn văn bản kịch bản trong khi giữ nguyên nội dung cốt truyện và đảm bảo tính liên tục. API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng simplify-script-async.",
 )
 async def simplify_script(
     request: ScriptSimplifyRequest,
     llm: BaseChatModel = Depends(get_llm),
 ) -> ApiResponse[ScriptSimplificationResult]:
-    """输入原文剧本，输出精简后的文本与精简策略摘要。"""
+    """Đầu vào kịch bản nguyên văn, đầu ra văn bản đã tinh giản kèm tóm tắt chiến lược tinh giản."""
     try:
         agent = ScriptSimplifierAgent(llm)
         result = agent.extract(script_text=request.script_text)
@@ -893,8 +893,8 @@ async def simplify_script(
 @router.post(
     "/simplify-script-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步智能精简剧本",
-    description="创建剧本精简任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="summary=Rút gọn kịch bản thông minh không đồng bộ,",
+    description="Tạo tác vụ rút gọn kịch bản và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def simplify_script_async(
     request: ScriptSimplifyRequest,
@@ -925,23 +925,23 @@ async def simplify_script_async(
 
 
 # ============================================================================
-# 7. ElementExtractorAgent - 项目级提取（最终输出）
+# 7. ElementExtractorAgent - Trích xuất cấp dự án (đầu ra cuối)
 # ============================================================================
 
 class ScriptExtractRequest(BaseModel):
-    """项目级信息提取请求（最终输出）。"""
-    project_id: str = Field(..., description="项目 ID", min_length=1)
-    chapter_id: str = Field(..., description="章节 ID", min_length=1)
-    script_division: dict[str, Any] = Field(..., description="分镜结果（ScriptDivisionResult 序列化）")
-    consistency: dict[str, Any] | None = Field(None, description="一致性检查结果（可选；ScriptConsistencyCheckResult 序列化）")
-    refresh_cache: bool = Field(False, description="是否跳过后端缓存并强制重新提取")
+    """Yêu cầu trích xuất thông tin cấp dự án (đầu ra cuối cùng)."""
+    project_id: str = Field(..., description="project_id: str = Field(..., description=ID dự án, min_length=1) ID", min_length=1)
+    chapter_id: str = Field(..., description="chapter_id: str = Field(..., description=ID chương, min_length=1) ID", min_length=1)
+    script_division: dict[str, Any] = Field(..., description="Kết quả chia phân cảnh (ScriptDivisionResult dạng serialized)")
+    consistency: dict[str, Any] | None = Field(None, description="Kết quả kiểm tra tính nhất quán (tùy chọn; ScriptConsistencyCheckResult dạng serialized)")
+    refresh_cache: bool = Field(False, description="refresh_cache: bool = Field(False, description=liệu bỏ qua bộ đệm phía sau và buộc trích xuất lại hay không)")
 
 
 @router.post(
     "/extract-async",
     response_model=ApiResponse[AsyncTaskCreateRead],
-    summary="异步项目级信息提取（最终输出）",
-    description="创建项目级信息提取任务并立即返回 task_id；前端可通过任务状态接口轮询。",
+    summary="Trích xuất thông tin cấp dự án không đồng bộ (đầu ra cuối)",
+    description="Tạo tác vụ trích xuất thông tin cấp dự án và trả về task_id ngay; phía trước có thể truy vấn lặp qua giao diện trạng thái tác vụ.",
 )
 async def extract_script_async(
     request: ScriptExtractRequest,
@@ -972,8 +972,8 @@ async def extract_script_async(
 @router.post(
     "/extract",
     response_model=ApiResponse[StudioScriptExtractionDraft],
-    summary="项目级信息提取（最终输出）",
-    description="输入分镜结果（可选带一致性检查结果），输出可导入 Studio 的草稿结构（name-based，ID 由导入接口生成）。当前同步接口主要用于兼容旧调用与调试场景；页面主流程优先使用 extract-async。"
+    summary="Trích xuất thông tin cấp dự án (đầu ra cuối cùng)",
+    description="Đầu vào là kết quả phân cảnh (có thể kèm kết quả kiểm tra tính nhất quán), đầu ra là cấu trúc bản nháp có thể nhập vào Studio (dựa theo name, ID do API nhập sinh ra). API đồng bộ hiện tại chủ yếu dùng để tương thích với cách gọi cũ và cho mục đích gỡ lỗi; luồng chính trên trang ưu tiên dùng extract-async."
 )
 async def extract_script(
     request: ScriptExtractRequest,

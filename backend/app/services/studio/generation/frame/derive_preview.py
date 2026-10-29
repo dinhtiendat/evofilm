@@ -11,7 +11,7 @@ def replace_reference_names_in_prompt(
     base_prompt: str,
     mappings: list[ShotFramePromptMappingRead],
 ) -> str:
-    """将提示词中的实体名称替换为稳定的图片 token。"""
+    """Thay tên thực thể trong prompt bằng token hình ảnh ổn định."""
     text = (base_prompt or "").strip()
     replace_pairs = [
         ((mapping.name or "").strip(), mapping.token)
@@ -30,7 +30,7 @@ def _score_frame_guidance_line(
     category: str,
     text: str,
 ) -> int:
-    """按帧类型和文本特征给图片 guidance 打分，控制最终 prompt 的收敛顺序。"""
+    """điểm guidance ảnh theo loại khung và đặc điểm văn bản, kiểm soát thứ tự hội tụ của prompt cuối."""
     score_by_category = {
         "summary": 100,
         "continuity": 80,
@@ -53,13 +53,13 @@ def _score_frame_guidance_line(
     if frame_type == "last" and category == "continuity":
         score += 5
 
-    if category == "frame" and any(keyword in text for keyword in ("触发瞬间", "初始反应", "尚未完成", "动作峰值", "情绪余韵", "收束")):
+    if category == "frame" and any(keyword in text for keyword in ("khoảnh khắc kích hoạt", "phản ứng ban đầu", "chưa hoàn tất", "đỉnh hành động", "dư âm cảm xúc", "khép lại")):
         score += 8
-    if category == "screen" and any(keyword in text for keyword in ("视线", "对视", "左右", "朝向", "跳轴")):
+    if category == "screen" and any(keyword in text for keyword in ("tầm mắt", "ngắm nhìn", "trái-phải", "hướng mặt", "nhảy trục")):
         score += 10
-    if category == "composition" and any(keyword in text for keyword in ("空间", "重心", "环境", "锚点", "站位")):
+    if category == "composition" and any(keyword in text for keyword in ("không gian", "trọng tâm", "môi trường", "mỏ neo", "đứng")):
         score += 10
-    if category == "continuity" and any(keyword in text for keyword in ("上一镜头", "下一镜头", "承接", "收束")):
+    if category == "continuity" and any(keyword in text for keyword in ("phân cảnh trước", "phân cảnh tiếp theo", "tiếp nối", "khép lại")):
         score += 5
 
     return score
@@ -71,48 +71,48 @@ def _build_frame_guidance_reason(
     category: str,
     selected: bool,
 ) -> str:
-    """生成 guidance 被保留或压缩的可解释原因。"""
+    """Lý do có thể giải thích cho việc guidance tạo được giữ lại hay nén."""
     if selected:
         if category == "frame":
             if frame_type == "first":
-                return "当前是首帧，系统优先保留触发瞬间与未完成态约束，避免画面直接跳到后续完成动作。"
+                return "hiện là khung hình đầu, hệ thống ưu tiên giữ ràng buộc khoảnh khắc kích hoạt và trạng thái chưa hoàn thành, tránh khung nhảy thẳng vào hành động hoàn tất sau."
             if frame_type == "key":
-                return "当前是关键帧，系统保留帧职责 guidance 来强化动作峰值或情绪爆点。"
+                return "hiện là khung hình chính, hệ thống giữ lại guidance theo trách nhiệm khung để tăng cường đỉnh hành động hoặc điểm nổ cảm xúc."
             if frame_type == "last":
-                return "当前是尾帧，系统保留帧职责 guidance 来强化动作收束与情绪落点。"
+                return "hiện là khung hình cuối, hệ thống giữ lại guidance theo trách nhiệm khung để tăng cường khép lại hành động và điểm rơi cảm xúc."
         if frame_type == "first" and category == "composition":
-            return "当前是首帧，系统优先稳住空间建立与主体站位，所以保留构图锚点。"
+            return "Hiện là khung hình đầu, hệ thống ưu tiên ổn định việc thiết lập không gian và vị trí đứng chủ thể, nên giữ mỏ neo bố cục."
         if frame_type in {"key", "last"} and category == "screen":
-            return "当前镜头更看重视线与左右轴线稳定，因此优先保留朝向与视线 guidance。"
+            return "shot hiện tại chú trọng sự ổn định của hướng nhìn và trục trái/phải hơn, nên ưu tiên giữ guidance hướng xoay và hướng nhìn."
         if category == "summary":
-            return "导演主指令始终属于最高优先级约束，因此会优先保留。"
+            return "Chỉ thị đạo diễn chính luôn là ràng buộc có độ ưu tiên cao nhất, nên sẽ được ưu tiên giữ lại."
         if category == "continuity":
-            return "连续性 guidance 直接影响镜头承接稳定性，因此被保留。"
+            return "Guidance liên tục ảnh hưởng trực tiếp đến độ ổn định tiếp nối phân cảnh, nên được giữ lại."
         if category == "composition":
-            return "这条 guidance 对画面空间重心更关键，因此被保留。"
+            return "Guidance này quan trọng hơn với trọng tâm không gian hình ảnh, nên được giữ lại."
         if category == "screen":
-            return "这条 guidance 对视线、朝向或轴线更关键，因此被保留。"
+            return "Guidance này quan trọng hơn với ánh mắt, định hướng hoặc trục, nên được giữ lại."
 
     if category == "frame":
         if frame_type == "first":
-            return "当前已有更高优先级的首帧约束进入最终 prompt，因此这条帧职责 guidance 被压缩。"
+            return "Hiện đã có ràng buộc khung hình đầu ưu tiên cao hơn bước vào prompt cuối cùng nên guidance trách nhiệm khung hình này bị thu gọn."
         if frame_type == "key":
-            return "当前已有更高优先级的关键帧约束进入最终 prompt，因此这条帧职责 guidance 被压缩。"
+            return "Hiện đã có ràng buộc khung hình chính ưu tiên cao hơn bước vào prompt cuối cùng nên guidance trách nhiệm khung hình này bị thu gọn."
         if frame_type == "last":
-            return "当前已有更高优先级的尾帧约束进入最终 prompt，因此这条帧职责 guidance 被压缩。"
+            return "Hiện đã có ràng buộc khung hình cuối ưu tiên cao hơn bước vào prompt cuối cùng nên guidance trách nhiệm khung hình này bị thu gọn."
     if frame_type == "first" and category == "screen":
-        return "当前是首帧，系统更优先保空间建立与站位关系，因此将朝向与视线 guidance 降为次级。"
+        return "Hiện đang ở khung hình đầu, hệ thống ưu tiên bảo toàn việc thiết lập không gian và quan hệ vị trí đứng nên hạ guidance hướng nhìn xuống mức thứ yếu."
     if frame_type in {"key", "last"} and category == "composition":
-        return "当前镜头更优先保视线与左右轴线稳定，因此构图锚点 guidance 被压缩。"
+        return "shot hiện tại ưu tiên giữ nhìn và trục trái/phải ổn định hơn, nên guidance neo bố cục bị nén lại."
     if category == "summary":
-        return "当前已有更高分的导演主指令进入最终 prompt，这条摘要未继续保留。"
+        return "hiện đã có lệnh đạo diễn chính điểm cao hơn vào prompt cuối, tóm tắt này không được giữ tiếp."
     if category == "continuity":
-        return "当前已有更高优先级的镜头约束进入最终 prompt，因此这条连续性 guidance 被压缩。"
+        return "Hiện đã có ràng buộc phân cảnh ưu tiên cao hơn bước vào prompt cuối cùng nên guidance liên tục này bị thu gọn."
     if category == "composition":
-        return "当前已有更高优先级的空间或朝向约束进入最终 prompt，因此这条构图 guidance 被压缩。"
+        return "Hiện đã có ràng buộc không gian hoặc hướng nhìn ưu tiên cao hơn bước vào prompt cuối cùng nên guidance bố cục này bị thu gọn."
     if category == "screen":
-        return "当前已有更高优先级的空间或连续性约束进入最终 prompt，因此这条朝向/视线 guidance 被压缩。"
-    return "当前已有更高优先级 guidance 进入最终 prompt，因此该条目未被保留。"
+        return "Hiện đã có ràng buộc không gian hoặc liên tục có ưu tiên cao hơn đi vào prompt cuối, nên guidance hướng nhìn/về nhìn này bị nén."
+    return "Hiện đã có guidance ưu tiên cao hơn vào prompt cuối cùng, vì vậy mục này không được giữ lại."
 
 
 def _build_frame_guidance_reason_tag(
@@ -121,31 +121,31 @@ def _build_frame_guidance_reason_tag(
     category: str,
     selected: bool,
 ) -> str:
-    """生成更适合前端快速阅读的短标签。"""
+    """Tạo nhãn ngắn phù hợp cho phía trước đọc nhanh."""
     if category == "summary":
-        return "导演主指令"
+        return "Lệnh chính của đạo diễn"
     if category == "frame":
         if frame_type == "first":
-            return "首帧保时序" if selected else "首帧降时序"
+            return "Khung hình đầu giữ thứ tự thời gian" if selected else "Khung hình đầu giáng thứ tự thời gian"
         if frame_type == "key":
-            return "关键帧保峰值" if selected else "关键帧降峰值"
+            return "khung chính giữ đỉnh" if selected else "khung chính hạ đỉnh"
         if frame_type == "last":
-            return "尾帧保收束" if selected else "尾帧降收束"
+            return "Khung hình cuối giữ khép lại" if selected else "Khung hình cuối giáng khép lại"
     if category == "continuity":
-        return "连续性优先" if selected else "连续性降级"
+        return "Ưu tiên liên tục" if selected else "Giáng cấp liên tục"
     if frame_type == "first" and category == "composition":
-        return "首帧保空间" if selected else "首帧降构图"
+        return "Khung hình đầu giữ không gian" if selected else "Khung hình đầu giáng bố cục"
     if frame_type == "first" and category == "screen":
-        return "首帧降轴线"
+        return "Khung hình đầu hạ trục kịch"
     if frame_type in {"key", "last"} and category == "screen":
-        return "关键帧保轴线" if frame_type == "key" and selected else ("尾帧保轴线" if selected else "轴线降级")
+        return "Giữ trục kịch ở khung hình chính" if frame_type == "key" and selected else ("Giữ trục kịch ở khung hình cuối" if selected else "Hạ cấp trục kịch")
     if frame_type in {"key", "last"} and category == "composition":
-        return "关键帧降构图" if frame_type == "key" else "尾帧降构图"
+        return "Khung hình chính hạ bố cục" if frame_type == "key" else "Khung hình cuối hạ bố cục"
     if category == "composition":
-        return "构图优先" if selected else "构图降级"
+        return "Ưu tiên bố cục" if selected else "Giáng cấp bố cục"
     if category == "screen":
-        return "轴线优先" if selected else "轴线降级"
-    return "优先级调整"
+        return "Ưu tiên trục" if selected else "Giáng cấp trục"
+    return "Điều chỉnh thứ tự ưu tiên"
 
 
 def _collect_frame_guidance_lines(
@@ -158,7 +158,7 @@ def _collect_frame_guidance_lines(
     composition_anchor: str,
     screen_direction_guidance: str,
 ) -> tuple[list[str], list[str], list[FrameGuidanceDecisionRead], list[FrameGuidanceDecisionRead]]:
-    """收集最终保留与被压缩掉的 guidance，供渲染与前端展示共用。"""
+    """Thu thập guidance được giữ lại cuối cùng và bị nén, dùng chung cho render và hiển thị phía trước."""
     text = (replaced_prompt or "").strip()
     candidates: list[tuple[int, int, str, str]] = []
     normalized_summary = (director_command_summary or "").strip()
@@ -173,61 +173,61 @@ def _collect_frame_guidance_lines(
                 _score_frame_guidance_line(frame_type=frame_type, category="summary", text=normalized_summary),
                 0,
                 "summary",
-                f"高优先级导演指令：{normalized_summary}",
+                f"Chỉ đạo đạo diễn ưu tiên cao: {normalized_summary}",
             )
         )
     if (
         normalized_continuity
         and normalized_continuity not in text
         and normalized_continuity not in normalized_summary
-        and "连续性要求：" not in text
+        and "Yêu cầu liên tục:" not in text
     ):
         candidates.append(
             (
                 _score_frame_guidance_line(frame_type=frame_type, category="continuity", text=normalized_continuity),
                 1,
                 "continuity",
-                f"连续性要求：{normalized_continuity}",
+                f"Yêu cầu tính liên tục: {normalized_continuity}",
             )
         )
     if (
         normalized_frame
         and normalized_frame not in text
         and normalized_frame not in normalized_summary
-        and "当前帧职责：" not in text
+        and "Nhiệm vụ của khung hình hiện tại:" not in text
     ):
         candidates.append(
             (
                 _score_frame_guidance_line(frame_type=frame_type, category="frame", text=normalized_frame),
                 2,
                 "frame",
-                f"当前帧职责：{normalized_frame}",
+                f"Trách nhiệm khung hình hiện tại: {normalized_frame}",
             )
         )
     if (
         normalized_composition
         and normalized_composition not in text
-        and "构图锚点：" not in text
+        and "Mỏ neo bố cục:" not in text
     ):
         candidates.append(
             (
                 _score_frame_guidance_line(frame_type=frame_type, category="composition", text=normalized_composition),
                 4,
                 "composition",
-                f"构图锚点：{normalized_composition}",
+                f"Mỏ neo bố cục: {normalized_composition}",
             )
         )
     if (
         normalized_screen
         and normalized_screen not in text
-        and "朝向与视线：" not in text
+        and "Hướng và đường nhìn:" not in text
     ):
         candidates.append(
             (
                 _score_frame_guidance_line(frame_type=frame_type, category="screen", text=normalized_screen),
                 3,
                 "screen",
-                f"朝向与视线：{normalized_screen}",
+                f"Hướng và ánh nhìn: {normalized_screen}",
             )
         )
 
@@ -267,7 +267,7 @@ def enrich_frame_prompt_with_guidance(
     composition_anchor: str,
     screen_direction_guidance: str,
 ) -> str:
-    """将高优先级导演约束补入最终图片提示词，避免只停留在调试展示。"""
+    """Bổ ràng buộc đạo diễn ưu tiên cao vào prompt ảnh cuối cùng, tránh chỉ dừng ở hiển thị gỡ lỗi."""
     text = (replaced_prompt or "").strip()
     guidance_lines, _, _, _ = _collect_frame_guidance_lines(
         frame_type=frame_type,
@@ -288,20 +288,20 @@ def compose_shot_frame_rendered_prompt(
     replaced_prompt: str,
     mappings: list[ShotFramePromptMappingRead],
 ) -> str:
-    """拼装最终提交给模型的关键帧提示词。"""
+    """Lắp ráp prompt khung hình chính cuối cùng gửi cho mô hình."""
     lines: list[str] = []
     if mappings:
-        lines.append("## 图片内容说明")
+        lines.append("## Diễn giải nội dung hình ảnh")
         for mapping in mappings:
             lines.append(f"{mapping.token}: {mapping.name}")
         lines.append("")
-    lines.append("## 生成内容")
+    lines.append("## Nội dung đã tạo")
     lines.append((replaced_prompt or "").strip())
     return "\n".join(lines).strip()
 
 
 class FrameDerivedPreview(GenerationDerivedPreview):
-    """分镜帧图片生成的最终预览结果。"""
+    """Kết quả xem trước cuối cùng của tạo ảnh khung hình phân cảnh."""
 
     kind: str = "frame"
     shot_id: str

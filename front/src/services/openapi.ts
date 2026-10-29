@@ -9,11 +9,11 @@ declare global {
 }
 
 /**
- * 初始化由 OpenAPI 生成的请求客户端。
+ * Khởi tạo client yêu cầu được tạo từ OpenAPI.
  *
- * 说明：
- * - 生成接口的路径已包含 `/api/v1/...`，因此 BASE 默认应为空串（同源）或完整后端地址。
- * - 本地开发默认直连 `http://localhost:8000`。
+ * Giải thích:
+ * - Đường dẫn của giao diện tạo đã chứa `/api/v1/...`, vì vậy BASE mặc định nên là chuỗi rỗng (cùng nguồn) hoặc địa chỉ backend đầy đủ.
+ * - Phát triển cục bộ mặc định nối thẳng `http://localhost:8000`.
  */
 export function initOpenAPI(base: string = '') {
   OpenAPI.BASE = base

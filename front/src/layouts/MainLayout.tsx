@@ -46,40 +46,40 @@ const MainLayout: React.FC = () => {
     if (path.length === 0) return [{ title: t('title') }]
     const items: { title: React.ReactNode; key: string }[] = []
     const pathLabels: Record<string, string> = {
-      projects: '项目列表',
-      assets: '资产管理',
-      prompts: '提示词模板',
-      files: '文件管理',
-      agents: 'Agent管理',
-      models: '模型管理',
+      projects: 'Danh sách dự án',
+      assets: 'Quản lý tài nguyên',
+      prompts: 'Mẫu prompt',
+      files: 'Quản lý tệp',
+      agents: 'Quản lý Agent',
+      models: 'Quản lý mô hình',
       settings: t('menu.settings'),
-      chapters: '章节管理',
-      studio: '分镜工作室',
-      prep: '章节编辑',
-      shots: '分镜',
-      editor: '视频剪辑',
-      edit: '编辑',
+      chapters: 'Quản lý chương',
+      studio: 'Studio phân cảnh',
+      prep: 'Chỉnh sửa chương',
+      shots: 'Phân cảnh',
+      editor: 'Dựng video',
+      edit: 'Chỉnh sửa',
     }
     path.forEach((segment, i) => {
-      // 特殊：/projects/:projectId/chapters/:chapterId/* 中的 chapterId 段不展示（避免出现“章节”这一层）
+      // Đặc biệt: đoạn chapterId trong /projects/:projectId/chapters/:chapterId/* không hiển thị (tránh xuất hiện tầng “chương”)
       if (path[0] === 'projects' && path[2] === 'chapters' && i === 3) {
         return
       }
 
-      // 默认：按原始路径逐段拼接
+      // Mặc định: ghép từng đoạn theo đường dẫn gốc
       let href = path.slice(0, i + 1).join('/')
       href = `/${href}`
 
-      // 特殊：章节相关的中间路径段在路由里不存在，需映射到有效地址
+      // Đặc biệt: đoạn đường dẫn trung gian liên quan chương không tồn tại trong route, cần ánh xạ sang địa chỉ hợp lệ
       // /projects/:projectId/chapters/:chapterId/*
       if (path[0] === 'projects' && path[2] === 'chapters') {
         const projectId = path[1]
         const chapterId = path[3]
         if (segment === 'chapters' && i === 2) {
-          // “章节管理”实际在项目工作台页
+          // “Quản lý chương” thực chất ở trang bàn làm việc dự án
           href = `/projects/${projectId}?tab=chapters`
         } else if (i === 3) {
-          // 章节 ID 段没有对应独立页面，跳到分镜页（存在路由）
+          // Đoạn ID chương không có trang độc lập tương ứng, nhảy sang trang phân cảnh (route đã tồn tại)
           href = `/projects/${projectId}/chapters/${chapterId}/shots`
         }
       }
@@ -87,8 +87,8 @@ const MainLayout: React.FC = () => {
       const isLast = i === path.length - 1
       let label = pathLabels[segment]
       if (label === undefined) {
-        if (path[0] === 'projects' && i === 1) label = '项目工作台'
-        else if (path[2] === 'chapters' && i === 3) label = '章节'
+        if (path[0] === 'projects' && i === 1) label = 'Không gian làm việc dự án'
+        else if (path[2] === 'chapters' && i === 3) label = 'Chương'
         else label = segment
       }
       items.push({
@@ -103,22 +103,22 @@ const MainLayout: React.FC = () => {
     {
       key: 'projects',
       icon: <FolderOutlined />,
-      label: <Link to="/projects">项目列表</Link>,
+      label: <Link to="/projects">Danh sách dự án</Link>,
     },
     {
       key: 'assets',
       icon: <PictureOutlined />,
-      label: <Link to="/assets">资产管理</Link>,
+      label: <Link to="/assets">Quản lý tài nguyên</Link>,
     },
     {
       key: 'prompts',
       icon: <FileTextOutlined />,
-      label: <Link to="/prompts">提示词模板</Link>,
+      label: <Link to="/prompts">Mẫu prompt</Link>,
     },
     {
       key: 'models',
       icon: <ApiOutlined />,
-      label: <Link to="/models">模型管理</Link>,
+      label: <Link to="/models">Quản lý mô hình</Link>,
     },
     {
       key: 'settings',
@@ -140,7 +140,7 @@ const MainLayout: React.FC = () => {
       key: 'logout',
       label: t('user.logout'),
       onClick: () => {
-        // 这里保留占位，实际项目中可接入登录逻辑
+        // Giữ chỗ tại đây, dự án thực tế có thể ghép logic đăng nhập
       },
     },
   ]

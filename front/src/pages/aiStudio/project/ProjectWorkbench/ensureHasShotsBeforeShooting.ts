@@ -10,7 +10,7 @@ export type EnsureHasShotsBeforeShootingArgs = {
   navigate: NavigateFunction
 }
 
-const NO_SHOTS_TIP = '请进入分镜页面提取分镜后进行拍摄'
+const NO_SHOTS_TIP = 'Vui lòng vào trang phân cảnh trích xuất phân cảnh rồi mới bấm máy'
 
 export function ensureHasShotsBeforeShooting(args: EnsureHasShotsBeforeShootingArgs) {
   const { projectId, chapterId, storyboardCount, navigate } = args

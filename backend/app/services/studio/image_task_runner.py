@@ -39,7 +39,7 @@ from app.utils.files import create_file_from_url_or_b64
 
 
 class _CreateOnlyTask:
-    """仅用于 TaskManager.create：提供 __class__.__name__，避免传入 lambda。"""
+    """Chỉ dùng cho TaskManager.create: cung cấp __class__.__name__, tránh truyền vào lambda."""
 
     async def run(self, *args: object, **kwargs: object):  # noqa: ANN001, ANN003
         return None
@@ -62,7 +62,7 @@ async def _persist_images_to_assets(
     relation_entity_id: str,
     result: ImageGenerationResult,
 ) -> None:
-    """将图片生成结果落库到 FileItem 与业务图片表。"""
+    """Lưu kết quả tạo hình ảnh vào CSDL của FileItem và bảng hình ảnh nghiệp vụ."""
     images = result.images or []
     if not images:
         return
@@ -229,7 +229,7 @@ async def _resolve_related_shot_id(
     relation_type: str,
     relation_entity_id: str,
 ) -> str | None:
-    """仅解析和镜头直接相关的生成任务。"""
+    """Chỉ phân tích các tác vụ tạo liên quan trực tiếp đến phân cảnh."""
     if relation_type != "shot_frame_image":
         return None
     image_row = await session.get(ShotFrameImage, int(relation_entity_id))
@@ -251,7 +251,7 @@ async def create_image_task_and_link(
     purpose: str = "generic",
     render_context: dict | None = None,
 ) -> str:
-    """创建图片生成任务，并建立任务关联。"""
+    """Tạo tác vụ tạo ảnh và thiết lập liên kết tác vụ."""
     store = SqlAlchemyTaskStore(db)
     tm = TaskManager(store=store, strategies={})
 

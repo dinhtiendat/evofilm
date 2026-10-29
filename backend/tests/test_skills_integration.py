@@ -1,15 +1,15 @@
-"""影视技能集成测试：FastAPI 应用、技能完整链路与（可选）真实 LLM。"""
+"""test tích hợp kỹ năng điện ảnh:ứng dụng FastAPI, chuỗi kỹ năng hoàn chỉnh và (tùy chọn) LLM thật."""
 
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
 
-# ---------- FastAPI 应用集成 ----------
+# ---------- Tích hợp ứng dụng FastAPI ----------
 
 
 class TestAppIntegration:
-    """FastAPI 应用端到端：健康检查与现有路由。"""
+    """Kiểm thử end-to-end ứng dụng FastAPI: health check và các route hiện có."""
 
     def test_health_returns_ok(self, client: TestClient) -> None:
         response = client.get("/health")

@@ -1,4 +1,4 @@
-"""统一任务事件日志。"""
+"""Nhật ký sự kiện tác vụ thống nhất."""
 
 from __future__ import annotations
 

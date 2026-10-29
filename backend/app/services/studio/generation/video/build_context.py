@@ -73,7 +73,7 @@ async def resolve_video_reference_images(
 
 
 class VideoGenerationContext(GenerationContext):
-    """视频生成的动态上下文。"""
+    """Ngữ cảnh động của tạo video."""
 
     kind: str = "video"
     shot_id: str

@@ -14,10 +14,10 @@ AsyncWorkerFn = Callable[[TaskRecord, TaskStore], Awaitable[None]]
 
 
 class DeliveryStrategy(ABC):
-    """结果交付策略：将“生成执行”与“任务存储”解耦。
+    """Chiến lược bàn giao kết quả: tách “thực thi tạo” khỏi “lưu trữ tác vụ”.
 
-扩展点：
-- 新增交付方式：实现一个子类并注册到 TaskManager。
+Điểm mở rộng:
+- Thêm phương thức giao hàng: implement một lớp con và đăng ký vào TaskManager.
 """
 
     mode: DeliveryMode
@@ -27,11 +27,11 @@ class DeliveryStrategy(ABC):
 
     @abstractmethod
     async def start(self, task: TaskRecord) -> Optional[AsyncIterator[Any]]:
-        """启动任务执行。
+        """Khởi động thực thi tác vụ.
 
-返回值：
-- 流式模式：返回 async iterator（上层可用于 StreamingResponse/SSE/WebSocket）
-- 轮询模式：返回 None（只返回 task_id，前端轮询查询状态）
+Giá trị trả về:
+- Chế độ streaming: trả về async iterator (tầng trên có thể dùng cho StreamingResponse/SSE/WebSocket)
+- Chế độ truy vấn lặp: trả về None (chỉ trả task_id, phía trước truy vấn lặp để lấy trạng thái)
 """
 
     async def stream(self, task: TaskRecord) -> AsyncIterator[Any]:

@@ -20,9 +20,9 @@ router = APIRouter()
 
 
 class VideoPromptPreviewResponse(BaseModel):
-    prompt: str = Field(..., description="最终用于视频生成的提示词")
-    images: list[str] = Field(default_factory=list, description="关联参考图 file_id 列表")
-    pack: ShotVideoPromptPackRead | None = Field(None, description="视频提示词预览上下文包")
+    prompt: str = Field(..., description="Prompt cuối cùng dùng để tạo video")
+    images: list[str] = Field(default_factory=list, description="Danh sách file_id ảnh tham chiếu liên kết")
+    pack: ShotVideoPromptPackRead | None = Field(None, description="Gói ngữ cảnh xem trước prompt video")
 
 
 
@@ -30,13 +30,13 @@ class VideoPromptPreviewResponse(BaseModel):
     "/tasks/video/preview-prompt",
     response_model=ApiResponse[VideoPromptPreviewResponse],
     status_code=200,
-    summary="视频提示词预览",
+    summary="Xem trước prompt video",
 )
 async def preview_video_generation_prompt(
     body: VideoGenerationTaskRequest,
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[VideoPromptPreviewResponse]:
-    """预览视频生成的提示词与自动关联参考图。"""
+    """Xem trước prompt tạo video và tự động liên kết ảnh tham chiếu."""
     prompt, images, pack = await preview_prompt_and_images(
         db,
         shot_id=body.shot_id,
@@ -51,13 +51,13 @@ async def preview_video_generation_prompt(
     "/tasks/video",
     response_model=ApiResponse[TaskCreated],
     status_code=201,
-    summary="视频生成（任务版）",
+    summary="Tạo video (phiên bản tác vụ)",
 )
 async def create_video_generation_task(
     body: VideoGenerationTaskRequest,
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[TaskCreated]:
-    """创建视频生成任务并后台执行，结果通过 /tasks/{task_id}/result 获取。"""
+    """Tạo tác vụ tạo video và thực thi ở nền, kết quả nhận qua /tasks/{task_id}/result."""
 
     store = SqlAlchemyTaskStore(db)
     tm = TaskManager(store=store, strategies={})
@@ -86,7 +86,7 @@ async def create_video_generation_task(
     )
     await mark_shot_generating(db, shot_id=body.shot_id)
 
-    # 确保任务记录已提交，避免后台 runner 新 session 查询不到任务行而无法更新状态。
+    # đảm bảo bản ghi tác vụ đã commit, tránh runner nền session mới không query được dòng tác vụ và không cập nhật trạng thái.
     await db.commit()
 
     enqueue_task_execution(task_record.id)

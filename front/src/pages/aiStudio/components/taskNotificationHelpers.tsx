@@ -23,13 +23,13 @@ type RelationTaskNotificationOptions = {
 function formatElapsedMs(elapsedMs?: number | null): string | null {
   if (elapsedMs == null || elapsedMs < 0) return null
   const totalSeconds = Math.floor(elapsedMs / 1000)
-  if (totalSeconds < 60) return `${totalSeconds} 秒`
+  if (totalSeconds < 60) return `${totalSeconds} giây`
   const minutes = Math.floor(totalSeconds / 60)
   const seconds = totalSeconds % 60
-  if (minutes < 60) return seconds > 0 ? `${minutes} 分 ${seconds} 秒` : `${minutes} 分`
+  if (minutes < 60) return seconds > 0 ? `${minutes} phút ${seconds} giây` : `${minutes} phút`
   const hours = Math.floor(minutes / 60)
   const remainMinutes = minutes % 60
-  return remainMinutes > 0 ? `${hours} 小时 ${remainMinutes} 分` : `${hours} 小时`
+  return remainMinutes > 0 ? `${hours} giờ ${remainMinutes} phút` : `${hours} giờ`
 }
 
 function formatStartedAt(startedAtTs?: number | null): string | null {
@@ -46,14 +46,14 @@ function formatStartedAt(startedAtTs?: number | null): string | null {
 
 function buildDescription(task: RelationTaskState, runningDescription: string, cancellingDescription: string): ReactNode {
   const parts: string[] = []
-  parts.push(`进度 ${Math.max(0, Math.min(100, Math.round(task.progress)))}%`)
+  parts.push(`Tiến độ ${Math.max(0, Math.min(100, Math.round(task.progress)))}%`)
   const elapsedLabel = formatElapsedMs(task.elapsedMs)
   if (elapsedLabel) {
-    parts.push(task.cancelRequested || task.finishedAtTs ? `累计耗时 ${elapsedLabel}` : `已运行 ${elapsedLabel}`)
+    parts.push(task.cancelRequested || task.finishedAtTs ? `Tổng thời gian ${elapsedLabel}` : `Đã chạy ${elapsedLabel}`)
   }
   const startedAtLabel = formatStartedAt(task.startedAtTs)
   if (startedAtLabel) {
-    parts.push(`开始于 ${startedAtLabel}`)
+    parts.push(`Bắt đầu lúc ${startedAtLabel}`)
   }
   return (
     <div className="space-y-1">
@@ -121,7 +121,7 @@ export function useRelationTaskNotification({
     })
     notification.open({
       key: task.taskId,
-      message: task.cancelRequested ? `${title}正在取消` : `${title}进行中`,
+      message: task.cancelRequested ? `${title}đang hủy` : `${title}đang thực hiện`,
       description,
       duration: 0,
       placement: 'topRight',
@@ -130,12 +130,12 @@ export function useRelationTaskNotification({
           <Space size={8}>
             {onNavigate ? (
               <Button size="small" onClick={onNavigate}>
-                查看
+                Xem
               </Button>
             ) : null}
             {onCancel && !task.cancelRequested ? (
               <Button size="small" danger onClick={onCancel}>
-                取消任务
+                Hủy tác vụ
               </Button>
             ) : null}
           </Space>
@@ -152,17 +152,17 @@ export function useRelationTaskNotification({
     const elapsedLabel = formatElapsedMs(settledTask.elapsedMs)
     const startedAtLabel = formatStartedAt(settledTask.startedAtTs)
     const details = [
-      `进度 ${Math.max(0, Math.min(100, Math.round(settledTask.progress)))}%`,
-      elapsedLabel ? `累计耗时 ${elapsedLabel}` : null,
-      startedAtLabel ? `开始于 ${startedAtLabel}` : null,
+      `Tiến độ ${Math.max(0, Math.min(100, Math.round(settledTask.progress)))}%`,
+      elapsedLabel ? `tổng thời gian ${elapsedLabel}` : null,
+      startedAtLabel ? `bắt đầu lúc ${startedAtLabel}` : null,
     ].filter(Boolean)
 
     const statusMeta =
       settledTask.status === 'succeeded'
-        ? { message: `${title}已完成`, description: successDescription || '任务已执行完成。', duration: 3.5 as number }
+        ? { message: `${title} hoàn thành`, description: successDescription || 'Đã thực thi tác vụ xong.', duration: 3.5 as number }
         : settledTask.status === 'cancelled'
-          ? { message: `${title}已取消`, description: cancelledDescription || '任务已停止执行。', duration: 4.5 as number }
-          : { message: `${title}失败`, description: failedDescription || '任务执行失败，请稍后重试。', duration: 6 as number }
+          ? { message: `${title} đã hủy`, description: cancelledDescription || 'Đã dừng thực thi tác vụ.', duration: 4.5 as number }
+          : { message: `${title} thất bại`, description: failedDescription || 'Thực thi tác vụ thất bại, vui lòng thử lại sau.', duration: 6 as number }
 
     upsertTask({
       taskId: settledTask.taskId,
@@ -198,7 +198,7 @@ export function useRelationTaskNotification({
       ),
       duration: statusMeta.duration,
       placement: 'topRight',
-      btn: onNavigate ? <Button size="small" onClick={onNavigate}>查看</Button> : undefined,
+      btn: onNavigate ? <Button size="small" onClick={onNavigate}>Xem</Button> : undefined,
     })
   }, [cancelledDescription, failedDescription, onNavigate, removeTask, settledTask, sourceLabel, successDescription, title, upsertTask])
 

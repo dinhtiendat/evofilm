@@ -1,4 +1,4 @@
-"""Files 接口响应壳测试。"""
+"""Kiểm thử vỏ phản hồi giao diện Files."""
 
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ def test_list_files_requires_project_id_when_scope_filters_set(client: TestClien
     db = _DummyDB()
     app.dependency_overrides[get_db] = _override_db(db)
     try:
-        response = client.get("/api/v1/studio/files", params={"chapter_title": "第一章"})
+        response = client.get("/api/v1/studio/files", params={"chapter_title": "Chương một"})
     finally:
         app.dependency_overrides.clear()
 
@@ -95,7 +95,7 @@ def test_update_file_meta_returns_success_envelope(client: TestClient, monkeypat
     file_item = FileItem(
         id="file-1",
         type=FileType.image,
-        name="封面图",
+        name="Ảnh bìa",
         thumbnail="https://example.com/image.png",
         tags=["cover"],
         storage_key="files/image.png",
@@ -111,7 +111,7 @@ def test_update_file_meta_returns_success_envelope(client: TestClient, monkeypat
     try:
         response = client.patch(
             "/api/v1/studio/files/file-1",
-            json={"name": "新封面图"},
+            json={"name": "Ảnh bìa mới"},
         )
     finally:
         app.dependency_overrides.clear()
@@ -121,4 +121,4 @@ def test_update_file_meta_returns_success_envelope(client: TestClient, monkeypat
     assert body["code"] == 200
     assert body["message"] == "success"
     assert body["data"]["id"] == "file-1"
-    assert body["data"]["name"] == "封面图"
+    assert body["data"]["name"] == "Ảnh bìa"

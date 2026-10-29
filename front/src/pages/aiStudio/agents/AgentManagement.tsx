@@ -39,19 +39,19 @@ import api from '../../../services/aiStudioApi'
 import type { Agent, AgentTypeKey } from '../../../mocks/data'
 
 const AGENT_TYPES: { key: AgentTypeKey; label: string; color: string }[] = [
-  { key: 'plot', label: '剧情提取', color: 'blue' },
-  { key: 'character', label: '角色提取', color: 'green' },
-  { key: 'scene', label: '场景提取', color: 'orange' },
-  { key: 'prop', label: '道具提取', color: 'purple' },
-  { key: 'other', label: '其他类型', color: 'default' },
+  { key: 'plot', label: 'trích xuất cốt truyện', color: 'blue' },
+  { key: 'character', label: 'Trích xuất nhân vật', color: 'green' },
+  { key: 'scene', label: 'Trích xuất bối cảnh', color: 'orange' },
+  { key: 'prop', label: 'trích xuất đạo cụ', color: 'purple' },
+  { key: 'other', label: 'Loại khác', color: 'default' },
 ]
 
 const typeLabelMap = Object.fromEntries(AGENT_TYPES.map((t) => [t.key, t.label]))
 const typeColorMap = Object.fromEntries(AGENT_TYPES.map((t) => [t.key, t.color]))
 
 const SORT_OPTIONS = [
-  { value: 'updated', label: '最近更新' },
-  { value: 'name', label: '名称' },
+  { value: 'updated', label: 'Gần đây nhất' },
+  { value: 'name', label: 'Tên' },
 ]
 
 export default function AgentManagement() {
@@ -81,7 +81,7 @@ export default function AgentManagement() {
       const list = await api.agents.list()
       setAgents(Array.isArray(list) ? list : [])
     } catch {
-      message.error('加载 Agent 列表失败')
+      message.error('Tải danh sách Agent thất bại')
     } finally {
       setLoading(false)
     }
@@ -93,7 +93,7 @@ export default function AgentManagement() {
 
   const filteredList = useMemo(() => {
     let list = agents
-    // 左侧树选中时以树为准，否则用 Tab
+    // Khi cây bên trái được chọn thì ưu tiên cây, ngược lại dùng Tab
     if (typeFilter) {
       list = list.filter((a) => a.type === typeFilter)
     } else if (activeTab !== 'all') {
@@ -145,25 +145,25 @@ export default function AgentManagement() {
   const handleSetDefault = async (agent: Agent) => {
     try {
       await api.agents.update(agent.id, { isDefault: true })
-      message.success('已设为默认')
+      message.success('Đã đặt làm mặc định')
       void load()
       if (selectedAgent?.id === agent.id) setSelectedAgent({ ...agent, isDefault: true })
     } catch {
-      message.error('设置失败')
+      message.error('Đặt thất bại')
     }
   }
 
   const handleBatchDelete = () => {
     Modal.confirm({
-      title: '批量删除',
-      content: `确定删除选中的 ${selectedRowKeys.length} 个 Agent？`,
-      okText: '删除',
+      title: 'Xóa hàng loạt',
+      content: `Xác nhận xóa ${selectedRowKeys.length} Agent đã chọn?`,
+      okText: 'Xóa',
       okType: 'danger',
       onOk: async () => {
         for (const id of selectedRowKeys) {
           await api.agents.delete(String(id))
         }
-        message.success('已删除')
+        message.success('Đã xóa')
         setSelectedRowKeys([])
         void load()
         setDetailPanelOpen(false)
@@ -174,7 +174,7 @@ export default function AgentManagement() {
 
   const handleCreate = async () => {
     if (!createName.trim()) {
-      message.warning('请输入 Agent 名称')
+      message.warning('Vui lòng nhập tên Agent')
       return
     }
     setCreateLoading(true)
@@ -184,14 +184,14 @@ export default function AgentManagement() {
         type: createType,
         description: createDesc.trim(),
       })
-      message.success('创建成功')
+      message.success('Đã tạo thành công')
       setCreateModalOpen(false)
       setCreateName('')
       setCreateDesc('')
       navigate(`/agents/${created.id}/edit`)
       void load()
     } catch {
-      message.error('创建失败')
+      message.error('Tạo thất bại')
     } finally {
       setCreateLoading(false)
     }
@@ -200,13 +200,13 @@ export default function AgentManagement() {
   const handleDelete = (agent: Agent, e: React.MouseEvent) => {
     e.stopPropagation()
     Modal.confirm({
-      title: '删除 Agent',
-      content: `确定删除「${agent.name}」？`,
-      okText: '删除',
+      title: 'Xóa Agent',
+      content: `Xác nhận xóa "${agent.name}"?`,
+      okText: 'Xóa',
       okType: 'danger',
       onOk: async () => {
         await api.agents.delete(agent.id)
-        message.success('已删除')
+        message.success('Đã xóa')
         if (selectedAgent?.id === agent.id) {
           setDetailPanelOpen(false)
           setSelectedAgent(null)
@@ -218,21 +218,21 @@ export default function AgentManagement() {
 
   const tableColumns: TableColumnsType<Agent> = [
     {
-      title: '名称',
+      title: 'Tên',
       dataIndex: 'name',
       key: 'name',
       ellipsis: true,
       render: (name, record) => (
         <Space>
           {record.isDefault && (
-            <StarFilled style={{ color: '#faad14' }} title="默认" />
+            <StarFilled style={{ color: '#faad14' }} title="Mặc định" />
           )}
           <span>{name}</span>
         </Space>
       ),
     },
     {
-      title: '类型',
+      title: 'Kiểu',
       dataIndex: 'type',
       key: 'type',
       width: 110,
@@ -241,7 +241,7 @@ export default function AgentManagement() {
       ),
     },
     {
-      title: '描述',
+      title: 'Mô tả',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
@@ -252,7 +252,7 @@ export default function AgentManagement() {
       ),
     },
     {
-      title: '默认',
+      title: 'Mặc định',
       dataIndex: 'isDefault',
       key: 'isDefault',
       width: 70,
@@ -265,8 +265,8 @@ export default function AgentManagement() {
             onClick={(e) => {
               e.stopPropagation()
               Modal.confirm({
-                title: '设为默认',
-                content: '此操作将替换当前该类型的默认 Agent。',
+                title: 'Đặt làm mặc định',
+                content: 'Thao tác này sẽ thay thế Agent mặc định hiện tại của loại này.',
                 onOk: () => handleSetDefault(record),
               })
             }}
@@ -274,38 +274,38 @@ export default function AgentManagement() {
         ),
     },
     {
-      title: '版本',
+      title: 'Phiên bản',
       key: 'version',
       width: 140,
-      render: (_, record) => `${record.version} (更新于 ${record.updatedAt})`,
+      render: (_, record) => `${record.version} (cập nhật lúc ${record.updatedAt})`,
     },
     {
-      title: '创建者/更新',
+      title: 'Người tạo/cập nhật',
       key: 'creator',
       width: 120,
       render: (_, record) => `${record.updatedBy} / ${record.updatedAt}`,
     },
     {
-      title: '操作',
+      title: 'Thao tác',
       key: 'action',
       width: 180,
       render: (_, record) => (
         <Space size="small" onClick={(e) => e.stopPropagation()}>
           <Button type="link" size="small" icon={<EditOutlined />} onClick={() => navigate(`/agents/${record.id}/edit`)}>
-            编辑
+            Chỉnh sửa
           </Button>
           <Button type="link" size="small" icon={<ThunderboltOutlined />} onClick={() => navigate(`/agents/${record.id}/edit?test=1`)}>
-            测试
+            Kiểm thử
           </Button>
           <Dropdown
             menu={{
               items: [
-                { key: 'copy', label: '复制', icon: <CopyOutlined /> },
-                { key: 'export', label: '导出', icon: <ExportOutlined /> },
+                { key: 'copy', label: 'Sao chép', icon: <CopyOutlined /> },
+                { key: 'export', label: 'Xuất', icon: <ExportOutlined /> },
                 { type: 'divider' },
                 {
                   key: 'delete',
-                  label: '删除',
+                  label: 'Xóa',
                   danger: true,
                   icon: <DeleteOutlined />,
                   onClick: () => handleDelete(record, { stopPropagation: () => {} } as unknown as React.MouseEvent),
@@ -323,19 +323,19 @@ export default function AgentManagement() {
 
   return (
     <Layout className="h-full flex flex-col" style={{ minHeight: 0 }}>
-      {/* 顶部区域 */}
+      {/* Vùng trên cùng */}
       <div className="flex-shrink-0 px-4 py-3 border-b border-gray-200 bg-white space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-gray-800">Agent管理</span>
-            <span className="text-gray-500 text-sm">· 总计 {agents.length} 个 Agent</span>
+            <span className="font-semibold text-gray-800">Quản lý Agent</span>
+            <span className="text-gray-500 text-sm">· Tổng cộng {agents.length} Agent</span>
           </div>
           <Space wrap>
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
-              创建新 Agent
+              Tạo Agent mới
             </Button>
             <Input
-              placeholder="按名称/类型/创建者搜索"
+              placeholder="Tìm theo tên/loại/người tạo"
               prefix={<SearchOutlined className="text-gray-400" />}
               allowClear
               className="w-52"
@@ -351,7 +351,7 @@ export default function AgentManagement() {
                 })),
               }}
             >
-              <Button icon={<DownOutlined />}>排序：{SORT_OPTIONS.find((s) => s.value === sortBy)?.label}</Button>
+              <Button icon={<DownOutlined />}>Sắp xếp: {SORT_OPTIONS.find((s) => s.value === sortBy)?.label}</Button>
             </Dropdown>
           </Space>
         </div>
@@ -360,7 +360,7 @@ export default function AgentManagement() {
           onChange={setActiveTab}
           size="small"
           items={[
-            { key: 'all', label: `全部 (${typeCounts.all})` },
+            { key: 'all', label: `tất cả (${typeCounts.all})` },
             ...AGENT_TYPES.map((t) => ({
               key: t.key,
               label: `${t.label} (${typeCounts[t.key]})`,
@@ -369,9 +369,9 @@ export default function AgentManagement() {
         />
       </div>
 
-      {/* 主体：左侧树 + 列表 + 右侧面板 */}
+      {/* Nội dung chính: cây bên trái + danh sách + panel bên phải */}
       <Layout className="flex-1 min-h-0 flex-row overflow-hidden">
-        {/* 左侧类型树 */}
+        {/* Cây danh mục trái */}
         <div
           className="flex-shrink-0 border-r border-gray-200 bg-white overflow-auto"
           style={{ width: treeCollapsed ? 48 : 200 }}
@@ -386,7 +386,7 @@ export default function AgentManagement() {
           ) : (
             <>
               <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
-                <span className="text-sm font-medium text-gray-700">类型筛选</span>
+                <span className="text-sm font-medium text-gray-700">Lọc theo loại</span>
                 <Button type="text" size="small" icon={<RightOutlined rotate={180} />} onClick={() => setTreeCollapsed(true)} />
               </div>
               <Tree
@@ -402,7 +402,7 @@ export default function AgentManagement() {
           )}
         </div>
 
-        {/* 列表区 */}
+        {/* Khu danh sách */}
         <div className="flex-1 min-w-0 overflow-auto p-4 bg-gray-50">
           <div className="flex justify-end gap-1 mb-2">
             <Button
@@ -423,11 +423,11 @@ export default function AgentManagement() {
             <Card>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={agents.length === 0 ? '暂无 Agent，点击「创建新 Agent」开始' : '无匹配结果'}
+                description={agents.length === 0 ? 'Tạm chưa có Agent, nhấp “Tạo Agent mới” để bắt đầu' : 'Không có kết quả phù hợp'}
               >
                 {agents.length === 0 && (
                   <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
-                    创建第一个 Agent
+                    Tạo Agent đầu tiên
                   </Button>
                 )}
               </Empty>
@@ -436,9 +436,9 @@ export default function AgentManagement() {
             <Card className="mb-4">
               {selectedRowKeys.length > 0 && (
                 <div className="mb-3 flex items-center gap-2 flex-wrap">
-                  <span className="text-gray-500 text-sm">已选 {selectedRowKeys.length} 项</span>
+                  <span className="text-gray-500 text-sm">Đã chọn {selectedRowKeys.length} mục</span>
                   <Button size="small" danger icon={<DeleteOutlined />} onClick={handleBatchDelete}>
-                    批量删除
+                    Xóa hàng loạt
                   </Button>
                 </div>
               )}
@@ -469,17 +469,17 @@ export default function AgentManagement() {
                   style={{ minHeight: 220 }}
                   onClick={() => handleRowClick(agent)}
                   actions={[
-                    <Button key="edit" type="text" size="small" icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); navigate(`/agents/${agent.id}/edit`) }}>编辑</Button>,
-                    <Button key="test" type="text" size="small" icon={<ThunderboltOutlined />} onClick={(e) => { e.stopPropagation(); navigate(`/agents/${agent.id}/edit?test=1`) }}>测试</Button>,
+                    <Button key="edit" type="text" size="small" icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); navigate(`/agents/${agent.id}/edit`) }}>Chỉnh sửa</Button>,
+                    <Button key="test" type="text" size="small" icon={<ThunderboltOutlined />} onClick={(e) => { e.stopPropagation(); navigate(`/agents/${agent.id}/edit?test=1`) }}>Thử</Button>,
                     <Dropdown
                       key="more"
                       menu={{
                         items: [
-                          { key: 'copy', label: '复制', icon: <CopyOutlined /> },
-                          { key: 'export', label: '导出', icon: <ExportOutlined /> },
+                          { key: 'copy', label: 'Sao chép', icon: <CopyOutlined /> },
+                          { key: 'export', label: 'Xuất', icon: <ExportOutlined /> },
                           {
                             key: 'delete',
-                            label: '删除',
+                            label: 'Xóa',
                             danger: true,
                             icon: <DeleteOutlined />,
                             onClick: () => handleDelete(agent, { stopPropagation: () => {} } as unknown as React.MouseEvent),
@@ -488,7 +488,7 @@ export default function AgentManagement() {
                       }}
                       trigger={['click']}
                     >
-                      <Button type="text" size="small" icon={<MenuOutlined />} onClick={(e) => e.stopPropagation()}>更多</Button>
+                      <Button type="text" size="small" icon={<MenuOutlined />} onClick={(e) => e.stopPropagation()}>Thêm</Button>
                     </Dropdown>,
                   ]}
                 >
@@ -503,7 +503,7 @@ export default function AgentManagement() {
                     {agent.description || '—'}
                   </div>
                   <div className="text-xs text-gray-400">
-                    {agent.version} · 更新：{agent.updatedAt}
+                    {agent.version} · Cập nhật: {agent.updatedAt}
                   </div>
                 </Card>
               ))}
@@ -511,35 +511,35 @@ export default function AgentManagement() {
           )}
         </div>
 
-        {/* 右侧详情：桌面为侧栏，移动端为 Drawer */}
+        {/* Chi tiết bên phải: desktop là sidebar, mobile là Drawer */}
         {selectedAgent && isLargeScreen && (
             <div className="flex-shrink-0 overflow-auto border-l border-gray-200 bg-white" style={{ width: '36%', minWidth: 320 }}>
               <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                <span className="font-medium">Agent 详情</span>
-                <Button type="link" size="small" onClick={() => { setSelectedAgent(null); setDetailPanelOpen(false) }}>收起</Button>
+                <span className="font-medium">chi tiết Agent</span>
+                <Button type="link" size="small" onClick={() => { setSelectedAgent(null); setDetailPanelOpen(false) }}>Thu gọn</Button>
               </div>
               <div className="p-4 space-y-4">
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">名称</div>
+                  <div className="text-sm text-gray-500 mb-1">Tên</div>
                   <div className="font-medium">{selectedAgent.name}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">类型</div>
+                  <div className="text-sm text-gray-500 mb-1">Loại</div>
                   <Tag color={typeColorMap[selectedAgent.type]}>{typeLabelMap[selectedAgent.type]}</Tag>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">描述</div>
+                  <div className="text-sm text-gray-500 mb-1">Mô tả</div>
                   <div className="text-gray-700 text-sm">{selectedAgent.description || '—'}</div>
                 </div>
                 <div className="text-sm text-gray-500">
-                  版本 {selectedAgent.version} · 更新于 {selectedAgent.updatedAt} · {selectedAgent.updatedBy}
+                  Phiên bản {selectedAgent.version} · Cập nhật lúc {selectedAgent.updatedAt} · {selectedAgent.updatedBy}
                 </div>
                 <Space>
                   <Button type="primary" icon={<EditOutlined />} onClick={() => navigate(`/agents/${selectedAgent.id}/edit`)}>
-                    编辑
+                    Chỉnh sửa
                   </Button>
                   <Button icon={<ThunderboltOutlined />} onClick={() => navigate(`/agents/${selectedAgent.id}/edit?test=1`)}>
-                    快速测试
+                    Kiểm thử nhanh
                   </Button>
                 </Space>
               </div>
@@ -547,7 +547,7 @@ export default function AgentManagement() {
         )}
         {selectedAgent && !isLargeScreen && (
             <Drawer
-              title="Agent 详情"
+              title="Chi tiết Agent"
               placement="right"
               open={detailPanelOpen}
               onClose={() => setDetailPanelOpen(false)}
@@ -555,23 +555,23 @@ export default function AgentManagement() {
             >
               <div className="space-y-4">
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">名称</div>
+                  <div className="text-sm text-gray-500 mb-1">Tên</div>
                   <div className="font-medium">{selectedAgent.name}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">类型</div>
+                  <div className="text-sm text-gray-500 mb-1">Loại</div>
                   <Tag color={typeColorMap[selectedAgent.type]}>{typeLabelMap[selectedAgent.type]}</Tag>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500 mb-1">描述</div>
+                  <div className="text-sm text-gray-500 mb-1">Mô tả</div>
                   <div className="text-gray-700 text-sm">{selectedAgent.description || '—'}</div>
                 </div>
                 <Space>
                   <Button type="primary" icon={<EditOutlined />} onClick={() => navigate(`/agents/${selectedAgent.id}/edit`)}>
-                    编辑
+                    Chỉnh sửa
                   </Button>
                   <Button icon={<ThunderboltOutlined />} onClick={() => navigate(`/agents/${selectedAgent.id}/edit?test=1`)}>
-                    快速测试
+                    Kiểm thử nhanh
                   </Button>
                 </Space>
               </div>
@@ -579,27 +579,27 @@ export default function AgentManagement() {
         )}
       </Layout>
 
-      {/* 创建 Agent 弹窗 */}
+      {/* Cửa sổ bật lên tạo Agent */}
       <Modal
-        title="创建新 Agent"
+        title="Tạo Agent mới"
         open={createModalOpen}
         onCancel={() => setCreateModalOpen(false)}
         onOk={() => void handleCreate()}
         confirmLoading={createLoading}
-        okText="创建"
+        okText="Tạo"
         width={480}
       >
         <div className="space-y-4 pt-2">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">名称</label>
+            <label className="block text-sm text-gray-600 mb-1">Tên</label>
             <Input
-              placeholder="例如：剧情提取Agent v2.1"
+              placeholder="Ví dụ: Agent trích xuất cốt truyện v2.1"
               value={createName}
               onChange={(e) => setCreateName(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">类型</label>
+            <label className="block text-sm text-gray-600 mb-1">Loại</label>
             <Space wrap>
               {AGENT_TYPES.map((t) => (
                 <Tag
@@ -614,10 +614,10 @@ export default function AgentManagement() {
             </Space>
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">描述（选填）</label>
+            <label className="block text-sm text-gray-600 mb-1">Mô tả (tùy chọn)</label>
             <Input.TextArea
               rows={3}
-              placeholder="简要描述该 Agent 的用途"
+              placeholder="Mô tả ngắn gọn công dụng của Agent này"
               value={createDesc}
               onChange={(e) => setCreateDesc(e.target.value)}
             />

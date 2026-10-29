@@ -76,7 +76,7 @@ export function ScenesTab() {
       })
       setScenesById(next)
     } catch {
-      message.error('加载项目场景关联失败')
+      message.error('Nạp liên kết bối cảnh dự án thất bại')
       setLinks([])
       setScenesById({})
     } finally {
@@ -97,7 +97,7 @@ export function ScenesTab() {
       })
       setScenes((res.data?.items ?? []) as SceneLike[])
     } catch {
-      message.error('加载场景失败')
+      message.error('Nạp bối cảnh thất bại')
       setScenes([])
     } finally {
       setScenesLoading(false)
@@ -120,7 +120,7 @@ export function ScenesTab() {
   const toThumbUrl = (thumbnail?: string) => {
     const url = resolveAssetUrl(thumbnail)
     if (url) return url
-    // 兼容后端返回 file_id 的情况
+    // Tương thích trường hợp phía sau trả về file_id
     if (thumbnail && !thumbnail.includes('/') && !thumbnail.includes(':')) return buildFileDownloadUrl(thumbnail)
     return undefined
   }
@@ -132,11 +132,11 @@ export function ScenesTab() {
       await StudioShotLinksService.createProjectSceneLinkApiV1StudioShotLinksScenePost({
         requestBody: { project_id: projectId, chapter_id: null, shot_id: null, asset_id: scene.id },
       })
-      message.success(`已关联场景「${scene.name}」到项目`)
+      message.success(`đã liên kết bối cảnh 「${scene.name}」 vào dự án`)
       setLinkModalOpen(false)
       await loadLinks()
     } catch {
-      message.error('关联失败')
+      message.error('Liên kết thất bại')
     } finally {
       setLinkingId(null)
     }
@@ -146,10 +146,10 @@ export function ScenesTab() {
     setUnlinkingId(link.id)
     try {
       await StudioShotLinksService.deleteProjectSceneLinkApiV1StudioShotLinksSceneLinkIdDelete({ linkId: link.id })
-      message.success('已取消关联')
+      message.success('Đã hủy liên kết')
       await loadLinks()
     } catch {
-      message.error('取消关联失败')
+      message.error('Hủy liên kết thất bại')
     } finally {
       setUnlinkingId(null)
     }
@@ -160,11 +160,11 @@ export function ScenesTab() {
   return (
     <div className="h-full overflow-auto">
       <Card
-        title="项目场景"
+        title="Bối cảnh dự án"
         extra={
           <Space>
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
-              新建
+              Tạo mới
             </Button>
             <Button
               type="primary"
@@ -174,16 +174,16 @@ export function ScenesTab() {
                 setLinkModalOpen(true)
               }}
             >
-              从资产库关联
+              Liên kết từ thư viện tài nguyên
             </Button>
             <Button icon={<PlusOutlined />} onClick={() => navigate('/assets?tab=scene')}>
-              前往资产管理
+              Đến quản lý tài nguyên
             </Button>
           </Space>
         }
       >
         {links.length === 0 && !linksLoading ? (
-          <Empty description="暂无项目场景，可从资产库关联场景到本项目" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          <Empty description="Chưa có bối cảnh nào trong dự án, có thể liên kết bối cảnh từ thư viện tài nguyên vào dự án này" image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           <div className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -207,7 +207,7 @@ export function ScenesTab() {
                           )
                         }
                       >
-                        编辑
+                        Chỉnh sửa
                       </Button>
                       <Button
                         size="small"
@@ -215,15 +215,15 @@ export function ScenesTab() {
                         loading={unlinkingId === l.id}
                         onClick={() => {
                           Modal.confirm({
-                            title: `取消关联「${s?.name ?? l.scene_id}」？`,
-                            okText: '取消关联',
-                            cancelText: '取消',
+                            title: `hủy liên kết 「${s?.name ?? l.scene_id}」?`,
+                            okText: 'Hủy liên kết',
+                            cancelText: 'Hủy',
                             okButtonProps: { danger: true },
                             onOk: () => handleUnlinkScene(l),
                           })
                         }}
                       >
-                        取消关联
+                        Hủy liên kết
                       </Button>
                     </Space>
                   }
@@ -243,7 +243,7 @@ export function ScenesTab() {
                 pageSize={pageSize}
                 total={links.length}
                 showSizeChanger={false}
-                showTotal={(t) => `共 ${t} 条`}
+                showTotal={(t) => `Tổng ${t} mục`}
                 onChange={(p, ps) => {
                   setPage(p)
                   setPageSize(ps)
@@ -256,7 +256,7 @@ export function ScenesTab() {
 
       <StudioAssetTypeFormModal
         open={createModalOpen}
-        label="场景"
+        label="Bối cảnh"
         entityType="scene"
         editing={null}
         linkProjectId={projectId}
@@ -277,7 +277,7 @@ export function ScenesTab() {
       />
 
       <Modal
-        title="从资产库关联场景"
+        title="Liên kết bối cảnh từ thư viện tài nguyên"
         open={linkModalOpen}
         onCancel={() => setLinkModalOpen(false)}
         footer={null}
@@ -285,7 +285,7 @@ export function ScenesTab() {
       >
         <div className="mb-3">
           <Input.Search
-            placeholder="搜索场景名称"
+            placeholder="Tìm tên bối cảnh"
             allowClear
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -294,9 +294,9 @@ export function ScenesTab() {
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
           {scenesLoading ? (
-            <div className="py-8 text-center text-gray-500">加载中...</div>
+            <div className="py-8 text-center text-gray-500">Đang tải...</div>
           ) : availableScenes.length === 0 ? (
-            <Empty description={scenes.length === 0 ? '暂无场景，请先在资产管理中创建场景' : '当前项目已关联全部搜索结果'} />
+            <Empty description={scenes.length === 0 ? 'Chưa có bối cảnh, vui lòng tạo bối cảnh trong quản lý tài nguyên trước' : 'Dự án hiện tại đã liên kết toàn bộ kết quả tìm kiếm'} />
           ) : (
             <div className="space-y-2">
               {availableScenes.map((scene) => (
@@ -322,7 +322,7 @@ export function ScenesTab() {
                     </div>
                   </div>
                   <Button type="primary" size="small" loading={linkingId === scene.id} onClick={() => handleLinkScene(scene)}>
-                    关联到项目
+                    Liên kết vào dự án
                   </Button>
                 </div>
               ))}

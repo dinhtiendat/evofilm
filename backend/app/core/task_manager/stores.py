@@ -179,7 +179,7 @@ def _task_record_from_row(row: GenerationTask) -> TaskRecord:
 
 
 class TaskStore(Protocol):
-    """任务存储抽象：可替换为内存、MySQL/SQLite(通过 SQLAlchemy) 等。"""
+    """Lưu trữ tác vụ trừu tượng: có thể thay bằng bộ nhớ, MySQL/SQLite (qua SQLAlchemy), v.v."""
 
     async def create(self, payload: dict[str, Any], mode: DeliveryMode, task_kind: str) -> TaskRecord: ...
     async def get(self, task_id: str) -> Optional[TaskRecord]: ...
@@ -378,7 +378,7 @@ class InMemoryTaskStore(TaskStore):
 
 
 class SqlAlchemyTaskStore(TaskStore):
-    """基于 SQLAlchemy AsyncSession 的任务存储（MySQL/SQLite 等均可）。"""
+    """Lưu trữ tác vụ dựa trên SQLAlchemy AsyncSession (MySQL/SQLite đều được)."""
 
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
@@ -407,7 +407,7 @@ class SqlAlchemyTaskStore(TaskStore):
         return _task_record_from_row(row)
 
     async def get_status_view(self, task_id: str) -> Optional[TaskStatusView]:
-        # 轮询高频：只选择必要列，减少 IO 与 ORM 开销
+        # Truy vấn lặp tần suất cao: chỉ chọn các cột cần thiết, giảm chi phí IO và ORM
         stmt = (
             select(
                 GenerationTask.id,
@@ -618,7 +618,7 @@ class SqlAlchemyTaskStore(TaskStore):
 
 
 class SyncSqlAlchemyTaskStore:
-    """给同步 worker 使用的任务存储。"""
+    """Kho lưu trữ tác vụ dùng cho worker đồng bộ."""
 
     def __init__(self, db: Session) -> None:
         self.db = db

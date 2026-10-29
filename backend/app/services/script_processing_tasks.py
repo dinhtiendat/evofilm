@@ -26,9 +26,9 @@ logger = logging.getLogger(__name__)
 
 CHAPTER_DIVISION_RELATION_TYPE = "chapter_division"
 SCRIPT_EXTRACTION_RELATION_TYPE = "script_extraction"
-ENTITY_MERGE_RELATION_TYPE = "entity_merge"  # 预备能力：当前无真实前端入口
+ENTITY_MERGE_RELATION_TYPE = "entity_merge"  # Năng lực dự bị: hiện chưa có lối vào phía trước thực
 CONSISTENCY_CHECK_RELATION_TYPE = "consistency_check"
-VARIANT_ANALYSIS_RELATION_TYPE = "variant_analysis"  # 预备能力：当前无真实前端入口
+VARIANT_ANALYSIS_RELATION_TYPE = "variant_analysis"  # Năng lực dự bị: hiện chưa có cổng frontend thực
 CHARACTER_PORTRAIT_ANALYSIS_RELATION_TYPE = "character_portrait_analysis"
 PROP_INFO_ANALYSIS_RELATION_TYPE = "prop_info_analysis"
 SCENE_INFO_ANALYSIS_RELATION_TYPE = "scene_info_analysis"
@@ -54,7 +54,7 @@ _ACTIVE_TASK_STATUSES = (
 
 
 class _CreateOnlyTask:
-    """仅用于 TaskManager.create，避免为异步任务额外声明无意义 task 类。"""
+    """Chỉ dùng cho TaskManager.create, tránh khai báo thêm class task vô nghĩa cho tác vụ không đồng bộ."""
 
     async def run(self, *args: object, **kwargs: object):
         return None
@@ -83,7 +83,7 @@ async def _cancel_if_requested(
     task_id: str,
     db: AsyncSession,
 ) -> bool:
-    """在阶段边界检查取消请求，并统一完成 cancelled 收尾。"""
+    """Kiểm tra yêu cầu hủy tại ranh giới giai đoạn và thống nhất hoàn tất xử lý hủy (cancelled)."""
 
     if not await store.is_cancel_requested(task_id):
         return False
@@ -110,11 +110,11 @@ async def _find_active_task(
     relation_type: str,
     relation_entity_id: str,
 ) -> GenerationTask | None:
-    """按业务关联查询任意活动任务。
+    """Truy vấn bất kỳ tác vụ đang chạy theo liên kết nghiệp vụ.
 
-    这里的目标只是“是否已有运行中的同类任务”，不需要挑出“最新”那一条。
-    因此直接从 relation link 侧过滤，再按活动状态做一次连接，并去掉排序，
-    避免在任务量大时触发 MySQL 的大排序与 sort buffer 压力。
+    Mục tiêu ở đây chỉ là "có đang có tác vụ cùng loại đang chạy hay chưa", không cần chọn ra "mới nhất" nhất.
+    vì thế lọc trực tiếp từ phía relation link, rồi nối thêm một lần theo trạng thái hoạt động, và bỏ sắp xếp,
+    Tránh gây áp lực sắp xếp lớn và sort buffer cho MySQL khi khối lượng tác vụ nhiều.
     """
     stmt = (
         select(GenerationTask)
@@ -178,7 +178,7 @@ async def create_divide_task(
         relation_entity_id=chapter_id,
     )
 def spawn_divide_task(task_id: str) -> None:
-    """统一封装后台启动：第一阶段改为通用 Celery 执行入口。"""
+    """Đóng gói thống nhất khởi động nền: giai đoạn một chuyển thành cổng thực thi Celery dùng chung."""
     from app.tasks.execute_task import enqueue_task_execution
 
     enqueue_task_execution(task_id)

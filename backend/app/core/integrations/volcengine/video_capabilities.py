@@ -1,4 +1,4 @@
-"""火山视频能力声明与覆盖注册。"""
+"""Khai báo và đăng ký ghi đè khả năng tạo video Volcano."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ _VOLCENGINE_DEFAULT = VideoModelCapability(
     default_ratio="16:9",
 )
 
-# key: 模型前缀（小写）
+# key: tiền tố mô hình (chữ thường)
 _VOLCENGINE_MODEL_OVERRIDES: dict[str, VideoModelCapability] = {}
 
 
@@ -37,7 +37,7 @@ def _pick_override(model: str | None) -> VideoModelCapability | None:
     value = model.strip().lower()
     if not value:
         return None
-    # 最长前缀优先，避免通用前缀覆盖具体前缀。
+    # Ưu tiên tiền tố dài nhất, tránh tiền tố chung che tiền tố cụ thể.
     for prefix, cap in sorted(_VOLCENGINE_MODEL_OVERRIDES.items(), key=lambda item: len(item[0]), reverse=True):
         if value.startswith(prefix):
             return cap
@@ -49,7 +49,7 @@ def resolve_volcengine_video_capability(model: str | None) -> VideoModelCapabili
 
 
 def validate_volcengine_video_options(input_: VideoGenerationInput) -> None:
-    """火山能力校验入口（避免调用侧传 provider 字面量）。"""
+    """Điểm vào xác thực khả năng Volcano (tránh để phía gọi truyền provider chuỗi cứng)."""
     from app.core.contracts.video_generation import VideoGenerationInput
     from app.core.integrations.video_capabilities import validate_video_options
 

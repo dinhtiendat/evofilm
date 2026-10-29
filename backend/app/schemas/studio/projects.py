@@ -1,4 +1,4 @@
-"""Project/Chapter 的请求响应模型。"""
+"""Project/Chapter Mô hình yêu cầu/phản hồi của Project/Chapter.。"""
 
 from __future__ import annotations
 
@@ -13,25 +13,25 @@ PROJECT_STYLE_EXAMPLES = [x.value for x in ProjectStyle]
 
 
 class ProjectBase(BaseModel):
-    name: str = Field(..., description="项目名称")
-    description: str = Field("", description="项目简介")
-    style: ProjectStyle = Field(..., description="题材/风格", examples=PROJECT_STYLE_EXAMPLES)
-    visual_style: ProjectVisualStyle = Field(ProjectVisualStyle.live_action, description="画面表现形式")
-    seed: int = Field(0, description="随机种子")
-    unify_style: bool = Field(True, description="是否统一风格")
-    progress: int = Field(0, description="进度百分比（0-100）")
-    default_video_ratio: str | None = Field(None, description="项目级默认视频比例；分镜未覆盖时生效")
-    stats: dict[str, Any] = Field(default_factory=dict, description="聚合统计（JSON）")
+    name: str = Field(..., description="name: str = Field(..., description=tên dự án)")
+    description: str = Field("", description="description: str = Field(, description=giới thiệu dự án)")
+    style: ProjectStyle = Field(..., description="Thể loại/phong cách", examples=PROJECT_STYLE_EXAMPLES)
+    visual_style: ProjectVisualStyle = Field(ProjectVisualStyle.live_action, description="visual_style: ProjectVisualStyle = Field(ProjectVisualStyle.live_action, description=Hình thức biểu diễn của hình ảnh)")
+    seed: int = Field(0, description="seed: int = Field(0, description=Hạt giống ngẫu nhiên)")
+    unify_style: bool = Field(True, description="unify_style: bool = Field(True, description=Có thống nhất phong cách không)")
+    progress: int = Field(0, description="progress: int = Field(0, description=Tỷ lệ tiến độ (0-100))（0-100）")
+    default_video_ratio: str | None = Field(None, description="Tỷ lệ video mặc định cấp dự án; áp dụng khi phân cảnh không ghi đè")
+    stats: dict[str, Any] = Field(default_factory=dict, description="stats: dict[str, Any] = Field(default_factory=dict, description=Thống kê tổng hợp (JSON))（JSON）")
 
 
 class ProjectCreate(ProjectBase):
-    id: str = Field(..., description="项目 ID")
+    id: str = Field(..., description="id: str = Field(..., description=ID dự án) ID")
 
 
 class ProjectUpdate(BaseModel):
     name: str | None = None
     description: str | None = None
-    style: ProjectStyle | None = Field(None, description="题材/风格", examples=PROJECT_STYLE_EXAMPLES)
+    style: ProjectStyle | None = Field(None, description="Thể loại / phong cách", examples=PROJECT_STYLE_EXAMPLES)
     visual_style: ProjectVisualStyle | None = None
     seed: int | None = None
     unify_style: bool | None = None
@@ -47,18 +47,18 @@ class ProjectRead(ProjectBase):
 
 
 class ChapterBase(BaseModel):
-    project_id: str = Field(..., description="所属项目 ID")
-    index: int = Field(..., description="章节序号（项目内唯一）")
-    title: str = Field(..., description="章节标题")
-    summary: str = Field("", description="章节摘要")
-    raw_text: str = Field("", description="章节原文")
-    condensed_text: str = Field("", description="精简原文")
-    storyboard_count: int = Field(0, description="分镜数量")
-    status: ChapterStatus = Field(ChapterStatus.draft, description="章节状态")
+    project_id: str = Field(..., description="project_id: str = Field(..., description=dự án thuộc ID) ID")
+    index: int = Field(..., description="Thứ tự của chương (duy nhất trong dự án)")
+    title: str = Field(..., description="title: str = Field(..., description=tiêu đề chương)")
+    summary: str = Field("", description="summary: str = Field(, description=tóm tắt chương)")
+    raw_text: str = Field("", description="raw_text: str = Field(, description=nguyên văn chương)")
+    condensed_text: str = Field("", description="condensed_text: str = Field(, description=Bản nguyên văn rút gọn)")
+    storyboard_count: int = Field(0, description="storyboard_count: int = Field(0, description=Số phân cảnh)")
+    status: ChapterStatus = Field(ChapterStatus.draft, description="status: ChapterStatus = Field(ChapterStatus.draft, description=Trạng thái chương)")
 
 
 class ChapterCreate(ChapterBase):
-    id: str = Field(..., description="章节 ID")
+    id: str = Field(..., description="id: str = Field(..., description=ID chương) ID")
 
 
 class ChapterUpdate(BaseModel):
@@ -76,25 +76,25 @@ class ChapterRead(ChapterBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
-    shot_count: int = Field(0, description="分镜数（shots 条数聚合）")
+    shot_count: int = Field(0, description="Số phân cảnh (tổng hợp số dòng shots)")
 
 
 class StyleOption(BaseModel):
-    """通用下拉选项。"""
+    """Lựa chọn danh sách thả dùng chung.。"""
 
-    value: str = Field(..., description="选项值")
-    label: str = Field(..., description="选项展示文案")
+    value: str = Field(..., description="value: str = Field(..., description=giá trị lựa chọn)")
+    label: str = Field(..., description="label: str = Field(..., description=câu chữ hiển thị lựa chọn)")
 
 
 class ProjectStyleOptionsRead(BaseModel):
-    """项目风格候选项。"""
+    """Ứng viên phong cách dự án.。"""
 
-    visual_styles: list[StyleOption] = Field(default_factory=list, description="视觉风格可选项")
+    visual_styles: list[StyleOption] = Field(default_factory=list, description="visual_styles: list[StyleOption] = Field(default_factory=list, description=Các lựa chọn phong cách thị giác)")
     styles_by_visual_style: dict[str, list[StyleOption]] = Field(
         default_factory=dict,
-        description="按视觉风格分组的视频风格选项",
+        description="description=Tùy chọn phong cách video được nhóm theo phong cách trực quan,",
     )
     default_style_by_visual_style: dict[str, str] = Field(
         default_factory=dict,
-        description="各视觉风格默认视频风格",
+        description="description=Phong cách video mặc định cho từng phong cách trực quan,",
     )

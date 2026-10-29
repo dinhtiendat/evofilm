@@ -8,7 +8,7 @@ SET @has_generation_tasks_cancel_requested = (
 
 SET @add_generation_tasks_cancel_requested = IF(
   @has_generation_tasks_cancel_requested = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN cancel_requested TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否已请求取消'",
+  "ALTER TABLE generation_tasks ADD COLUMN cancel_requested TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Có đã yêu cầu hủy không'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_cancel_requested FROM @add_generation_tasks_cancel_requested;
@@ -25,7 +25,7 @@ SET @has_generation_tasks_cancel_requested_at = (
 
 SET @add_generation_tasks_cancel_requested_at = IF(
   @has_generation_tasks_cancel_requested_at = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN cancel_requested_at DATETIME NULL COMMENT '请求取消时间'",
+  "ALTER TABLE generation_tasks ADD COLUMN cancel_requested_at DATETIME NULL COMMENT 'Thời điểm yêu cầu hủy'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_cancel_requested_at FROM @add_generation_tasks_cancel_requested_at;
@@ -42,7 +42,7 @@ SET @has_generation_tasks_cancel_reason = (
 
 SET @add_generation_tasks_cancel_reason = IF(
   @has_generation_tasks_cancel_reason = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN cancel_reason VARCHAR(255) NULL COMMENT '取消原因'",
+  "ALTER TABLE generation_tasks ADD COLUMN cancel_reason VARCHAR(255) NULL COMMENT 'Lý do hủy'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_cancel_reason FROM @add_generation_tasks_cancel_reason;
@@ -59,7 +59,7 @@ SET @has_generation_tasks_cancelled_at = (
 
 SET @add_generation_tasks_cancelled_at = IF(
   @has_generation_tasks_cancelled_at = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN cancelled_at DATETIME NULL COMMENT '实际取消完成时间'",
+  "ALTER TABLE generation_tasks ADD COLUMN cancelled_at DATETIME NULL COMMENT 'Thời điểm hoàn tất hủy (thực tế)'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_cancelled_at FROM @add_generation_tasks_cancelled_at;
@@ -93,7 +93,7 @@ SET @has_generation_tasks_task_kind = (
 
 SET @add_generation_tasks_task_kind = IF(
   @has_generation_tasks_task_kind = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN task_kind VARCHAR(64) NOT NULL DEFAULT 'generic' COMMENT '业务任务类型：用于执行器路由'",
+  "ALTER TABLE generation_tasks ADD COLUMN task_kind VARCHAR(64) NOT NULL DEFAULT 'generic' COMMENT 'Loại tác vụ nghiệp vụ: dùng cho routing bộ điều hành'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_task_kind FROM @add_generation_tasks_task_kind;
@@ -110,7 +110,7 @@ SET @has_generation_tasks_executor_type = (
 
 SET @add_generation_tasks_executor_type = IF(
   @has_generation_tasks_executor_type = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN executor_type VARCHAR(32) NULL COMMENT '执行器类型，如 celery'",
+  "ALTER TABLE generation_tasks ADD COLUMN executor_type VARCHAR(32) NULL COMMENT 'Loại bộ điều hành, ví dụ celery'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_executor_type FROM @add_generation_tasks_executor_type;
@@ -127,7 +127,7 @@ SET @has_generation_tasks_executor_task_id = (
 
 SET @add_generation_tasks_executor_task_id = IF(
   @has_generation_tasks_executor_task_id = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN executor_task_id VARCHAR(128) NULL COMMENT '执行器侧任务 ID，如 celery task id'",
+  "ALTER TABLE generation_tasks ADD COLUMN executor_task_id VARCHAR(128) NULL COMMENT 'ID tác vụ phía bộ điều hành, ví dụ celery task id'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_executor_task_id FROM @add_generation_tasks_executor_task_id;
@@ -144,7 +144,7 @@ SET @has_generation_tasks_started_at = (
 
 SET @add_generation_tasks_started_at = IF(
   @has_generation_tasks_started_at = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN started_at DATETIME NULL COMMENT '任务开始执行时间'",
+  "ALTER TABLE generation_tasks ADD COLUMN started_at DATETIME NULL COMMENT 'Thời điểm tác vụ bắt đầu thực thi'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_started_at FROM @add_generation_tasks_started_at;
@@ -161,7 +161,7 @@ SET @has_generation_tasks_finished_at = (
 
 SET @add_generation_tasks_finished_at = IF(
   @has_generation_tasks_finished_at = 0,
-  "ALTER TABLE generation_tasks ADD COLUMN finished_at DATETIME NULL COMMENT '任务结束时间（成功 / 失败 / 取消）'",
+  "ALTER TABLE generation_tasks ADD COLUMN finished_at DATETIME NULL COMMENT 'Thời gian kết thúc tác vụ (thành công / thất bại / hủy)'",
   'SELECT 1'
 );
 PREPARE stmt_add_generation_tasks_finished_at FROM @add_generation_tasks_finished_at;

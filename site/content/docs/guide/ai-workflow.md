@@ -1,27 +1,27 @@
 ---
-title: "AI 工作流"
+title: "Quy trình AI"
 weight: 5
-description: "理解 chains、services 和 task 层如何承接 AI 能力。"
+description: "Hiểu cách các tầng chains, services và task tiếp nhận năng lực AI."
 ---
 
-Jellyfish 的 AI 能力主要由三部分组成：
+Năng lực AI của Jellyfish chủ yếu gồm ba phần:
 
-- 文本处理与实体提取
-- 分镜草稿与提示词生成
-- 图片 / 视频任务生成与状态追踪
+- Xử lý văn bản và trích xuất thực thể
+- Bản nháp phân cảnh và tạo prompt
+- Tạo tác vụ hình ảnh / video và theo dõi trạng thái
 
-这些能力主要分布在后端的 `app/chains/`、`app/services/` 和 `app/core/tasks/` 中。
+Các năng lực này chủ yếu nằm ở phía sau trong `app/chains/`, `app/services/` và `app/core/tasks/`.
 
-## 结构理解方式
+## Cách hiểu cấu trúc
 
 ### `chains/`
 
-负责 Prompt、Agent 和工作流图定义，偏向“如何思考与编排”。
+Chịu trách nhiệm định nghĩa Prompt, Agent và sơ đồ workflow, thiên về "cách tư duy và điều phối".
 
 ### `services/`
 
-负责把业务实体、数据库记录和 AI 能力串起来，偏向“如何在系统里使用 AI”。
+phụ trách nối chuỗi thực thể nghiệp vụ, bản ghi cơ sở dữ liệu và năng lực AI, nghiêng về "cách sử dụng AI trong hệ thống".
 
 ### `core/tasks/`
 
-负责更接近执行层的图片 / 视频任务逻辑，偏向“如何真正发起任务与追踪状态”。
+Chịu trách nhiệm logic tác vụ ảnh / video gần tầng thực thi hơn, thiên về "làm thế nào để thực sự khởi động tác vụ và theo dõi trạng thái".

@@ -1,4 +1,4 @@
-"""Chapter CRUD（从 projects.py 拆分）。"""
+"""CRUD Chapter (tách ra từ projects.py)."""
 
 from __future__ import annotations
 
@@ -31,14 +31,14 @@ CHAPTER_ORDER_FIELDS = {"index", "title", "created_at", "updated_at", "storyboar
 @router.get(
     "",
     response_model=ApiResponse[PaginatedData[ChapterRead]],
-    summary="章节列表（分页）",
+    summary="Danh sách chương (phân trang)",
 )
 async def list_chapters(
     db: AsyncSession = Depends(get_db),
-    project_id: str | None = Query(None, description="按项目过滤"),
-    q: str | None = Query(None, description="关键字，过滤 title/summary"),
-    order: str | None = Query(None, description="排序字段"),
-    is_desc: bool = Query(False, description="是否倒序"),
+    project_id: str | None = Query(None, description="Lọc theo dự án"),
+    q: str | None = Query(None, description="từ khóa, lọc title/summary"),
+    order: str | None = Query(None, description="Trường sắp xếp"),
+    is_desc: bool = Query(False, description="Sắp xếp giảm dần hay không"),
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
 ) -> ApiResponse[PaginatedData[ChapterRead]]:
@@ -82,7 +82,7 @@ async def list_chapters(
     "",
     response_model=ApiResponse[ChapterRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建章节",
+    summary="Tạo chương",
 )
 async def create_chapter(
     body: ChapterCreate,
@@ -108,7 +108,7 @@ async def create_chapter(
 @router.get(
     "/{chapter_id}",
     response_model=ApiResponse[ChapterRead],
-    summary="获取章节",
+    summary="Lấy chương",
 )
 async def get_chapter(
     chapter_id: str,
@@ -124,7 +124,7 @@ async def get_chapter(
 @router.patch(
     "/{chapter_id}",
     response_model=ApiResponse[ChapterRead],
-    summary="更新章节",
+    summary="Cập nhật chương",
 )
 async def update_chapter(
     chapter_id: str,
@@ -149,7 +149,7 @@ async def update_chapter(
 @router.delete(
     "/{chapter_id}",
     response_model=ApiResponse[None],
-    summary="删除章节",
+    summary="Xóa chương",
 )
 async def delete_chapter(
     chapter_id: str,

@@ -1,4 +1,4 @@
-"""演员图片（ActorImage）schemas。"""
+"""Schemas hình ảnh diễn viên (ActorImage)."""
 
 from __future__ import annotations
 

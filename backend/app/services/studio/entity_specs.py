@@ -1,4 +1,4 @@
-"""Studio 实体规格定义与类型归一化。"""
+"""Định nghĩa spec thực thể Studio và chuẩn hóa kiểu."""
 
 from __future__ import annotations
 

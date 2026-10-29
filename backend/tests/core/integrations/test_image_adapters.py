@@ -1,4 +1,4 @@
-"""图片 integrations：httpx MockTransport 单测（不发起真实网络请求）。"""
+"""Integrations ảnh: test đơn httpx MockTransport (không phát request mạng thực)."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from app.core.integrations.image_capabilities import (
 
 
 def _patch_httpx_client(monkeypatch: pytest.MonkeyPatch, transport: httpx.MockTransport) -> None:
-    """让各 adapter 内 `import httpx` 后使用的 AsyncClient 走 MockTransport。"""
+    """Để AsyncClient được dùng sau `import httpx` trong các adapter chạy qua MockTransport."""
 
     real_client = httpx.AsyncClient
 
@@ -117,7 +117,7 @@ async def test_volcengine_image_adapter_generations(monkeypatch: pytest.MonkeyPa
     def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path.endswith("/images/generations")
         payload = json.loads(request.content.decode())
-        assert payload["prompt"] == "火山"
+        assert payload["prompt"] == "Volcano"
         assert payload["n"] == 1
         assert payload["watermark"] is True
         assert payload["size"] == "1600x2848"
@@ -133,7 +133,7 @@ async def test_volcengine_image_adapter_generations(monkeypatch: pytest.MonkeyPa
     _patch_httpx_client(monkeypatch, httpx.MockTransport(handler))
     cfg = ProviderConfig(provider="volcengine", api_key="ak-test")
     inp = ImageGenerationInput(
-        prompt="火山",
+        prompt="Volcano",
         n=1,
         seed=42,
         watermark=True,
@@ -149,7 +149,7 @@ async def test_volcengine_image_adapter_generations(monkeypatch: pytest.MonkeyPa
 
 @pytest.mark.asyncio
 async def test_openai_image_adapter_rejects_unsupported_watermark(monkeypatch: pytest.MonkeyPatch) -> None:
-    """当能力配置不支持 watermark 时，adapter 在发请求前直接拒绝。"""
+    """Khi cấu hình khả năng không hỗ trợ watermark, adapter sẽ từ chối ngay trước khi gửi request."""
 
     def handler(request: httpx.Request) -> httpx.Response:
         raise AssertionError(f"request should not be sent, got path={request.url.path}")

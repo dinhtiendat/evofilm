@@ -1,4 +1,4 @@
-"""镜头对白提取候选项服务。"""
+"""Dịch vụ ứng viên trích xuất thoại phân cảnh."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ async def _flush_refresh_candidate(
     db: AsyncSession,
     row: ShotExtractedDialogueCandidate,
 ) -> ShotExtractedDialogueCandidate:
-    """刷新 candidate，避免响应序列化时触发异步懒加载。"""
+    """làm mới candidate, tránh kích hoạt tải lười bất đồng bộ khi chuỗi hóa phản hồi."""
     await db.flush()
     await db.refresh(row)
     return row
@@ -82,7 +82,7 @@ async def sync_from_extraction_draft(
     chapter_id: str,
     draft: StudioScriptExtractionDraft,
 ) -> None:
-    """将 chapter 级提取结果同步到各镜头对白候选项表。"""
+    """Đồng bộ kết quả trích xuất cấp chapter sang bảng ứng viên thoại của từng phân cảnh."""
     chapter = await db.get(Chapter, chapter_id)
     if chapter is None:
         raise ValueError(entity_not_found("Chapter"))
@@ -328,7 +328,7 @@ async def mark_pending_by_linked_dialog_line(
     *,
     dialog_line_id: int,
 ) -> ShotExtractedDialogueCandidate | None:
-    """当已接受的对白被删除后，将对应 candidate 回退到 pending。"""
+    """sau khi thoại đã chấp nhận bị xóa, đưa ứng viên tương ứng về pending."""
     stmt = (
         select(ShotExtractedDialogueCandidate)
         .where(ShotExtractedDialogueCandidate.linked_dialog_line_id == dialog_line_id)

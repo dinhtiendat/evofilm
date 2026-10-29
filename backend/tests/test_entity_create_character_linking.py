@@ -23,14 +23,14 @@ async def _seed_graph(db: AsyncSession) -> None:
         [
             Project(
                 id="p1",
-                name="项目一",
+                name="Dự án 1",
                 description="",
                 style=ProjectStyle.real_people_city,
                 visual_style=ProjectVisualStyle.live_action,
             ),
-            Chapter(id="c1", project_id="p1", index=1, title="第一章"),
-            Chapter(id="c2", project_id="p1", index=2, title="第二章"),
-            Shot(id="s1", chapter_id="c1", index=1, title="镜头一"),
+            Chapter(id="c1", project_id="p1", index=1, title="Chương một"),
+            Chapter(id="c2", project_id="p1", index=2, title="Chương hai"),
+            Shot(id="s1", chapter_id="c1", index=1, title="Phân cảnh 1"),
         ]
     )
     await db.commit()
@@ -50,8 +50,8 @@ async def test_create_character_with_shot_id_auto_links_shot() -> None:
                 "project_id": "p1",
                 "chapter_id": "c1",
                 "shot_id": "s1",
-                "name": "苗青",
-                "description": "角色描述",
+                "name": "Nhiêu Thanh",
+                "description": "Mô tả nhân vật",
                 "style": ProjectStyle.real_people_city,
                 "visual_style": ProjectVisualStyle.live_action,
                 "actor_id": None,
@@ -83,8 +83,8 @@ async def test_create_character_rejects_mismatched_chapter_and_shot() -> None:
                     "project_id": "p1",
                     "chapter_id": "c2",
                     "shot_id": "s1",
-                    "name": "苗青",
-                    "description": "角色描述",
+                    "name": "Nhiêu Thanh",
+                    "description": "Mô tả nhân vật",
                     "style": ProjectStyle.real_people_city,
                     "visual_style": ProjectVisualStyle.live_action,
                     "actor_id": None,

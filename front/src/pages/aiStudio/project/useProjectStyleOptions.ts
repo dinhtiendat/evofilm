@@ -5,20 +5,20 @@ import type { ProjectStyleFieldOptions } from './ProjectVisualStyleAndStyleField
 
 const FALLBACK_OPTIONS: ProjectStyleFieldOptions = {
   visualStyles: [
-    { value: '现实', label: '现实' },
-    { value: '动漫', label: '动漫' },
+    { value: '现实', label: 'Thực tế' },
+    { value: '动漫', label: 'Hoạt hình' },
   ],
   stylesByVisual: {
     现实: [
-      { value: '真人都市', label: '真人都市' },
-      { value: '真人科幻', label: '真人科幻' },
-      { value: '真人古装', label: '真人古装' },
+      { value: '真人都市', label: 'Người thật đô thị' },
+      { value: '真人科幻', label: 'Người thật khoa học viễn tưởng' },
+      { value: '真人古装', label: 'Người thật cổ trang' },
     ],
     动漫: [
-      { value: '动漫科幻', label: '动漫科幻' },
-      { value: '动漫3D', label: '动漫3D' },
-      { value: '国漫', label: '国漫' },
-      { value: '水墨画', label: '水墨画' },
+      { value: '动漫科幻', label: 'Hoạt hình khoa học viễn tưởng' },
+      { value: '动漫3D', label: 'Hoạt hình 3D' },
+      { value: '国漫', label: 'Hoạt hình Trung Quốc' },
+      { value: '水墨画', label: 'Tranh thủy mặc' },
     ],
   },
   defaultStyleByVisual: {
@@ -69,7 +69,7 @@ function resolveDefaultStyle(options: ProjectStyleFieldOptions, visual: string):
 }
 
 /**
- * 加载并缓存项目风格配置，保证多个页面/弹窗共享同一次请求结果。
+ * Tải và cache cấu hình phong cách dự án, đảm bảo nhiều trang/hộp thoại dùng chung kết quả của cùng một yêu cầu.
  */
 async function loadProjectStyleOptionsSnapshot(): Promise<ProjectStyleOptionsSnapshot> {
   if (cachedSnapshot) return cachedSnapshot

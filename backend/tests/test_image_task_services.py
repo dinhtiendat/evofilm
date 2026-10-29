@@ -1,4 +1,4 @@
-"""image_task_* services 单测。"""
+"""Kiểm thử đơn services image_task_*."""
 
 from __future__ import annotations
 
@@ -141,15 +141,15 @@ async def test_validate_character_image_requires_image_id():
 @pytest.mark.asyncio
 async def test_resolve_reference_file_ids_and_names_filters_empty_file_ids():
     items = [
-        ShotLinkedAssetItem(id="a1", type="prop", name="道具一", file_id="file-1"),
+        ShotLinkedAssetItem(id="a1", type="prop", name="Đạo cụ 1", file_id="file-1"),
         ShotLinkedAssetItem(id="a2", type="scene", name="", file_id="file-2"),
-        ShotLinkedAssetItem(id="a3", type="costume", name="忽略项", file_id=""),
+        ShotLinkedAssetItem(id="a3", type="costume", name="Mục bỏ qua", file_id=""),
     ]
 
     file_ids, names = await resolve_reference_file_ids_and_names_from_linked_items(None, items=items)
 
     assert file_ids == ["file-1", "file-2"]
-    assert names == ["道具一", "a2"]
+    assert names == ["Đạo cụ 1", "a2"]
 
 
 @pytest.mark.asyncio
@@ -199,11 +199,11 @@ async def test_pick_ordered_ref_file_ids_returns_requested_angle_order(monkeypat
 async def test_build_actor_image_base_draft_front_view_returns_no_refs(monkeypatch):
     actor = SimpleNamespace(
         id="actor-1",
-        name="演员A",
-        description="沉稳男性",
-        tags=["成熟", "都市"],
-        visual_style="写实",
-        style="影视",
+        name="Diễn viên A",
+        description="Nam giới điềm tĩnh",
+        tags=["Chín muồi", "Đô thị"],
+        visual_style="Thực tế",
+        style="Điện ảnh",
     )
     image = SimpleNamespace(
         id=1,
@@ -220,7 +220,7 @@ async def test_build_actor_image_base_draft_front_view_returns_no_refs(monkeypat
     )
 
     async def _fake_build_prompt(*_args, **_kwargs):
-        return "演员渲染提示词"
+        return "Prompt kết xuất diễn viên"
 
     monkeypatch.setattr(asset_base, "build_prompt_with_template", _fake_build_prompt)
     monkeypatch.setattr(asset_base, "asset_prompt_category", lambda **_kwargs: "actor_front")
@@ -231,7 +231,7 @@ async def test_build_actor_image_base_draft_front_view_returns_no_refs(monkeypat
         image_id=1,
     )
 
-    assert draft.prompt == "演员渲染提示词"
+    assert draft.prompt == "Prompt kết xuất diễn viên"
     assert draft.default_images == []
     assert draft.image_id == 1
 
@@ -240,12 +240,12 @@ async def test_build_actor_image_base_draft_front_view_returns_no_refs(monkeypat
 async def test_build_character_image_base_draft_combines_actor_and_costume_refs(monkeypatch):
     character = SimpleNamespace(
         id="char-1",
-        name="角色A",
-        description="主角",
+        name="Nhân vật A",
+        description="Nhân vật chính",
         actor_id="actor-1",
         costume_id="costume-1",
-        visual_style="写实",
-        style="影视",
+        visual_style="Thực tế",
+        style="Điện ảnh",
     )
     image = SimpleNamespace(
         id=1,
@@ -264,7 +264,7 @@ async def test_build_character_image_base_draft_combines_actor_and_costume_refs(
     )
 
     async def _fake_build_prompt(*_args, **_kwargs):
-        return "角色合成提示词"
+        return "Prompt tổng hợp nhân vật"
 
     async def _fake_pick_ordered(*_args, parent_id: str, **_kwargs):
         if parent_id == "actor-1":
@@ -280,7 +280,7 @@ async def test_build_character_image_base_draft_combines_actor_and_costume_refs(
         image_id=1,
     )
 
-    assert draft.prompt == "角色合成提示词"
+    assert draft.prompt == "Prompt tổng hợp nhân vật"
     assert draft.default_images == ["actor-front", "actor-left", "costume-front"]
     assert draft.image_id == 1
 
@@ -289,19 +289,19 @@ def test_derive_frame_preview_replaces_reference_names_with_stable_order() -> No
     base = build_frame_base_draft(
         shot_id="shot-1",
         frame_type=ShotFrameType.first,
-        prompt="张三在雨夜中逼近李四",
-        director_command_summary="必须：锁定主角视线方向；优先：保持同场景轴线稳定",
-        continuity_guidance="当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局",
-        frame_specific_guidance="首帧只表现受惊瞬间，人物身体骤然僵住，动作尚未完成",
-        composition_anchor="以门口灯光和主角站位作为画面重心，保持环境与人物同时可读",
-        screen_direction_guidance="保持张三与李四的左右站位和对视方向稳定，避免无故翻转朝向",
+        prompt="Trương Tam trong đêm mưa áp sát Lý Tứ",
+        director_command_summary="Bắt buộc: cố định hướng nhìn của nhân vật chính; Ưu tiên: giữ ổn định trục cùng bối cảnh",
+        continuity_guidance="Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, không nên như một khung cảnh hoàn toàn mới bắt đầu lại từ đầu",
+        frame_specific_guidance="Khung hình đầu chỉ thể hiện khoảnh khắc giật mình, thân thể nhân vật đơ lại đột ngột, hành động chưa hoàn thành",
+        composition_anchor="Lấy ánh đèn cửa và vị trí đứng của nhân vật chính làm trọng tâm khung hình, giữ cho môi trường và nhân vật cùng đọc được",
+        screen_direction_guidance="Giữ vị trí đứng trái/phải và hướng nhìn đối diện của Trương Tam và Lý Tứ ổn định, tránh lật hướng vô cớ",
     )
     context = build_frame_context(
         shot_id="shot-1",
         frame_type=ShotFrameType.first,
         items=[
-            ShotLinkedAssetItem(id="char-1", type="character", name="张三", file_id="char-1-front"),
-            ShotLinkedAssetItem(id="char-2", type="character", name="李四", file_id="char-2-front"),
+            ShotLinkedAssetItem(id="char-1", type="character", name="Trương Tam", file_id="char-1-front"),
+            ShotLinkedAssetItem(id="char-2", type="character", name="Lý Tứ", file_id="char-2-front"),
         ],
     )
 
@@ -311,36 +311,36 @@ def test_derive_frame_preview_replaces_reference_names_with_stable_order() -> No
     assert preview.mappings[0].token == "图1"
     assert preview.mappings[1].token == "图2"
     assert preview.selected_guidance == [
-        "高优先级导演指令：必须：锁定主角视线方向；优先：保持同场景轴线稳定",
-        "当前帧职责：首帧只表现受惊瞬间，人物身体骤然僵住，动作尚未完成",
-        "连续性要求：当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局",
+        "Chỉ đạo đạo diễn ưu tiên cao: Bắt buộc: cố định hướng nhìn của nhân vật chính; Ưu tiên: giữ ổn định trục cùng bối cảnh",
+        "Trách nhiệm khung hình hiện tại: Khung hình đầu chỉ thể hiện khoảnh khắc giật mình, thân thể nhân vật đơ lại đột ngột, hành động chưa hoàn thành",
+        "Yêu cầu tính liên tục: Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, không nên như một khung cảnh hoàn toàn mới bắt đầu lại từ đầu",
     ]
     assert preview.dropped_guidance == [
-        "构图锚点：以门口灯光和主角站位作为画面重心，保持环境与人物同时可读",
-        "朝向与视线：保持张三与李四的左右站位和对视方向稳定，避免无故翻转朝向",
+        "Mỏ neo bố cục: Lấy ánh đèn cửa và vị trí đứng của nhân vật chính làm trọng tâm khung hình, giữ cho môi trường và nhân vật cùng đọc được",
+        "Hướng và ánh nhìn: Giữ vị trí đứng trái/phải và hướng nhìn đối diện của Trương Tam và Lý Tứ ổn định, tránh lật hướng vô cớ",
     ]
-    assert preview.selected_guidance_details[1].reason_tag == "首帧保时序"
-    assert preview.selected_guidance_details[1].reason == "当前是首帧，系统优先保留触发瞬间与未完成态约束，避免画面直接跳到后续完成动作。"
-    assert preview.dropped_guidance_details[0].reason_tag == "首帧降构图"
-    assert preview.dropped_guidance_details[1].reason_tag == "首帧降轴线"
-    assert "高优先级导演指令：必须：锁定主角视线方向；优先：保持同场景轴线稳定" in preview.rendered_prompt
-    assert "当前帧职责：首帧只表现受惊瞬间，人物身体骤然僵住，动作尚未完成" in preview.rendered_prompt
-    assert "连续性要求：当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局" in preview.rendered_prompt
-    assert "构图锚点：以门口灯光和主角站位作为画面重心，保持环境与人物同时可读" not in preview.rendered_prompt
-    assert "朝向与视线：保持张三与李四的左右站位和对视方向稳定，避免无故翻转朝向" not in preview.rendered_prompt
-    assert "图1在雨夜中逼近图2" in preview.rendered_prompt
+    assert preview.selected_guidance_details[1].reason_tag == "Khung hình đầu giữ thứ tự thời gian"
+    assert preview.selected_guidance_details[1].reason == "hiện là khung hình đầu, hệ thống ưu tiên giữ ràng buộc khoảnh khắc kích hoạt và trạng thái chưa hoàn thành, tránh khung nhảy thẳng vào hành động hoàn tất sau."
+    assert preview.dropped_guidance_details[0].reason_tag == "Khung hình đầu giáng bố cục"
+    assert preview.dropped_guidance_details[1].reason_tag == "Khung hình đầu hạ trục kịch"
+    assert "Chỉ đạo đạo diễn ưu tiên cao: Bắt buộc: cố định hướng nhìn của nhân vật chính; Ưu tiên: giữ ổn định trục cùng bối cảnh" in preview.rendered_prompt
+    assert "Trách nhiệm khung hình hiện tại: Khung hình đầu chỉ thể hiện khoảnh khắc giật mình, thân thể nhân vật đơ lại đột ngột, hành động chưa hoàn thành" in preview.rendered_prompt
+    assert "Yêu cầu tính liên tục: Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước, không nên như một khung cảnh hoàn toàn mới bắt đầu lại từ đầu" in preview.rendered_prompt
+    assert "Mỏ neo bố cục: dùng ánh sáng cửa và vị trí đứng của nhân vật chính làm trọng tâm khung hình, giữ cho môi trường và nhân vật đều đọc được" not in preview.rendered_prompt
+    assert "Hướng và đường nhìn: giữ vị trí đứng trái/phải và hướng nhìn nhau của Trương Tam với Lý Tứ ổn định, tránh vô cớ lật hướng" not in preview.rendered_prompt
+    assert "图1 trong đêm mưa áp sát 图2" in preview.rendered_prompt
 
 
 def test_derive_frame_preview_prioritizes_composition_for_first_frame() -> None:
     base = build_frame_base_draft(
         shot_id="shot-2",
         frame_type=ShotFrameType.first,
-        prompt="主角推门进入空旷大厅",
-        director_command_summary="必须：先建立空间",
-        continuity_guidance="当前镜头应承接上一镜头的动作与情绪",
-        frame_specific_guidance="首帧优先表现推门瞬间和人物尚未完全进入大厅的状态",
-        composition_anchor="以门框、人物站位和大厅纵深作为空间锚点，优先建立环境与人物关系",
-        screen_direction_guidance="保持人物朝向稳定",
+        prompt="Nhân vật chính đẩy cửa bước vào sảnh trống",
+        director_command_summary="Bắt buộc: thiết lập không gian trước",
+        continuity_guidance="Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước",
+        frame_specific_guidance="Khung hình đầu ưu tiên thể hiện khoảnh khắc đẩy cửa và trạng thái nhân vật chưa hoàn toàn vào sảnh",
+        composition_anchor="Lấy khung cửa, vị trí đứng của nhân vật và độ sâu của sảnh làm mỏ neo không gian, ưu tiên thiết lập mối quan hệ giữa môi trường và nhân vật",
+        screen_direction_guidance="Giữ định hướng nhân vật ổn định",
     )
     context = build_frame_context(
         shot_id="shot-2",
@@ -350,28 +350,28 @@ def test_derive_frame_preview_prioritizes_composition_for_first_frame() -> None:
 
     preview = derive_frame_preview(base=base, context=context)
 
-    assert preview.selected_guidance[1] == "当前帧职责：首帧优先表现推门瞬间和人物尚未完全进入大厅的状态"
+    assert preview.selected_guidance[1] == "Trách nhiệm khung hình hiện tại: Khung hình đầu ưu tiên thể hiện khoảnh khắc đẩy cửa và trạng thái nhân vật chưa hoàn toàn vào sảnh"
     assert preview.dropped_guidance == [
-        "构图锚点：以门框、人物站位和大厅纵深作为空间锚点，优先建立环境与人物关系",
-        "朝向与视线：保持人物朝向稳定",
+        "Mỏ neo bố cục: Lấy khung cửa, vị trí đứng của nhân vật và độ sâu của sảnh làm mỏ neo không gian, ưu tiên thiết lập mối quan hệ giữa môi trường và nhân vật",
+        "Hướng và ánh nhìn: Giữ định hướng nhân vật ổn định",
     ]
-    assert preview.selected_guidance_details[1].reason_tag == "首帧保时序"
-    assert preview.selected_guidance_details[1].reason == "当前是首帧，系统优先保留触发瞬间与未完成态约束，避免画面直接跳到后续完成动作。"
-    assert "当前帧职责：首帧优先表现推门瞬间和人物尚未完全进入大厅的状态" in preview.rendered_prompt
-    assert "构图锚点：以门框、人物站位和大厅纵深作为空间锚点，优先建立环境与人物关系" not in preview.rendered_prompt
-    assert "朝向与视线：保持人物朝向稳定" not in preview.rendered_prompt
+    assert preview.selected_guidance_details[1].reason_tag == "Khung hình đầu giữ thứ tự thời gian"
+    assert preview.selected_guidance_details[1].reason == "hiện là khung hình đầu, hệ thống ưu tiên giữ ràng buộc khoảnh khắc kích hoạt và trạng thái chưa hoàn thành, tránh khung nhảy thẳng vào hành động hoàn tất sau."
+    assert "Trách nhiệm khung hình hiện tại: Khung hình đầu ưu tiên thể hiện khoảnh khắc đẩy cửa và trạng thái nhân vật chưa hoàn toàn vào sảnh" in preview.rendered_prompt
+    assert "Mỏ neo bố cục: Lấy khung cửa, vị trí đứng của nhân vật và độ sâu của sảnh làm mỏ neo không gian, ưu tiên thiết lập mối quan hệ giữa môi trường và nhân vật" not in preview.rendered_prompt
+    assert "Hướng và ánh nhìn: Giữ định hướng nhân vật ổn định" not in preview.rendered_prompt
 
 
 def test_derive_frame_preview_prioritizes_screen_guidance_for_key_frame() -> None:
     base = build_frame_base_draft(
         shot_id="shot-3",
         frame_type=ShotFrameType.key,
-        prompt="两人对峙，情绪到达顶点",
-        director_command_summary="必须：锁定对峙张力",
-        continuity_guidance="当前镜头应承接上一镜头的动作与情绪",
-        frame_specific_guidance="关键帧应锁定对峙动作的峰值瞬间",
-        composition_anchor="以走廊尽头和人物站位作为空间锚点，保持环境与人物同时可读",
-        screen_direction_guidance="保持两人的左右站位和对视方向稳定，避免跳轴",
+        prompt="Hai người đối đầu, cảm xúc lên đến đỉnh điểm",
+        director_command_summary="Bắt buộc: khóa căng thẳng đối đầu",
+        continuity_guidance="Phân cảnh hiện tại nên tiếp nối hành động và cảm xúc của phân cảnh trước",
+        frame_specific_guidance="khung hình chính nên khóa khoảnh khắc đỉnh của hành động đối đầu",
+        composition_anchor="Lấy cuối hành lang và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng đọc được",
+        screen_direction_guidance="Giữ vị trí đứng trái/phải và hướng nhìn đối diện của hai người ổn định, tránh nhảy trục",
     )
     context = build_frame_context(
         shot_id="shot-3",
@@ -381,14 +381,14 @@ def test_derive_frame_preview_prioritizes_screen_guidance_for_key_frame() -> Non
 
     preview = derive_frame_preview(base=base, context=context)
 
-    assert preview.selected_guidance[2] == "朝向与视线：保持两人的左右站位和对视方向稳定，避免跳轴"
+    assert preview.selected_guidance[2] == "Hướng và ánh nhìn: Giữ vị trí đứng trái/phải và hướng nhìn đối diện của hai người ổn định, tránh nhảy trục"
     assert preview.dropped_guidance == [
-        "当前帧职责：关键帧应锁定对峙动作的峰值瞬间",
-        "构图锚点：以走廊尽头和人物站位作为空间锚点，保持环境与人物同时可读",
+        "Trách nhiệm khung hình hiện tại: khung hình chính nên khóa khoảnh khắc đỉnh của hành động đối đầu",
+        "Mỏ neo bố cục: Lấy cuối hành lang và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng đọc được",
     ]
-    assert preview.selected_guidance_details[2].reason_tag == "关键帧保轴线"
-    assert preview.selected_guidance_details[2].reason == "当前镜头更看重视线与左右轴线稳定，因此优先保留朝向与视线 guidance。"
-    assert preview.dropped_guidance_details[0].reason_tag == "关键帧降峰值"
-    assert "朝向与视线：保持两人的左右站位和对视方向稳定，避免跳轴" in preview.rendered_prompt
-    assert "构图锚点：以走廊尽头和人物站位作为空间锚点，保持环境与人物同时可读" not in preview.rendered_prompt
-    assert "当前帧职责：关键帧应锁定对峙动作的峰值瞬间" not in preview.rendered_prompt
+    assert preview.selected_guidance_details[2].reason_tag == "Giữ trục kịch ở khung hình chính"
+    assert preview.selected_guidance_details[2].reason == "shot hiện tại chú trọng sự ổn định của hướng nhìn và trục trái/phải hơn, nên ưu tiên giữ guidance hướng xoay và hướng nhìn."
+    assert preview.dropped_guidance_details[0].reason_tag == "khung chính hạ đỉnh"
+    assert "Hướng và ánh nhìn: Giữ vị trí đứng trái/phải và hướng nhìn đối diện của hai người ổn định, tránh nhảy trục" in preview.rendered_prompt
+    assert "Mỏ neo bố cục: Lấy cuối hành lang và vị trí đứng của nhân vật làm mỏ neo không gian, giữ cho môi trường và nhân vật cùng đọc được" not in preview.rendered_prompt
+    assert "Trách nhiệm khung hình hiện tại: khung hình chính nên khóa khoảnh khắc đỉnh của hành động đối đầu" not in preview.rendered_prompt

@@ -1,4 +1,4 @@
-"""智能精简 Agent：ScriptSimplifierAgent"""
+"""Agent rút gọn thông minh: ScriptSimplifierAgent"""
 
 from __future__ import annotations
 
@@ -10,30 +10,30 @@ from app.chains.agents.base import AgentBase
 from app.schemas.skills.script_processing import ScriptSimplificationResult
 
 _SCRIPT_SIMPLIFIER_SYSTEM_PROMPT = """\
-你是"智能精简剧本Agent"。你的任务是：在不改变核心剧情走向的前提下精简剧本。
+Bạn là \"Agent rút gọn kịch bản thông minh\". Nhiệm vụ của bạn: rút gọn kịch bản mà không thay đổi mạch truyện chính.
 
-强约束：
-- 必须保留剧情主体（关键事件、关键冲突、关键转折、结局/阶段性结果）。
-- 必须保证剧情连续（时间顺序、因果关系、角色动机衔接不能断裂）。
-- 禁止凭空新增关键设定或关键事件。
-- 精简优先删除冗余重复描述、弱信息修饰、对主线无贡献的枝节句。
-- 输出语言风格尽量贴近原文叙述口吻。
+Ràng buộc mạnh:
+- Phải giữ nguyên thân truyện (sự kiện then chốt, xung đột then chốt, bước ngoặt then chốt, kết cục/kết quả từng giai đoạn).
+- Phải đảm bảo tính liên tục của truyện (thứ tự thời gian, quan hệ nhân quả, sự nối tiếp động cơ nhân vật không được đứt gãy).
+- Cấm thêm mới bừa bãi các thiết lập hoặc sự kiện quan trọng.
+- Khi rút gọn, ưu tiên cắt các mô tả thừa lặp, mô tả thông tin yếu, câu phụ không đóng góp cho tuyến chính.
+- Phong cách ngôn ngữ đầu ra nên sát với giọng kể của nguyên văn nhất.
 
-输出 ScriptSimplificationResult：
-- simplified_script_text：精简后的完整文本
-- simplification_summary：精简策略摘要（说明删改了什么、为何不影响主线）
+Xuất ScriptSimplificationResult:
+- simplified_script_text: văn bản hoàn chỉnh sau rút gọn
+- simplification_summary: tóm tắt chiến lược rút gọn (giải thích đã cắt/chỉnh gì, vì sao không ảnh hưởng tuyến chính)
 
-只输出 JSON。
+Chỉ xuất JSON.
 """
 
 SCRIPT_SIMPLIFIER_PROMPT = PromptTemplate(
     input_variables=["script_text"],
-    template="## 原文剧本\n{script_text}\n\n## 输出\n",
+    template="## Kịch bản nguyên văn\n{script_text}\n\n## Đầu ra\n",
 )
 
 
 class ScriptSimplifierAgent(AgentBase[ScriptSimplificationResult]):
-    """智能精简剧本 Agent：输入剧本文本，输出保留主线与连续性的精简版本。"""
+    """Agent rút gọn kịch bản thông minh: nhận văn bản kịch bản, xuất phiên bản rút gọn giữ được tuyến chính và tính liên tục."""
 
     @property
     def system_prompt(self) -> str:
@@ -50,7 +50,7 @@ class ScriptSimplifierAgent(AgentBase[ScriptSimplificationResult]):
     def _normalize(self, data: dict[str, Any]) -> dict[str, Any]:
         data = dict(data)
         if "simplified_script_text" not in data:
-            # 兼容模型可能沿用旧字段名
+            # Tương thích với việc model có thể dùng tên trường cũ
             data["simplified_script_text"] = str(data.get("optimized_script_text") or "")
         if "simplification_summary" not in data:
             data["simplification_summary"] = str(data.get("change_summary") or "")

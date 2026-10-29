@@ -15,7 +15,7 @@ from app.services.studio.shot_video_prompt_pack import (
 
 
 class VideoDerivedPreview(GenerationDerivedPreview):
-    """视频生成预览结果。"""
+    """Kết quả xem trước tạo video."""
 
     kind: str = "video"
     shot_id: str
@@ -53,12 +53,12 @@ async def derive_video_preview(
     template = await _resolve_video_prompt_template(db, template_id=context.template_id)
     warnings: list[str] = []
     if template is None:
-        warnings.append("未配置视频提示词模板，已使用系统默认拼装提示词")
+        warnings.append("chưa cấu hình mẫu prompt video, đã dùng prompt ghép mặc định của hệ thống")
         rendered_prompt = _fallback_video_prompt(pack)
     else:
         rendered_prompt = _render_template(template.content, _pack_variables(pack))
         if not rendered_prompt:
-            warnings.append("视频提示词模板渲染结果为空，已使用系统默认拼装提示词")
+            warnings.append("kết quả render mẫu prompt video trống, đã dùng prompt ghép mặc định của hệ thống")
             rendered_prompt = _fallback_video_prompt(pack)
         else:
             rendered_prompt = enrich_rendered_video_prompt(

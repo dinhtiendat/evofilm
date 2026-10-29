@@ -1,4 +1,4 @@
-"""资产（Scene/Prop/Costume）及其图片表的 schemas。"""
+"""schemas của tài nguyên (Scene/Prop/Costume) và bảng ảnh của chúng."""
 
 from __future__ import annotations
 
@@ -10,14 +10,14 @@ from app.models.studio import AssetQualityLevel, AssetViewAngle, ProjectStyle, P
 
 
 class AssetBase(BaseModel):
-    id: str = Field(..., description="资产 ID")
-    name: str = Field(..., description="名称")
-    description: str = Field("", description="描述")
-    tags: list[str] = Field(default_factory=list, description="标签")
-    prompt_template_id: str | None = Field(None, description="提示词模板 ID（可空）")
-    view_count: int = Field(1, ge=1, description="计划为该资产生成的视角图片数量（不含分镜帧）")
-    style: ProjectStyle = Field(ProjectStyle.real_people_city, description="题材/风格")
-    visual_style: ProjectVisualStyle = Field(ProjectVisualStyle.live_action, description="画面表现形式（现实/动漫等）")
+    id: str = Field(..., description="ID tài nguyên")
+    name: str = Field(..., description="Tên")
+    description: str = Field("", description="Mô tả")
+    tags: list[str] = Field(default_factory=list, description="Nhãn")
+    prompt_template_id: str | None = Field(None, description="Mẫu prompt ID(để trống được)")
+    view_count: int = Field(1, ge=1, description="Số hình ảnh góc nhìn dự kiến tạo cho tài nguyên này (không gồm khung phân cảnh)")
+    style: ProjectStyle = Field(ProjectStyle.real_people_city, description="Thể loại/phong cách")
+    visual_style: ProjectVisualStyle = Field(ProjectVisualStyle.live_action, description="Hình thức thể hiện hình ảnh (thực tế/hoạt hình...)")
 
 
 class AssetCreate(BaseModel):
@@ -29,9 +29,9 @@ class AssetCreate(BaseModel):
     view_count: int = Field(1, ge=1)
     style: ProjectStyle = ProjectStyle.real_people_city
     visual_style: ProjectVisualStyle = ProjectVisualStyle.live_action
-    project_id: str | None = Field(None, description="可选：创建成功后写入 project_*_link（与资产创建同一事务）")
-    chapter_id: str | None = Field(None, description="可选：章节 ID")
-    shot_id: str | None = Field(None, description="可选：分镜 ID")
+    project_id: str | None = Field(None, description="Tùy chọn: sau khi tạo thành công ghi vào project_*_link (cùng giao dịch với việc tạo tài nguyên)")
+    chapter_id: str | None = Field(None, description="Tùy chọn: ID chương")
+    shot_id: str | None = Field(None, description="Tùy chọn: phân cảnh ID")
 
     @field_validator("project_id", "chapter_id", "shot_id", mode="before")
     @classmethod
@@ -64,17 +64,17 @@ class AssetUpdate(BaseModel):
 class AssetRead(AssetBase):
     model_config = ConfigDict(from_attributes=True)
 
-    thumbnail: str = Field("", description="缩略图下载地址")
+    thumbnail: str = Field("", description="Đường dẫn tải ảnh thu nhỏ")
 
 
 class AssetImageBase(BaseModel):
-    id: int = Field(..., description="图片行 ID")
-    quality_level: AssetQualityLevel = Field(AssetQualityLevel.low, description="精度等级")
-    view_angle: AssetViewAngle = Field(AssetViewAngle.front, description="视角")
-    file_id: str | None = Field(None, description="关联的 FileItem ID（可空，支持先创建槽位后填充）")
-    width: int | None = Field(None, description="宽(px)")
-    height: int | None = Field(None, description="高(px)")
-    format: str = Field("png", description="格式")
+    id: int = Field(..., description="dòng hình ảnh ID")
+    quality_level: AssetQualityLevel = Field(AssetQualityLevel.low, description="Cấp độ chính xác")
+    view_angle: AssetViewAngle = Field(AssetViewAngle.front, description="Góc nhìn")
+    file_id: str | None = Field(None, description="ID FileItem liên kết (để trống được, hỗ trợ tạo vị trí giữ trước rồi điền sau)")
+    width: int | None = Field(None, description="Rộng(px)")
+    height: int | None = Field(None, description="Cao(px)")
+    format: str = Field("png", description="Định dạng")
 
 
 class AssetImageCreate(BaseModel):

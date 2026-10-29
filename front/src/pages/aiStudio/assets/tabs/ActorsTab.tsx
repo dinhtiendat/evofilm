@@ -42,7 +42,7 @@ export function ActorsTab() {
       setActors(items)
       setTotal(res.data?.pagination.total ?? 0)
     } catch {
-      message.error('加载演员失败')
+      message.error('Tải diễn viên thất bại')
     } finally {
       setLoading(false)
     }
@@ -105,11 +105,11 @@ export function ActorsTab() {
 
   return (
     <Card
-      title="演员"
+      title="Diễn viên"
       extra={
         <Space>
           <Input.Search
-            placeholder="搜索演员"
+            placeholder="Tìm diễn viên"
             allowClear
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -120,16 +120,16 @@ export function ActorsTab() {
             style={{ width: 240 }}
           />
           <Button icon={<ReloadOutlined />} onClick={() => void load()}>
-            刷新
+            Làm mới
           </Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-            新建
+            Tạo mới
           </Button>
         </Space>
       }
     >
       {filtered.length === 0 && !loading ? (
-        <Empty description="暂无演员" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <Empty description="Chưa có diễn viên" image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {filtered.map((a) => (
@@ -141,10 +141,10 @@ export function ActorsTab() {
               extra={
                 <Space>
                   <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(a)}>
-                    编辑
+                    Chỉnh sửa
                   </Button>
                   <Button size="small" onClick={() => navigate(`/assets/actors/${a.id}/edit`)}>
-                    详情
+                    Chi tiết
                   </Button>
                   <Button
                     danger
@@ -152,17 +152,17 @@ export function ActorsTab() {
                     icon={<DeleteOutlined />}
                     onClick={() => {
                       Modal.confirm({
-                        title: `删除演员「${a.name}」？`,
-                        okText: '删除',
-                        cancelText: '取消',
+                        title: `Xóa diễn viên "${a.name}"?`,
+                        okText: 'Xóa',
+                        cancelText: 'Hủy',
                         okButtonProps: { danger: true },
                         onOk: async () => {
                           try {
                             await StudioEntitiesApi.remove('actor', a.id)
-                            message.success('已删除')
+                            message.success('Đã xóa')
                             void load()
                           } catch {
-                            message.error('删除失败')
+                            message.error('Xóa thất bại')
                           }
                         },
                       })

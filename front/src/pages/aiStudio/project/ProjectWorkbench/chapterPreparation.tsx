@@ -22,39 +22,39 @@ export function getChapterPreparationState(chapter: Chapter): ChapterPreparation
   if (!hasRawText) {
     return {
       key: 'edit_raw',
-      text: '待录入原文',
+      text: 'Chờ nhập nguyên văn',
       color: 'default',
-      hint: '先补章节原文，再进入分镜流程',
-      primaryAction: '编辑原文',
+      hint: 'Hãy bổ sung nguyên văn chương trước, rồi vào quy trình phân cảnh',
+      primaryAction: 'Chỉnh sửa nguyên văn',
       primaryIcon: <EditOutlined />,
     }
   }
   if (!hasShots) {
     return {
       key: 'extract_shots',
-      text: '待提取分镜',
+      text: 'Phân cảnh chờ trích xuất',
       color: 'gold',
-      hint: '已有章节原文，下一步建议先提取分镜',
-      primaryAction: '提取分镜',
+      hint: 'Đã có nguyên văn chương, bước tiếp theo nên trích xuất phân cảnh trước',
+      primaryAction: 'Trích xuất phân cảnh',
       primaryIcon: <ScissorOutlined />,
     }
   }
   if (chapter.status === 'shooting' || chapter.status === 'done') {
     return {
       key: 'shoot',
-      text: '可进入拍摄',
+      text: 'Có thể vào quay',
       color: 'green',
-      hint: '当前章节已具备分镜，可继续进入拍摄',
-      primaryAction: '进入拍摄',
+      hint: 'Chương hiện tại đã có phân cảnh, có thể tiếp tục quay',
+      primaryAction: 'Vào quay',
       primaryIcon: <VideoCameraOutlined />,
     }
   }
   return {
     key: 'prepare_shots',
-    text: '待准备镜头',
+    text: 'Phân cảnh chờ chuẩn bị',
     color: 'blue',
-    hint: '已有分镜，建议先进入分镜工作室补齐镜头准备',
-    primaryAction: '进入分镜工作室',
+    hint: 'Đã có phân cảnh, nên vào studio phân cảnh trước để hoàn thiện sự sẵn sàng của phân cảnh',
+    primaryAction: 'Vào studio phân cảnh',
     primaryIcon: <FileSearchOutlined />,
   }
 }

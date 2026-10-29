@@ -1,160 +1,160 @@
 ---
-title: "分镜页面职责边界"
-description: "面向开发者说明分镜编辑页与分镜工作室的职责划分，以及准备阶段与生成阶段的推荐主流程。"
+title: "Ranh giới trách nhiệm trang phân cảnh"
+description: "Giải thích cho người phát triển về sự phân chia trách nhiệm giữa trang chỉnh sửa phân cảnh và studio phân cảnh, cùng quy trình chính được khuyến nghị giữa giai đoạn chuẩn bị và giai đoạn tạo."
 weight: 8
 ---
 
-## 背景
+## Bối cảnh
 
-随着 `shot.status` 收窄为：
+Khi `shot.status` thu hẹp còn:
 
 - `pending`
 - `ready`
 
-并且 `video-readiness` 成为独立的生成准备度检查，分镜相关页面也需要明确区分：
+và `video-readiness` trở thành bước kiểm tra độ sẵn sàng tạo độc lập, các trang liên quan phân cảnh cũng cần phân biệt rõ:
 
-- 哪一页负责准备
-- 哪一页负责生成
+- Trang nào phụ trách chuẩn bị
+- Trang nào phụ trách tạo
 
-如果这两层边界不清晰，页面很容易重新长成“两个都能做一点”的混合大页。
+Nếu ranh giới hai lớp này không rõ, trang sẽ dễ mọc lại thành “trang lớn lai tạp, cái gì cũng làm được một chút”.
 
-## 核心结论
+## Kết luận cốt lõi
 
-当前推荐的页面分工是：
+Phân công trang hiện được khuyến nghị là:
 
 ```text
 ChapterShotEditPage
-  = 分镜准备页
+  = Trang chuẩn bị phân cảnh
 
 ChapterStudio
-  = 分镜生成工作台
+  = Bàn làm việc tạo phân cảnh
 ```
 
-也就是：
+Tức là:
 
 ```text
-分镜编辑页
-→ 提取、确认、修正
+Trang chỉnh sửa phân cảnh
+→ Trích xuất, xác nhận, sửa chữa
 
-分镜工作室
-→ 关键帧、参考图、视频参数、视频生成
+Studio phân cảnh
+→ Khung hình chính, ảnh tham chiếu, tham số video, tạo video
 ```
 
-## `ChapterShotEditPage` 的职责
+## `ChapterShotEditPage` Trách nhiệm của
 
-这页负责把单镜头准备到可进入生成阶段。
+Trang này phụ trách chuẩn bị phân cảnh đơn đến mức có thể vào giai đoạn tạo.
 
-### 应保留为主流程的动作
+### Hành động nên giữ ở luồng chính
 
-- 提取并刷新候选
-- 无需提取 / 恢复提取
-- 资产候选：关联 / 新建 / 忽略
-- 对白候选：接受 / 忽略 / 批量接受 / 批量忽略
-- 单镜头基础信息修正
+- Trích xuất và làm mới ứng viên
+- Không cần trích xuất / khôi phục trích xuất
+- Ứng viên tài nguyên: liên kết / tạo mới / bỏ qua
+- Ứng viên thoại: chấp nhận / Bỏ qua / Chấp nhận hàng loạt / Bỏ qua hàng loạt
+- Sửa thông tin cơ bản của phân cảnh đơn
 
-### 这页的目标
+### Mục tiêu của trang này
 
-完成：
+Hoàn tất:
 
-- 资产候选确认
-- 对白候选确认
-- `skip_extraction` 等准备决策
+- Xác nhận ứng viên tài nguyên
+- Xác nhận ứng viên thoại
+- `skip_extraction` v.v., quyết định chuẩn bị
 - `shot.status = ready`
 
-可以把这页理解成：
+Có thể hiểu trang này như:
 
 ```text
-单镜头准备台 / 最终确认台
+Bàn chuẩn bị phân cảnh đơn / Bàn xác nhận cuối cùng
 ```
 
-## `ChapterStudio` 的职责
+## Trách nhiệm của `ChapterStudio`
 
-这页负责在章节内连续处理镜头的生成准备与执行。
+Trang này chịu trách nhiệm xử lý liên tục việc chuẩn bị tạo và thực thi phân cảnh trong chương.
 
-### 应保留为主流程的动作
+### Hành động nên giữ ở luồng chính
 
-- 单镜头和批量 `video-readiness`
-- 关键帧与参考图
-- 视频提示词与生成参数
-- 单镜头视频生成
-- 批量生成前预检
-- 批量生成
+- cảnh đơn và hàng loạt `video-readiness`
+- Khung hình chính và ảnh tham chiếu
+- Prompt video và tham số tạo
+- Tạo video cho phân cảnh đơn
+- Kiểm tra trước khi tạo hàng loạt
+- Tạo hàng loạt
 
-### 这页的目标
+### Mục tiêu của trang này
 
-回答：
+Trả lời:
 
-- 当前镜头能不能生成视频
-- 还差什么
-- 应先补关键帧、参考图还是视频参数
-- 一章内哪些镜头可以批量推进
+- Phân cảnh hiện tại có thể tạo video không
+- Còn thiếu gì
+- Trước nên bổ khung hình chính, ảnh tham chiếu hay tham số video
+- Trong một chương, phân cảnh nào có thể thúc đẩy hàng loạt
 
-可以把这页理解成：
+Có thể hiểu trang này như:
 
 ```text
-章节内的生成工作台
+Bàn làm việc tạo trong chương
 ```
 
-## 哪些动作应从工作室降级
+## Những hành động nào nên hạ cấp khỏi studio
 
-为了避免 `ChapterStudio` 重新变成“第二个编辑页”，下面这些动作应逐步从主流程中降级：
+Để tránh `ChapterStudio` thành “trang chỉnh sửa thứ hai”, những hành động dưới đây nên dần hạ cấp khỏi quy trình chính:
 
-- 无需提取
-- 候选忽略
-- 对白接受 / 忽略
-- 快速关联 / 新建
+- Không cần trích xuất
+- Bỏ qua ứng viên
+- Chấp nhận / bỏ qua thoại
+- Nhanh liên kết / tạo mới
 
-更推荐的方式是：
+Cách được khuyến nghị hơn là:
 
-- 工作室里显示诊断结果
-- 主动作统一变成：
-  - `去分镜编辑确认`
-  - `去分镜编辑确认对白`
+- Hiển thị kết quả chẩn đoán trong studio
+- Hành động chính được thống nhất thành:
+  - `Đi sửa và xác nhận phân cảnh`
+  - `Đi sửa, xác nhận thoại phân cảnh`
 
-## 两页之间的推荐主流程
+## Luồng chính được khuyến nghị giữa hai trang
 
 ```text
 ChapterShotEditPage
-→ 提取与确认
+→ Trích xuất và xác nhận
 → shot.status = ready
-→ 进入 ChapterStudio
-→ 查看 video-readiness
-→ 关键帧 / 参考图 / 视频参数
-→ 生成视频
+→ Vào ChapterStudio
+→ Xem video-readiness
+→ Khung hình chính / Ảnh tham chiếu / Tham số video
+→ Tạo video
 ```
 
-如果在 `ChapterStudio` 中发现：
+Nếu trong `ChapterStudio` phát hiện:
 
 - `shot.status = pending`
 - `video-readiness.extraction_ready = false`
 
-则应回流到：
+Thì nên đưa về lại:
 
 ```text
 ChapterShotEditPage
 ```
 
-继续完成提取确认。
+Tiếp tục hoàn thành xác nhận trích xuất.
 
-## 状态边界
+## Ranh giới trạng thái
 
-为了让页面分工和后端状态一致，建议始终遵守下面这条规则：
+Để sự phân công của các trang khớp với trạng thái phía backend, nên luôn tuân thủ quy tắc sau:
 
 - `shot.status`
-  - 只表示信息提取确认状态
+  - Chỉ thể hiện trạng thái xác nhận trích xuất thông tin
 - `video-readiness`
-  - 只表示视频生成前置条件是否满足
+  - Chỉ thể hiện điều kiện tiên quyết tạo video có đạt không
 - runtime task
-  - 只表示当前是否有运行中的生成任务
+  - Chỉ thể hiện hiện có tác vụ tạo đang chạy không
 
-也就是说：
+Nói cách khác:
 
 ```text
-准备状态
+Trạng thái chuẩn bị
 ≠
-视频可生成状态
+Trạng thái có thể tạo video
 ≠
-生成中状态
+Trạng thái đang tạo
 ```
 
-这三者应分别展示，不应继续混进同一个字段或同一类提示里。
+Ba thứ này nên hiển thị riêng biệt, không nên trộn tiếp vào cùng một trường hay cùng một loại thông báo.

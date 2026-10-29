@@ -1,7 +1,7 @@
-"""脚本处理 Agents（兼容聚合模块）。
+"""Các Agent xử lý kịch bản (module tập hợp tương thích).
 
-该模块历史上承载所有 Agent 实现；当前实现已拆分到各自独立文件中。
-此文件保留原 import 路径，便于旧代码/路由/测试继续工作。
+Module này trước đây chứa toàn bộ implementation của các Agent; hiện đã tách ra từng file riêng.
+File này giữ nguyên đường import cũ để code/route/test cũ tiếp tục hoạt động.
 """
 
 from __future__ import annotations

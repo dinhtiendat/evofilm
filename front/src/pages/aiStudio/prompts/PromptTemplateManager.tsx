@@ -6,27 +6,27 @@ import { StudioPromptsService } from '../../../services/generated'
 import type { PromptCategory, PromptTemplateRead } from '../../../services/generated'
 
 const fallbackCategoryLabels: Record<string, string> = {
-  frame_head_image: '首帧图片',
-  frame_tail_image: '尾帧图片',
-  frame_key_image: '关键帧图片',
-  frame_head_prompt: '首帧提示词',
-  frame_tail_prompt: '尾帧提示词',
-  frame_key_prompt: '关键帧提示词',
-  video_prompt: '视频提示词',
-  storyboard_prompt: '分镜',
-  bgm: '配乐',
-  sfx: '音效',
-  character_image_front: '角色正面',
-  character_image_other: '角色其他',
-  actor_image_front: '角色形象正面',
-  actor_image_other: '角色形象其他',
-  prop_image_front: '道具正面',
-  prop_image_other: '道具其他',
-  scene_image_front: '场景正面',
-  scene_image_other: '场景其他',
-  costume_image_front: '服装正面',
-  costume_image_other: '服装其他',
-  combined: '综合提示词',
+  frame_head_image: 'Ảnh khung hình đầu',
+  frame_tail_image: 'Ảnh khung hình cuối',
+  frame_key_image: 'Ảnh khung hình chính',
+  frame_head_prompt: 'Prompt khung hình đầu',
+  frame_tail_prompt: 'Prompt khung hình cuối',
+  frame_key_prompt: 'Prompt khung hình chính',
+  video_prompt: 'Prompt video',
+  storyboard_prompt: 'Phân cảnh',
+  bgm: 'Nhạc nền',
+  sfx: 'Hiệu ứng âm thanh',
+  character_image_front: 'Nhân vật phía trước',
+  character_image_other: 'Nhân vật khác',
+  actor_image_front: 'Hình mẫu nhân vật phía trước',
+  actor_image_other: 'Hình mẫu nhân vật khác',
+  prop_image_front: 'Mặt trước đạo cụ',
+  prop_image_other: 'Đạo cụ khác',
+  scene_image_front: 'Mặt trước bối cảnh',
+  scene_image_other: 'Bối cảnh khác',
+  costume_image_front: 'Trang phục phía trước',
+  costume_image_other: 'Trang phục khác',
+  combined: 'Prompt tổng hợp',
 }
 
 const PAGE_SIZE = 10
@@ -80,16 +80,16 @@ const groupOrder = [
 ] as const
 
 const groupTitles: Record<(typeof groupOrder)[number], string> = {
-  frame: '首/尾/关键帧',
-  video: '视频生成 / 分镜',
-  audio: '配乐 / 音效 / 角色',
-  chapter: '角色',
-  actor: '角色形象',
-  scene: '场景',
-  prop: '道具',
-  costume: '服装',
-  combined: '综合提示词',
-  other: '其他',
+  frame: 'Đầu/cuối/khung chính',
+  video: 'Tạo video / Phân cảnh',
+  audio: 'Nhạc nền / Hiệu ứng âm thanh / Nhân vật',
+  chapter: 'Nhân vật',
+  actor: 'Hình tượng nhân vật',
+  scene: 'Bối cảnh',
+  prop: 'Đạo cụ',
+  costume: 'Trang phục',
+  combined: 'Prompt tổng hợp',
+  other: 'Khác',
 }
 
 function getGroupKey(category: string): (typeof groupOrder)[number] {
@@ -141,7 +141,7 @@ const PromptTemplateManager: FC = () => {
       const items = res.data?.items ?? []
       const totalCount = res.data?.pagination?.total ?? 0
 
-      // 空页时自动回退上一页，避免用户停留在无数据页。
+      // Trang rỗng thì tự quay về trang trước, tránh người dùng kẹt ở trang không có dữ liệu.
       if (nextPage > 1 && items.length === 0 && totalCount > 0) {
         setPage(nextPage - 1)
         return
@@ -150,7 +150,7 @@ const PromptTemplateManager: FC = () => {
       setTemplates(items)
       setTotal(totalCount)
     } catch {
-      message.error('加载模板失败')
+      message.error('Nạp mẫu thất bại')
     } finally {
       if (requestId === requestIdRef.current) {
         setLoading(false)
@@ -176,7 +176,7 @@ const PromptTemplateManager: FC = () => {
         })),
       )
     } catch {
-      // 类别接口失败时保留本地兜底映射。
+      // Khi giao diện hạng mục lỗi, giữ lại ánh xạ dự phòng cục bộ.
     }
   }
 
@@ -272,11 +272,11 @@ const PromptTemplateManager: FC = () => {
           requestBody: payload,
         })
         if (!res.data) {
-          message.error('添加提示词失败')
+          message.error('Thêm prompt thất bại')
           return
         }
 
-        message.success('提示词已添加')
+        message.success('Đã thêm prompt')
         setFormOpen(false)
         createForm.resetFields()
         setSelected(null)
@@ -288,7 +288,7 @@ const PromptTemplateManager: FC = () => {
       }
 
       if (!editingTemplateId) {
-        message.error('编辑目标不存在')
+        message.error('Đối tượng chỉnh sửa không tồn tại')
         return
       }
 
@@ -297,12 +297,12 @@ const PromptTemplateManager: FC = () => {
         requestBody: payload,
       })
       if (!res.data) {
-        message.error('更新提示词失败')
+        message.error('Cập nhật prompt thất bại')
         return
       }
       const updatedTemplate = res.data
 
-      message.success('提示词已更新')
+      message.success('Đã cập nhật prompt')
       setFormOpen(false)
       setEditingTemplateId(null)
       createForm.resetFields()
@@ -311,7 +311,7 @@ const PromptTemplateManager: FC = () => {
       void loadTemplates(page, query)
     } catch (error) {
       if (error && typeof error === 'object' && 'errorFields' in error) return
-      message.error(modalMode === 'create' ? '添加提示词失败' : '更新提示词失败')
+      message.error(modalMode === 'create' ? 'Thêm prompt thất bại' : 'Cập nhật prompt thất bại')
     } finally {
       setSubmitting(false)
     }
@@ -319,17 +319,17 @@ const PromptTemplateManager: FC = () => {
 
   const handleDeleteTemplate = (template: PromptTemplateRead) => {
     Modal.confirm({
-      title: '删除提示词',
-      content: `确定删除「${template.name}」吗？`,
-      okText: '删除',
+      title: 'Xóa prompt',
+      content: `Xác nhận xóa "${template.name}"?`,
+      okText: 'Xóa',
       okType: 'danger',
-      cancelText: '取消',
+      cancelText: 'Hủy',
       onOk: async () => {
         try {
           await StudioPromptsService.deletePromptTemplateApiV1StudioPromptsTemplateIdDelete({
             templateId: template.id,
           })
-          message.success('提示词已删除')
+          message.success('Đã xóa prompt')
           if (selected?.id === template.id) {
             setSelected(null)
           }
@@ -340,7 +340,7 @@ const PromptTemplateManager: FC = () => {
             void loadTemplates(page, query)
           }
         } catch {
-          message.error('删除提示词失败')
+          message.error('Xóa prompt thất bại')
         }
       },
     })
@@ -349,12 +349,12 @@ const PromptTemplateManager: FC = () => {
   return (
     <div className="space-y-4">
       <Card
-        title="提示词模板管理"
+        title="Quản lý mẫu prompt"
         loading={loading && templates.length === 0}
-        extra={<Button type="primary" onClick={openCreateModal}>添加提示词</Button>}
+        extra={<Button type="primary" onClick={openCreateModal}>Thêm prompt</Button>}
       >
         <Input.Search
-          placeholder="搜索模板名称或预览"
+          placeholder="Tìm kiếm tên mẫu hoặc xem trước"
           allowClear
           className="mb-4 max-w-md"
           value={searchText}
@@ -394,9 +394,9 @@ const PromptTemplateManager: FC = () => {
                 size="small"
                 extra={(
                   <div className="flex gap-2">
-                    <Button size="small" onClick={() => openEditModal(selected)}>编辑</Button>
+                    <Button size="small" onClick={() => openEditModal(selected)}>Chỉnh sửa</Button>
                     <Button size="small" danger onClick={() => handleDeleteTemplate(selected)}>
-                      删除
+                      Xóa
                     </Button>
                   </div>
                 )}
@@ -408,18 +408,18 @@ const PromptTemplateManager: FC = () => {
                 </pre>
                 {selected.variables.length > 0 && (
                   <div className="mt-2 text-xs text-gray-500">
-                    变量：{selected.variables.join(', ')}
+                    Biến: {selected.variables.join(', ')}
                   </div>
                 )}
                 <div className="mt-3 flex gap-2">
-                  {selected.is_system && <Tag color="gold">系统预置</Tag>}
-                  {selected.is_default && <Tag color="blue">默认提示词</Tag>}
+                  {selected.is_system && <Tag color="gold">Hệ thống cài đặt sẵn</Tag>}
+                  {selected.is_default && <Tag color="blue">Prompt mặc định</Tag>}
                 </div>
               </Card>
             ) : (
               <Card>
                 <div className="text-gray-500 text-center py-8">
-                  左侧选择模板查看详情
+                  Chọn mẫu ở bên trái để xem chi tiết
                 </div>
               </Card>
             )}
@@ -428,52 +428,52 @@ const PromptTemplateManager: FC = () => {
       </Card>
 
       <Modal
-        title={modalMode === 'create' ? '添加提示词' : '编辑提示词'}
+        title={modalMode === 'create' ? 'Thêm prompt' : 'Chỉnh sửa prompt'}
         open={formOpen}
         onCancel={() => {
           setFormOpen(false)
           setEditingTemplateId(null)
         }}
         onOk={handleFormSubmit}
-        okText="保存"
-        cancelText="取消"
+        okText="Lưu"
+        cancelText="Hủy"
         confirmLoading={submitting}
         destroyOnClose
       >
         <Form layout="vertical" form={createForm}>
           <Form.Item
-            label="模板类别"
+            label="Hạng mục mẫu"
             name="category"
-            rules={[{ required: true, message: '请选择模板类别' }]}
+            rules={[{ required: true, message: 'vui lòng chọn hạng mục mẫu' }]}
           >
-            <Select options={categoryOptions} placeholder="请选择类别" />
+            <Select options={categoryOptions} placeholder="Vui lòng chọn hạng mục" />
           </Form.Item>
           <Form.Item
-            label="模板名称"
+            label="Tên mẫu"
             name="name"
-            rules={[{ required: true, message: '请输入模板名称' }]}
+            rules={[{ required: true, message: 'vui lòng nhập tên mẫu' }]}
           >
-            <Input maxLength={255} placeholder="例如：分镜基础提示词" />
+            <Input maxLength={255} placeholder="Ví dụ: prompt nền tảng phân cảnh" />
           </Form.Item>
-          <Form.Item label="预览文案" name="preview">
-            <Input.TextArea rows={2} maxLength={500} placeholder="用于列表预览的简短说明" />
+          <Form.Item label="Văn bản xem trước" name="preview">
+            <Input.TextArea rows={2} maxLength={500} placeholder="Giải thích ngắn dùng cho xem trước trong danh sách" />
           </Form.Item>
           <Form.Item
-            label="模板内容"
+            label="Nội dung mẫu"
             name="content"
-            rules={[{ required: true, message: '请输入模板内容' }]}
+            rules={[{ required: true, message: 'vui lòng nhập nội dung mẫu' }]}
           >
-            <Input.TextArea rows={6} placeholder="请输入提示词模板内容" />
+            <Input.TextArea rows={6} placeholder="Vui lòng nhập nội dung mẫu prompt" />
           </Form.Item>
-          <Form.Item label="变量（回车添加）" name="variables">
+          <Form.Item label="biến(Enter để thêm)" name="variables">
             <Select
               mode="tags"
               tokenSeparators={[',', '，']}
               open={false}
-              placeholder="例如：subject, style, lighting"
+              placeholder="ví dụ:subject, style, lighting"
             />
           </Form.Item>
-          <Form.Item label="设为默认提示词" name="is_default" valuePropName="checked">
+          <Form.Item label="Đặt làm prompt mặc định" name="is_default" valuePropName="checked">
             <Switch />
           </Form.Item>
         </Form>

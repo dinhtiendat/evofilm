@@ -1,4 +1,4 @@
-"""人物画像缺失信息分析：结构化输出 schema。"""
+"""Phân tích thông tin còn thiếu của hồ sơ nhân vật: schema đầu ra có cấu trúc."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class CharacterPortraitAnalysisResult(BaseModel):
-    """根据原文人物描述，分析缺少的信息，并给出优化后的可生成画像描述。"""
+    """Dựa mô tả nhân vật gốc, phân tích thông tin thiếu và đưa ra mô tả hồ sơ có thể tạo đã tối ưu."""
 
     model_config = ConfigDict(extra="forbid")
 

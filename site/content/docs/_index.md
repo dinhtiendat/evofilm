@@ -1,7 +1,7 @@
 ---
-title: "文档中心"
+title: "Trung tâm tài liệu"
 weight: 2
-description: "安装、开发、架构、计划与贡献相关资料总入口。"
+description: "Cổng vào tổng hợp tài liệu về cài đặt, phát triển, kiến trúc, kế hoạch và đóng góp."
 images:
   - /images/og-default.svg
 cascade:
@@ -9,34 +9,34 @@ cascade:
     toc: false
 ---
 
-这里汇总 Jellyfish 的安装、开发、当前架构、任务计划与贡献相关资料。
+Ở đây tổng hợp tài liệu cài đặt, phát triển, kiến trúc hiện tại, kế hoạch tác vụ và đóng góp của Jellyfish.
 
-## 快速开始
+## Bắt đầu nhanh
 
-- [安装说明](/docs/getting-started/installation/)
-- [本地开发](/docs/getting-started/local-dev/)
-- [Docker 部署](/docs/getting-started/docker/)
+- [Hướng dẫn cài đặt](/docs/getting-started/installation/)
+- [Phát triển local](/docs/getting-started/local-dev/)
+- [Triển khai Docker](/docs/getting-started/docker/)
 
-## 开发指南
+## Hướng dẫn phát triển
 
-- [前端说明](/docs/guide/frontend/)
-- [后端说明](/docs/guide/backend/)
+- [Giải thích frontend](/docs/guide/frontend/)
+- [Giải thích backend](/docs/guide/backend/)
 - [OpenAPI](/docs/guide/openapi/)
-- [AI 工作流](/docs/guide/ai-workflow/)
+- [AI Work flow](/docs/guide/ai-workflow/)
 
-## 当前架构
+## Kiến trúc hiện tại
 
-- [项目结构](/docs/architecture/project-structure/)
-- [分镜状态流转说明](/docs/architecture/shot-status-flow/)
-- [分镜页面职责边界](/docs/architecture/shot-page-boundary/)
+- [Cấu trúc dự án](/docs/architecture/project-structure/)
+- [Giải thích luân chuyển trạng thái phân cảnh](/docs/architecture/shot-status-flow/)
+- [Giới hạn trách nhiệm các trang phân cảnh](/docs/architecture/shot-page-boundary/)
 
-## 任务计划
+## Kế hoạch tác vụ
 
-- [开发规划](/docs/plans/development-plan/)
-- [任务异步化与取消方案](/docs/plans/task-async-cancellation-plan/)
+- [Lộ trình phát triển](/docs/plans/development-plan/)
+- [Phương án bất đồng bộ hóa và hủy tác vụ](/docs/plans/task-async-cancellation-plan/)
 
-## 社区与协作
+## Cộng đồng và hợp tác
 
-- [贡献指南](/docs/community/contributing/)
-- [提交规范](/docs/community/commit-convention/)
+- [Hướng dẫn đóng góp](/docs/community/contributing/)
+- [Quy phạm submit](/docs/community/commit-convention/)
 - [FAQ](/docs/community/faq/)

@@ -1,9 +1,9 @@
-"""任务执行器注册表。
+"""Bảng đăng ký bộ thực thi tác vụ.
 
-职责：
-- 通过 task_kind 解析到具体 WorkerTaskExecutor；
-- 将任务编排层与 worker 执行层解耦；
-- 为后续图片 / 视频 / 文本任务统一执行入口预留注册点。
+Trách nhiệm:
+- Phân tích task_kind về WorkerTaskExecutor cụ thể;
+- Tách rời tầng điều phối tác vụ với tầng thực thi worker;
+- Dự trù điểm đăng ký cho điểm vào thực thi thống nhất của các tác vụ hình ảnh / video / văn bản về sau.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ class TaskExecutorRegistry:
     def resolve(self, task_kind: str) -> AbstractWorkerTaskExecutor:
         try:
             return self._executors[task_kind]
-        except KeyError as exc:  # pragma: no cover - 显式错误路径
+        except KeyError as exc:  # pragma: no cover - đường lỗi rõ
             raise RuntimeError(f"Unsupported task_kind: {task_kind}") from exc
 
 

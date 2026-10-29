@@ -24,11 +24,11 @@ import api from '../../../services/aiStudioApi'
 import type { Agent, AgentTypeKey } from '../../../mocks/data'
 
 const AGENT_TYPES: { value: AgentTypeKey; label: string }[] = [
-  { value: 'plot', label: '剧情提取' },
-  { value: 'character', label: '角色提取' },
-  { value: 'scene', label: '场景提取' },
-  { value: 'prop', label: '道具提取' },
-  { value: 'other', label: '其他类型' },
+  { value: 'plot', label: 'Trích xuất cốt truyện' },
+  { value: 'character', label: 'Trích xuất nhân vật' },
+  { value: 'scene', label: 'Trích xuất bối cảnh' },
+  { value: 'prop', label: 'Trích xuất đạo cụ' },
+  { value: 'other', label: 'Loại khác' },
 ]
 
 export default function AgentEdit() {
@@ -60,9 +60,9 @@ export default function AgentEdit() {
       setEditName(a.name)
       setEditType(a.type)
       setEditDesc(a.description)
-      setPromptDraft('从以下剧本中提取主线剧情，输出结构化 JSON。')
+      setPromptDraft('từ kịch bản dưới đây, trích xuất cốt truyện chính, xuất JSON có cấu trúc.')
     } catch {
-      message.error('加载 Agent 失败')
+      message.error('Tải Agent thất bại')
       navigate('/agents')
     } finally {
       setLoading(false)
@@ -82,10 +82,10 @@ export default function AgentEdit() {
         type: editType,
         description: editDesc.trim(),
       })
-      message.success('保存成功')
+      message.success('Lưu thành công')
       setAgent((prev) => (prev ? { ...prev, name: editName, type: editType, description: editDesc } : null))
     } catch {
-      message.error('保存失败')
+      message.error('Lưu thất bại')
     } finally {
       setSaving(false)
     }
@@ -96,54 +96,54 @@ export default function AgentEdit() {
     setTestLogs([])
     setTestOutput('')
     try {
-      setTestLogs((l) => [...l, '[INFO] 开始执行...', '[INFO] 调用 LLM 节点...'])
+      setTestLogs((l) => [...l, '[INFO] Bắt đầu thực thi...', '[INFO] Gọi node LLM...'])
       await new Promise((r) => setTimeout(r, 1200))
-      setTestLogs((l) => [...l, '[OK] 提取完成'])
+      setTestLogs((l) => [...l, '[OK] Trích xuất hoàn tất'])
       setTestOutput(
         JSON.stringify(
           {
-            plot_points: ['开场：出租屋争吵', '发展：身份证丢失', '高潮：雨夜寻找'],
-            summary: '基于剧本提取的主线剧情摘要。',
+            plot_points: ['Mở đầu: cãi nhau trong phòng trọ', 'Phát triển: mất CMND', 'Cao trào: tìm kiếm trong đêm mưa'],
+            summary: 'Tóm tắt cốt truyện chính trích từ kịch bản.'
           },
           null,
           2
         )
       )
     } catch {
-      setTestLogs((l) => [...l, '[ERROR] 执行失败'])
-      message.error('测试执行失败')
+      setTestLogs((l) => [...l, '[ERROR] thực thi thất bại'])
+      message.error('Chạy thử thất bại')
     } finally {
       setTesting(false)
     }
   }
 
-  // 简易工作流占位节点（后续可替换为 React Flow）
+  // Nút giữ chỗ quy trình đơn giản (có thể thay bằng React Flow sau)
   const workflowNodes = [
-    { id: 'start', label: '开始', type: 'start' },
-    { id: 'llm1', label: 'LLM 提取', type: 'llm' },
-    { id: 'end', label: '结束', type: 'end' },
+    { id: 'start', label: 'bắt đầu', type: 'start' },
+    { id: 'llm1', label: 'LLM trích xuất', type: 'llm' },
+    { id: 'end', label: 'Kết thúc', type: 'end' },
   ]
 
   if (loading || !agent) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
-        {loading ? '加载中...' : null}
+        {loading ? 'Đang nạp...' : null}
       </div>
     )
   }
 
   return (
     <Layout className="h-full flex flex-col" style={{ minHeight: 0 }}>
-      {/* 顶部工具栏 */}
+      {/* Thanh công cụ trên */}
       <div className="flex-shrink-0 flex flex-wrap items-center gap-2 px-4 py-2 border-b border-gray-200 bg-white">
         <Button type="text" icon={<ArrowLeftOutlined />} onClick={() => navigate('/agents')}>
-          返回列表
+          Quay lại danh sách
         </Button>
         <Input
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
           className="font-medium w-48"
-          placeholder="Agent 名称"
+          placeholder="Tên Agent"
         />
         <Select
           value={editType}
@@ -152,21 +152,21 @@ export default function AgentEdit() {
           style={{ width: 140 }}
         />
         <Space className="ml-auto">
-          <Button icon={<HistoryOutlined />}>版本管理</Button>
+          <Button icon={<HistoryOutlined />}>quản lý phiên bản</Button>
           <Button icon={<ThunderboltOutlined />} loading={testing} onClick={() => void handleRunTest()}>
-            测试
+            Kiểm thử
           </Button>
           <Button type="primary" icon={<SaveOutlined />} loading={saving} onClick={() => void handleSave()}>
-            保存
+            Lưu
           </Button>
         </Space>
       </div>
 
-      {/* 双栏：工作流 + 属性 */}
+      {/* Hai cột: luồng công việc + thuộc tính */}
       <Layout className="flex-1 min-h-0 flex-row overflow-hidden">
-        {/* 左侧：工作流编辑器占位 */}
+        {/* Bên trái: vị trí giữ của trình chỉnh sửa luồng công việc */}
         <div className="flex-1 min-w-0 overflow-auto p-4 bg-gray-50 border-r border-gray-200">
-          <div className="text-sm text-gray-500 mb-2">工作流编排（可接入 React Flow）</div>
+          <div className="text-sm text-gray-500 mb-2">Điều phối workflow (có thể tích hợp React Flow)</div>
           <div className="relative rounded-lg border-2 border-dashed border-gray-300 bg-white p-6 min-h-[320px]">
             <div className="flex flex-col items-center gap-4">
               {workflowNodes.map((node, i) => (
@@ -190,33 +190,33 @@ export default function AgentEdit() {
             </div>
             <div className="absolute bottom-3 right-3 flex gap-2">
               <Button size="small" icon={<PlusOutlined />}>
-                添加节点
+                Thêm nút
               </Button>
             </div>
           </div>
         </div>
 
-        {/* 右侧：节点属性配置 */}
+        {/* Phải: cấu hình thuộc tính nút */}
         <div className="w-96 flex-shrink-0 overflow-auto border-l border-gray-200 bg-white">
           <div className="p-4 border-b border-gray-100 font-medium flex items-center gap-2">
             <SettingOutlined />
-            节点属性
+            Thuộc tính nút
           </div>
           <div className="p-4 space-y-4">
             {selectedNodeId ? (
               <>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">提示词</label>
+                  <label className="block text-sm text-gray-600 mb-1">Prompt</label>
                   <Input.TextArea
                     rows={6}
                     value={promptDraft}
                     onChange={(e) => setPromptDraft(e.target.value)}
-                    placeholder="输入系统提示词..."
+                    placeholder="Nhập prompt hệ thống..."
                     className="font-mono text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">温度 (Temperature)</label>
+                  <label className="block text-sm text-gray-600 mb-1">Nhiệt độ (Temperature)</label>
                   <Slider min={0} max={2} step={0.1} value={temperature} onChange={setTemperature} />
                   <span className="text-xs text-gray-400">{temperature}</span>
                 </div>
@@ -227,25 +227,25 @@ export default function AgentEdit() {
                 </div>
                 {agent.type === 'plot' && (
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">主线保留阈值</label>
+                    <label className="block text-sm text-gray-600 mb-1">Ngưỡng giữ tuyến chính</label>
                     <InputNumber min={0} max={1} step={0.1} defaultValue={0.5} className="w-full" />
                   </div>
                 )}
                 {agent.type === 'character' && (
                   <div>
-                    <label className="block text-sm text-gray-600 mb-1">角色数量上限</label>
+                    <label className="block text-sm text-gray-600 mb-1">Giới hạn số nhân vật</label>
                     <InputNumber min={1} max={100} defaultValue={20} className="w-full" />
                   </div>
                 )}
               </>
             ) : (
-              <div className="text-gray-500 text-sm">在左侧点击节点以编辑属性</div>
+              <div className="text-gray-500 text-sm">Bấm nút bên trái để chỉnh sửa thuộc tính</div>
             )}
           </div>
         </div>
       </Layout>
 
-      {/* 底部测试区 */}
+      {/* Vùng kiểm thử dưới */}
       <div
         className="flex-shrink-0 border-t border-gray-200 bg-white flex flex-col"
         style={{ height: testPanelCollapsed ? 48 : 280 }}
@@ -256,25 +256,25 @@ export default function AgentEdit() {
         >
           <Space>
             <PlayCircleOutlined />
-            <span className="font-medium">测试区</span>
+            <span className="font-medium">Vùng test</span>
           </Space>
           <Button type="text" size="small">
-            {testPanelCollapsed ? '展开' : '收起'}
+            {testPanelCollapsed ? 'Mở' : 'Thu gọn'}
           </Button>
         </div>
         {!testPanelCollapsed && (
           <div className="flex-1 min-h-0 flex overflow-hidden">
             <div className="w-1/2 flex flex-col border-r border-gray-100 p-3">
-              <div className="text-sm text-gray-500 mb-1">输入（剧本片段 / JSON）</div>
+              <div className="text-sm text-gray-500 mb-1">Đầu vào (đoạn kịch bản / JSON)</div>
               <Input.TextArea
-                placeholder="粘贴剧本或测试数据..."
+                placeholder="Dán kịch bản hoặc dữ liệu thử..."
                 value={testInput}
                 onChange={(e) => setTestInput(e.target.value)}
                 className="flex-1 font-mono text-sm resize-none"
                 rows={6}
               />
               <Button type="primary" icon={<ThunderboltOutlined />} loading={testing} className="mt-2" onClick={() => void handleRunTest()}>
-                运行
+                Chạy
               </Button>
             </div>
             <div className="w-1/2 flex flex-col overflow-hidden p-3">
@@ -283,8 +283,8 @@ export default function AgentEdit() {
                 onChange={(k) => setTestTab(k as 'output' | 'history')}
                 size="small"
                 items={[
-                  { key: 'output', label: '输出' },
-                  { key: 'history', label: '历史记录' },
+                  { key: 'output', label: 'Đầu ra' },
+                  { key: 'history', label: 'Lịch sử' },
                 ]}
               />
               {testTab === 'output' && (
@@ -297,12 +297,12 @@ export default function AgentEdit() {
                         ))}
                       </div>
                     )}
-                    {testOutput || '运行后在此显示结果'}
+                    {testOutput || 'Chạy xong sẽ hiện kết quả ở đây'}
                   </div>
                 </>
               )}
               {testTab === 'history' && (
-                <div className="text-gray-500 text-sm flex-1 overflow-auto">暂无历史测试记录</div>
+                <div className="text-gray-500 text-sm flex-1 overflow-auto">Tạm chưa có bản ghi test lịch sử</div>
               )}
             </div>
           </div>

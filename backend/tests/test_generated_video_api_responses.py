@@ -1,4 +1,4 @@
-"""generated_video 接口响应壳测试。"""
+"""generated_video Kiểm thử vỏ phản hồi API generated_video.。"""
 
 from __future__ import annotations
 
@@ -53,27 +53,27 @@ def test_preview_video_generation_prompt_returns_success_envelope(client: TestCl
     db = _FakeDB()
 
     async def _fake_preview(*_args, **_kwargs):
-        return "视频预览提示词", ["file-1", "file-2"], {
+        return "Prompt preview video", ["file-1", "file-2"], {
             "shot_id": "shot-1",
-            "title": "镜头一",
-            "script_excerpt": "主角转身看向门口。",
-            "action_beats": ["主角转身", "视线停在门口"],
+            "title": "Phân cảnh 1",
+            "script_excerpt": "Nhân vật chính quay lại nhìn về phía cửa.",
+            "action_beats": ["Nhân vật chính quay người", "Ánh mắt dừng lại ở cửa ra vào"],
             "action_beat_phases": [
-                {"text": "主角转身", "phase": "trigger"},
-                {"text": "视线停在门口", "phase": "aftermath"},
+                {"text": "Nhân vật chính quay người", "phase": "trigger"},
+                {"text": "hướng nhìn dừng ở cửa", "phase": "aftermath"},
             ],
-            "previous_shot_summary": "标题：镜头零；剧本摘录：主角推门进入走廊",
-            "next_shot_goal": "标题：镜头二；主角停住动作，保持警惕",
-            "continuity_guidance": "承接上一镜头动作，不要像全新场面重新开局",
-            "composition_anchor": "以走廊门口作为空间锚点",
-            "screen_direction_guidance": "保持主角朝向和视线落点连续",
+            "previous_shot_summary": "Tiêu đề: Phân cảnh không；trích đoạn kịch bản: Nhân vật chính đẩy cửa vào hành lang",
+            "next_shot_goal": "Tiêu đề: Phân cảnh hai; nhân vật chính dừng hành động, giữ cảnh giác",
+            "continuity_guidance": "Tiếp nối hành động của shot trước, đừng như cảnh hoàn toàn mới bắt đầu lại",
+            "composition_anchor": "Lấy cửa hành lang làm mỏ neo không gian",
+            "screen_direction_guidance": "Giữ liên tục hướng xoay và điểm nhìn của nhân vật chính",
             "dialogue_summary": "",
             "characters": [],
             "scene": None,
             "props": [],
             "costumes": [],
             "camera": {"camera_shot": "MS", "angle": "EYE_LEVEL", "movement": "STATIC", "duration": 4},
-            "atmosphere": "紧张",
+            "atmosphere": "Căng thẳng",
             "visual_style": "现实",
             "style": "真人都市",
             "negative_prompt": "",
@@ -87,7 +87,7 @@ def test_preview_video_generation_prompt_returns_success_envelope(client: TestCl
             json={
                 "shot_id": "shot-1",
                 "reference_mode": "first_last",
-                "prompt": "生成一个压迫感强的镜头",
+                "prompt": "Chế tạo một phân cảnh có sức ép mạnh",
                 "images": [],
                 "ratio": "9:16",
             },
@@ -99,10 +99,10 @@ def test_preview_video_generation_prompt_returns_success_envelope(client: TestCl
     body = response.json()
     assert body["code"] == 200
     assert body["message"] == "success"
-    assert body["data"]["prompt"] == "视频预览提示词"
+    assert body["data"]["prompt"] == "Prompt preview video"
     assert body["data"]["images"] == ["file-1", "file-2"]
-    assert body["data"]["pack"]["previous_shot_summary"].startswith("标题：镜头零")
-    assert body["data"]["pack"]["next_shot_goal"].startswith("标题：镜头二")
+    assert body["data"]["pack"]["previous_shot_summary"].startswith("Tiêu đề: Phân cảnh không")
+    assert body["data"]["pack"]["next_shot_goal"].startswith("Tiêu đề: Phân cảnh hai")
 
 
 def test_preview_video_generation_prompt_not_found_returns_api_response(
@@ -121,7 +121,7 @@ def test_preview_video_generation_prompt_not_found_returns_api_response(
             json={
                 "shot_id": "shot-missing",
                 "reference_mode": "text_only",
-                "prompt": "仅文本生成",
+                "prompt": "Chỉ tạo bằng văn bản",
                 "images": [],
                 "ratio": "16:9",
             },
@@ -137,7 +137,7 @@ def test_create_video_generation_task_returns_created_envelope(client: TestClien
     db = _FakeDB()
 
     async def _fake_build_run_args(*_args, **_kwargs):
-        return {"prompt": "最终视频提示词", "images": ["file-1"]}
+        return {"prompt": "return {prompt: prompt video cuối cùng, images: [file-1]}", "images": ["file-1"]}
 
     monkeypatch.setattr(route, "build_run_args", _fake_build_run_args)
     monkeypatch.setattr(route, "TaskManager", _FakeTaskManager)
@@ -150,7 +150,7 @@ def test_create_video_generation_task_returns_created_envelope(client: TestClien
             json={
                 "shot_id": "shot-1",
                 "reference_mode": "first",
-                "prompt": "生成一个节奏紧张的视频片段",
+                "prompt": "prompt: Tạo một đoạn video nhịp điệu căng thẳng,",
                 "images": [],
                 "ratio": "9:16",
             },

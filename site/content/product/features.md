@@ -1,30 +1,30 @@
 ---
-title: "功能总览"
+title: "Tổng quan tính năng"
 weight: 1
-description: "按模块理解 Jellyfish 当前重点覆盖的产品能力。"
+description: "hiểu theo module các năng lực sản phẩm mà Jellyfish hiện tập trung bao phủ."
 ---
 
-Jellyfish 当前重点覆盖以下几类能力：
+Jellyfish hiện tập trung bao phủ các nhóm năng lực sau:
 
-- 项目管理：统一维护项目级风格、种子、章节与生产状态。
-- 章节工作台：承接脚本输入、精简、分镜提取与编辑。
-- 分镜系统：支持镜头信息、对白、帧图与关联资产管理。
-- 资产管理：角色、场景、道具、服装等素材集中管理与复用。
-- 模型与 Agent：统一管理供应商模型、脚本处理链路与生成任务。
-- 剪辑输出：在同一系统内继续承接时间线编辑与成片导出。
+- Quản lý dự án: thống nhất duy trì phong cách cấp dự án, seed, chương và trạng thái sản xuất.
+- Mặt bàn chương: nhận xử lý đầu vào kịch bản, tóm gọn, trích xuất và chỉnh sửa phân cảnh.
+- Hệ thống phân cảnh: hỗ trợ thông tin phân cảnh, lời thoại, ảnh khung hình và quản lý tài nguyên liên kết.
+- Quản lý tài nguyên: quản lý và tái sử dụng tập trung các vật liệu như nhân vật, bối cảnh, đạo cụ, trang phục.
+- Mô hình và Agent: quản lý thống nhất mô hình nhà cung cấp, chuỗi xử lý kịch bản và tác vụ tạo.
+- Xuất bản dựng: trong cùng một hệ thống tiếp tục nhận xử lý chỉnh sửa trục thời gian và xuất phim hoàn chỉnh.
 
-## 为什么这套结构有价值
+## Tại sao cấu trúc này có giá trị
 
-很多 AI 内容工具只覆盖“生成”这一段，但短剧生产真正困难的地方是：
+Nhiều công cụ nội dung AI chỉ phủ được đoạn "tạo", nhưng điểm khó thực sự của sản xuất short drama là:
 
-- 角色和场景很容易漂移
-- 脚本、镜头、资产之间常常断层
-- 生成结果难以被组织成可重复的生产流程
+- Nhân vật và bối cảnh rất dễ trôi dạt
+- Kịch bản, phân cảnh, tài nguyên thường đứt gãy giữa chúng
+- Kết quả tạo khó được tổ chức thành quy trình sản xuất lặp lại được
 
-Jellyfish 现在的重点，是把这些断点尽量拉通。
+Trọng tâm hiện tại của Jellyfish là rút ngắn các điểm đứt gãy này cho bằng được.
 
-## 对开发者意味着什么
+## Điều này có ý nghĩa gì với người phát triển
 
-- 前端页面是以工作台和业务链路来组织的
-- 后端路由主要围绕 `studio / llm / film / script-processing`
-- AI 能力不是孤立模块，而是嵌在业务数据流里的
+- Các trang phía trước được tổ chức theo bàn làm việc và đường dẫn nghiệp vụ
+- Route phía sau chủ yếu xoay quanh `studio / llm / film / script-processing`
+- Năng lực AI không phải module cô lập, mà được nhúng trong luồng dữ liệu nghiệp vụ

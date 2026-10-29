@@ -1,4 +1,4 @@
-"""entities existence-check 接口响应壳测试。"""
+"""Test vỏ phản ứng interface existence-check của entities."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def test_entity_existence_check_returns_success_envelope(client: TestClient, mon
         return {
             "characters": [
                 {
-                    "name": "角色一",
+                    "name": "Nhân vật 1",
                     "exists": True,
                     "linked_to_project": True,
                     "linked_to_shot": False,
@@ -49,7 +49,7 @@ def test_entity_existence_check_returns_success_envelope(client: TestClient, mon
             json={
                 "project_id": "project-1",
                 "shot_id": "shot-1",
-                "character_names": ["角色一"],
+                "character_names": ["Nhân vật một"],
                 "prop_names": [],
                 "scene_names": [],
                 "costume_names": [],
@@ -65,7 +65,7 @@ def test_entity_existence_check_returns_success_envelope(client: TestClient, mon
         "data": {
             "characters": [
                 {
-                    "name": "角色一",
+                    "name": "Nhân vật 1",
                     "exists": True,
                     "linked_to_project": True,
                     "linked_to_shot": False,

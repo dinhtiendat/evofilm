@@ -20,15 +20,15 @@ def bootstrap_builtin_providers() -> None:
             ),
             ProviderSpec(
                 key="volcengine",
-                display_name="火山引擎",
+                display_name="Volcano Engine",
                 aliases=("火山引擎", "volcengine", "volc", "doubao", "bytedance", "ark"),
                 supported_categories=(ModelCategoryKey.image, ModelCategoryKey.video),
                 default_base_url="https://ark.cn-beijing.volces.com/api/v3",
             ),
             ProviderSpec(
                 key="aliyun_bailian",
-                display_name="阿里百炼",
-                aliases=("阿里百炼", "aliyun", "bailian", "dashscope"),
+                display_name="Alibaba Bailian",
+                aliases=("阿里百炼", "alibaba bailian", "aliyun", "bailian", "dashscope"),
                 supported_categories=(ModelCategoryKey.text,),
                 default_base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
             ),

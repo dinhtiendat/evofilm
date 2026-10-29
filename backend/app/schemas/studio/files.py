@@ -1,4 +1,4 @@
-"""文件素材相关的 Pydantic Schemas。"""
+"""Schemas Pydantic liên quan đến vật liệu tệp."""
 
 from __future__ import annotations
 
@@ -13,11 +13,11 @@ class FileTypeEnum(str, Enum):
 
 
 class FileBase(BaseModel):
-    id: str = Field(..., description="文件 ID")
-    type: FileTypeEnum = Field(..., description="文件类型")
-    name: str = Field(..., description="文件名/标题")
-    thumbnail: str = Field("", description="缩略图 URL/路径")
-    tags: list[str] = Field(default_factory=list, description="标签")
+    id: str = Field(..., description="ID tệp")
+    type: FileTypeEnum = Field(..., description="Loại tệp")
+    name: str = Field(..., description="tên tệp/tiêu đề")
+    thumbnail: str = Field("", description="Ảnh thu nhỏ URL/Đường")
+    tags: list[str] = Field(default_factory=list, description="Nhãn")
 
 
 class FileCreate(BaseModel):
@@ -28,16 +28,16 @@ class FileCreate(BaseModel):
 
 
 class FileUsageWrite(BaseModel):
-    """写入 file_usages 的关联信息（与 FileItem 一并提交）。"""
+    """thông tin liên kết ghi vào file_usages (submit cùng với FileItem)."""
 
-    project_id: str = Field(..., description="项目 ID")
-    chapter_id: str | None = Field(None, description="章节 ID")
-    shot_id: str | None = Field(None, description="镜头 ID")
+    project_id: str = Field(..., description="ID dự án")
+    chapter_id: str | None = Field(None, description="ID chương")
+    shot_id: str | None = Field(None, description="ID phân cảnh")
     usage_kind: str = Field(
         ...,
-        description="用途：shot_frame / generated_video / character_image / asset_image / upload / api 等",
+        description="Mục đích: shot_frame / generated_video / character_image / asset_image / upload / api v.v.",
     )
-    source_ref: str | None = Field(None, description="幂等键（可选）")
+    source_ref: str | None = Field(None, description="Chìa idempotent (tùy chọn)")
 
 
 class FileUsageRead(BaseModel):
@@ -55,7 +55,7 @@ class FileUpdate(BaseModel):
     name: str | None = None
     thumbnail: str | None = None
     tags: list[str] | None = None
-    usage: FileUsageWrite | None = Field(None, description="若提供则 upsert 一条 file_usages")
+    usage: FileUsageWrite | None = Field(None, description="Nếu được cung cấp thì upsert một dòng file_usages")
 
 
 class FileRead(FileBase):
@@ -63,7 +63,7 @@ class FileRead(FileBase):
 
 
 class FileDetailRead(FileRead):
-    """含 file_usages 列表（详情接口）。"""
+    """Chứa danh sách file_usages (giao diện chi tiết)."""
 
     model_config = ConfigDict(from_attributes=True)
 

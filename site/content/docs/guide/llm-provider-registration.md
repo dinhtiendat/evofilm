@@ -1,84 +1,84 @@
 ---
-title: "LLM 供应商注册与扩展"
+title: "Đăng ký và mở rộng nhà cung cấp LLM"
 weight: 12
-description: "如何在代码中注册内置供应商能力，并与异步任务执行器对齐。"
+description: "cách đăng ký năng lực nhà cung cấp tích hợp trong mã, và đối chiếu với executor tác vụ không đồng bộ."
 ---
 
-系统里与「供应商」相关的概念分两层，扩展时通常要同时考虑。
+Các khái niệm liên quan đến “nhà cung cấp” trong hệ thống chia làm hai tầng, khi mở rộng thường phải cân nhắc đồng thời cả hai.
 
-## 两层注册分别解决什么
+## Hai lớp đăng ký, mỗi lớp giải quyết gì
 
-1. **能力注册表（内置、进程内）**  
-   描述「我们认识哪些供应商 key、别名、支持哪些模型类别、默认 base URL」等。  
-   实现位于 `app/services/llm/provider_registry.py`，启动时通过 `app/services/llm/provider_bootstrap.py` 的 `bootstrap_builtin_providers()` 调用 `register_many(...)` 写入。  
-   对外只读入口：`GET /api/v1/llm/providers/supported`（可按 `category` 过滤），供前端展示可选能力与默认值提示。
+1. **Bảng đăng ký khả năng (tích hợp, trong tiến trình)**
+   mô tả "chúng ta nhận biết những provider key, alias nào, hỗ trợ hạng mục mô hình nào, base URL mặc định là gì" v.v.
+   Thực hiện nằm trong `app/services/llm/provider_registry.py`, lúc khởi động gọi `bootstrap_builtin_providers()` của `app/services/llm/provider_bootstrap.py` để viết vào bằng `register_many(...)`.
+   Lối vào chỉ đọc đối ngoại: `GET /api/v1/llm/providers/supported` (có thể lọc theo `category`), dùng cho phía trước hiển thị khả năng có thể chọn và gợi ý giá trị mặc định.
 
-2. **任务执行器注册表（任务类型 × 供应商 key）**  
-   描述「某类异步任务（如图片生成、视频生成）在某个供应商 key 上由哪个工厂函数构造执行器」。  
-   实现位于 `app/core/tasks/registry.py`，启动时通过 `app/core/tasks/bootstrap.py` 的 `bootstrap_task_adapters()` 注册。  
-   Worker 或内联执行路径会按任务 payload 里的供应商信息解析到具体实现。
+2. **Bảng đăng ký bộ thực thi tác vụ (loại tác vụ × key nhà cung cấp)**
+   mô tả "hàm factory nào dựng executor cho một loại tác vụ không đồng bộ (như sinh ảnh, sinh video) trên một provider key nào đó".
+   Thực hiện nằm trong `app/core/tasks/registry.py`, lúc khởi động đăng ký qua `bootstrap_task_adapters()` của `app/core/tasks/bootstrap.py`.
+   Worker hoặc đường thực thi inline sẽ phân tích tới thực hiện cụ thể theo thông tin nhà cung cấp trong payload tác vụ.
 
-3. **出站 HTTP 适配层（`app/core/integrations/`）**  
-   OpenAI / 火山等供应商的 URL、请求体、响应解析集中在 `app/core/integrations/openai/`与 `app/core/integrations/volcengine/`（图片、视频分文件）；`ImageGenerationTask` / `VideoGenerationTask` 只做生命周期与轮询节奏，**不**直接拼 httpx 细节。  
-   与任务输入输出共用的 Pydantic 模型放在 `app/core/tasks/image_generation_types.py`、`video_generation_types.py`，避免 `tasks` 与 `integrations` 循环导入。
+3. **tầng thích ứng HTTP ra(`app/core/integrations/`)**
+   URL, body yêu cầu, phân giải response của các nhà cung cấp như OpenAI / Volcengine được tập trung trong `app/core/integrations/openai/` và `app/core/integrations/volcengine/` (ảnh, video tách tệp riêng); `ImageGenerationTask` / `VideoGenerationTask` chỉ lo vòng đời và nhịp truy vấn lặp, **không** trực tiếp ghép chi tiết httpx.
+   Mô hình Pydantic dùng chung cho đầu vào / đầu ra tác vụ nằm trong `app/core/tasks/image_generation_types.py`, `video_generation_types.py`, tránh `tasks` và `integrations` import vòng nhau.
 
-应用启动时由 `app/bootstrap.py` 的 `bootstrap_all_registries()` **先** bootstrap供应商能力，**再** bootstrap 任务适配器，保证解析供应商 key 时注册表已就绪。
+Khi ứng dụng khởi động, `bootstrap_all_registries()` của `app/bootstrap.py` **trước tiên** bootstrap khả năng nhà cung cấp, **rồi** mới bootstrap adapter tác vụ, đảm bảo khi phân giải key nhà cung cấp thì bảng đăng ký đã sẵn sàng.
 
-## 新增一个内置供应商时要改哪里
+## Khi thêm nhà cung cấp tích hợp, cần sửa ở đâu
 
-按顺序检查并补齐下面几项（均以「新增 key `acme`」为例）。
+Kiểm tra và bổ sung lần lượt các mục dưới đây (đều lấy "thêm key `acme`" làm ví dụ).
 
-### 1. 能力规格在 `provider_bootstrap.py` 中为 `acme` 增加一条 `ProviderSpec`：
+### 1. Spec năng lực: thêm một `ProviderSpec` cho `acme` trong `provider_bootstrap.py`:
 
-- `key`：稳定小写 key，与任务注册、DB 里可选的命名约定一致。
-- `aliases`：兼容历史名称、中文名、常见拼写。
-- `supported_categories`：`ModelCategoryKey` 中本供应商实际接得住的类别（text / image / video）。
-- `default_base_url`：若 UI 或创建 Provider 时需要默认 endpoint，可填；纯网关型可置空。
+- `key`: key chữ thường ổn định, khớp quy ước đặt tên tùy chọn trong đăng ký tác vụ, DB.
+- `aliases`: tương thích tên cũ, tên tiếng Trung, cách viết phổ biến.
+- `supported_categories`: các hạng mục trong `ModelCategoryKey` mà nhà cung cấp này thực sự nhận được (text / image / video).
+- `default_base_url`: nếu UI hoặc khi tạo Provider cần endpoint mặc định thì có thể điền; loại gateway thuần có thể để trống.
 
-若 key 或别名与已有注册冲突，`register_provider` 会抛错，避免静默覆盖。
+nếu key hoặc alias trùng với đăng ký có sẵn, `register_provider` sẽ báo lỗi, tránh ghi đè im lặng.
 
-### 2. 任务适配器
+### 2. Bộ thích ứng tác vụ
 
-在 `app/core/tasks/bootstrap.py` 中，对每一种需要跑在 `acme` 上的任务类型调用 `register_task_adapter`，例如：
+Trong `app/core/tasks/bootstrap.py`, với mỗi loại tác vụ cần chạy trên `acme` đều gọi `register_task_adapter`, ví dụ:
 
-- `image_generation` + `acme` → 指向 `ImageGenerationTask` 上对应的 `_build_acme_impl`（或等价工厂）。
-- `video_generation` + `acme` → 指向 `VideoGenerationTask` 上对应的工厂。
+- `image_generation` + `acme` → trỏ đến `_build_acme_impl` tương ứng trên `ImageGenerationTask` (hoặc factory tương đương).
+- `video_generation` + `acme` → trỏ đến nhà máy tương ứng trên `VideoGenerationTask`.
 
-工厂未注册时，任务分派会在运行时报错，与「能力表里有 key」不是一回事：**能力表只说明「产品层面支持」；任务表说明「 worker 能执行」**。
+Khi nhà máy (factory) chưa được đăng ký, việc điều phối tác vụ sẽ gây lỗi ở thời điểm chạy, đây không cùng ý với việc 「có key trong bảng năng lực」: **bảng năng lực chỉ cho biết 「được hỗ trợ ở cấp độ sản phẩm」; bảng tác vụ cho biết 「worker có thể thực thi được」**。
 
-### 3. 具体实现类
+### 3. Lớp thực hiện cụ thể
 
-- 在 `app/core/integrations/` 下为 `acme` 增加图片/视频 API 适配类（httpx 调用与 JSON 映射）。  
-- 在 `image_generation_tasks.py` / `video_generation_tasks.py` 中增加 `_build_acme_impl`，构造 Task 并注入对应 adapter（或默认 adapter）。  
-- 在 `app/core/tasks/bootstrap.py` 中注册 `(task_kind, acme)` → 该工厂。  
-若 `provider_resolver` 或 manage 层有按供应商分支的逻辑，按需增加分支，保持 **api 薄、service 厚**。
+- Dưới `app/core/integrations/` thêm lớp thích ứng API ảnh / video cho `acme` (gọi httpx và ánh xạ JSON).
+- Thêm `_build_acme_impl` trong `image_generation_tasks.py` / `video_generation_tasks.py`, xây Task và tiêm adapter tương ứng (hoặc adapter mặc định).
+- Đăng ký `(task_kind, acme)` → nhà máy đó trong `app/core/tasks/bootstrap.py`.
+Nếu `provider_resolver` hoặc tầng manage có logic phân nhánh theo nhà cung cấp, thêm nhánh theo nhu cầu, giữ **api mỏng, service dày**.
 
-### 4. 验证
+### 4. Xác minh
 
-- 跑与 LLM 路由相关的测试（例如 `backend/tests/test_llm_api_responses.py` 中对 `providers/supported` 的断言可按需扩展）。
-- 跑任务注册相关测试（如 `backend/tests/test_task_registry.py`）。
-- 适配层可补充 `backend/tests/core/integrations/` 下基于 `httpx.MockTransport` 的单测，无需真实网络。
-- 若暴露了新 API 或响应字段，按仓库约定执行 `pnpm run openapi:update` 并更新前端 generated client。
+- Chạy test liên quan routing LLM (ví dụ các assertion về `providers/supported` trong `backend/tests/test_llm_api_responses.py` có thể mở rộng tùy nhu cầu).
+- Chạy test liên quan đến đăng ký tác vụ (ví dụ `backend/tests/test_task_registry.py`).
+- Tầng thích ứng có thể bổ sung đơn vị kiểm thử dựa trên `httpx.MockTransport` dưới `backend/tests/core/integrations/`, không cần mạng thật.
+- Nếu có mở API mới hoặc trường response mới, theo quy ước của repo chạy `pnpm run openapi:update` và cập nhật generated client phía frontend.
 
-## 与数据库里配置的 Provider 的关系
+## Mối quan hệ với Provider cấu hình trong cơ sở dữ liệu
 
-- **内置注册表**：定义「系统认识哪些供应商 key、类别、默认 URL」，不替代数据库中的 `Provider` 实例（API Key、环境特定 base_url 等仍存 DB）。
-- **用户/运维在 UI 创建的 Provider**：通常应选用 `supported` 列表中的 key或与别名解析一致的名称，以便 `resolve_provider_key_from_name` 能落到统一 key；任务执行时再按 key 查找已注册的适配器。
+- **Bảng đăng ký tích hợp sẵn**: định nghĩa「hệ thống nhận diện những key nhà cung cấp, hạng mục, URL mặc định nào」, không thay thế bản ghi `Provider` trong cơ sở dữ liệu (API Key, base_url theo môi trường v.v. vẫn lưu ở DB).
+- **Nhà cung cấp do người dùng / vận hành tạo trong UI**: thường nên chọn key trong danh sách `supported` hoặc tên khớp với cách phân giải alias, để `resolve_provider_key_from_name` có thể về đúng key thống nhất; khi thực thi tác vụ mới tra adapter đã đăng ký theo key.
 
-### Base URL 优先级（按类别解析）
+### Thứ tự ưu tiên Base URL (phân giải theo hạng mục)
 
-当前 `Provider` 支持三组 URL 字段：
+Hiện `Provider` hỗ trợ ba nhóm trường URL:
 
-- `base_url`：文本/通用入口（默认建议配置 OpenAI-compatible 网关）。
-- `image_base_url`：图片能力覆盖入口（可选）。
-- `video_base_url`：视频能力覆盖入口（可选）。
+- `base_url`: cổng vào văn bản/ghiêng (khuyến nghị cấu hình gateway OpenAI-tương thích làm mặc định).
+- `image_base_url`: điểm vào ghi đè năng lực hình ảnh (tùy chọn).
+- `video_base_url`: điểm vào ghi đè năng lực video (tùy chọn).
 
-运行时解析优先级：
+Thứ tự ưu tiên phân giải runtime:
 
 - image：`image_base_url` > `base_url` > `ProviderSpec.default_base_url`
 - video：`video_base_url` > `base_url` > `ProviderSpec.default_base_url`
 - text：`base_url` > `ProviderSpec.default_base_url`
 
-## 测试提示
+## Mẹo kiểm thử
 
-完整 `app.main` 会加载含 Celery 依赖的路由链。仅验证 LLM 路由行为时，可使用测试辅助模块 `backend/tests/support/llm_api_app.py` 构建只挂载 `/api/v1/llm` 的应用，避免轻量环境缺少可选依赖导致导入失败。
+`app.main` đầy đủ sẽ nạp chuỗi routing có phụ thuộc Celery. Khi chỉ kiểm tra hành vi routing LLM, có thể dùng module hỗ trợ test `backend/tests/support/llm_api_app.py` để dựng ứng dụng chỉ gán `/api/v1/llm`, tránh môi trường nhẹ thiếu dependency tùy chọn làm hỏng import.

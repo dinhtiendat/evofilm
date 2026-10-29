@@ -91,7 +91,7 @@ def resolve_effective_base_url(
     category: ModelCategoryKey,
     provider_key: str | None = None,
 ) -> str | None:
-    """按类别解析 Provider 实际 base_url：类别覆盖 > 通用 > 内置默认。"""
+    """Phân tích base_url thực của Provider theo hạng mục: phủ hạng mục > chung > mặc định nội dung."""
     bootstrap_all_registries()
     key = provider_key or resolve_provider_key_from_name(provider.name)
     spec = get_provider_spec(key)
@@ -102,7 +102,7 @@ def resolve_effective_base_url(
         return image_base or common_base or spec.default_base_url
     if category == ModelCategoryKey.video:
         return video_base or common_base or spec.default_base_url
-    # text 仍使用通用 base_url；保留内置默认值兜底。
+    # text vẫn dùng base_url chung; giữ giá trị mặc định built-in làm dự phòng.
     return common_base or spec.default_base_url
 
 

@@ -26,7 +26,7 @@ router = APIRouter()
     "/tasks/shot-frame-prompts",
     response_model=ApiResponse[TaskCreated],
     status_code=201,
-    summary="镜头分镜帧提示词生成（任务版）",
+    summary="Tạo prompt khung phân cảnh của phân cảnh (phiên bản tác vụ)",
 )
 async def create_shot_frame_prompt_task(
     body: ShotFramePromptRequest,

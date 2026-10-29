@@ -1,4 +1,4 @@
-"""Async worker 任务的通用辅助函数。"""
+"""Hàm hỗ trợ chung cho tác vụ async worker."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ async def cancel_if_requested_async(
     task_id: str,
     session: AsyncSession,
 ) -> bool:
-    """在 async service 阶段边界执行协作式取消检查。"""
+    """Thực hiện kiểm tra hủy phối hợp tại ranh giới giai đoạn của service async."""
 
     if not await store.is_cancel_requested(task_id):
         return False

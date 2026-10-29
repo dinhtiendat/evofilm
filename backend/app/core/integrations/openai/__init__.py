@@ -1,1 +1,1 @@
-"""OpenAI API 适配。"""
+"""Thích ứng API OpenAI."""

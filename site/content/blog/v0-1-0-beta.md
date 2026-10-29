@@ -1,55 +1,55 @@
 ---
-title: "v0.1.0-beta 发布说明"
+title: "Ghi chú phát hành v0.1.0-beta"
 date: 2026-04-03
-description: "Jellyfish 后端第一阶段发布说明，覆盖 route -> service 重构、响应壳统一、分镜状态闭环、assets-overview 聚合接口、OpenAPI 同步约定与测试补强。"
+description: "Ghi chú phát hành giai đoạn một phía backend của Jellyfish, bao phủ refactor route -> service, thống nhất vỏ response, khép kín trạng thái phân cảnh, API gộp assets-overview, quy ước đồng bộ OpenAPI và bổ sung test."
 ---
 
-这一阶段的重点，不是继续堆功能，而是把已经跑通的主流程收成一套更稳定的工程结构。
+trọng điểm của giai đoạn này không phải tiếp tục chất thêm tính năng, mà là thu gọn luồng chính đã chạy thông thành một cấu trúc kỹ thuật ổn định hơn.
 
-如果用一句话概括，这一轮发布完成了：
+Nếu tóm tắt bằng một câu, bản phát hành này hoàn thành:
 
-- 路由瘦身与 Service 分层
-- 接口响应壳与错误风格统一
-- 分镜状态流转闭环
-- 分镜资产视图聚合
-- OpenAPI 同步约定落地
-- 测试与迁移补强
+- Gọn định tuyến và phân tầng Service
+- Thống nhất vỏ phản hồi giao diện và phong cách lỗi
+- Vòng khép kín chuyển trạng thái phân cảnh
+- Gom nhóm view tài nguyên phân cảnh
+- Thỏa thuận đồng bộ OpenAPI đã đi vào thực tế
+- Củng cố kiểm thử và di trú
 
-## ✨ 本次发布摘要
+## ✨ Tóm tắt lần phát hành này
 
-这一轮最关键的变化有 5 条：
+Đợt này có 5 thay đổi quan trọng nhất:
 
-- `route -> service -> common` 的后端分层已经正式建立
-- `shot.status` 现在有了真正可维护的后端状态机
-- 新增 `shot_extracted_candidates`，把提取确认流程变成正式中间状态
-- 新增 `assets-overview`，把分镜资产视图从前端拼接改成后端聚合
-- 前端接口调用约定收紧为：**接口更新后主动执行 `pnpm run openapi:update`，并优先使用 generated client**
+- phân tầng phía sau `route -> service -> common` đã được chính thức thiết lập
+- `shot.status` giờ đã có máy trạng thái phía backend thực sự bảo trì được
+- thêm `shot_extracted_candidates`, biến luồng xác nhận trích xuất thành trạng thái trung gian chính thức
+- thêm `assets-overview`, chuyển view tài nguyên phân cảnh từ ghép phía trước sang aggregate phía sau
+- Thoả thuận gọi giao diện phía trước được siết chặt: **sau khi cập nhật API, chủ động chạy `pnpm run openapi:update` và ưu tiên dùng generated client**
 
 ## 🚀 Added
 
-### 1. Common 能力层
+### 1. Lớp khả năng Common
 
-新增：
+Thêm mới:
 
 - `services/common/validators.py`
 - `services/common/crud.py`
 - `services/common/errors.py`
 
-这一层统一了承担高频样板逻辑的公共能力：
+Tầng này thống nhất các khả năng dùng chung cho logic mẫu lặp cao:
 
-- 存在性校验
-- 基础 CRUD helper
-- 常用错误文案模板
+- Xác thực tồn tại
+- Helper CRUD cơ bản
+- Mẫu văn bản lỗi thông dụng
 
-它的直接效果是：
+Hiệu quả trực tiếp của nó là:
 
-- route 更薄
-- service 不再重复写样板代码
-- 错误风格更统一
+- route mỏng hơn
+- service không phải viết lại mã mẫu (boilerplate)
+- Phong cách lỗi thống nhất hơn
 
-### 2. Studio / LLM / Film Service 层
+### 2. Tầng Studio / LLM / Film Service
 
-这一轮新建或重构了大量 service，重点包括：
+Lượt này tạo mới hoặc cấu trúc lại nhiều service, trọng tâm gồm:
 
 - `services/studio/shots.py`
 - `services/studio/shot_assets.py`
@@ -67,84 +67,84 @@ description: "Jellyfish 后端第一阶段发布说明，覆盖 route -> service
 - `services/film/generated_video.py`
 - `services/film/shot_frame_prompt_tasks.py`
 
-这意味着 Studio 主链路、LLM 配置链路、Film 任务链路，都已经不再继续堆在 route 文件里。
+Điều này có nghĩa là luồng chính Studio, luồng cấu hình LLM, luồng tác vụ Film đã không còn chất đống trong file route.
 
-### 3. 分镜提取确认中间表
+### 3. Bảng trung gian xác nhận trích xuất phân cảnh
 
-新增正式数据结构：
+Mới thêm cấu trúc dữ liệu chính thức:
 
 - `shot_extracted_candidates`
 
-同时 `Shot` 新增：
+Đồng thời `Shot` bổ sung mới:
 
 - `skip_extraction`
 - `last_extracted_at`
 
-`shot_extracted_candidates` 的作用是记录：
+`shot_extracted_candidates` có vai trò ghi nhận:
 
-- 某个镜头从剧本提取出的候选项
-- 当前是否仍待处理
-- 是否已关联
-- 是否已忽略
+- Mục ứng viên được trích xuất từ kịch bản cho một phân cảnh
+- Hiện tại vẫn đang chờ xử lý hay không
+- Có đã liên kết chưa
+- Có đã bỏ qua chưa
 
-候选项状态现在是正式状态，而不是前端临时拼出来的 UI 数据。
+Trạng thái ứng viên giờ là trạng thái chính thức, không còn là dữ liệu UI chắp vá tạm thời ở frontend.
 
-### 4. 分镜资产聚合接口
+### 4. Giao diện tổng hợp tài nguyên phân cảnh
 
-新增接口：
+Giao diện mới thêm:
 
 - `GET /api/v1/studio/shots/{shot_id}/assets-overview`
 
-这个接口专门返回：
+Giao diện này chuyên dùng để trả về:
 
-- 当前已关联资产
-- 待确认候选资产
-- 每项的 `candidate_status`
-- 每项是否已关联
-- 汇总统计 `summary`
+- Tài nguyên đã liên kết hiện tại
+- Ứng viên tài nguyên chờ xác nhận
+- `candidate_status` của từng mục
+- Mỗi mục đã liên kết hay chưa
+- Thống kê tổng hợp `summary`
 
-它的目标很明确：
+Mục tiêu của nó rất rõ ràng:
 
-> 把“分镜资产视图”的真相收回后端，不再让前端自己拼 `linked-assets + extracted-candidates`。
+> Đưa nguồn sự thật của “view tài nguyên phân cảnh” về phía backend, không để frontend tự ghép `linked-assets + extracted-candidates` nữa.
 
-### 5. 分镜状态流转开发文档与迁移 SQL
+### 5. Tài liệu phát triển luồng trạng thái phân cảnh và SQL di trú
 
-这一轮同步补了：
+Lượt đồng bộ này đã bổ sung:
 
-- 开发文档：
+- Tài liệu phát triển:
   - `site/content/docs/guide/shot-status-flow.md`
-- 迁移 SQL：
+- SQL di trú:
   - `backend/sql/002-add-shot-extracted-candidates.sql`
 
-这意味着这条状态链不只是代码可用，也已经有了可追溯的设计说明与数据库迁移入口。
+Điều này có nghĩa là chuỗi trạng thái này không chỉ dùng được trong code, mà đã có cả giải thích thiết kế có thể truy vết và cổng vào di trú database.
 
 ## 🔄 Changed
 
-### 1. Route 更薄，边界更清晰
+### 1. Route mỏng hơn, ranh giới rõ hơn
 
-`app/api/v1/routes/` 现在主要只做：
+`app/api/v1/routes/` hiện chủ yếu chỉ làm:
 
-- 接收参数
-- 依赖注入
-- 调 service
-- 包装 `ApiResponse`
+- Tham số nhận
+- Tiêm phụ thuộc
+- Gọi service
+- Bao bọc `ApiResponse`
 
-复杂业务逻辑、跨实体校验、文件处理、任务编排，已经大幅下沉到 service 层。
+logic nghiệp vụ phức tạp, xác thực chéo thực thể, xử lý tệp, dàn dựng tác vụ, đã chuyển phần lớn xuống tầng service.
 
-### 2. 响应壳统一
+### 2. Thống nhất vỏ phản hồi
 
-这一轮统一了成功响应风格：
+Đợt này đã thống nhất phong cách phản hồi thành công:
 
 - `created_response(...)`
 - `success_response(...)`
 - `empty_response()`
 - `paginated_response(...)`
 
-这让创建、删除、列表接口的响应行为更稳定，前端也更容易统一处理。
+Điều này làm hành vi phản hồi của các API tạo, xóa, danh sách ổn định hơn, frontend cũng dễ xử lý thống nhất hơn.
 
-### 3. 错误文案统一
+### 3. Thống nhất văn bản lỗi
 
-新增并逐步接入：
+Mới thêm và từng bước kết nối:
 
 - `entity_not_found(...)`
 - `entity_already_exists(...)`
@@ -153,296 +153,296 @@ description: "Jellyfish 后端第一阶段发布说明，覆盖 route -> service
 - `not_belong_to(...)`
 - `relation_mismatch(...)`
 
-仍然保留少量带上下文信息的特例文案，用于排障。
+Vẫn giữ một số văn bản trường hợp đặc biệt có thông tin ngữ cảnh, dùng cho gỡ lỗi.
 
-### 4. `entities.py` 拆分
+### 4. Tách `entities.py`
 
-原本较重的 `entities.py` 已拆成：
+Tệp `entities.py` vốn nặng đã được tách thành:
 
 - `entity_crud.py`
 - `entity_images.py`
 - `entity_existence.py`
 - `entity_specs.py`
 - `entity_thumbnails.py`
-- `entities.py`（协调层）
+- `entities.py` (tầng điều phối)
 
-现在它不再是一个大而杂的巨型实现文件，而更像明确职责的协调层。
+Giờ nó không còn là tệp triển khai khổng lồ lớn mà lộn xộn, mà giống hơn một tầng điều phối có trách nhiệm rõ ràng.
 
-### 5. 前端接口调用方式收紧
+### 5. Thu chặt cách gọi giao diện phía trước
 
-这轮明确新增了一条开发约定：
+Đợt này bổ sung rõ một thỏa thuận phát triển:
 
-> **接口更新后，前端需要主动执行 `pnpm run openapi:update`。**
+> **sau khi cập nhật API, phía trước cần chủ động chạy `pnpm run openapi:update`.**
 
-同时，前端这批新逻辑已经改成优先使用：
+Đồng thời, lô logic mới ở phía trước đã đổi sang ưu tiên dùng:
 
 - OpenAPI generated client
 
-而不是再手写一层重复 service。
+chứ không phải tự viết thêm một tầng service trùng lặp.
 
-## 🧠 分镜状态闭环
+## 🧠 Vòng khép kín trạng thái phân cảnh
 
-这一轮最关键的结构性变化，是把 `shot.status` 真的接成了一条可维护的后端状态链。
+thay đổi cấu trúc quan trọng nhất của đợt này là thật sự nối `shot.status` thành một chuỗi trạng thái phía sau có thể bảo trì được.
 
-### `shot.status` 现在的正式语义
+### Nghĩa chính thức của `shot.status` hiện nay
 
 - `pending`
-  - 当前镜头还没有完成进入视频生成前的确认流程
+  - Phân cảnh hiện tại chưa hoàn thành luồng xác nhận trước khi vào tạo video
 - `ready`
-  - 当前镜头已经具备进入视频生成流程的前置条件
+  - Phân cảnh hiện tại đã có điều kiện tiền đề để vào luồng tạo video
 
-这里的 `ready` 已经明确收敛成：
+`ready` ở đây đã được thu gọn rõ ràng thành:
 
-> 当前分镜已经完成信息提取确认，因此可以进入视频生成流程。
+> Phân cảnh hiện tại đã hoàn tất xác nhận trích xuất thông tin, do đó có thể vào quy trình tạo video.
 
-需要特别注意：
+Đặc biệt lưu ý:
 
-> 运行中的生成任务已经不再写入 `shot.status`。
-> “生成中”应通过 `GenerationTask / GenerationTaskLink`
-> 动态聚合得到，而不是复用 `pending / ready` 这类静态状态。
+> Các tác vụ tạo đang chạy không còn ghi vào `shot.status` nữa.
+> “Đang tạo” nên thể hiện qua `GenerationTask / GenerationTaskLink`
+> Được tổng hợp động, không tái sử dụng các trạng thái tĩnh như `pending / ready`.
 
-### `ready` 的最小必要条件
+### Điều kiện cần tối thiểu của `ready`
 
-当前后端按下面这套规则统一计算：
+Phía sau hiện tính thống nhất theo bộ quy tắc sau:
 
 1. `skip_extraction = true`：
    - `ready`
-2. 从未提取过：
+2. Chưa bao giờ trích xuất:
    - `pending`
-3. 提取过，但当前镜头没有任何候选项：
+3. Đã trích xuất, nhưng phân cảnh hiện tại không có ứng viên nào:
    - `ready`
-4. 所有候选项都已处理完（`linked / ignored`）：
+4. Tất cả mục ứng viên đã được xử lý xong (`linked / ignored`):
    - `ready`
-5. 其他情况：
+5. Các trường hợp khác:
    - `pending`
 
-这里“候选项已处理完”是正式规则，不再由前端猜测。
+Ở đây “ứng viên đã xử lý xong” là quy tắc chính thức, không còn để frontend đoán nữa.
 
-### 两条合法进入 `ready` 的路径
+### Hai đường hợp lệ để vào `ready`
 
-当前镜头可以通过两条路径进入 `ready`：
+Phân cảnh hiện tại có thể vào `ready` qua hai đường dẫn:
 
 ```text
-路径 A：
-提取
-→ 候选全部处理完
+Đường A:
+Trích xuất
+→ Đã xử lý xong toàn bộ ứng viên
 → ready
 
-路径 B：
-明确无需提取
+Đường B:
+Rõ ràng không cần trích xuất
 → skip_extraction = true
 → ready
 ```
 
-### 候选项状态回写闭环
+### Vòng khép kín ghi ngược trạng thái ứng viên
 
-这次不是只增加了表结构，而是把真实业务动作接进来了。
+Lần này không chỉ thêm cấu trúc bảng, mà đã kết nối các hành động nghiệp vụ thật vào.
 
-当前已经完成这些自动回写：
+Hiện tại đã hoàn thành các ghi ngược tự động sau:
 
-- 提取完成后，同步写入 `shot_extracted_candidates`
-- 角色关联成功后，角色 candidate 自动回写 `linked`
-- 场景 / 道具 / 服装关联成功后，自动回写 `linked`
-- `ShotDetail.scene_id` 设置成功后，场景 candidate 自动回写 `linked`
-- 删除场景 / 道具 / 服装关联后，candidate 回退 `pending`
-- 角色同 index 被替换时，被顶掉的旧角色 candidate 回退 `pending`
-- `scene_id` 从 A 改到 B，或清空为 `None` 时，旧场景 candidate 回退 `pending`
+- Sau khi trích xuất xong, đồng bộ ghi vào `shot_extracted_candidates`
+- Sau khi liên kết nhân vật thành công, ứng viên nhân vật tự ghi ngược `linked`
+- Sau khi liên kết bối cảnh / đạo cụ / trang phục thành công, tự động ghi ngược `linked`
+- Sau khi đặt `ShotDetail.scene_id` thành công, ứng viên bối cảnh tự động ghi ngược `linked`
+- sau khi xóa liên kết bối cảnh / đạo cụ / trang phục, ứng viên lùi về `pending`
+- khi nhân vật cùng index bị thay thế, ứng viên nhân vật cũ bị thay sẽ lùi về `pending`
+- Khi `scene_id` đổi từ A sang B hoặc xóa thành `None`, ứng viên của bối cảnh cũ lùi về `pending`
 
-所以现在的正式流转已经是：
+Vì vậy quy trình chính thức hiện nay là:
 
 ```text
-提取
-→ candidate 入库
-→ 关联后 linked
-→ 忽略后 ignored
-→ 取消关联 / 替换 / 清空后回退 pending
-→ shot.status 自动重算
+Trích xuất
+→ ứng viên vào kho
+→ Sau khi liên kết, linked
+→ sau khi bỏ qua là ignored
+→ Hủy liên kết / thay thế / xóa sạch thì quay về pending
+→ shot.status tự động tính lại
 ```
 
-### “无对白”不再影响 `ready`
+### "Không có thoại" không còn ảnh hưởng đến `ready`
 
-这一轮还明确收掉了一个语义歧义：
+Đợt này còn xử lý dứt khoát một điểm mơ hồ ngữ nghĩa:
 
-> 无对白的镜头，不应因为“没有对白”而被判定为状态未完成。
+> Phân cảnh không có thoại không nên bị xác định là trạng thái chưa hoàn tất chỉ vì “không có thoại”.
 
-当前规则已经明确：
+Quy tắc hiện tại đã rõ:
 
-- 正式 `shot.status` 与对白数量无关
-- 无对白镜头，只要提取确认闭环完成，仍然可以进入 `ready`
+- `shot.status` chính thức không liên quan số lượng lời thoại
+- Phân cảnh không có thoại, chỉ cần khép kín vòng xác nhận trích xuất là vẫn có thể vào `ready`
 
-这条规则已经同时在：
+Quy tắc này hiện đang đồng thời nằm ở:
 
-- 后端 `shot_status` 计算
+- Tính `shot_status` ở phía sau
 - `ChapterStudio`
 - `ChapterShotEditPage`
 - `ChapterShotsPage`
 
-收口过一轮，并补了回归测试。
+Đã thu gọn một vòng và bổ sung kiểm thử hồi quy.
 
-## 🖥️ 前端协作方式变化
+## 🖥️ Thay đổi cách phối hợp phía trước
 
-这轮除了后端结构变化，前端与后端的协作方式也发生了很关键的调整。
+Đợt này ngoài thay đổi cấu trúc backend, cách phối hợp giữa frontend và backend cũng được điều chỉnh rất quan trọng.
 
-### 1. 分镜编辑页默认展示“已关联资产 + 待确认候选”的并集
+### 1. Trang chỉnh sửa phân cảnh mặc định hiển thị phần hội của “tài nguyên đã liên kết + ứng viên chờ xác nhận”
 
-`ChapterShotEditPage` 现在默认展示的是：
+`ChapterShotEditPage` hiện mặc định hiển thị:
 
-- 已关联资产
-- `shot_extracted_candidates` 中仍待处理的候选
+- Tài nguyên đã liên kết
+- Ứng viên vẫn chờ xử lý trong `shot_extracted_candidates`
 
-而不是：
+Thay vì:
 
-- 只有点了“提取资产”以后，才临时显示候选
+- Chỉ sau khi nhấn "Trích xuất tài nguyên" mới tạm thời hiển thị ứng viên
 
-### 2. 分镜编辑页已切到 `assets-overview`
+### 2. Trang chỉnh sửa phân cảnh đã chuyển sang `assets-overview`
 
-分镜编辑页现在已经改成优先使用：
+Trang chỉnh sửa phân cảnh hiện đã đổi sang ưu tiên dùng:
 
 - `GET /api/v1/studio/shots/{shot_id}/assets-overview`
 
-不再长期自己拼：
+Không tự ghép tay lâu dài nữa:
 
 - `linked-assets`
 - `extracted-candidates`
 - `extraction-draft`
 
-### 3. 分镜工作室职责收口
+### 3. Thu gọn trách nhiệm studio phân cảnh
 
-`ChapterStudio` 这轮也做了一个非常重要的职责调整：
+`ChapterStudio` đợt này cũng thực hiện một điều chỉnh trách nhiệm rất quan trọng:
 
-- **不再调用** `/api/v1/script-processing/extract`
-- 不再保留页面内提取缓存与批量预取
-- `画面描述 / 资产就绪度` 只负责展示：
+- **không gọi nữa** `/api/v1/script-processing/extract`
+- Không giữ nữa bộ đệm trích xuất trong trang và tải trước hàng loạt
+- `Mô tả khung hình / Độ sẵn sàng tài nguyên` chỉ phụ trách hiển thị:
   - `assets-overview`
   - `shot.status`
   - `skip_extraction`
-- 正式提取与确认动作统一收敛到：
+- Hành động trích xuất và xác nhận chính thức thống nhất gom về:
   - `ChapterShotEditPage`
 
-也就是说：
+Nói cách khác:
 
 ```text
 ChapterStudio
-→ 看状态
-→ 跳转分镜编辑确认
+→ Xem trạng thái
+→ Chuyển tới trang chỉnh sửa phân cảnh để xác nhận
 
 ChapterShotEditPage
-→ 提取
-→ 关联 / 忽略 / 新建
-→ 完成确认
+→ trích xuất
+→ liên kết / bỏ qua / tạo mới
+→ Xác nhận hoàn thành
 ```
 
-这条职责线现在已经清晰很多了。
+Đường ranh giới trách nhiệm này giờ đã rõ ràng hơn nhiều.
 
-### 4. 分镜页面职责继续收口
+### 4. Tiếp tục thu gọn trách nhiệm trang phân cảnh
 
-这轮后续前端又继续把两页边界往前收了一步：
+Sau vòng này, phía trước tiếp tục thu hẹp ranh giới hai trang thêm một bước:
 
 - `ChapterShotEditPage`
-  - 明确强化为“分镜准备 / 信息确认”主入口
-  - 负责提取、确认、修正，并把镜头推进到 `ready`
+  - Xác nhận và củng cố là lối vào chính cho "chuẩn bị phân cảnh / xác nhận thông tin"
+  - Chịu trách nhiệm trích xuất, xác nhận, chỉnh sửa, và đưa phân cảnh đến `ready`
 - `ChapterStudio`
-  - 明确强化为“章节生成工作台”
-  - 负责 `video-readiness`、关键帧、参考图、视频参数与视频生成
+  - Được củng cố rõ thành “bàn làm việc tạo chương”
+  - Chịu trách nhiệm `video-readiness`, khung hình chính, ảnh tham chiếu, tham số video và tạo video
 
-对应推荐主流程也更明确了：
+Tương ứng với quy trình chính được khuyến nghị cũng rõ ràng hơn:
 
 ```text
-分镜编辑页
-→ 提取与确认
+Trang chỉnh sửa phân cảnh
+→ Trích xuất và xác nhận
 → shot.status = ready
-→ 进入分镜工作室
-→ 查看 video-readiness
-→ 关键帧 / 参考图 / 视频参数
-→ 生成视频
+→ Vào studio phân cảnh
+→ Xem video-readiness
+→ Khung hình chính / Ảnh tham chiếu / Tham số video
+→ Tạo video
 ```
 
 ## 🐞 Fixed
 
-### 1. `ignore extracted candidate` 的 500
+### 1. 500 của `ignore extracted candidate`
 
-修复了：
+Đã sửa:
 
 - `PATCH /api/v1/studio/shots/extracted-candidates/{id}/ignore`
 
-返回时因为 `updated_at` 懒加载触发 `MissingGreenlet` 的问题。
+lỗi `MissingGreenlet` do lazy load `updated_at` gây ra khi trả về.
 
-修复方式是统一补：
+Cách sửa là thống nhất bổ sung:
 
 - `flush + refresh`
 
-确保 ORM 对象在异步序列化前状态完整。
+Đảm bảo đối tượng ORM ở trạng thái hoàn chỉnh trước khi chuỗi hóa không đồng bộ.
 
-### 2. `assets-overview` 的 Enum / str 兼容问题
+### 2. vấn đề tương thích Enum / str của `assets-overview`
 
-修复了新接口在某些 ORM 返回路径下：
+Sửa lỗi của giao diện mới trên một số đường trả về ORM:
 
 - `candidate_type`
 - `candidate_status`
 
-可能是 `str` 而不是 Enum，导致：
+Có thể là `str` chứ không phải Enum, gây ra:
 
 - `'str' object has no attribute 'value'`
 
-现在已经统一兼容：
+Giờ đây đã thống nhất tương thích:
 
 - Enum
 - str
 
-### 3. 重新提取后已关联项被错误重置
+### 3. Sau khi trích xuất lại, các mục đã liên kết bị đặt lại sai
 
-修复了这条关键问题：
+Đã sửa lỗi chủ chốt này:
 
-> 已 `linked` 的 candidate，在重新提取后被错误重置成 `pending`
+> ứng viên đã `linked`, sau khi trích xuất lại bị đặt lại nhầm thành `pending`
 
-现在重新提取时：
+Giờ đây khi trích xuất lại:
 
-- 同名同类、且此前已 `linked` 的候选
-- 会继续保持 `linked`
+- Ứng viên cùng tên cùng loại, trước đó đã `linked`
+- Sẽ tiếp tục giữ `linked`
 
-这也直接修掉了页面上那种：
+Điều này cũng trực tiếp sửa luôn tình trạng trên trang kiểu:
 
-- 关联 1 个
-- 忽略 4 个
-- 刷新后再提取
-- 再忽略 4 个
-- 却仍显示“还有 1 项待处理”
+- Liên kết 1 mục
+- Bỏ qua 4 mục
+- Trích xuất lại sau khi làm mới
+- Bỏ qua thêm 4 mục
+- mà vẫn hiển thị “còn 1 mục chờ xử lý”
 
-的错误统计问题。
+về thống kê lỗi.
 
-### 4. 前端旧请求覆盖新状态
+### 4. Yêu cầu cũ phía trước ghi đè trạng thái mới
 
-补了“latest request wins”保护，避免：
+Đã bổ sung cơ chế bảo vệ “lời yêu cầu mới nhất thắng” (latest request wins), tránh:
 
-- 旧 overview 请求晚返回
-- 把新状态覆盖掉
+- Yêu cầu overview cũ trả về muộn
+- Dùng trạng thái mới đè lên
 
-这层保护现在已经加在：
+Lớp bảo vệ này hiện đã được thêm ở:
 
 - `ChapterShotEditPage`
 - `ChapterStudio`
 
 ## 🧪 Testing
 
-这轮整理里，测试不是最后补的，而是跟着结构变化同步往前推的。
+Trong đợt dọn dẹp này, kiểm thử không được bổ sung sau cùng mà được đẩy lên cùng với sự thay đổi cấu trúc.
 
-### Service 层
+### Tầng Service
 
-已经覆盖到：
+Đã bao quát:
 
 - common helpers
-- llm 管理
-- 镜头角色关联
-- 剧本分镜写库
-- 文件服务
-- 视频生成
-- 分镜帧提示词任务
+- Quản lý llm
+- Liên kết nhân vật với phân cảnh
+- Ghi kịch bản phân cảnh vào CSDL
+- Dịch vụ tệp
+- Tạo video
+- Tác vụ prompt khung phân cảnh
 - `image_task_*`
 - `shot_status` / `shot_extracted_candidates`
 
-### API 层
+### Tầng API
 
-已经覆盖到：
+Đã bao quát:
 
 - `prompts`
 - `llm/providers`
@@ -456,88 +456,88 @@ ChapterShotEditPage
 - `tasks_images`
 - `entities`
 
-### 当前结果
+### Kết quả hiện tại
 
-这一轮阶段结束时，从仓库根目录执行：
+Khi kết thúc giai đoạn này, thực thi từ thư mục gốc của repository:
 
 ```bash
 uv run pytest backend/tests -q
 ```
 
-结果为：
+Kết quả là:
 
 ```text
 125 passed
 ```
 
-而且根目录与 `backend/` 两种入口都已经稳定，不再出现 async 用例误跳过的问题。
+và cả hai lối vào thư mục gốc lẫn `backend/` đều đã ổn định, không còn vấn đề test async bị bỏ qua nhầm.
 
 ## 🗃️ Migration Notes
 
-这一轮涉及数据库结构变化，必须先执行迁移 SQL：
+Lượt này có thay đổi cấu trúc cơ sở dữ liệu, phải chạy SQL di trú trước:
 
 - `backend/sql/002-add-shot-extracted-candidates.sql`
 
-特别需要注意：
+Đặc biệt cần lưu ý:
 
-- 代码已经依赖：
+- Mã đã phụ thuộc vào:
   - `shots.skip_extraction`
   - `shots.last_extracted_at`
   - `shot_extracted_candidates`
-- 如果数据库没有先迁移，运行时会报：
+- Nếu không di trú cơ sở dữ liệu trước, lúc chạy sẽ báo lỗi:
   - `Unknown column 'shots.skip_extraction'`
 
-所以这轮上线顺序应该是：
+Vì vậy, thứ tự đưa lên môi trường thật trong vòng này nên là:
 
-1. 执行数据库迁移
-2. 部署后端代码
-3. 更新前端 generated client
+1. Thực thi di trú cơ sở dữ liệu
+2. Triển khai mã phía sau
+3. Cập nhật generated client phía frontend
 
 ## 👩‍💻 Developer Notes
 
-这一轮新增了一条明确约定：
+Đợt này bổ sung một thỏa thuận rõ ràng:
 
-> **后端接口有更新时，前端需要主动执行 `pnpm run openapi:update`。**
+> **Khi giao diện phía sau có cập nhật, phía trước cần chủ động thực thi `pnpm run openapi:update`.**
 
-同时也建议遵守这两条：
+Đồng thời khuyến nghị tuân thủ hai điều này:
 
-- 前端优先使用 generated client
-- 不再额外手写一层重复 service 去包 OpenAPI 已有接口
+- Frontend ưu tiên dùng generated client
+- Không viết thêm tầng service trùng lặp thủ công để bọc các interface OpenAPI đã có
 
-这一约定已经在本轮新接口接入中实际执行：
+Quy ước này đã được thực thi trong việc kết nối giao diện mới của vòng này:
 
 - `assets-overview`
 - `skip_extraction`
-- extracted-candidates 相关接口
+- Các interface liên quan đến extracted-candidates
 
-都已经按这个约定同步过一轮。
+Đều đã đồng bộ một vòng theo thỏa thuận này.
 
 ## ⚠️ Known Gaps
 
-这一轮不是终局，仍然保留了一些刻意未完全收口的点：
+Lượt này không phải chặng cuối, vẫn còn giữ một số điểm cố ý chưa khép hoàn toàn:
 
-- `dependencies.py` 里仍有部分手写 `HTTPException`
-- 少量错误文案仍保留上下文特例
-- 个别 route / service 命名还可继续统一
-- `entities.py` 虽然已拆分，但仍属于相对复杂的通用实体服务
+- `dependencies.py` vẫn có một số `HTTPException` tự viết
+- Một ít văn bản lỗi vẫn giữ ngoại lệ ngữ cảnh
+- Việc đặt tên một số route / service có thể tiếp tục thống nhất
+- `entities.py` tuy đã tách ra nhưng vẫn thuộc dịch vụ thực thể dùng chung tương đối phức tạp
 
-这些已经不是结构阻塞项，更像下一轮工程化清理对象。
+Những thứ này không còn là điểm chặn cấu trúc nữa, giống hơn là đối tượng dọn dẹp kỹ thuật hóa của lượt tới.
 
-## ✅ 发布结论
+## ✅ Kết luận phát hành
 
-如果把这一轮压缩成一句话，它真正完成的是：
+Nếu nén vòng này thành một câu, điều thực sự hoàn thành là:
 
-- 后端分层更清楚了
-- 接口行为更统一了
-- 分镜状态流转正式闭环了
-- 前端不再长期猜资产状态了
-- 测试和迁移护栏也补起来了
+- Phân tầng phía sau rõ ràng hơn
+- Hành vi giao diện thống nhất hơn
+- Chuyển trạng thái phân cảnh đã chính thức khép kín
+- Phía trước không phải đoán lâu dài trạng thái tài nguyên nữa
+- Hàng rào kiểm thử và di trú cũng đã được bổ sung
 
-这意味着后续不管继续做：
+Điều này có nghĩa là sau này dù tiếp tục làm:
 
-- 交互优化
-- 提示词优化
-- 剪辑能力补强
-- 数据模型标准化
+- Tối ưu tương tác
+- Tối ưu prompt
+- Củng cố khả năng dựng phim
+- Chuẩn hóa mô hình dữ liệu
 
-都已经有了一个更稳的后端基础。
+Đều đã có nền tảng phía sau vững hơn.

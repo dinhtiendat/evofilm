@@ -19,7 +19,7 @@ export const useAppStore = create<AppState>((set) => ({
   siderCollapsed: false,
   user: {
     name: 'Admin',
-    role: '系统管理员',
+    role: 'Quản trị viên hệ thống',
   },
   language: 'zh-CN',
   setUser: (user) =>

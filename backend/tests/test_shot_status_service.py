@@ -68,13 +68,13 @@ async def _build_session() -> tuple[AsyncSession, object]:
 async def _seed_graph(db: AsyncSession) -> Shot:
     project = Project(
         id="project-1",
-        name="项目一",
+        name="Dự án 1",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
     )
-    chapter = Chapter(id="chapter-1", project_id="project-1", index=1, title="第一章")
-    shot = Shot(id="shot-1", chapter_id="chapter-1", index=1, title="镜头一")
+    chapter = Chapter(id="chapter-1", project_id="project-1", index=1, title="Chương một")
+    shot = Shot(id="shot-1", chapter_id="chapter-1", index=1, title="Phân cảnh một")
     db.add_all([project, chapter, shot])
     await db.flush()
     return shot
@@ -133,8 +133,8 @@ async def test_replace_candidates_marks_pending_until_all_resolved() -> None:
             db,
             shot_id=shot.id,
             candidates=[
-                {"candidate_type": "character", "candidate_name": "仙女A"},
-                {"candidate_type": "scene", "candidate_name": "河边"},
+                {"candidate_type": "character", "candidate_name": "Tiên nữ A"},
+                {"candidate_type": "scene", "candidate_name": "Bờ sông"},
             ],
         )
 
@@ -167,7 +167,7 @@ async def test_shot_ready_does_not_depend_on_dialog_lines() -> None:
         rows = await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "scene", "candidate_name": "河边"}],
+            candidates=[{"candidate_type": "scene", "candidate_name": "Bờ sông"}],
         )
 
         await ignore_shot_extracted_candidate(db, candidate_id=rows[0].id)
@@ -201,7 +201,7 @@ async def test_dialogue_candidate_blocks_ready_until_accepted() -> None:
         rows = await replace_shot_extracted_dialogue_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"index": 1, "text": "你是谁？", "speaker_name": "男子"}],
+            candidates=[{"index": 1, "text": "Anh là ai?", "speaker_name": "Người đàn ông"}],
         )
 
         assert len(rows) == 1
@@ -218,7 +218,7 @@ async def test_dialogue_candidate_blocks_ready_until_accepted() -> None:
 
         assert row.candidate_status == ShotDialogueCandidateStatus.accepted
         assert row.linked_dialog_line_id == dialog_lines[0].id
-        assert dialog_lines[0].text == "你是谁？"
+        assert dialog_lines[0].text == "Anh là ai?"
         assert shot.status == ShotStatus.ready
     await engine.dispose()
 
@@ -236,19 +236,19 @@ async def test_derive_video_preview_uses_prompt_pack() -> None:
                     angle="EYE_LEVEL",
                     movement="STATIC",
                     duration=3,
-                    atmosphere="温暖但紧张",
+                    atmosphere="Ấm áp nhưng căng thẳng",
                 ),
                 ShotDialogLine(
                     shot_detail_id=shot.id,
                     index=1,
-                    text="你终于来了。",
-                    speaker_name="男子",
+                    text="Cuối cùng bạn cũng đến.",
+                    speaker_name="Người đàn ông",
                 ),
                 PromptTemplate(
                     id="video-template-1",
                     category=PromptCategory.video_prompt,
-                    name="视频默认模板",
-                    content="标题：{{ shot_title }}\n对白：{{ dialogue_summary }}\n风格：{{ visual_style }}",
+                    name="Mẫu mặc định video",
+                    content="Tiêu đề: {{ shot_title }}\nThoại: {{ dialogue_summary }}\nPhong cách: {{ visual_style }}",
                     preview="",
                     variables=[],
                     is_default=True,
@@ -270,8 +270,8 @@ async def test_derive_video_preview_uses_prompt_pack() -> None:
         )
 
         assert result.template_id == "video-template-1"
-        assert "镜头一" in result.rendered_prompt
-        assert "男子：你终于来了。" in result.rendered_prompt
+        assert "Phân cảnh một" in result.rendered_prompt
+        assert "Cuối cùng bạn cũng đến." in result.rendered_prompt
         assert "现实" in result.rendered_prompt
         assert result.pack.camera.duration == 3
     await engine.dispose()
@@ -285,7 +285,7 @@ async def test_dialogue_candidate_ignore_allows_ready() -> None:
         rows = await replace_shot_extracted_dialogue_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"index": 1, "text": "画外音", "line_mode": "VOICE_OVER"}],
+            candidates=[{"index": 1, "text": "Giọng ngoại cảnh", "line_mode": "VOICE_OVER"}],
         )
 
         assert shot.status == ShotStatus.pending
@@ -304,12 +304,12 @@ async def test_ignore_candidate_refreshes_updated_at_for_safe_response_serializa
         rows = await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "prop", "candidate_name": "银斧头"}],
+            candidates=[{"candidate_type": "prop", "candidate_name": "Rìu bạc"}],
         )
 
         row = await ignore_shot_extracted_candidate(db, candidate_id=rows[0].id)
 
-        # 这里直接读取 updated_at，确保不会在响应序列化阶段触发异步懒加载。
+        # Ở đây đọc trực tiếp updated_at, đảm bảo không kích hoạt lazy-load không đồng bộ ở giai đoạn serialization phản ứng.
         assert row.updated_at is not None
         assert row.candidate_status == ShotCandidateStatus.ignored
     await engine.dispose()
@@ -323,17 +323,17 @@ async def test_replace_candidates_replaces_old_rows() -> None:
         await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "character", "candidate_name": "旧角色"}],
+            candidates=[{"candidate_type": "character", "candidate_name": "Nhân vật cũ"}],
         )
         rows = await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "prop", "candidate_name": "新道具"}],
+            candidates=[{"candidate_type": "prop", "candidate_name": "Đạo cụ mới"}],
         )
 
         assert len(rows) == 1
         assert rows[0].candidate_type == ShotCandidateType.prop
-        assert rows[0].candidate_name == "新道具"
+        assert rows[0].candidate_name == "Đạo cụ mới"
     await engine.dispose()
 
 
@@ -346,8 +346,8 @@ async def test_replace_candidates_preserves_existing_linked_status_by_same_name(
             db,
             shot_id=shot.id,
             candidates=[
-                {"candidate_type": "character", "candidate_name": "仙女A"},
-                {"candidate_type": "scene", "candidate_name": "河边"},
+                {"candidate_type": "character", "candidate_name": "Tiên nữ A"},
+                {"candidate_type": "scene", "candidate_name": "Bờ sông"},
             ],
         )
 
@@ -359,15 +359,15 @@ async def test_replace_candidates_preserves_existing_linked_status_by_same_name(
             db,
             shot_id=shot.id,
             candidates=[
-                {"candidate_type": "character", "candidate_name": "仙女A"},
-                {"candidate_type": "scene", "candidate_name": "河边"},
+                {"candidate_type": "character", "candidate_name": "Tiên nữ A"},
+                {"candidate_type": "scene", "candidate_name": "Bờ sông"},
             ],
         )
         status_by_name = {row.candidate_name: row.candidate_status for row in new_rows}
         overview = await get_shot_assets_overview(db, shot_id=shot.id)
 
-        assert status_by_name["仙女A"] == ShotCandidateStatus.linked
-        assert status_by_name["河边"] == ShotCandidateStatus.pending
+        assert status_by_name["Tiên nữ A"] == ShotCandidateStatus.linked
+        assert status_by_name["Bờ sông"] == ShotCandidateStatus.pending
         assert shot.status == ShotStatus.pending
         assert overview.summary.pending_count == 1
 
@@ -387,7 +387,7 @@ async def test_sync_from_extraction_draft_marks_empty_extraction_as_ready() -> N
         draft = StudioScriptExtractionDraft(
             project_id="project-1",
             chapter_id="chapter-1",
-            script_text="测试文本",
+            script_text="Văn bản thử nghiệm",
             characters=[],
             scenes=[],
             props=[],
@@ -395,8 +395,8 @@ async def test_sync_from_extraction_draft_marks_empty_extraction_as_ready() -> N
             shots=[
                 StudioShotDraft(
                     index=1,
-                    title="镜头一",
-                    script_excerpt="摘录",
+                    title="Phân cảnh 1",
+                    script_excerpt="Trích đoạn",
                     scene_name=None,
                     character_names=[],
                     prop_names=[],
@@ -423,12 +423,12 @@ async def test_sync_from_extraction_draft_persists_candidate_description_in_payl
         draft = StudioScriptExtractionDraft(
             project_id="project-1",
             chapter_id="chapter-1",
-            script_text="测试文本",
+            script_text="Văn bản thử nghiệm",
             characters=[],
             scenes=[
                 {
-                    "name": "河边",
-                    "description": "一条雾气弥漫的河岸，岸边有湿润石块",
+                    "name": "Bờ sông",
+                    "description": "Bờ sông phủ sương mù, bên bờ có đá ướt",
                     "thumbnail": "/api/v1/studio/files/file-1/download",
                     "file_id": "file-1",
                 }
@@ -438,9 +438,9 @@ async def test_sync_from_extraction_draft_persists_candidate_description_in_payl
             shots=[
                 StudioShotDraft(
                     index=1,
-                    title="镜头一",
-                    script_excerpt="摘录",
-                    scene_name="河边",
+                    title="Phân cảnh 1",
+                    script_excerpt="Trích đoạn",
+                    scene_name="Bờ sông",
                     character_names=[],
                     prop_names=[],
                     costume_names=[],
@@ -455,8 +455,8 @@ async def test_sync_from_extraction_draft_persists_candidate_description_in_payl
         rows = await list_shot_extracted_candidates(db, shot_id=shot.id)
 
         assert len(rows) == 1
-        assert rows[0].candidate_name == "河边"
-        assert rows[0].payload["description"] == "一条雾气弥漫的河岸，岸边有湿润石块"
+        assert rows[0].candidate_name == "Bờ sông"
+        assert rows[0].payload["description"] == "Bờ sông phủ sương mù, bên bờ có đá ướt"
         assert rows[0].payload["thumbnail"] == "/api/v1/studio/files/file-1/download"
         assert rows[0].payload["file_id"] == "file-1"
     await engine.dispose()
@@ -470,7 +470,7 @@ async def test_sync_from_extraction_draft_persists_dialogue_candidates() -> None
         draft = StudioScriptExtractionDraft(
             project_id="project-1",
             chapter_id="chapter-1",
-            script_text="测试文本",
+            script_text="Văn bản thử nghiệm",
             characters=[],
             scenes=[],
             props=[],
@@ -478,8 +478,8 @@ async def test_sync_from_extraction_draft_persists_dialogue_candidates() -> None
             shots=[
                 StudioShotDraft(
                     index=1,
-                    title="镜头一",
-                    script_excerpt="摘录",
+                    title="Phân cảnh 1",
+                    script_excerpt="Trích đoạn",
                     scene_name=None,
                     character_names=[],
                     prop_names=[],
@@ -487,9 +487,9 @@ async def test_sync_from_extraction_draft_persists_dialogue_candidates() -> None
                     dialogue_lines=[
                         {
                             "index": 1,
-                            "text": "你终于来了。",
+                            "text": "Cuối cùng bạn cũng đến.",
                             "line_mode": "DIALOGUE",
-                            "speaker_name": "男子",
+                            "speaker_name": "Người đàn ông",
                         }
                     ],
                     actions=[],
@@ -502,7 +502,7 @@ async def test_sync_from_extraction_draft_persists_dialogue_candidates() -> None
         rows = await list_shot_extracted_dialogue_candidates(db, shot_id=shot.id)
 
         assert len(rows) == 1
-        assert rows[0].text == "你终于来了。"
+        assert rows[0].text == "Cuối cùng bạn cũng đến."
         assert rows[0].candidate_status == ShotDialogueCandidateStatus.pending
         assert shot.status == ShotStatus.pending
     await engine.dispose()
@@ -516,7 +516,7 @@ async def test_mark_shot_generating_keeps_static_ready_status() -> None:
         await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "character", "candidate_name": "仙女A"}],
+            candidates=[{"candidate_type": "character", "candidate_name": "Tiên nữ A"}],
         )
         candidate = await db.get(ShotExtractedCandidate, 1)
         assert candidate is not None
@@ -548,7 +548,7 @@ async def test_delete_dialog_line_marks_linked_dialogue_candidate_back_to_pendin
         rows = await replace_shot_extracted_dialogue_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"index": 1, "text": "你终于来了。", "speaker_name": "男子"}],
+            candidates=[{"index": 1, "text": "Cuối cùng anh cũng đến.", "speaker_name": "Người đàn ông"}],
         )
         accepted = await accept_shot_extracted_dialogue_candidate(
             db,
@@ -576,7 +576,7 @@ async def test_create_project_asset_link_marks_matching_prop_candidate_as_linked
         db.add(
             Prop(
                 id="prop-1",
-                name="银斧头",
+                name="Rìu bạc",
                 description="",
                 style=ProjectStyle.real_people_city,
                 view_count=1,
@@ -587,7 +587,7 @@ async def test_create_project_asset_link_marks_matching_prop_candidate_as_linked
         await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "prop", "candidate_name": "银斧头"}],
+            candidates=[{"candidate_type": "prop", "candidate_name": "Rìu bạc"}],
         )
 
         await create_project_asset_link(
@@ -616,7 +616,7 @@ async def test_delete_project_asset_link_marks_matching_prop_candidate_back_to_p
         db.add(
             Prop(
                 id="prop-1",
-                name="银斧头",
+                name="Rìu bạc",
                 description="",
                 style=ProjectStyle.real_people_city,
                 view_count=1,
@@ -627,7 +627,7 @@ async def test_delete_project_asset_link_marks_matching_prop_candidate_back_to_p
         await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "prop", "candidate_name": "银斧头"}],
+            candidates=[{"candidate_type": "prop", "candidate_name": "Rìu bạc"}],
         )
 
         link = await create_project_asset_link(
@@ -677,7 +677,7 @@ async def test_update_shot_detail_scene_marks_matching_scene_candidate_as_linked
         db.add(
             Scene(
                 id="scene-1",
-                name="河边",
+                name="Bờ sông",
                 description="",
                 style=ProjectStyle.real_people_city,
                 view_count=1,
@@ -689,7 +689,7 @@ async def test_update_shot_detail_scene_marks_matching_scene_candidate_as_linked
         await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "scene", "candidate_name": "河边"}],
+            candidates=[{"candidate_type": "scene", "candidate_name": "Bờ sông"}],
         )
 
         await update_shot_detail(
@@ -732,7 +732,7 @@ async def test_update_shot_detail_scene_change_marks_old_candidate_back_to_pendi
             [
                 Scene(
                     id="scene-1",
-                    name="河边",
+                    name="Bờ sông",
                     description="",
                     style=ProjectStyle.real_people_city,
                     view_count=1,
@@ -741,7 +741,7 @@ async def test_update_shot_detail_scene_change_marks_old_candidate_back_to_pendi
                 ),
                 Scene(
                     id="scene-2",
-                    name="山洞",
+                    name="Hang động",
                     description="",
                     style=ProjectStyle.real_people_city,
                     view_count=1,
@@ -755,8 +755,8 @@ async def test_update_shot_detail_scene_change_marks_old_candidate_back_to_pendi
             db,
             shot_id=shot.id,
             candidates=[
-                {"candidate_type": "scene", "candidate_name": "河边"},
-                {"candidate_type": "scene", "candidate_name": "山洞"},
+                {"candidate_type": "scene", "candidate_name": "Bờ sông"},
+                {"candidate_type": "scene", "candidate_name": "Hang động"},
             ],
         )
 
@@ -765,10 +765,10 @@ async def test_update_shot_detail_scene_change_marks_old_candidate_back_to_pendi
 
         rows = await list_shot_extracted_candidates(db, shot_id=shot.id)
         by_name = {row.candidate_name: row for row in rows}
-        assert by_name["河边"].candidate_status == ShotCandidateStatus.pending
-        assert by_name["河边"].linked_entity_id is None
-        assert by_name["山洞"].candidate_status == ShotCandidateStatus.linked
-        assert by_name["山洞"].linked_entity_id == "scene-2"
+        assert by_name["Bờ sông"].candidate_status == ShotCandidateStatus.pending
+        assert by_name["Bờ sông"].linked_entity_id is None
+        assert by_name["Hang động"].candidate_status == ShotCandidateStatus.linked
+        assert by_name["Hang động"].linked_entity_id == "scene-2"
     await engine.dispose()
 
 
@@ -798,7 +798,7 @@ async def test_update_shot_detail_scene_clear_marks_old_candidate_back_to_pendin
         db.add(
             Scene(
                 id="scene-1",
-                name="河边",
+                name="Bờ sông",
                 description="",
                 style=ProjectStyle.real_people_city,
                 view_count=1,
@@ -810,7 +810,7 @@ async def test_update_shot_detail_scene_clear_marks_old_candidate_back_to_pendin
         await replace_shot_extracted_candidates(
             db,
             shot_id=shot.id,
-            candidates=[{"candidate_type": "scene", "candidate_name": "河边"}],
+            candidates=[{"candidate_type": "scene", "candidate_name": "Bờ sông"}],
         )
 
         await update_shot_detail(db, shot_id=shot.id, body=ShotDetailUpdate(scene_id="scene-1"))

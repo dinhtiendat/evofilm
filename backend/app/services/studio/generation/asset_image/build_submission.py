@@ -14,7 +14,7 @@ from app.services.studio.image_task_validation import (
 
 
 class AssetImageSubmissionPayload(GenerationSubmissionPayload):
-    """资产图片生成最终提交载荷。"""
+    """Tải cuối cùng gửi khi tạo ảnh tài nguyên."""
 
     kind: str = "asset_image"
     relation_type: str = Field(...)

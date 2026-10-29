@@ -1,11 +1,11 @@
 -- 2026-04-03
--- 为分镜提取确认流程新增中间状态结构：
+-- Thêm cấu trúc trạng thái trung gian cho luồng xác nhận trích xuất phân cảnh:
 -- 1. shots.skip_extraction
 -- 2. shots.last_extracted_at
--- 3. shot_extracted_candidates 表
--- 说明：
--- - 在 fresh init 场景下，init_db.py 可能已经创建过这些结构
--- - 这里必须允许重复执行，避免 compose 第二次启动失败
+-- 3. Bảng shot_extracted_candidates
+-- Giải thích:
+-- - trong kịch bản fresh init, init_db.py có thể đã tạo các cấu trúc này
+-- - Chỗ này phải cho phép thực thi lặp lại, tránh compose khởi động lần hai bị lỗi
 
 BEGIN;
 

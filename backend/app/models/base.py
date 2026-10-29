@@ -1,4 +1,4 @@
-"""通用模型混入。"""
+"""Trộn (mixin) mô hình dùng chung.。"""
 
 from datetime import datetime
 
@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 
 class TimestampMixin:
-    """created_at / updated_at 时间戳混入。"""
+    """created_at / updated_at Lẫn lộn timestamp created_at / updated_at.。"""
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

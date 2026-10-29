@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-"""资产与镜头相关的图片生成任务 API。
+"""API tác vụ tạo ảnh liên quan tài nguyên và phân cảnh.
 
-通过 TaskManager 调用 `ImageGenerationTask`，并使用 `GenerationTaskLink`
-将任务与上层业务实体（演员形象/道具/场景/服装/角色/镜头分镜帧）建立关联。
+Gọi `ImageGenerationTask` thông qua TaskManager và sử dụng `GenerationTaskLink`
+Thiết lập liên kết giữa tác vụ và thực thể nghiệp vụ cấp trên (hình tượng diễn viên/đạo cụ/bối cảnh/trang phục/nhân vật/khung hình phân cảnh).
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -51,88 +51,88 @@ router = APIRouter()
 
 
 class StudioImageTaskRequest(BaseModel):
-    """Studio 专用图片任务请求体：可选模型 ID，不传则用默认图片模型；供应商由模型反查。
+    """thân yêu cầu tác vụ ảnh dùng riêng cho Studio:ID mô hình tùy chọn, không truyền thì dùng mô hình ảnh mặc định；provider được tra ngược từ mô hình.
 
-    image_id 表示具体的图片模型 ID，例如：
-    - 演员图片：ActorImage.id
-    - 场景图片：SceneImage.id
-    - 道具图片：PropImage.id
-    - 服装图片：CostumeImage.id
-    - 角色图片：CharacterImage.id
-    - 分镜帧图片：ShotFrameImage.id
+    image_id là ID mô hình ảnh cụ thể, ví dụ:
+    - - Ảnh diễn viên: ActorImage.id：ActorImage.id
+    - - Ảnh bối cảnh: SceneImage.id：SceneImage.id
+    - - Ảnh đạo cụ: PropImage.id：PropImage.id
+    - - Ảnh trang phục: CostumeImage.id：CostumeImage.id
+    - - Ảnh nhân vật: CharacterImage.id：CharacterImage.id
+    - - Ảnh khung phân cảnh: ShotFrameImage.id：ShotFrameImage.id
     """
 
     model_id: str | None = Field(
         None,
-        description="可选模型 ID（models.id）；不传则使用 ModelSettings.default_image_model_id；Provider 由模型关联反查",
+        description="Mô hình tùy chọn ID(models.id); nếu không truyền sẽ dùng ModelSettings.default_image_model_id;Provider tra ngược từ liên kết của mô hình",
     )
     image_id: int | None = Field(
         None,
-        description="图片模型 ID，如 ActorImage.id / SceneImage.id / PropImage.id 等；必须与路径主体 ID 匹配",
+        description="ID mô hình ảnh, như ActorImage.id / SceneImage.id / PropImage.id...; phải khớp với ID chủ thể của đường dẫn",
     )
     prompt: str | None = Field(
         None,
-        description="提示词（由前端传入）。创建任务接口必填；render-prompt 接口可不传",
+        description="Prompt (do phía trước truyền). Giao diện tạo tác vụ bắt buộc phải truyền; giao diện render-prompt có thể không truyền",
     )
     images: list[str] = Field(
         default_factory=list,
-        description="参考图 file_id 列表（可多张，顺序有效）。创建任务接口会基于 file_id 从数据中解析为参考图",
+        description="Danh sách file_id của ảnh tham chiếu (nhiều ảnh, thứ tự có hiệu lực). API tạo tác vụ sẽ dựa vào file_id để phân tích thành ảnh tham chiếu từ dữ liệu",
     )
 
 
 class ShotFrameImageTaskRequest(BaseModel):
-    """镜头分镜帧图片生成请求体：只根据 `shot_id + frame_type` 定位 ShotFrameImage。
+    """Thân yêu cầu tạo ảnh khung hình phân cảnh: chỉ định vị ShotFrameImage dựa trên `shot_id + frame_type`.
 
-    用于替代旧接口中通过 `image_id` 直接传入 ShotFrameImage.id 的方式。
+    Dùng để thay thế cách truyền trực tiếp ShotFrameImage.id qua `image_id` trong giao diện cũ.
     """
 
     model_id: str | None = Field(
         None,
-        description="可选模型 ID（models.id）；不传则使用 ModelSettings.default_image_model_id；Provider 由模型关联反查",
+        description="Mô hình tùy chọn ID(models.id); nếu không truyền sẽ dùng ModelSettings.default_image_model_id;Provider tra ngược từ liên kết của mô hình",
     )
     frame_type: ShotFrameType = Field(..., description="first | last | key")
     prompt: str = Field(
         ...,
-        description="提示词（由前端传入，创建任务接口必填）。",
+        description="Prompt (do phía trước truyền vào, bắt buộc với interface tạo tác vụ).",
         min_length=1,
     )
     images: list[ShotLinkedAssetItem] = Field(
         default_factory=list,
         description=(
-            "参考资产条目列表（可多张，顺序有效）。后端会使用 item.file_id 作为参考图；"
-            "无效条目会被跳过。"
+            "danh sách mục tài nguyên tham chiếu (nhiều ảnh, thứ tự có hiệu lực). Backend sẽ dùng item.file_id làm ảnh tham chiếu；"
+            "Mục không hợp lệ sẽ bị bỏ qua.。"
         ),
     )
     target_ratio: ImageTargetRatio = Field(
         ...,
-        description="目标视频画幅比例；关键帧将按该画幅生成，以提升后续视频参考稳定性",
+        description="tỷ lệ khung hình video đích；khung hình chính sẽ sinh theo khung hình này để tăng tính ổn định tham chiếu video sau",
     )
     resolution_profile: ImageResolutionProfile | None = Field(
         "standard",
-        description="关键帧输出分辨率档位，默认 standard",
+        description="Hạng độ phân giải đầu ra khung hình chính, mặc định standard",
     )
 
 
 class ShotFramePromptRenderRequest(BaseModel):
-    """镜头分镜帧提示词渲染请求体。"""
+    """Body yêu cầu render prompt khung hình phân cảnh.。"""
 
     frame_type: ShotFrameType = Field(..., description="first | last | key")
     prompt: str = Field(
         ...,
-        description="原始基础提示词。渲染接口要求显式传入，用于生成最终提示词。",
+        description="prompt nền gốc. API render yêu cầu truyền rõ, dùng để sinh prompt cuối.",
         min_length=1,
     )
     images: list[ShotLinkedAssetItem] = Field(
         default_factory=list,
-        description="参考资产条目列表（可多张，顺序有效）。后端会使用 item.file_id 作为参考图；无效条目会被跳过。",
+        description="Danh sách mục tài nguyên tham chiếu (nhiều mục, thứ tự có hiệu lực). Backend sẽ dùng item.file_id làm ảnh tham chiếu; các mục không hợp lệ sẽ bị bỏ qua.",
     )
 
 
 class RenderedPromptResponse(BaseModel):
-    prompt: str = Field(..., description="渲染后的提示词（已套用模板与变量替换）")
+    prompt: str = Field(..., description="Prompt sau kết xuất (đã áp mẫu và thay thế biến)")
     images: list[str] = Field(
         default_factory=list,
-        description="参考图 file_id 列表（自动选择；顺序有效）",
+        description="Danh sách file_id ảnh tham chiếu (tự chọn; thứ tự có hiệu lực)",
     )
 
 
@@ -142,7 +142,7 @@ async def _load_frame_render_guidance(
     shot_id: str,
     frame_type: ShotFrameType,
 ) -> dict[str, str]:
-    """读取最终图片提示词需要保留的高优先级镜头约束。"""
+    """Đọc các ràng buộc phân cảnh ưu tiên cao cần giữ lại cho prompt hình ảnh cuối cùng.。"""
     try:
         run_args = await _build_shot_frame_prompt_run_args_service(
             db,
@@ -173,14 +173,14 @@ async def _load_frame_render_guidance(
     "/actors/{actor_id}/image-tasks",
     response_model=ApiResponse[TaskCreated],
     status_code=status.HTTP_201_CREATED,
-    summary="演员图片生成（任务版）",
+    summary="Tạo ảnh diễn viên (phiên bản tác vụ)",
 )
 async def create_actor_image_generation_task(
     actor_id: str,
     body: StudioImageTaskRequest,
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[TaskCreated]:
-    """为指定演员创建图片生成任务，并通过 `GenerationTaskLink` 关联。"""
+    """tạo tác vụ sinh ảnh cho diễn viên được chỉ định, và liên kết qua `GenerationTaskLink`."""
     prompt = (body.prompt or "").strip()
     if not prompt:
         raise HTTPException(
@@ -210,7 +210,7 @@ async def create_actor_image_generation_task(
     "/actors/{actor_id}/render-prompt",
     response_model=ApiResponse[RenderedPromptResponse],
     status_code=status.HTTP_200_OK,
-    summary="演员图片提示词渲染",
+    summary="summary=Render prompt ảnh diễn viên,",
 )
 async def render_actor_image_prompt(
     actor_id: str,
@@ -231,7 +231,7 @@ async def render_actor_image_prompt(
     "/assets/{asset_type}/{asset_id}/image-tasks",
     response_model=ApiResponse[TaskCreated],
     status_code=status.HTTP_201_CREATED,
-    summary="道具/场景/服装图片生成（任务版）",
+    summary="Tạo hình ảnh đạo cụ/bối cảnh/trang phục (phiên bản tác vụ)",
 )
 async def create_asset_image_generation_task(
     asset_type: str,
@@ -239,11 +239,11 @@ async def create_asset_image_generation_task(
     body: StudioImageTaskRequest,
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[TaskCreated]:
-    """为道具/场景/服装创建图片生成任务。
+    """Tạo tác vụ tạo ảnh cho đạo cụ/bối cảnh/trang phục.
 
     - asset_type: prop / scene / costume
-    - path 参数 asset_id 为对应资产 ID
-    - body.image_id 必须为该资产下对应图片表记录的 ID（PropImage/SceneImage/CostumeImage）
+    - Tham số path asset_id là ID tài nguyên tương ứng
+    - body.image_id - body.image_id phải là ID của bản ghi tương ứng trong bảng hình ảnh dưới tài nguyên (PropImage/SceneImage/CostumeImage) ID（PropImage/SceneImage/CostumeImage）
     """
     prompt = (body.prompt or "").strip()
     if not prompt:
@@ -276,7 +276,7 @@ async def create_asset_image_generation_task(
     "/assets/{asset_type}/{asset_id}/render-prompt",
     response_model=ApiResponse[RenderedPromptResponse],
     status_code=status.HTTP_200_OK,
-    summary="道具/场景/服装图片提示词渲染",
+    summary="Kết xuất prompt ảnh đạo cụ/bối cảnh/trang phục",
 )
 async def render_asset_image_prompt(
     asset_type: str,
@@ -299,17 +299,17 @@ async def render_asset_image_prompt(
     "/characters/{character_id}/image-tasks",
     response_model=ApiResponse[TaskCreated],
     status_code=status.HTTP_201_CREATED,
-    summary="角色图片生成（任务版）",
+    summary="Tạo ảnh nhân vật (phiên bản tác vụ)",
 )
 async def create_character_image_generation_task(
     character_id: str,
     body: StudioImageTaskRequest,
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[TaskCreated]:
-    """为角色创建图片生成任务（对应 CharacterImage 业务）。
+    """Tạo tác vụ tạo ảnh cho nhân vật (tương ứng nghiệp vụ CharacterImage)."
 
-    - path 参数 character_id 为 Character.id
-    - body.image_id 必须为该角色下的 CharacterImage.id
+    - tham số path character_id là Character.id
+    - body.image_id - body.image_id phải là CharacterImage.id dưới nhân vật này CharacterImage.id
     """
     prompt = (body.prompt or "").strip()
     if not prompt:
@@ -340,7 +340,7 @@ async def create_character_image_generation_task(
     "/characters/{character_id}/render-prompt",
     response_model=ApiResponse[RenderedPromptResponse],
     status_code=status.HTTP_200_OK,
-    summary="角色图片提示词渲染",
+    summary="summary=Render prompt ảnh nhân vật,",
 )
 async def render_character_image_prompt(
     character_id: str,
@@ -361,14 +361,14 @@ async def render_character_image_prompt(
     "/shot/{shot_id}/frame-image-tasks",
     response_model=ApiResponse[TaskCreated],
     status_code=status.HTTP_201_CREATED,
-    summary="镜头分镜帧图片生成（任务版）",
+    summary="Tạo ảnh khung phân cảnh của phân cảnh (phiên bản tác vụ)",
 )
 async def create_shot_frame_image_generation_task(
     shot_id: str,
     body: ShotFrameImageTaskRequest,
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[TaskCreated]:
-    """为镜头分镜帧图片生成任务（基于 `shot_id + frame_type` 自动定位数据）。"""
+    """Tạo tác vụ cho ảnh khung hình phân cảnh (tự định vị dữ liệu dựa trên `shot_id + frame_type`)."""
     prompt = (body.prompt or "").strip()
     if not prompt:
         raise HTTPException(
@@ -404,7 +404,7 @@ async def create_shot_frame_image_generation_task(
     )
     ref_images = await _resolve_reference_image_refs_by_file_ids_service(db, file_ids=submission.images)
 
-    # 通过 shot_id 与 frame_type 定位 ShotFrameImage，作为落库目标；若不存在则创建占位记录。
+    # Định vị ShotFrameImage qua shot_id và frame_type, làm đối tượng ghi CSDL; nếu không tồn tại thì tạo bản ghi giữ chỗ.
     shot_frame_image_stmt = (
         select(ShotFrameImage)
         .where(ShotFrameImage.shot_detail_id == shot_id, ShotFrameImage.frame_type == body.frame_type)
@@ -412,8 +412,8 @@ async def create_shot_frame_image_generation_task(
     )
     shot_frame_image = (await db.execute(shot_frame_image_stmt)).scalars().first()
     if shot_frame_image is None:
-        # 缺少对应 frame_type 的 ShotFrameImage slot：创建占位记录（file_id 允许为空）。
-        # 后续图片生成完成后会覆盖写回 file_id。
+        # Thiếu slot ShotFrameImage cho frame_type tương ứng: tạo bản ghi giữ chỗ (file_id được phép để trống).
+        # # Sau khi tạo ảnh hoàn tất, sẽ ghi đè file_id. file_id。
         shot_frame_image = ShotFrameImage(
             shot_detail_id=shot_id,
             frame_type=body.frame_type,
@@ -426,7 +426,7 @@ async def create_shot_frame_image_generation_task(
         await db.flush()
         await db.refresh(shot_frame_image)
     else:
-        # 已存在则补齐默认字段（不改写 file_id）。
+        # Nếu đã tồn tại thì bổ sung trường mặc định (không ghi đè file_id).
         if not shot_frame_image.format:
             shot_frame_image.format = "png"
 
@@ -450,7 +450,7 @@ async def create_shot_frame_image_generation_task(
     "/shot/{shot_id}/frame-render-prompt",
     response_model=ApiResponse[RenderedShotFramePromptRead],
     status_code=status.HTTP_200_OK,
-    summary="镜头分镜帧提示词渲染",
+    summary="summary=Render prompt khung hình phân cảnh,",
 )
 async def render_shot_frame_prompt(
     shot_id: str,

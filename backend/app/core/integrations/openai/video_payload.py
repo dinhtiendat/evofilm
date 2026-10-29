@@ -1,4 +1,4 @@
-"""OpenAI Videos API：请求体与参考图映射。"""
+"""OpenAI Videos API: thân yêu cầu và ánh xạ ảnh tham chiếu."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ def to_image_data_url(value: str) -> str:
 
 
 def pick_input_reference(input_: VideoGenerationInput) -> dict[str, str] | None:
-    """OpenAI 仅支持单一 input_reference；优先级：key > first > last。"""
+    """OpenAI chỉ hỗ trợ một input_reference duy nhất; độ ưu tiên: key > first > last."""
     for raw in (
         _strip_optional_b64(input_.key_frame_base64),
         _strip_optional_b64(input_.first_frame_base64),

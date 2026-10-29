@@ -25,7 +25,7 @@ const VideoEditor: React.FC = () => {
       const list = await api.timeline.get(projectId)
       setClips(Array.isArray(list) ? list : [])
     } catch {
-      message.error('加载时间线失败')
+      message.error('Nạp trục thời gian thất bại')
     } finally {
       setLoading(false)
     }
@@ -42,26 +42,26 @@ const VideoEditor: React.FC = () => {
           to={projectId ? `/projects/${projectId}/chapters` : '/projects'}
           className="text-sm text-gray-600 hover:text-blue-600 flex items-center gap-1"
         >
-          <ArrowLeftOutlined /> {projectId ? '返回章节列表' : '项目列表'}
+          <ArrowLeftOutlined /> {projectId ? 'Quay lại danh sách chương' : 'Danh sách dự án'}
         </Link>
       </div>
       <Card
-        title="视频编辑"
+        title="Chỉnh sửa video"
         extra={
           <Button type="primary" icon={<ExportOutlined />}>
-            导出成片
+            Xuất phim thành phẩm
           </Button>
         }
       >
         <div className="flex items-center gap-2 mb-4">
-          <Button icon={<ScissorOutlined />}>剪切</Button>
-          <Button icon={<PlusOutlined />}>添加效果</Button>
-          <Button icon={<PlayCircleOutlined />}>预览</Button>
+          <Button icon={<ScissorOutlined />}>cắt</Button>
+          <Button icon={<PlusOutlined />}>thêm effect</Button>
+          <Button icon={<PlayCircleOutlined />}>xem trước</Button>
         </div>
 
         <Layout className="bg-gray-50 rounded p-4 min-h-[400px]">
           <div className="mb-4">
-            <div className="text-sm text-gray-500 mb-2">素材库</div>
+            <div className="text-sm text-gray-500 mb-2">Thư viện nguyên liệu</div>
             <div className="flex gap-2 flex-wrap">
               {clips.map((c) => (
                 <div
@@ -72,19 +72,19 @@ const VideoEditor: React.FC = () => {
                 </div>
               ))}
               {clips.length === 0 && !loading && (
-                <span className="text-gray-500">暂无素材，可从文件管理导入</span>
+                <span className="text-gray-500">Chưa có nguyên liệu, có thể import từ quản lý tệp</span>
               )}
             </div>
           </div>
           <Content>
-            <div className="text-sm text-gray-500 mb-2">时间线（拖拽素材到轨道）</div>
+            <div className="text-sm text-gray-500 mb-2">Trục thời gian (kéo thả tư liệu lên đường rai)</div>
             <div className="bg-white rounded border border-gray-200 overflow-hidden">
               <div className="grid grid-cols-[80px_1fr] border-b border-gray-200">
-                <div className="px-2 py-2 bg-gray-50 text-gray-600 text-xs font-medium">轨道</div>
-                <div className="px-2 py-2 bg-gray-50 text-gray-600 text-xs font-medium">内容</div>
+                <div className="px-2 py-2 bg-gray-50 text-gray-600 text-xs font-medium">Đạo</div>
+                <div className="px-2 py-2 bg-gray-50 text-gray-600 text-xs font-medium">Nội dung</div>
               </div>
               <div className="grid grid-cols-[80px_1fr] border-b border-gray-100">
-                <div className="px-2 py-3 bg-gray-50/80 text-gray-500 text-xs">视频轨道</div>
+                <div className="px-2 py-3 bg-gray-50/80 text-gray-500 text-xs">Đường video</div>
                 <div className="px-2 py-3 min-h-[56px] flex items-center gap-2 flex-wrap">
                   {clips.filter((c) => c.type === 'video').map((c) => (
                     <div
@@ -95,12 +95,12 @@ const VideoEditor: React.FC = () => {
                     </div>
                   ))}
                   {clips.filter((c) => c.type === 'video').length === 0 && (
-                    <span className="text-gray-400 text-xs">拖入视频素材</span>
+                    <span className="text-gray-400 text-xs">Kéo nguyên liệu video vào đây</span>
                   )}
                 </div>
               </div>
               <div className="grid grid-cols-[80px_1fr]">
-                <div className="px-2 py-3 bg-gray-50/80 text-gray-500 text-xs">音频轨道</div>
+                <div className="px-2 py-3 bg-gray-50/80 text-gray-500 text-xs">Đường âm thanh</div>
                 <div className="px-2 py-3 min-h-[56px] flex items-center gap-2 flex-wrap">
                   {clips.filter((c) => c.type === 'audio').map((c) => (
                     <div
@@ -111,7 +111,7 @@ const VideoEditor: React.FC = () => {
                     </div>
                   ))}
                   {clips.filter((c) => c.type === 'audio').length === 0 && (
-                    <span className="text-gray-400 text-xs">拖入音频/配乐</span>
+                    <span className="text-gray-400 text-xs">Kéo âm thanh/nhạc vào</span>
                   )}
                 </div>
               </div>

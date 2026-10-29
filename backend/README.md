@@ -1,80 +1,80 @@
 
 # Jellyfish Backend
 
-基于 FastAPI + LangChain/LangGraph + SQLAlchemy 的后端 API，使用 **uv** 管理依赖。
+Backend API xây trên FastAPI + LangChain/LangGraph + SQLAlchemy, quản lý phụ thuộc bằng **uv**.
 
-## 技术栈
+## Công nghệ
 
-- **FastAPI**：Web 框架
-- **LangChain / LangGraph**：链与工作流编排，`PromptTemplate` 管理提示词
-- **SQLAlchemy**：异步 ORM，默认 SQLite（可换 PostgreSQL 等）
-- **uv**：包管理与虚拟环境
+- **FastAPI**: Khung web
+- **LangChain / LangGraph**: điều phối chain và workflow, `PromptTemplate` quản lý prompt
+- **SQLAlchemy**: ORM không đồng bộ, mặc định SQLite (có thể đổi PostgreSQL, v.v.)
+- **uv**: Quản lý gói và môi trường ảo
 
-## 目录结构
+## Cấu trúc thư mục
 
 ```
 backend/
-├── pyproject.toml          # 项目与依赖（uv）
-├── .python-version        # Python 版本
+├── pyproject.toml          # Dự án và phụ thuộc (uv)
+├── .python-version        # Phiên bản Python
 ├── app/
 │   ├── __init__.py
-│   ├── main.py             # FastAPI 入口
-│   ├── config.py           # 配置（pydantic-settings）
-│   ├── dependencies.py     # 依赖注入（如 get_db）
+│   ├── main.py             # Cổng vào FastAPI
+│   ├── config.py           # Cấu hình (pydantic-settings)
+│   ├── dependencies.py     # tiêm phụ thuộc (ví dụ get_db)
 │   ├── api/
 │   │   └── v1/
-│   │       ├── __init__.py # 路由聚合
-│   │       └── routes/     # 各模块路由
+│   │       ├── __init__.py # Gom route
+│   │       └── routes/     # Route của từng module
 │   ├── core/
-│   │   └── db.py           # SQLAlchemy 引擎与 Base
-│   ├── models/             # ORM 模型
-│   ├── schemas/            # Pydantic 请求/响应
-│   ├── services/           # 业务逻辑
+│   │   └── db.py           # Engine và Base của SQLAlchemy
+│   ├── models/             # Mô hình ORM
+│   ├── schemas/            # Pydantic request/response
+│   ├── services/           # Logic nghiệp vụ
 │   └── chains/             # LangChain PromptTemplate、LangGraph
 ├── tests/
 ├── .env.example
 └── README.md
 ```
 
-## 当前分层约定
+## Quy ước phân lớp hiện tại
 
-目前后端已经按“**路由层瘦身，业务逻辑下沉**”的方向整理过一轮，建议后续继续遵循下面这套分工：
+Hiện backend đã được sắp xếp theo hướng "dọn dẹp tầng route, chuyển logic nghiệp vụ xuống", nên tiếp tục tuân theo cơ chế phân công dưới đây:
 
 - `app/api/v1/routes/`
-  - 负责收参、依赖注入、调用 service、包装响应
+  - Chịu trách nhiệm nhận tham số, tiêm phụ thuộc, gọi service, bọc phản hồi
 - `app/services/common/`
-  - 负责通用校验、通用 CRUD、公共错误文案
+  - Chịu trách nhiệm xác thực dùng chung, CRUD dùng chung, văn bản lỗi công cộng
 - `app/services/studio/`
-  - 负责项目、章节、分镜、文件、图片任务等 Studio 主业务
+  - Chịu trách nhiệm các nghiệp vụ chính của Studio: dự án, chương, phân cảnh, tệp, tác vụ hình ảnh
 - `app/services/llm/`
-  - 负责 Provider / Model / Settings 管理逻辑
+  - Chịu trách nhiệm logic quản lý Provider / Model / Settings
 - `app/services/film/`
-  - 负责视频生成、分镜帧提示词任务等编排逻辑
+  - Chịu trách nhiệm logic điều phối như tác vụ tạo video, prompt khung hình phân cảnh
 
-推荐遵循的判断标准：
+Tiêu chí quyết định được khuyến nghị:
 
-- **留在 route 的**
-  - 参数解析
+- **Được giữ lại trong route**
+  - Phân tích tham số
   - `Depends`
-  - 调 service
-  - 返回 `ApiResponse`
-- **放到 service 的**
-  - 跨实体校验
-  - 默认值策略
-  - 文件/存储交互
-  - 任务编排
-  - AI 工作流调用
+  - Gọi service
+  - Trả về `ApiResponse`
+- **Được đưa vào service**
+  - Xác thực xuyên thực thể
+  - Chiến lược giá trị mặc định
+  - Tương tác tệp/lưu trữ
+  - Điều phối tác vụ
+  - Gọi workflow AI
 
-## 响应与错误约定
+## Quy ước phản hồi và lỗi
 
-当前接口已经统一使用 `ApiResponse` 响应壳，后续新增接口也建议保持一致：
+API hiện tại đã thống nhất dùng vỏ phản hồi `ApiResponse`, API thêm mới sau này cũng nên giữ nhất quán:
 
-- 创建成功：`created_response(...)`
-- 普通成功：`success_response(...)`
-- 空响应成功：`empty_response()`
-- 分页成功：`paginated_response(...)`
+- Tạo thành công: `created_response(...)`
+- Thành công thường:`success_response(...)`
+- Phản hồi rỗng thành công: `empty_response()`
+- Phân trang thành công: `paginated_response(...)`
 
-错误风格也已开始统一，优先复用：
+Phong cách lỗi cũng đã bắt đầu được thống nhất, ưu tiên dùng lại:
 
 - `entity_not_found(...)`
 - `entity_already_exists(...)`
@@ -82,94 +82,94 @@ backend/
 - `invalid_choice(...)`
 - `not_belong_to(...)`
 
-## 快速开始
+## Bắt đầu nhanh
 
-### 1. 安装 uv（若未安装）
+### 1. Cài uv (nếu chưa cài)
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2. 进入 backend 并安装依赖
+### 2. Vào backend và cài đặt phụ thuộc
 
 ```bash
 cd backend
 uv sync
 ```
 
-### 3. 配置环境
+### 3. Cấu hình môi trường
 
 ```bash
 cp .env.example .env
-# 按需编辑 .env
+# Chỉnh sửa .env theo nhu cầu
 ```
 
-### 4. 初始化数据库（可选，MySQL/PostgreSQL 等）
+### 4. Khởi tạo database (tùy chọn, MySQL/PostgreSQL v.v.)
 
-如果你使用的是 **SQLite 默认配置**（`DATABASE_URL=sqlite+aiosqlite:///./jellyfish.db`），可以跳过本节，首次访问时会自动创建文件。
+Nếu bạn dùng **cấu hình mặc định SQLite** (`DATABASE_URL=sqlite+aiosqlite:///./jellyfish.db`), có thể bỏ qua mục này, tệp sẽ được tự động tạo ở lần truy cập đầu tiên.
 
-若切换到 **MySQL / PostgreSQL 等外部数据库**，建议先手动初始化表结构：
+nếu chuyển sang **cơ sở dữ liệu ngoài như MySQL / PostgreSQL**, nên khởi tạo cấu trúc bảng thủ công trước:
 
-1. 在 `.env` 中配置数据库连接（示例）：
+1. Cấu hình kết nối cơ sở dữ liệu trong `.env` (ví dụ):
 
    ```env
-   # SQLite（默认）
+   # SQLite (mặc định)
    # DATABASE_URL=sqlite+aiosqlite:///./jellyfish.db
 
-   # MySQL（使用 aiomysql 驱动）
+   # MySQL (dùng trình điều khiển aiomysql)
    # DATABASE_URL=mysql+aiomysql://user:pass@localhost:3306/jellyfish
 
    # PostgreSQL
    # DATABASE_URL=postgresql+asyncpg://user:pass@localhost:5432/jellyfish
    ```
 
-2. 运行初始化脚本（使用 uv）：
+2. Chạy script khởi tạo (dùng uv):
 
    ```bash
    cd backend
-   uv sync               # 确保依赖已安装
+   uv sync               # Đảm bảo phụ thuộc đã cài đặt
    uv run python init_db.py
    ```
 
-该脚本会导入所有 ORM 模型并调用 `Base.metadata.create_all()`，在目标数据库中创建所需的 27 张业务表。
+Script này sẽ import toàn bộ ORM model và gọi `Base.metadata.create_all()`, tạo 27 bảng nghiệp vụ cần thiết trong CSDL đích.
 
-### 5. 启动服务
+### 5. Khởi động dịch vụ
 
 ```bash
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-- API 文档：http://localhost:8000/docs  
-- 健康检查：http://localhost:8000/health  
-- API v1 示例：http://localhost:8000/api/v1/example/prompt  
-- 影视技能（确认路由）：http://localhost:8000/api/v1/film （GET）；实体/分镜抽取见下方，需 **POST** 且路径带 **/api/v1** 前缀。
+- Tài liệu API: http://localhost:8000/docs
+- Kiểm tra hoạt động: http://localhost:8000/health
+- Ví dụ API v1: http://localhost:8000/api/v1/example/prompt
+- Kỹ năng kịch chiếu (xác nhận routing): http://localhost:8000/api/v1/film (GET); trích xuất thực thể / phân cảnh xem bên dưới, cần **POST** và prefix đường dẫn là **/api/v1**.
 
-### 影视技能 API（需配置 OPENAI_API_KEY）
+### API kỹ năng điện ảnh (cần cấu hình OPENAI_API_KEY)
 
-| 方法 | 完整路径 | 说明 |
+| Phương thức | Đường dẫn đầy đủ | Mô tả |
 |------|----------|------|
-| GET  | `/api/v1/film` | 返回端点说明，用于确认路由已注册 |
-| POST | `/api/v1/film/extract/entities` | 人物/地点/道具抽取 |
-| POST | `/api/v1/film/extract/shotlist` | 分镜/镜头表抽取 |
+| GET  | `/api/v1/film` | trả về mô tả endpoint, dùng để xác nhận route đã được đăng ký |
+| POST | `/api/v1/film/extract/entities` | Trích xuất nhân vật/địa điểm/đạo cụ |
+| POST | `/api/v1/film/extract/shotlist` | Trích xuất bảng phân cảnh/phân cảnh |
 
-未配置 `OPENAI_API_KEY` 时上述 POST 返回 503。
+Khi chưa cấu hình `OPENAI_API_KEY`, POST trên sẽ trả 503.
 
-## 常用命令
+## Lệnh thường dùng
 
-| 命令 | 说明 |
+| Lệnh | Giải thích |
 |------|------|
-| `uv sync` | 安装/同步依赖 |
-| `uv sync --group dev` | 同步依赖并包含开发组（pytest、pylint 等） |
-| `uv add <pkg>` | 添加依赖 |
-| `uv run uvicorn app.main:app --reload` | 开发运行 |
-| `uv run pytest` | 运行测试 |
-| `uv run pytest tests/... -q` | 运行定向测试 |
-| `uv run pylint app` | 对 `app` 包运行 Pylint（需已 `uv sync --group dev`） |
-| `python -m py_compile <paths>` | 快速做语法检查 |
+| `uv sync` | Cài/đồng bộ phụ thuộc |
+| `uv sync --group dev` | Đồng bộ phụ thuộc và bao gồm nhóm phát triển (pytest, pylint, v.v.) |
+| `uv add <pkg>` | Thêm phụ thuộc |
+| `uv run uvicorn app.main:app --reload` | Chạy chế độ phát triển |
+| `uv run pytest` | Chạy kiểm thử |
+| `uv run pytest tests/... -q` | chạy test được định hướng |
+| `uv run pylint app` | Chạy Pylint trên gói `app` (cần đã chạy `uv sync --group dev`) |
+| `python -m py_compile <paths>` | kiểm tra cú pháp nhanh |
 
-## 代码检查（Pylint）
+## Kiểm tra mã nguồn (Pylint)
 
-与常见开源 Python 项目一致，Pylint 选项集中在 [`pyproject.toml`](pyproject.toml) 的 `[tool.pylint.*]`（行宽、Python 版本、`jobs=1` 等；并对 SQLAlchemy / 文档串等噪声规则做了合理关闭）。
+Khớp với dự án Python mã nguồn mở phổ biến, tùy chọn Pylint tập trung trong `[tool.pylint.*]` của [`pyproject.toml`](pyproject.toml) (bề rộng dòng, phiên bản Python, `jobs=1` v.v.; đồng thời tắt hợp lý các rule gây nhiễu như SQLAlchemy / docstring).
 
 ```bash
 cd backend
@@ -177,32 +177,32 @@ uv sync --group dev
 uv run pylint app
 ```
 
-- **Pylint**：未使用导入、风格问题、部分可维护性告警等。  
-- **BasedPyright**：类型检查配置在同文件 `[tool.basedpyright]`，供 IDE 或本机已安装的 `basedpyright` CLI 使用；与 Pylint 互补（类型 vs 风格/模式）。
-- **CI**：变更 `backend/**` 的 PR（及启用 Merge queue 时的合并组）会运行仓库根目录下的 [`.github/workflows/backend-pylint.yml`](../.github/workflows/backend-pylint.yml)。若要将 Pylint 作为合并前置，请在 GitHub **分支保护 / Rules** 中把对应状态检查（一般为 **Backend Pylint / pylint**）设为必需，详见该 workflow 文件头注释。
+- **Pylint**: import không dùng, vấn đề style, một số cảnh báo bảo trì...
+- **BasedPyright**: cấu hình kiểm tra kiểu nằm trong `[tool.basedpyright]` cùng tệp, dùng cho IDE hoặc CLI `basedpyright` đã cài trên máy; bổ trợ cho Pylint (kiểu so với phong cách / mẫu mã).
+- **CI**: PR thay đổi `backend/**` (kể cả nhóm merge khi bật Merge queue) sẽ chạy [`.github/workflows/backend-pylint.yml`](../.github/workflows/backend-pylint.yml) trong thư mục gốc của repo. Nếu muốn Pylint là điều kiện trước khi merge, hãy đặt status check tương ứng (thường là **Backend Pylint / pylint**) thành bắt buộc trong **Branch protection / Rules** của GitHub, xem chú thích đầu tệp workflow đó.
 
-## 测试
+## Kiểm thử
 
-### 推荐入口
+### Cổng vào được khuyến nghị
 
-现在无论你在仓库根目录还是 `backend/` 目录运行，pytest 都已经做了统一配置。
+bây giờ bất kể chạy ở thư mục gốc repo hay thư mục `backend/`, pytest đều đã được cấu hình thống nhất.
 
-在 `backend/` 目录：
+Trong thư mục `backend/`:
 
 ```bash
 cd backend
 uv run pytest -q
 ```
 
-在仓库根目录：
+Ở thư mục gốc của kho:
 
 ```bash
 uv run pytest backend/tests -q
 ```
 
-### 常用定向测试
+### Kiểm thử định hướng thường dùng
 
-运行 service 层测试：
+Chạy kiểm thử lớp service:
 
 ```bash
 cd backend
@@ -218,7 +218,7 @@ uv run pytest \
   -q
 ```
 
-运行 API 响应壳测试：
+Chạy kiểm thử vỏ phản hồi API:
 
 ```bash
 cd backend
@@ -237,41 +237,41 @@ uv run pytest \
   -q
 ```
 
-### 当前测试重点
+### Trọng điểm kiểm thử hiện tại
 
-当前测试主要覆盖三类目标：
+Kiểm thử hiện tại chủ yếu bao phủ ba nhóm mục tiêu:
 
-- **公共层**
-  - 通用校验、通用 CRUD、公共错误文案
-- **service 层**
-  - `studio`、`llm`、`film` 的关键业务服务
-- **API 层**
-  - 创建/删除/异常时的 `ApiResponse` 外层结构
+- **Tầng công cộng**
+  - Kiểm tra dùng chung, CRUD dùng chung, văn bản lỗi công cộng
+- **Lớp service**
+  - Dịch vụ nghiệp vụ chính của `studio`, `llm`, `film`
+- **Tầng API**
+  - Cấu trúc ngoài `ApiResponse` khi tạo/xóa/lỗi
 
-如果只是快速验证本轮改动，建议优先：
+Nếu chỉ cần xác nhận nhanh các thay đổi của vòng này, nên ưu tiên:
 
 ```bash
 cd backend
 uv run pytest tests/test_common_services.py tests/test_studio_api_responses.py -q
 ```
 
-### 语法级快速检查
+### Kiểm tra nhanh cấp cú pháp
 
-在做较大重构但暂时不想跑全量测试时，可以先做一轮语法检查：
+Khi thực hiện tái cấu trúc lớn nhưng tạm thời không muốn chạy toàn bộ kiểm thử, có thể chạy trước một vòng kiểm tra cú pháp:
 
 ```bash
 cd backend
 python -m py_compile $(rg --files app tests)
 ```
 
-### 说明
+### Mô tả
 
-- 根目录 `pytest.ini` 已补齐，避免从仓库根目录执行时异步测试被误跳过
-- 异步测试统一使用 `@pytest.mark.asyncio`
-- 真实 LLM 联调前，请先执行 `uv sync --group dev`
+- `pytest.ini` ở thư mục gốc đã được bổ sung, tránh khi chạy từ thư mục gốc repo test không đồng bộ bị bỏ qua nhầm
+- Kiểm thử bất đồng bộ thống nhất dùng `@pytest.mark.asyncio`
+- Trước khi liên động LLM thực, vui lòng chạy `uv sync --group dev`
 
-## 扩展说明
+## Giải thích mở rộng
 
-- **数据库**：在 `app/models/` 下新增模型并继承 `Base`，在 `app/core/db.py` 中可调用 `init_db()` 建表。
-- **提示词**：在 `app/chains/prompts.py` 中增加 `PromptTemplate`。
-- **工作流**：在 `app/chains/graphs.py` 中定义 `StateGraph` 并 `compile()`，在路由中 `ainvoke` 调用。
+- **Cơ sở dữ liệu**: thêm model mới trong `app/models/` và kế thừa `Base`, có thể gọi `init_db()` trong `app/core/db.py` để tạo bảng.
+- **Prompt**: thêm `PromptTemplate` trong `app/chains/prompts.py`.
+- **Quy trình**: định nghĩa `StateGraph` trong `app/chains/graphs.py` và `compile()`, gọi `ainvoke` trong các route.

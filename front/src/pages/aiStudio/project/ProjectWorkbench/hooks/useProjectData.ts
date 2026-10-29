@@ -27,7 +27,7 @@ function toUIProject(p: ProjectRead): Project {
     id: p.id,
     name: p.name,
     description: p.description ?? '',
-    style: (p.style as Project['style']) ?? '现实主义',
+    style: (p.style as Project['style']) ?? 'Chủ nghĩa hiện thực',
     seed: p.seed ?? 0,
     unifyStyle: p.unify_style ?? true,
     progress: p.progress ?? 0,

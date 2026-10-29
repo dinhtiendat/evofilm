@@ -37,15 +37,15 @@ def _division_result() -> ScriptDivisionResult:
                 index=1,
                 start_line=1,
                 end_line=3,
-                script_excerpt="主角走进房间。",
-                shot_name="进入房间",
+                script_excerpt="Nhân vật chính bước vào phòng.",
+                shot_name="Bước vào phòng",
             ),
             ShotDivision(
                 index=2,
                 start_line=4,
                 end_line=6,
-                script_excerpt="镜头切到窗边。",
-                shot_name="窗边对话",
+                script_excerpt="Cắt máy sang bên cửa sổ.",
+                shot_name="Thảo luận bên cửa sổ",
             ),
         ],
         total_shots=2,
@@ -59,12 +59,12 @@ async def test_write_division_result_to_empty_chapter_creates_shots_and_details(
     async with db:
         project = Project(
             id="p1",
-            name="项目一",
+            name="Dự án 1",
             description="",
             style=ProjectStyle.real_people_city,
             visual_style=ProjectVisualStyle.live_action,
         )
-        chapter = Chapter(id="c1", project_id="p1", index=1, title="第一章")
+        chapter = Chapter(id="c1", project_id="p1", index=1, title="Chương 1")
         db.add_all([project, chapter])
         await db.commit()
 
@@ -73,7 +73,7 @@ async def test_write_division_result_to_empty_chapter_creates_shots_and_details(
         shots = (await db.execute(select(Shot).order_by(Shot.index.asc()))).scalars().all()
         details = (await db.execute(select(ShotDetail).order_by(ShotDetail.id.asc()))).scalars().all()
 
-        assert [shot.title for shot in shots] == ["进入房间", "窗边对话"]
+        assert [shot.title for shot in shots] == ["Bước vào phòng", "Thảo luận bên cửa sổ"]
         assert [shot.index for shot in shots] == [1, 2]
         assert len(details) == 2
         assert all(detail.camera_shot == CameraShotType.ms for detail in details)
@@ -90,13 +90,13 @@ async def test_write_division_result_refuses_when_chapter_already_has_shots() ->
     async with db:
         project = Project(
             id="p1",
-            name="项目一",
+            name="Dự án 1",
             description="",
             style=ProjectStyle.real_people_city,
             visual_style=ProjectVisualStyle.live_action,
         )
-        chapter = Chapter(id="c1", project_id="p1", index=1, title="第一章")
-        existing_shot = Shot(id="s1", chapter_id="c1", index=1, title="已有镜头")
+        chapter = Chapter(id="c1", project_id="p1", index=1, title="Chương 1")
+        existing_shot = Shot(id="s1", chapter_id="c1", index=1, title="Phân cảnh hiện có")
         db.add_all([project, chapter, existing_shot])
         await db.commit()
 

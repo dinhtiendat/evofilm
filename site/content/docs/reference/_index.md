@@ -1,7 +1,7 @@
 ---
-title: "参考资料"
+title: "Tài liệu tham khảo"
 weight: 3
-description: "环境变量、接口与数据模型等参考性资料。"
+description: "Tài liệu tham khảo về biến môi trường, interface và mô hình dữ liệu."
 ---
 
-这里集中放环境变量、API、数据模型等参考型内容。
+Ở đây tập trung đặt các nội dung tra cứu như biến môi trường, API, mô hình dữ liệu.

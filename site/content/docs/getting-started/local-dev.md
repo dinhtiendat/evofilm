@@ -1,10 +1,10 @@
 ---
-title: "本地开发"
+title: "Phát triển cục bộ"
 weight: 2
-description: "启动前后端并完成本地联调。"
+description: "Khởi động frontend và backend, hoàn thành kiểm thử liên động cục bộ."
 ---
 
-## 启动后端
+## Khởi động backend
 
 ```bash
 cd backend
@@ -13,7 +13,7 @@ uv sync
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-## 启动前端
+## Khởi động frontend
 
 ```bash
 cd front
@@ -21,20 +21,20 @@ pnpm install
 pnpm dev
 ```
 
-## 默认端口
+## Cổng mặc định
 
-- 前端：`http://localhost:7788`
-- 后端：`http://localhost:8000`
+- Phía trước: `http://localhost:7788`
+- Backend:`http://localhost:8000`
 - Swagger：`http://localhost:8000/docs`
 
-## OpenAPI 更新
+## Cập nhật OpenAPI
 
 ```bash
 cd front
 pnpm run openapi:update
 ```
 
-## 官网与文档站本地预览
+## Xem trước cục bộ trang chủ và trang tài liệu
 
 ```bash
 cd site
@@ -42,9 +42,9 @@ hugo mod tidy
 hugo server --buildDrafts --disableFastRender
 ```
 
-## 推荐的联调顺序
+## Thứ tự chạy tổng duyệt được khuyến nghị
 
-1. 启动后端，确认 `/docs` 和 `/health` 正常。
-2. 启动前端，确认页面能访问并能请求后端。
-3. 如果修改了接口定义，再执行 `openapi:update`。
-4. 如果同时在维护官网，再单独启动 `site/` 预览。
+1. Khởi động backend, xác nhận /docs và /health hoạt động bình thường.
+2. Khởi động phía trước, xác nhận trang truy cập được và có thể gọi phía sau.
+3. Nếu đã sửa định nghĩa interface, hãy chạy lại `openapi:update`.
+4. Nếu đồng thời đang bảo trì trang chủ, hãy khởi động riêng preview `site/`.

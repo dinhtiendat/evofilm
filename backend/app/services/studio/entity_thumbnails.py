@@ -1,4 +1,4 @@
-"""Studio 实体缩略图解析。"""
+"""Giải quyết ảnh thu nhỏ thực thể Studio."""
 
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ async def resolve_thumbnail_infos(
     parent_field_name: str,
     parent_ids: list[str],
 ) -> dict[str, dict[str, Any]]:
-    """解析每个 parent_id 的最佳缩略图信息（thumbnail + image_id）。"""
+    """Phân tích thông tin ảnh thu nhỏ tối ưu của mỗi parent_id (thumbnail + image_id)."""
     if not parent_ids:
         return {}
     parent_field = getattr(image_model, parent_field_name)

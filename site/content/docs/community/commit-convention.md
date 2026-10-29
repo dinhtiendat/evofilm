@@ -1,16 +1,16 @@
 ---
-title: "提交规范"
+title: "Quy tắc gửi (commit)"
 weight: 2
-description: "本仓库提交标题的格式要求与示例。"
+description: "Yêu cầu định dạng và ví dụ tiêu đề commit của kho này."
 ---
 
-提交首行应满足：
+Dòng đầu khi gửi phải thỏa:
 
 ```text
-[类型] 摘要
+[Loại] Tóm tắt
 ```
 
-允许的类型包括：
+Các kiểu được phép gồm:
 
 - `feat`
 - `fix`
@@ -24,8 +24,8 @@ description: "本仓库提交标题的格式要求与示例。"
 - `build`
 - `revert`
 
-## 示例
+## Ví dụ
 
-- `[feat] 新增分镜批量编辑`
-- `[fix] 修复模型列表分页`
-- `[docs] 更新本地开发文档`
+- `[feat] Thêm chỉnh sửa phân cảnh hàng loạt`
+- `[fix] sửa phân trang danh sách mô hình`
+- `[docs] Cập nhật tài liệu phát triển cục bộ`

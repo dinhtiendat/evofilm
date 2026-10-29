@@ -42,7 +42,7 @@ import {
 } from '../../project/ProjectWorkbench/chapterDivisionTasks'
 
 const MAX_VIEW_COUNT = 4
-// 与后端 `AssetViewAngle`（backend/app/models/studio.py）一致的枚举值
+// Giá trị mã trùng với `AssetViewAngle` của backend (backend/app/models/studio.py)
 export type AssetViewAngle =
   | 'FRONT'
   | 'LEFT'
@@ -64,13 +64,13 @@ export type AssetUpdate = {
 const DEFAULT_ANGLES: AssetViewAngle[] = ['FRONT', 'LEFT', 'RIGHT', 'BACK']
 
 const ANGLE_LABEL_MAP: Record<AssetViewAngle, string> = {
-  FRONT: '正面',
-  LEFT: '左侧',
-  RIGHT: '右侧',
-  BACK: '背面',
-  THREE_QUARTER: '3/4 侧面',
-  TOP: '俯视',
-  DETAIL: '细节',
+  FRONT: 'Mặt trước',
+  LEFT: 'Bên trái',
+  RIGHT: 'Bên phải',
+  BACK: 'Mặt sau',
+  THREE_QUARTER: '3/4 nghiêng',
+  TOP: 'Nhìn từ trên xuống',
+  DETAIL: 'Chi tiết',
 }
 
 export type BaseAsset = {
@@ -246,8 +246,8 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
   )
   const applySmartDetectResult = useCallback(async (taskId: string) => {
     await handleTaskResultSafely(taskId, {
-      readErrorMessage: '读取智能检测结果失败',
-      failedFallbackMessage: '智能检测失败',
+      readErrorMessage: 'Đọc kết quả kiểm tra thông minh thất bại',
+      failedFallbackMessage: 'Kiểm tra thông minh thất bại',
       onSucceeded: (resultValue) => {
         const result = resultValue as Record<string, any>
         const issues = Array.isArray(result.issues)
@@ -257,14 +257,14 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         setSmartDetectIssues(issues)
         setSmartDetectOptimizedDesc(optimizedDesc)
         setSmartDetectOpen(true)
-        if (issues.length > 0) message.warning(`发现 ${issues.length} 项可能缺失信息`)
-        else message.success('未发现缺失信息')
+        if (issues.length > 0) message.warning(`Phát hiện ${issues.length} mục có thể thiếu thông tin`)
+        else message.success('Không phát hiện thông tin thiếu')
       },
       onFailed: (errorMessage) => {
         message.error(errorMessage)
       },
       onReadError: () => {
-        message.error('读取智能检测结果失败')
+        message.error('Đọc kết quả kiểm tra thông minh thất bại')
       },
     })
   }, [])
@@ -328,7 +328,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
     try {
       const nextAsset = await getAsset(assetId)
       if (!nextAsset) {
-        message.error(`未找到${assetDisplayName}资产`)
+        message.error(`không tìm thấy tài nguyên ${assetDisplayName}`)
         onNavigate(backTo, true)
         return
       }
@@ -349,7 +349,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
       const imageRows = await ensureImageSlots(targetCount)
       setImages(imageRows)
     } catch {
-      message.error(`加载${assetDisplayName}资产失败`)
+      message.error(`tải tài nguyên ${assetDisplayName} thất bại`)
     } finally {
       setLoading(false)
     }
@@ -381,7 +381,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
   const handleSaveBaseInfo = async () => {
     if (!assetId || !asset) return
     if (!formName.trim()) {
-      message.warning('请输入名称')
+      message.warning('Vui lòng nhập tên')
       return
     }
 
@@ -398,10 +398,10 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
       }
       const nextAsset = await updateAsset(assetId, payload)
       if (nextAsset) setAsset(nextAsset)
-      message.success('基础信息已保存')
+      message.success('Đã lưu thông tin cơ bản')
       await loadData()
     } catch {
-      message.error('保存失败')
+      message.error('Lưu thất bại')
     } finally {
       setSavingBase(false)
     }
@@ -413,10 +413,10 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
 
     const description = (formDesc || '').trim()
     if (!description) {
-      if (relationType === 'actor_image') message.warning('请先输入演员描述再进行智能检测')
-      else if (relationType === 'scene_image') message.warning('请先输入场景描述再进行智能检测')
-      else if (relationType === 'prop_image') message.warning('请先输入道具描述再进行智能检测')
-      else if (relationType === 'costume_image') message.warning('请先输入服装描述再进行智能检测')
+      if (relationType === 'actor_image') message.warning('Vui lòng nhập mô tả diễn viên trước rồi mới chạy kiểm tra thông minh')
+      else if (relationType === 'scene_image') message.warning('Vui lòng nhập mô tả bối cảnh trước khi tiến hành phát hiện thông minh')
+      else if (relationType === 'prop_image') message.warning('Vui lòng nhập mô tả đạo cụ trước rồi mới chạy kiểm tra thông minh')
+      else if (relationType === 'costume_image') message.warning('Vui lòng nhập mô tả trang phục trước khi tiến hành phát hiện thông minh')
       return
     }
 
@@ -431,7 +431,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
     try {
       const request = () => {
         if (relationType === 'actor_image') {
-          const character_context = asset?.name ? `角色名：${formName}\n演员标签：${formTags}` : `演员标签：${formTags}`
+          const character_context = asset?.name ? `Tên nhân vật: ${formName}\nThẻ diễn viên: ${formTags}` : `Thẻ diễn viên: ${formTags}`
           return ScriptProcessingService.analyzeCharacterPortraitAsyncApiV1ScriptProcessingAnalyzeCharacterPortraitAsyncPost({
             requestBody: {
               relation_entity_id: smartDetectRelationEntityId,
@@ -441,7 +441,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
           })
         }
         if (relationType === 'scene_image') {
-          const scene_context = asset?.name ? `场景名：${formName}\n标签：${formTags}` : `标签：${formTags}`
+          const scene_context = asset?.name ? `Tên bối cảnh: ${formName}\nThẻ: ${formTags}` : `Thẻ: ${formTags}`
           return ScriptProcessingService.analyzeSceneInfoAsyncApiV1ScriptProcessingAnalyzeSceneInfoAsyncPost({
             requestBody: {
               relation_entity_id: smartDetectRelationEntityId,
@@ -451,7 +451,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
           })
         }
         if (relationType === 'prop_image') {
-          const prop_context = asset?.name ? `道具名：${formName}\n标签：${formTags}` : `标签：${formTags}`
+          const prop_context = asset?.name ? `Tên đạo cụ: ${formName}\nThẻ: ${formTags}` : `Thẻ: ${formTags}`
           return ScriptProcessingService.analyzePropInfoAsyncApiV1ScriptProcessingAnalyzePropInfoAsyncPost({
             requestBody: {
               relation_entity_id: smartDetectRelationEntityId,
@@ -460,7 +460,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
             },
           })
         }
-        const costume_context = asset?.name ? `服装名：${formName}\n标签：${formTags}` : `标签：${formTags}`
+        const costume_context = asset?.name ? `Tên trang phục: ${formName}\nThẻ: ${formTags}` : `Thẻ: ${formTags}`
         return ScriptProcessingService.analyzeCostumeInfoAsyncApiV1ScriptProcessingAnalyzeCostumeInfoAsyncPost({
           requestBody: {
             relation_entity_id: smartDetectRelationEntityId,
@@ -475,18 +475,18 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         trackTaskData: trackSmartDetectTaskData,
         startedMessage: taskCopy.startedMessage,
         reusedMessage: taskCopy.reusedMessage,
-        fallbackErrorMessage: '智能检测失败',
+        fallbackErrorMessage: 'Kiểm tra thông minh thất bại',
         getErrorMessage: (error, fallbackMessage) => {
           const maybeAny = error as { response?: { status?: number }; status?: number }
           const status = maybeAny?.response?.status ?? maybeAny?.status
           if (status === 404) {
-            return '接口未找到：请运行 `pnpm run openapi:update` 生成客户端代码后重试'
+            return 'Giao diện không tìm thấy: hãy chạy `pnpm run openapi:update` để tạo client code rồi thử lại'
           }
           return defaultTaskActionErrorMessage(error, fallbackMessage)
         },
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setSmartDetectLoading(false)
     }
@@ -497,14 +497,14 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
     try {
       await executeTaskCancel({
         taskId: smartDetectTask.taskId,
-        reason: `用户在${assetDisplayName}资产编辑页取消智能检测任务`,
+        reason: `người dùng hủy tác vụ kiểm tra thông minh ở trang chỉnh sửa tài nguyên ${assetDisplayName}`,
         applyCancelData: applySmartDetectCancelData,
         cancelledImmediatelyMessage: taskCopy.cancelledImmediatelyMessage,
         cancelRequestedMessage: taskCopy.cancelRequestedMessage,
-        fallbackErrorMessage: '取消智能检测任务失败',
+        fallbackErrorMessage: 'Hủy tác vụ kiểm tra thông minh thất bại',
       })
     } catch {
-      // executeTaskCancel 已统一处理错误提示
+      // executeTaskCancel đã xử lý thống nhất thông báo lỗi
     }
   }
 
@@ -512,7 +512,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
     task: smartDetectTask,
     settledTask: smartDetectSettledTask,
     title: taskCopy.title,
-    sourceLabel: formName?.trim() ? `${assetDisplayName}：${formName.trim()}` : `${assetDisplayName}编辑页`,
+    sourceLabel: formName?.trim() ? `${assetDisplayName}:${formName.trim()}` : `${assetDisplayName}trang chỉnh sửa`,
     runningDescription: taskCopy.runningDescription,
     cancellingDescription: taskCopy.cancellingDescription,
     successDescription: taskCopy.successDescription,
@@ -525,7 +525,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
     task: generationTask,
     settledTask: generationSettledTask,
     title: TASK_COPY.imageGeneration.title,
-    sourceLabel: formName?.trim() ? `${assetDisplayName}：${formName.trim()}` : `${assetDisplayName}编辑页`,
+    sourceLabel: formName?.trim() ? `${assetDisplayName}:${formName.trim()}` : `${assetDisplayName}trang chỉnh sửa`,
     runningDescription: TASK_COPY.imageGeneration.runningDescription,
     cancellingDescription: TASK_COPY.imageGeneration.cancellingDescription,
     successDescription: TASK_COPY.imageGeneration.successDescription,
@@ -536,7 +536,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         ? () =>
             void executeTaskCancel({
               taskId: generationTask.taskId,
-              reason: `用户在${assetDisplayName}资产编辑页取消图片生成任务`,
+              reason: `người dùng hủy tác vụ sinh ảnh ở trang chỉnh sửa tài nguyên ${assetDisplayName}`,
               applyCancelData: (data) => {
                 setGenerationTask((current) =>
                   current
@@ -552,7 +552,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
               },
               cancelledImmediatelyMessage: TASK_COPY.imageGeneration.cancelledImmediatelyMessage,
               cancelRequestedMessage: TASK_COPY.imageGeneration.cancelRequestedMessage,
-              fallbackErrorMessage: '取消图片生成任务失败',
+              fallbackErrorMessage: 'Hủy tác vụ tạo ảnh thất bại',
             })
         : null,
     onNavigate: () => onNavigate(location.pathname),
@@ -582,7 +582,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         })
       }
     } catch {
-      message.error('获取提示词失败')
+      message.error('Lấy prompt thất bại')
     } finally {
       setPromptPreviewLoading(false)
     }
@@ -592,7 +592,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
     if (!assetId || !promptPreviewImage) return
     const prompt = (promptPreviewDraft || '').trim()
     if (!prompt) {
-      message.warning('请输入提示词')
+      message.warning('Vui lòng nhập prompt')
       return
     }
 
@@ -601,7 +601,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
       const submitted = await promptDraft.submitNow()
       const taskId = submitted?.taskId
       if (!taskId) {
-        message.error('生成任务创建失败：缺少任务 ID')
+        message.error('Tạo tác vụ thất bại: thiếu ID tác vụ')
         return
       }
       setGenerationTask({
@@ -636,10 +636,10 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         setPromptPreviewImage(null)
         await loadData()
       } else if (finalStatus !== 'failed' && finalStatus !== 'cancelled') {
-        message.warning('生成任务仍在执行，请稍后刷新')
+        message.warning('Tác vụ tạo vẫn đang thực thi, vui lòng làm mới sau')
       }
     } catch {
-      message.error('发起生成失败')
+      message.error('Khởi tạo quy trình tạo thất bại')
     } finally {
       setGeneratingByImageId((prev) => ({ ...prev, [promptPreviewImage.id]: false }))
     }
@@ -701,7 +701,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
 
       setHistoryCandidates(taskLinkCandidates.length > 0 ? taskLinkCandidates : fallbackCandidates)
     } catch {
-      message.error('加载历史生成图片失败')
+      message.error('Nạp ảnh tạo trước đó thất bại')
       setHistoryCandidates([])
     } finally {
       setHistoryLoading(false)
@@ -719,12 +719,12 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         height: candidate.height ?? null,
         format: candidate.format ?? null,
       })
-      message.success('角度图片已更新')
+      message.success('Đã cập nhật ảnh góc nhìn')
       setHistoryOpen(false)
       setEditingSlotImage(null)
       await loadData()
     } catch {
-      message.error('更新角度图片失败')
+      message.error('Cập nhật ảnh góc nhìn thất bại')
     } finally {
       setAdoptingImageId(null)
     }
@@ -744,15 +744,15 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Space>
             <Button icon={<ArrowLeftOutlined />} onClick={() => onNavigate(backTo)}>
-              返回{assetDisplayName}资产
+              Trả về tài nguyên {assetDisplayName}
             </Button>
             <Typography.Title level={5} style={{ margin: 0 }}>
-              {assetDisplayName}资产编辑
+              {assetDisplayName}Chỉnh sửa tài nguyên
             </Typography.Title>
             {asset?.id ? <Tag>{asset.id}</Tag> : null}
           </Space>
           <Button icon={<ReloadOutlined />} onClick={() => void loadData()} loading={loading}>
-            刷新
+            Làm mới
           </Button>
         </div>
       </Card>
@@ -762,7 +762,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         items={[
           {
             key: 'base',
-            label: '基础信息展示',
+            label: 'Hiển thị thông tin cơ bản',
             children: loading ? (
               <div className="py-8 text-center">
                 <Spin />
@@ -770,12 +770,12 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
             ) : (
               <div className="space-y-3">
                 <div>
-                  <div className="text-gray-600 text-sm mb-1">名称</div>
+                  <div className="text-gray-600 text-sm mb-1">Tên</div>
                   <Input value={formName} onChange={(e) => setFormName(e.target.value)} disabled={smartDetectBusy || savingBase} />
                 </div>
                 <div>
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="text-gray-600 text-sm">描述</div>
+                      <div className="text-gray-600 text-sm">mô tả</div>
                       {relationType === 'actor_image' ||
                       relationType === 'scene_image' ||
                       relationType === 'prop_image' ||
@@ -788,7 +788,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                             loading={smartDetectLoading}
                             disabled={Boolean(loading) || !!smartDetectTask}
                           >
-                            {smartDetectTask ? '检测中' : '智能检测'}
+                            {smartDetectTask ? 'Đang kiểm tra' : 'Kiểm tra thông minh'}
                           </Button>
                           {smartDetectTask ? (
                             <Button
@@ -798,7 +798,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                               disabled={smartDetectTask.cancelRequested}
                               onClick={() => void handleCancelSmartDetectTask()}
                             >
-                              {smartDetectTask.cancelRequested ? '正在取消' : '取消检测'}
+                              {smartDetectTask.cancelRequested ? 'Đang hủy' : 'Hủy phát hiện'}
                             </Button>
                           ) : null}
                         </>
@@ -812,11 +812,11 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                   />
                 </div>
                 <div>
-                  <div className="text-gray-600 text-sm mb-1">标签（逗号分隔）</div>
+                  <div className="text-gray-600 text-sm mb-1">Nhãn (phân cách bằng dấu phẩy)</div>
                   <Input value={formTags} onChange={(e) => setFormTags(e.target.value)} disabled={smartDetectBusy || savingBase} />
                 </div>
                 <div>
-                  <div className="text-gray-600 text-sm mb-1">镜头数（仅可增加，最大 4）</div>
+                  <div className="text-gray-600 text-sm mb-1">Số phân cảnh (chỉ tăng được, tối đa 4)</div>
                   <InputNumber
                     min={minViewCount}
                     max={4}
@@ -827,7 +827,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                   />
                 </div>
                 <div>
-                  <div className="text-gray-600 text-sm mb-1">视觉风格</div>
+                  <div className="text-gray-600 text-sm mb-1">Phong cách thị giác</div>
                   <ProjectVisualStyleAndStyleFields
                     disabled={smartDetectBusy || savingBase}
                     visual_style={formVisualStyle}
@@ -840,23 +840,23 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                   />
                 </div>
                 <Button type="primary" onClick={() => void handleSaveBaseInfo()} loading={savingBase || smartDetectLoading}>
-                  保存基础信息
+                  Lưu thông tin cơ bản
                 </Button>
               </div>
             ),
           },
           {
             key: 'views',
-            label: '多镜头图片',
+            label: 'Ảnh đa phân cảnh',
             children: (
               <Row gutter={[16, 16]}>
                 {slotItems.map((slot) => (
                   <Col xs={24} sm={12} lg={8} xl={6} key={slot.angle}>
                     <DisplayImageCard
-                      title={`照片角度：${ANGLE_LABEL_MAP[slot.angle]}`}
+                      title={`góc chụp:${ANGLE_LABEL_MAP[slot.angle]}`}
                       imageUrl={slot.imageUrl}
                       imageAlt={slot.angle}
-                      placeholder="暂无图片"
+                      placeholder="Chưa có ảnh"
                       hoverable={false}
                       imageHeightClassName="h-44"
                       extra={slot.image ? <Tag color="blue">ID {slot.image.id}</Tag> : null}
@@ -869,7 +869,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                             loading={Boolean(slot.image && generatingByImageId[slot.image.id])}
                             onClick={() => slot.image && void openPromptPreview(slot.image)}
                           >
-                            生成
+                            Tạo
                           </Button>
                           <Button
                             size="small"
@@ -877,7 +877,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                             disabled={!slot.image}
                             onClick={() => slot.image && void openHistoryModal(slot.image)}
                           >
-                            编辑
+                            Chỉnh sửa
                           </Button>
                         </div>
                       }
@@ -891,7 +891,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
       />
 
       <Modal
-        title="历史生成图片"
+        title="Ảnh tạo lịch sử"
         open={historyOpen}
         onCancel={() => {
           setHistoryOpen(false)
@@ -905,16 +905,16 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
             <Spin />
           </div>
         ) : historyCandidates.length === 0 ? (
-          <Empty description="暂无可用历史图片" />
+          <Empty description="Chưa có hình ảnh lịch sử khả dụng" />
         ) : (
           <Row gutter={[16, 16]}>
             {historyCandidates.map((candidate) => (
               <Col xs={24} sm={12} md={8} key={candidate.id}>
                 <DisplayImageCard
-                  title={candidate.view_angle ? `角度：${ANGLE_LABEL_MAP[candidate.view_angle] ?? candidate.view_angle}` : candidate.source === 'task-link' ? '任务产物' : `图片 ${candidate.id}`}
+                  title={candidate.view_angle ? `Góc: ${ANGLE_LABEL_MAP[candidate.view_angle] ?? candidate.view_angle}` : candidate.source === 'task-link' ? 'Sản phẩm tác vụ' : `Ảnh ${candidate.id}`}
                   imageUrl={buildFileDownloadUrl(candidate.file_id)}
                   imageAlt={candidate.id}
-                  placeholder="无缩略图"
+                  placeholder="Không có ảnh thu nhỏ"
                   hoverable={false}
                   imageHeightClassName="h-44"
                   footer={
@@ -927,7 +927,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                       loading={adoptingImageId === candidate.id}
                       onClick={() => void handleAdoptHistoryImage(candidate)}
                     >
-                      选中并更新当前角度
+                      Chọn và cập nhật góc hiện tại
                     </Button>
                   }
                 />
@@ -938,14 +938,14 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
       </Modal>
 
       <Modal
-        title="提示词内容预览"
+        title="Xem trước nội dung prompt"
         open={promptPreviewOpen}
         onCancel={() => {
           setPromptPreviewOpen(false)
           setPromptPreviewImage(null)
         }}
-        okText="生成"
-        cancelText="取消"
+        okText="Tạo"
+        cancelText="Hủy"
         confirmLoading={Boolean(promptPreviewImage && generatingByImageId[promptPreviewImage.id])}
         onOk={() => void confirmGenerateWithPrompt()}
         destroyOnClose
@@ -958,9 +958,9 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
         ) : (
           <div className="space-y-3">
             <div>
-              <div className="text-xs text-gray-500 mb-2">关联图片（参考图）</div>
+              <div className="text-xs text-gray-500 mb-2">Hình liên kết (ảnh tham chiếu)</div>
               {promptPreviewRefFileIds.length === 0 ? (
-                <div className="text-xs text-gray-400">暂无关联图片</div>
+                <div className="text-xs text-gray-400">Chưa có ảnh liên kết</div>
               ) : (
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   <Image.PreviewGroup>
@@ -978,12 +978,12 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
               )}
             </div>
             <div>
-              <div className="text-xs text-gray-500 mb-2">提示词（可编辑）</div>
+              <div className="text-xs text-gray-500 mb-2">Prompt (chỉnh sửa được)</div>
               <Input.TextArea
                 rows={10}
                 value={promptPreviewDraft}
                 onChange={(e) => promptDraft.setBase({ prompt: e.target.value })}
-                placeholder="请输入提示词…"
+                placeholder="Vui lòng nhập prompt…"
               />
             </div>
           </div>
@@ -991,7 +991,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
       </Modal>
 
       <Modal
-        title="智能检测：缺失信息"
+        title="Kiểm tra thông minh: thông tin thiếu"
         open={smartDetectOpen}
         onCancel={() => setSmartDetectOpen(false)}
         footer={null}
@@ -1006,9 +1006,9 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
           <div className="space-y-4">
             <div className="space-y-2">
               {smartDetectIssues.length === 0 ? (
-                <div className="text-sm text-gray-600">未发现缺失信息。</div>
+                <div className="text-sm text-gray-600">Không phát hiện thông tin thiếu.</div>
               ) : (
-                <div className="text-sm text-gray-600">发现 {smartDetectIssues.length} 项可能缺失信息（建议参考下面优化后的描述）：</div>
+                <div className="text-sm text-gray-600">Phát hiện {smartDetectIssues.length} mục thông tin có thể đang thiếu (khuyến nghị tham khảo mô tả tối ưu bên dưới):</div>
               )}
               {smartDetectIssues.length > 0 ? (
                 <div className="space-y-2">
@@ -1022,7 +1022,7 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
             </div>
 
             <div>
-              <div className="text-xs text-gray-500 mb-2">优化后的描述（可直接填入）</div>
+              <div className="text-xs text-gray-500 mb-2">Mô tả đã tối ưu (điền trực tiếp được)</div>
               <Input.TextArea rows={6} value={smartDetectOptimizedDesc} readOnly />
             </div>
 
@@ -1031,18 +1031,18 @@ export function AssetEditPageBase<TAsset extends BaseAsset, TImage extends BaseA
                 onClick={() => {
                   const next = smartDetectOptimizedDesc.trim()
                   if (!next) {
-                    message.warning('未返回有效的优化描述')
+                    message.warning('Không trả về mô tả tối ưu hợp lệ')
                     return
                   }
                   setFormDesc(next)
                   setSmartDetectOpen(false)
-                  message.success('已填入描述')
+                  message.success('Đã điền mô tả')
                 }}
                 disabled={!smartDetectOptimizedDesc.trim()}
               >
-                填入描述
+                Điền mô tả
               </Button>
-              <Button onClick={() => setSmartDetectOpen(false)}>关闭</Button>
+              <Button onClick={() => setSmartDetectOpen(false)}>Đóng</Button>
             </div>
           </div>
         )}

@@ -64,7 +64,7 @@ def _compact_text(value: str | None) -> str:
 
 def _join_context_lines(lines: list[str]) -> str:
     cleaned = [line for line in lines if line]
-    return "\n".join(cleaned) if cleaned else "无"
+    return "\n".join(cleaned) if cleaned else "Không có"
 
 
 def _build_character_context(characters: list[Character]) -> str:
@@ -75,19 +75,19 @@ def _build_character_context(characters: list[Character]) -> str:
             fragments.append(_compact_text(character.description))
         actor = getattr(character, "actor", None)
         if actor is not None and _compact_text(getattr(actor, "name", None)):
-            actor_desc = f"演员形象：{_compact_text(getattr(actor, 'name', None))}"
+            actor_desc = f"Hình tượng diễn viên: {_compact_text(getattr(actor, 'name', None))}"
             if _compact_text(getattr(actor, "description", None)):
-                actor_desc += f"（{_compact_text(getattr(actor, 'description', None))}）"
+                actor_desc += f"({_compact_text(getattr(actor, 'description', None))})"
             fragments.append(actor_desc)
         costume = getattr(character, "costume", None)
         if costume is not None and _compact_text(getattr(costume, "name", None)):
-            costume_desc = f"默认服装：{_compact_text(getattr(costume, 'name', None))}"
+            costume_desc = f"Trang phục mặc định: {_compact_text(getattr(costume, 'name', None))}"
             if _compact_text(getattr(costume, "description", None)):
-                costume_desc += f"（{_compact_text(getattr(costume, 'description', None))}）"
+                costume_desc += f"({_compact_text(getattr(costume, 'description', None))})"
             fragments.append(costume_desc)
         line = f"- {character.name}"
         if fragments:
-            line += f"：{'；'.join(fragments)}"
+            line += f": {'；'.join(fragments)}"
         lines.append(line)
     return _join_context_lines(lines)
 
@@ -97,7 +97,7 @@ def _build_named_asset_context(assets: list[Scene] | list[Prop] | list[Costume])
     for asset in assets:
         line = f"- {asset.name}"
         if _compact_text(getattr(asset, "description", None)):
-            line += f"：{_compact_text(getattr(asset, 'description', None))}"
+            line += f": {_compact_text(getattr(asset, 'description', None))}"
         lines.append(line)
     return _join_context_lines(lines)
 
@@ -112,19 +112,19 @@ def _build_subject_priority(
     parts: list[str] = []
     if characters:
         primary_names = "、".join(character.name for character in characters[:2])
-        parts.append(f"优先以角色 {primary_names} 作为画面主体")
+        parts.append(f"ưu tiên lấy nhân vật {primary_names} làm chủ thể khung")
         if len(characters) > 2:
             support_names = "、".join(character.name for character in characters[2:])
-            parts.append(f"其余角色 {support_names} 仅在能强化画面关系时再补充")
+            parts.append(f"Các nhân vật khác {support_names} chỉ bổ sung khi củng cố được mối quan hệ khung hình")
     if scenes:
-        parts.append(f"优先建立场景 {scenes[0].name} 的环境信息")
+        parts.append(f"ưu tiên xây dựng thông tin môi trường của bối cảnh {scenes[0].name}")
     if props:
         prop_names = "、".join(prop.name for prop in props[:2])
-        parts.append(f"道具 {prop_names} 仅在进入主动作或构图焦点时重点写入")
+        parts.append(f"Đạo cụ {prop_names} chỉ ghi chú trọng khi vào hành động chính hoặc điểm tiêu bố cục")
     if costumes:
         costume_names = "、".join(costume.name for costume in costumes[:2])
-        parts.append(f"服装 {costume_names} 主要用于强化人物外观一致性，不必喧宾夺主")
-    return "；".join(parts) if parts else "优先根据镜头信息突出主角色和主场景，不必平均铺陈所有元素"
+        parts.append(f"Trang phục {costume_names} chủ yếu dùng để tăng cường tính nhất quán ngoại hình nhân vật, không cần chiếm spotlight")
+    return "；".join(parts) if parts else "Ưu tiên làm nổi bật nhân vật chính và bối cảnh chính dựa trên thông tin phân cảnh, không cần dàn đều cho mọi yếu tố"
 
 
 def _truncate_for_prompt(value: str | None, *, limit: int = 80) -> str:
@@ -135,7 +135,7 @@ def _truncate_for_prompt(value: str | None, *, limit: int = 80) -> str:
 
 
 def _summarize_neighbor_shot(shot: Shot | None) -> tuple[str, str, str]:
-    """生成相邻镜头的标题、摘录和状态摘要，供连续性提示词使用。"""
+    """Sinh tiêu đề, trích đoạn và tóm tắt trạng thái của các phân cảnh liền kề, dùng cho prompt liên tục."""
     if shot is None:
         return "", "", ""
     detail = getattr(shot, "detail", None)
@@ -148,14 +148,14 @@ def _summarize_neighbor_shot(shot: Shot | None) -> tuple[str, str, str]:
     camera_text = " / ".join(part for part in camera_parts if part)
     description = _truncate_for_prompt(getattr(detail, "description", None), limit=60)
     summary_parts = [
-        f"场景：{scene_name}" if scene_name else "",
-        f"镜头语言：{camera_text}" if camera_text else "",
-        f"画面状态：{description}" if description else "",
+        f"Bối cảnh: {scene_name}" if scene_name else "",
+        f"Ngôn ngữ điện ảnh: {camera_text}" if camera_text else "",
+        f"Trạng thái khung: {description}" if description else "",
     ]
     return (
         _compact_text(getattr(shot, "title", None)),
         _truncate_for_prompt(getattr(shot, "script_excerpt", None), limit=80),
-        "；".join(part for part in summary_parts if part),
+        "; ".join(part for part in summary_parts if part),
     )
 
 
@@ -165,7 +165,7 @@ def _build_continuity_guidance(
     current_shot: Shot,
     next_shot: Shot | None,
 ) -> str:
-    """基于相邻镜头关系生成简明连续性约束。"""
+    """Tạo ràng buộc liên tục đơn giản dựa trên quan hệ phân cảnh lân cận.。"""
     guidance: list[str] = []
     current_detail = getattr(current_shot, "detail", None)
     current_scene_id = str(getattr(current_detail, "scene_id", "") or "")
@@ -175,16 +175,16 @@ def _build_continuity_guidance(
     next_scene_id = str(getattr(next_detail, "scene_id", "") or "")
 
     if previous_shot is not None:
-        guidance.append("当前镜头应承接上一镜头的动作与情绪，不要像全新场面重新开局")
+        guidance.append("shot hiện tại nên tiếp nối hành động và cảm xúc của shot trước, đừng như cảnh hoàn toàn mới bắt đầu lại")
         if current_scene_id and previous_scene_id and current_scene_id == previous_scene_id:
-            guidance.append("上一镜头与当前镜头处于同一场景，优先保持空间轴线和主体朝向稳定")
+            guidance.append("Phân cảnh trước và phân cảnh hiện tại ở cùng một bối cảnh, ưu tiên giữ trục không gian và hướng chủ thể ổn định")
         if _enum_value(getattr(previous_detail, "movement", None)) and _enum_value(getattr(current_detail, "movement", None)):
-            guidance.append("若镜头语言未明显变化，应视为同一动作链条中的推进或延续")
+            guidance.append("nếu ngôn ngữ điện ảnh không thay đổi rõ, nên xem là tiếp nối hoặc tiếp tục trong cùng chuỗi hành động")
 
     if next_shot is not None:
-        guidance.append("当前镜头应形成自然收束，为下一镜头预留动作或情绪落点，避免硬切")
+        guidance.append("Phân cảnh hiện tại nên hình thành khép lại tự nhiên, dự phòng điểm rơi hành động hoặc cảm xúc cho phân cảnh tiếp theo, tránh cắt cứng")
         if current_scene_id and next_scene_id and current_scene_id == next_scene_id:
-            guidance.append("下一镜头与当前镜头处于同一场景，尽量保持视觉重心与空间关系可连续延展")
+            guidance.append("Phân cảnh tiếp theo và phân cảnh hiện tại ở cùng một bối cảnh, cố gắng giữ trọng tâm thị giác và quan hệ không gian có thể tiếp nối liên tục")
 
     return "；".join(guidance)
 
@@ -197,34 +197,34 @@ def _build_composition_anchor(
     characters: list[Character],
     scenes: list[Scene],
 ) -> str:
-    """根据镜头语言和相邻镜头关系生成构图锚点建议。"""
+    """Tạo gợi ý mỏ neo bố cục dựa trên ngôn ngữ phân cảnh và quan hệ phân cảnh lân cận.。"""
     anchors: list[str] = []
     camera_shot = _enum_value(detail.camera_shot)
     movement = _enum_value(detail.movement)
 
     if camera_shot in {"ECU", "CU"}:
-        anchors.append("以主角色面部或关键动作作为画面重心，弱化环境干扰")
+        anchors.append("lấy khuôn mặt hoặc hành động chính của nhân vật chính làm trọng tâm khung, giảm nhiễu môi trường")
     elif camera_shot in {"MS", "FS"}:
-        anchors.append("保持人物与环境同时可读，避免只剩情绪特写或只剩空场")
+        anchors.append("giữ nhân vật và môi trường đều dễ đọc cùng lúc, tránh chỉ còn cận cảm xúc hoặc chỉ còn không gian trống")
     else:
-        anchors.append("优先建立空间关系，再突出主角色动作")
+        anchors.append("Ưu tiên thiết lập quan hệ không gian, sau đó mới nổi bật hành động nhân vật chính")
 
     if movement in {"DOLLY_IN", "ZOOM_IN"}:
-        anchors.append("构图应体现向主体推进的视觉趋势，焦点逐步收束到主角色")
+        anchors.append("bố cục nên thể hiện xu hướng nhìn tiến về phía chủ thể, tiêu điểm dần khép vào nhân vật chính")
     elif movement in {"DOLLY_OUT", "ZOOM_OUT"}:
-        anchors.append("构图应体现从主体向环境退开的趋势，保留更多空间信息")
+        anchors.append("bố cục nên thể hiện xu hướng lùi từ chủ thể ra môi trường, giữ nhiều thông tin không gian hơn")
     elif movement == "STATIC":
-        anchors.append("保持构图稳定，不要无故改变主体在画面中的重心位置")
+        anchors.append("giữ bố cục ổn định, không đổi trọng tâm vị trí chủ thể trong khung vô cớ")
 
     if scenes:
-        anchors.append(f"以场景 {scenes[0].name} 作为空间锚点，保证主体与环境关系清晰")
+        anchors.append(f"Lấy bối cảnh {scenes[0].name} làm mỏ neo không gian, đảm bảo quan hệ chủ thể và môi trường rõ ràng")
     if characters:
-        anchors.append(f"优先锁定角色 {characters[0].name} 的朝向和视线，不要无故翻转左右关系")
+        anchors.append(f"Ưu tiên cố định hướng thân và tầm nhìn của nhân vật {characters[0].name}, không được tự ý đảo ngược quan hệ trái phải")
 
     if previous_shot is not None and str(getattr(getattr(previous_shot, 'detail', None), 'scene_id', '') or '') == str(detail.scene_id or ''):
-        anchors.append("与上一镜头同场景时，尽量延续同一空间轴线和主体朝向")
+        anchors.append("khi cùng bối cảnh với shot trước, cố gắng tiếp nối cùng trục không gian và hướng xoay chủ thể")
     if next_shot is not None and str(getattr(getattr(next_shot, 'detail', None), 'scene_id', '') or '') == str(detail.scene_id or ''):
-        anchors.append("与下一镜头同场景时，为后续镜头保留稳定的视觉落点与空间方向")
+        anchors.append("khi cùng bối cảnh với shot tiếp theo, giữ điểm nhìn và hướng không gian ổn định cho shot tiếp theo")
 
     return "；".join(anchors)
 
@@ -237,64 +237,67 @@ def _build_screen_direction_guidance(
     dialogue_summary: str,
     character_names: list[str],
 ) -> str:
-    """生成人物朝向、视线与左右轴线建议。"""
+    """Tạo gợi ý hướng người, ánh nhìn và trục trái-phải."""
     guidance: list[str] = []
     angle = _enum_value(detail.angle)
 
     if angle == "OVER_SHOULDER":
-        guidance.append("当前镜头为过肩视角，应保持前景肩部与被看对象的左右关系稳定")
+        guidance.append("shot hiện tại là góc qua vai, nên giữ quan hệ trái/phải giữa vai tiền cảnh và đối tượng được nhìn ổn định")
     elif angle == "EYE_LEVEL":
-        guidance.append("优先保持人物视线水平和对视方向稳定，避免无故翻转左右朝向")
+        guidance.append("ưu tiên giữ hướng nhìn ngang và hướng nhìn đối xứng của nhân vật ổn định, tránh xoay trái/phải vô cớ")
     else:
-        guidance.append("明确主体朝向和视线落点，避免人物突然改向或跳轴")
+        guidance.append("nêu rõ hướng xoay và điểm nhìn của chủ thể, tránh nhân vật đổi hướng đột ngột hoặc nhảy trục")
 
     if dialogue_summary.strip():
-        guidance.append("存在对白时，优先保证说话者与受话者的视线关系连续")
+        guidance.append("khi có thoại, ưu tiên đảm bảo quan hệ hướng nhìn giữa người nói và người nghe liên tục")
     if len(character_names) >= 2:
-        guidance.append(f"角色 {character_names[0]} 与 {character_names[1]} 的左右站位和对视方向应保持一致")
+        guidance.append(f"Vị trí đứng trái-phải và hướng nhìn đối diện giữa nhân vật {character_names[0]} và {character_names[1]} nên được giữ nhất quán")
     elif character_names:
-        guidance.append(f"角色 {character_names[0]} 的朝向与视线落点应在相邻镜头中保持延续")
+        guidance.append(f"hướng thân và điểm nhìn của nhân vật {character_names[0]} nên được giữ liên tục giữa các phân cảnh liền kề")
 
     current_scene_id = str(detail.scene_id or "")
     previous_scene_id = str(getattr(getattr(previous_shot, "detail", None), "scene_id", "") or "")
     next_scene_id = str(getattr(getattr(next_shot, "detail", None), "scene_id", "") or "")
     if previous_shot is not None and current_scene_id and current_scene_id == previous_scene_id:
-        guidance.append("与上一镜头同场景时，不要无故翻转人物面向和左右轴线")
+        guidance.append("khi cùng bối cảnh với shot trước, không xoay hướng và trục trái/phải của nhân vật vô cớ")
     if next_shot is not None and current_scene_id and current_scene_id == next_scene_id:
-        guidance.append("与下一镜头同场景时，当前镜头结尾应保留可延续的视线方向")
+        guidance.append("khi cùng bối cảnh với shot tiếp theo, kết thúc shot hiện tại nên giữ hướng nhìn có thể tiếp nối")
 
     return "；".join(guidance)
 
 
 _SEQUENTIAL_REACTION_KEYWORDS = (
-    "听到",
-    "闻声",
-    "忽然",
-    "突然",
-    "下意识",
-    "立刻",
-    "随即",
-    "紧接着",
-    "随后",
-    "脱手",
-    "掉在地上",
-    "捂住耳朵",
-    "捂住",
-    "蹲下",
-    "跪下",
-    "跌坐",
-    "转身",
-    "回头",
+    "nghe thấy",
+    "nghe tiếng",
+    "đột nhiên",
+    "đột ngột",
+    "vô thức",
+    "ngay lập tức",
+    "ngay sau đó",
+    "rồi sau đó",
+    "rơi khỏi tay",
+    "rơi xuống đất",
+    "che tai",
+    "che",
+    "quỳ xuống",
+    "quỳ",
+    "ngã ngồi bệt",
+    "quay người",
+    "quay lại",
 )
 
 
 def _has_sequential_reaction_chain(*values: str | None) -> bool:
-    """判断文本是否包含明显的连续反应链，供首帧时间切片加权使用。"""
+    """Xác định văn bản có chứa chuỗi phản ứng liên tiếp rõ ràng hay không, để dùng cho trọng số cắt thời gian khung hình đầu."""
     text = " ".join(_compact_text(value) for value in values if _compact_text(value))
     if not text:
         return False
-    keyword_hits = sum(1 for keyword in _SEQUENTIAL_REACTION_KEYWORDS if keyword in text)
-    punctuation_hits = text.count("，") + text.count("。") + text.count("；") + text.count("、")
+    lowered = text.lower()
+    keyword_hits = sum(1 for keyword in _SEQUENTIAL_REACTION_KEYWORDS if keyword.lower() in lowered)
+    # Đếm dấu ngắt câu bằng ngôn ngữ trung lập (dấu ASCII lẫn CJK) để hoạt động trên văn bản đã dịch.
+    punctuation_hits = (
+        text.count(",") + text.count(";") + text.count("，") + text.count("；") + text.count("、")
+    )
     return keyword_hits >= 2 or (keyword_hits >= 1 and punctuation_hits >= 2)
 
 
@@ -307,46 +310,46 @@ def _build_frame_specific_guidance(
     script_excerpt: str,
     action_beats: list[str],
 ) -> str:
-    """按首帧/关键帧/尾帧生成专项提示，拉开三类帧职责差异。"""
+    """Sinh prompt chuyên biệt theo khung hình đầu/khung hình chính/khung hình cuối, làm rõ khác biệt trách nhiệm giữa ba loại khung hình."""
     guidance: list[str] = []
     if frame_type == "first":
-        guidance.append("首帧应优先建立空间、主体初始站位和第一眼视觉印象，不要直接跳到动作尾声")
-        guidance.append("首帧只表现事件触发瞬间或最初反应的起始状态，不要直接写成后续完成动作、最终姿态或情绪爆发结果")
-        guidance.append("若剧本存在连续反应链，优先写成动作刚开始、尚未完成或被打断的状态，例如手刚松脱、身体骤然僵住、人物尚未完全蹲下")
+        guidance.append("Khung hình đầu nên ưu tiên thiết lập không gian, vị trí đứng ban đầu của chủ thể và ấn tượng thị giác từ ánh nhìn đầu tiên, không nhảy thẳng vào hậu cảnh của hành động")
+        guidance.append("Khung đầu chỉ thể hiện khoảnh khắc kích hoạt sự kiện hoặc trạng thái ban đầu của phản ứng đầu tiên, không viết trực tiếp thành hành động đã hoàn tất, tư thế cuối cùng hay kết quả bùng nổ cảm xúc")
+        guidance.append("Nếu kịch bản có chuỗi phản ứng liên tục, ưu tiên viết thành trạng thái hành động vừa bắt đầu, chưa hoàn tất hoặc bị ngắt, ví dụ tay vừa buông ra, cơ thể bất chợt đông cứng, nhân vật chưa hoàn toàn khom xuống")
         if _has_sequential_reaction_chain(script_excerpt, detail.description):
-            guidance.append("当前镜头存在明显连续反应链，首帧必须截取触发后最早的可见瞬间，禁止直接落到捂耳、蹲下、倒地或转身完成态")
+            guidance.append("Phân cảnh hiện tại có chuỗi phản ứng liên tục rõ rệt, khung hình đầu phải cắt đúng khoảnh khắc thấy được sớm nhất sau khi kích hoạt, cấm đặt thẳng vào trạng thái che tai, khom xuống, ngã khuỵu hay hoàn tất quay người")
         if previous_shot is not None:
-            guidance.append("首帧要承接上一镜头结束状态，但仍应让观众迅速看清当前空间与主体起始状态")
+            guidance.append("Khung hình đầu cần tiếp nối trạng thái kết thúc của phân cảnh trước, nhưng vẫn giúp người xem nhanh nhận ra không gian hiện tại và trạng thái ban đầu của chủ thể")
         if _enum_value(detail.camera_shot) in {"LS", "ELS", "MLS"}:
-            guidance.append("当前景别较大时，优先把环境、人物位置关系和进入方向交代清楚")
+            guidance.append("khi cận hiện tại rộng, ưu tiên nói rõ môi trường, quan hệ vị trí nhân vật và hướng tiến vào")
     elif frame_type == "last":
-        guidance.append("尾帧应强调动作收束、情绪余韵或视线停留点，不要重新铺开新的动作起点")
+        guidance.append("Khung hình cuối nên nhấn mạnh khép lại hành động, dư âm cảm xúc hoặc điểm dừng của ánh mắt, không mở lại điểm khởi đầu hành động mới")
         if next_shot is not None:
-            guidance.append("尾帧应为下一镜头留下自然衔接的姿态、视线或情绪落点")
-        guidance.append("尾帧中的主体姿态应更稳定，便于后续镜头承接")
+            guidance.append("khung cuối nên để lại tư thế, hướng nhìn hoặc điểm rơi cảm xúc nối tự nhiên cho shot tiếp theo")
+        guidance.append("Tư thế chủ thể trong khung hình cuối nên ổn định hơn, dễ cho phân cảnh sau tiếp nối")
     else:
-        guidance.append("关键帧应锁定镜头内最有戏剧张力或信息密度最高的瞬间，不要平均描述整个过程")
-        guidance.append("优先选择动作峰值、情绪爆点或构图最有代表性的瞬间")
+        guidance.append("Khung hình chính nên chốt khoảnh khắc có sức căng kịch tính hoặc mật độ thông tin cao nhất trong phân cảnh, không mô tả đều toàn bộ quá trình")
+        guidance.append("ưu tiên chọn khoảnh khắc đỉnh hành động, điểm nổ cảm xúc hoặc bố cục tiêu biểu nhất")
         if _enum_value(detail.movement) in {"DOLLY_IN", "ZOOM_IN", "TRACK"}:
-            guidance.append("若镜头存在推进或跟拍，关键帧应体现运动过程中最集中、最有压迫感的画面")
+            guidance.append("Nếu phân cảnh có đường đi hoặc quay theo, khung hình chính nên thể hiện khung hình chặt chẽ nhất, có áp lực nhất trong quá trình chuyển động")
     beat_item = pick_action_beat_for_frame(frame_type, action_beats)
     if beat_item is not None:
         phase_label = {
-            "trigger": "触发阶段",
-            "peak": "峰值阶段",
-            "aftermath": "收束阶段",
-        }.get(beat_item.phase, "当前阶段")
-        guidance.append(f"当前帧优先围绕动作拍点“{beat_item.text}”组织画面（{phase_label}），不要越级跳到其他阶段")
+            "trigger": "trigger: Giai đoạn kích hoạt",
+            "peak": "peak: Giai đoạn đỉnh",
+            "aftermath": "aftermath: Giai đoạn khép lại",
+        }.get(beat_item.phase, "Giai đoạn hiện tại")
+        guidance.append(f"Khung hình hiện tại ưu tiên tổ chức cảnh quay quanh mốc hành động “{beat_item.text}” ({phase_label}), không nhảy cấp sang giai đoạn khác")
     return "；".join(guidance)
 
 
 def _format_action_beat_phase_summary(action_beats: list[str]) -> str:
-    """格式化动作拍点阶段摘要，供 agent 输入与调试预览复用。"""
+    """Định dạng tóm tắt giai đoạn mốc hành động, dùng chung cho input agent và xem trước gỡ lỗi."""
     sequence = infer_action_beat_sequence(action_beats)
     phase_labels = {
-        "trigger": "触发",
-        "peak": "峰值",
-        "aftermath": "收束",
+        "trigger": "trigger: Kích hoạt",
+        "peak": "peak: Đỉnh",
+        "aftermath": "aftermath: Khép lại",
     }
     return "；".join(
         f"{index + 1}. {phase_labels.get(item.phase, item.phase)} · {item.text}"
@@ -355,7 +358,7 @@ def _format_action_beat_phase_summary(action_beats: list[str]) -> str:
 
 
 def _same_scene(shot: Shot | None, current_scene_id: str) -> bool:
-    """判断相邻镜头是否与当前镜头处于同一场景。"""
+    """Xác định phân cảnh lân cận có cùng bối cảnh với phân cảnh hiện tại hay không.。"""
     return bool(
         shot is not None
         and current_scene_id
@@ -374,56 +377,56 @@ def _score_director_guidance_item(
     same_scene_with_next: bool,
     movement: str,
 ) -> int:
-    """为 guidance 句子打分，优先保留更能稳定镜头连续性的约束。"""
+    """Điểm guidance câu, ưu tiên giữ ràng buộc ổn định tính liên tục phân cảnh hơn."""
     score = 0
     if category == "frame":
         score += 10
-        if frame_type == "first" and ("建立空间" in text or "起始状态" in text):
+        if frame_type == "first" and ("thiết lập không gian" in text or "trạng thái ban đầu" in text):
             score += 5
-        if frame_type == "first" and ("触发瞬间" in text or "后续完成动作" in text or "尚未完成" in text):
+        if frame_type == "first" and ("khoảnh khắc kích hoạt" in text or "hành động hoàn tất phía sau" in text or "chưa hoàn tất" in text):
             score += 6
-        if frame_type == "first" and ("连续反应链" in text or "最早的可见瞬间" in text or "完成态" in text):
+        if frame_type == "first" and ("chuỗi phản ứng liên tục" in text or "khoảnh khắc hiển thị sớm nhất" in text or "trạng thái hoàn tất" in text):
             score += 8
-        if frame_type == "key" and ("动作峰值" in text or "戏剧张力" in text or "情绪爆点" in text):
+        if frame_type == "key" and ("đỉnh hành động" in text or "căng thẳng kịch tính" in text or "điểm bùng cảm xúc" in text):
             score += 5
-        if frame_type == "last" and ("动作收束" in text or "情绪余韵" in text or "停留点" in text):
+        if frame_type == "last" and ("khép lại hành động" in text or "dư âm cảm xúc" in text or "điểm dừng" in text):
             score += 5
     elif category == "continuity":
         score += 8
-        if "承接上一镜头" in text:
+        if "Tiếp nối phân cảnh trước" in text:
             score += 3
             if same_scene_with_previous:
                 score += 4
-        if "下一镜头" in text or "收束" in text:
+        if "phân cảnh tiếp theo" in text or "khép lại" in text:
             score += 3
             if same_scene_with_next:
                 score += 4
-        if "空间轴线" in text or "主体朝向稳定" in text or "视觉重心" in text:
+        if "trục không gian" in text or "hướng chủ thể ổn định" in text or "trọng tâm thị giác" in text:
             score += 3
     elif category == "composition":
         score += 7
-        if frame_type == "first" and ("空间锚点" in text or "建立空间" in text):
+        if frame_type == "first" and ("mỏ neo không gian" in text or "thiết lập không gian" in text):
             score += 5
-        if frame_type == "key" and ("画面重心" in text or "推进" in text or "焦点" in text):
+        if frame_type == "key" and ("trọng tâm khung hình" in text or "đẩy" in text or "điểm tiêu" in text):
             score += 4
-        if frame_type == "last" and ("视觉落点" in text or "空间方向" in text):
+        if frame_type == "last" and ("điểm kết về thị giác" in text or "hướng không gian" in text):
             score += 4
-        if "锁定角色" in text or "重心位置" in text:
+        if "khóa nhân vật" in text or "vị trí trọng tâm" in text:
             score += 2
     elif category == "screen":
         score += 6
-        if "不要无故翻转" in text or "跳轴" in text:
+        if "không tự ý lật" in text or "nhảy trục" in text:
             score += 5
-        if has_dialogue and ("视线关系连续" in text or "对视方向" in text):
+        if has_dialogue and ("quan hệ ánh nhìn liên tục" in text or "hướng nhìn đối diện" in text):
             score += 5
-        if character_count >= 2 and ("左右站位" in text or "对视方向" in text):
+        if character_count >= 2 and ("vị trí đứng trái phải" in text or "hướng nhìn nhau" in text):
             score += 4
         if same_scene_with_previous or same_scene_with_next:
-            if "同场景" in text or "视线方向" in text or "左右轴线" in text:
+            if "cùng bối cảnh" in text or "hướng nhìn" in text or "trục trái phải" in text:
                 score += 4
-        if frame_type == "last" and "视线方向" in text:
+        if frame_type == "last" and "hướng nhìn" in text:
             score += 2
-    if movement in {"DOLLY_IN", "ZOOM_IN", "TRACK"} and category == "composition" and "推进" in text:
+    if movement in {"DOLLY_IN", "ZOOM_IN", "TRACK"} and category == "composition" and "đẩy" in text:
         score += 3
     return score
 
@@ -437,7 +440,7 @@ def _build_director_must_categories(
     same_scene_with_next: bool,
     movement: str,
 ) -> list[str]:
-    """按镜头风险动态决定哪些 guidance 应提升为必须项。"""
+    """Dựa trên rủi ro của phân cảnh để động quyết định guidance nào nên được nâng thành mục bắt buộc."""
     if frame_type == "first":
         must_categories = ["frame", "continuity", "composition"]
     elif frame_type == "key":
@@ -476,7 +479,7 @@ def _build_director_command_summary(
     same_scene_with_next: bool,
     movement: str,
 ) -> str:
-    """将多类 guidance 压缩成高优先级导演指令摘要。"""
+    """Nén nhiều loại guidance thành tóm tắt chỉ đạo đạo diễn ưu tiên cao."""
     seen: set[str] = set()
 
     def _split_bucket(category: str, block: str) -> list[str]:
@@ -530,7 +533,7 @@ def _build_director_command_summary(
     frame_bucket = buckets.get("frame") or []
     if frame_type == "first" and len(frame_bucket) > 1:
         primary_frame_item = frame_bucket[0]
-        if any(keyword in primary_frame_item for keyword in ("连续反应链", "触发瞬间", "尚未完成", "完成态")):
+        if any(keyword in primary_frame_item for keyword in ("chuỗi phản ứng liên tục", "khoảnh khắc kích hoạt", "chưa hoàn tất", "trạng thái hoàn tất")):
             secondary_frame_item = frame_bucket[1]
             if secondary_frame_item not in consumed_must_items:
                 must_items.append(secondary_frame_item)
@@ -547,7 +550,7 @@ def _build_director_command_summary(
             if head not in consumed_must_items:
                 prefer_items.insert(0, head)
 
-    items = [*(f"必须：{item}" for item in must_items[:4]), *(f"优先：{item}" for item in prefer_items[:4])]
+    items = [*(f"Bắt buộc: {item}" for item in must_items[:4]), *(f"Ưu tiên: {item}" for item in prefer_items[:4])]
     if not items:
         return ""
     return "；".join(items[:8])
@@ -560,7 +563,7 @@ def _extract_context_names(context_text: str | None) -> list[str]:
         if not line.startswith("- "):
             continue
         body = line[2:]
-        name = body.split("：", 1)[0].strip()
+        name = body.split(": ", 1)[0].strip()
         if name:
             names.append(name)
     return names
@@ -574,11 +577,11 @@ def _cleanup_generated_prompt(prompt: str) -> str:
     cleaned: list[str] = []
     after_generation_heading = False
     for line in lines:
-        if line == "## 生成内容":
+        if line == "## if line == ## Nội dung tạo:":
             after_generation_heading = True
             cleaned = []
             continue
-        if line == "## 图片内容说明" or re.fullmatch(r"图\d+\s*[:：].*", line):
+        if line == "## Diễn giải nội dung hình ảnh" or re.fullmatch(r"图\d+\s*[:：].*", line):
             continue
         cleaned.append(line)
     if after_generation_heading and cleaned:
@@ -590,21 +593,21 @@ def _validate_generated_prompt(prompt: str, input_dict: dict[str, object]) -> li
     issues: list[str] = []
     text = str(prompt or "").strip()
     if not text:
-        return ["生成结果为空"]
-    if "## 图片内容说明" in text or "## 生成内容" in text or re.search(r"(^|\n)\s*图\d+\s*[:：]", text):
-        issues.append("结果混入了图片映射说明，应只保留基础提示词")
+        return ["Kết quả tạo trống"]
+    if "## Diễn giải nội dung hình ảnh" in text or "## Nội dung tạo dựng" in text or re.search(r"(^|\n)\s*图\d+\s*[:：]", text):
+        issues.append("Kết quả lẫn lộn diễn giải ánh xạ hình ảnh, nên chỉ giữ lại prompt cơ bản")
     primary_characters = _extract_context_names(str(input_dict.get("character_context") or ""))
     if primary_characters:
         lead_names = primary_characters[:2]
         if not any(name in text for name in lead_names):
-            issues.append(f"结果缺少主角色名称：{'、'.join(lead_names)}")
+            issues.append(f"Kết quả thiếu tên nhân vật chính: {'、'.join(lead_names)}")
     return issues
 
 
 def _build_retry_guidance(issues: list[str]) -> str:
     if not issues:
         return ""
-    return "请严格修正以下问题后重新生成：\n- " + "\n- ".join(issues)
+    return "Vui lòng sửa nghiêm ngặt các vấn đề dưới đây rồi tạo lại:\n- " + "\n- ".join(issues)
 
 
 async def build_run_args(

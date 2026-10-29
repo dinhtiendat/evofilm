@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 """
-AI Studio/影视制作相关的数据库模型（聚合导出器）。
+Mô hình CSDL liên quan AI Studio/sản xuất phim (bộ xuất tập hợp).
 
-为避免在单个文件里维护过多 ORM 定义，这里把模型类按类别拆分到多个模块，
-并在此处统一 re-export，保持现有导入路径兼容（`app.models.studio.*`）。
+Để tránh phải bảo trì quá nhiều định nghĩa ORM trong một tệp, ở đây các lớp mô hình được tách theo hạng mục vào nhiều module,
+Và ở đây re-export thống nhất, giữ tương thích đường dẫn import hiện tại (`app.models.studio.*`).
 """
 
 from app.models.studio_assets import Actor, Character, CharacterPropLink, Costume, Prop, Scene

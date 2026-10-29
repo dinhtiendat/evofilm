@@ -1,1 +1,1 @@
-"""Celery task 包装层。"""
+"""Lớp bọc task Celery."""

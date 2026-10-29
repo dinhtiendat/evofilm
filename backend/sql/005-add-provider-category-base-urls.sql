@@ -8,7 +8,7 @@ SET @has_providers_image_base_url = (
 
 SET @add_providers_image_base_url = IF(
   @has_providers_image_base_url = 0,
-  "ALTER TABLE providers ADD COLUMN image_base_url VARCHAR(1024) NULL COMMENT '图片能力 API Base URL（可选覆盖）'",
+  "ALTER TABLE providers ADD COLUMN image_base_url VARCHAR(1024) NULL COMMENT 'Base URL API khả năng ảnh (phủ ghi tùy chọn)'",
   'SELECT 1'
 );
 PREPARE stmt_add_providers_image_base_url FROM @add_providers_image_base_url;
@@ -25,7 +25,7 @@ SET @has_providers_video_base_url = (
 
 SET @add_providers_video_base_url = IF(
   @has_providers_video_base_url = 0,
-  "ALTER TABLE providers ADD COLUMN video_base_url VARCHAR(1024) NULL COMMENT '视频能力 API Base URL（可选覆盖）'",
+  "ALTER TABLE providers ADD COLUMN video_base_url VARCHAR(1024) NULL COMMENT 'Base URL API khả năng video (phủ ghi tùy chọn)'",
   'SELECT 1'
 );
 PREPARE stmt_add_providers_video_base_url FROM @add_providers_video_base_url;

@@ -1,4 +1,4 @@
-"""entities 接口响应壳测试。"""
+"""Kiểm thử vỏ phản hồi giao diện entities."""
 
 from __future__ import annotations
 
@@ -74,8 +74,8 @@ def test_create_actor_entity_returns_created_envelope(client: TestClient) -> Non
             "/api/v1/studio/entities/actor",
             json={
                 "id": "actor-1",
-                "name": "演员一",
-                "description": "测试演员",
+                "name": "Diễn viên một",
+                "description": "Diễn viên thử",
                 "tags": [],
                 "prompt_template_id": None,
                 "view_count": 2,
@@ -110,7 +110,7 @@ def test_delete_actor_entity_returns_empty_envelope(client: TestClient) -> None:
     db = _FakeEntityDB()
     actor = Actor(
         id="actor-1",
-        name="演员一",
+        name="Diễn viên 1",
         description="",
         tags=[],
         prompt_template_id=None,

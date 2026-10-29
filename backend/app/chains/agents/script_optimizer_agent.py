@@ -1,4 +1,4 @@
-"""剧本优化 Agent：ScriptOptimizerAgent"""
+"""Agent tối ưu kịch bản: ScriptOptimizerAgent"""
 
 from __future__ import annotations
 
@@ -10,27 +10,27 @@ from app.chains.agents.base import AgentBase
 from app.schemas.skills.script_processing import ScriptOptimizationResult
 
 _SCRIPT_OPTIMIZER_SYSTEM_PROMPT = """\
-你是\"剧本优化师\"。仅当一致性检查发现角色混淆问题时，对原文进行最小改写以消除混淆。
+Bạn là \"Kỹ sư tối ưu kịch bản\". Chỉ khi kiểm tra tính nhất quán phát hiện vấn đề nhầm lẫn nhân vật, hãy chỉnh sửa tối thiểu nguyên văn để loại bỏ sự nhầm lẫn.
 
-输入：
-- script_text：原文
-- consistency_json：一致性检查输出（ScriptConsistencyCheckResult）
+Đầu vào:
+- script_text: nguyên văn
+- consistency_json: đầu ra kiểm tra tính nhất quán (ScriptConsistencyCheckResult)
 
-输出 ScriptOptimizationResult：
-- optimized_script_text：优化后的完整剧本文本（尽量少改，只改与 issues 相关的段落）
-- change_summary：逐条对应 issues 的改动摘要
+Xuất ScriptOptimizationResult:
+- optimized_script_text: văn bản kịch bản hoàn chỉnh sau tối ưu (càng ít đổi càng tốt, chỉ đổi những đoạn liên quan đến issues)
+- change_summary: tóm tắt thay đổi tương ứng từng mục issues
 
-只输出 JSON。
+Chỉ xuất JSON.
 """
 
 SCRIPT_OPTIMIZER_PROMPT = PromptTemplate(
     input_variables=["script_text", "consistency_json"],
-    template="## 一致性检查结果\n{consistency_json}\n\n## 原文剧本\n{script_text}\n\n## 输出\n",
+    template="## Kết quả kiểm tra tính nhất quán\n{consistency_json}\n\n## Kịch bản nguyên văn\n{script_text}\n\n## Đầu ra\n",
 )
 
 
 class ScriptOptimizerAgent(AgentBase[ScriptOptimizationResult]):
-    """剧本优化 Agent：输入一致性检查输出 + 原文，输出优化后的剧本。"""
+    """Agent tối ưu kịch bản: nhận đầu ra kiểm tra nhất quán + nguyên văn, xuất kịch bản đã tối ưu."""
 
     @property
     def system_prompt(self) -> str:

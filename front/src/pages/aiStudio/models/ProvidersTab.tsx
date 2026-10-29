@@ -74,7 +74,7 @@ export default function ProvidersTab() {
       })
       setProviders(res.data?.items ?? [])
     } catch {
-      message.error('加载失败')
+      message.error('Tải thất bại')
     } finally {
       setLoading(false)
     }
@@ -93,7 +93,7 @@ export default function ProvidersTab() {
         if (!cancelled) setSupportedSpecs(res.data ?? [])
       } catch {
         if (!cancelled) {
-          message.error('加载系统支持的供应商列表失败')
+          message.error('Tải danh sách nhà cung cấp được hệ thống hỗ trợ thất bại')
           setSupportedSpecs([])
         }
       } finally {
@@ -107,7 +107,7 @@ export default function ProvidersTab() {
 
   const providerNameOptions = useMemo(() => {
     const fromApi = supportedSpecs.map((s) => ({
-      label: s.is_experimental ? `${s.display_name}（实验）` : s.display_name,
+      label: s.is_experimental ? `${s.display_name}（thử nghiệm）` : s.display_name,
       value: s.display_name,
     }))
     const name = providerEditing?.name?.trim()
@@ -116,7 +116,7 @@ export default function ProvidersTab() {
       (s) => s.display_name === name || (s.aliases?.length && s.aliases.includes(name)),
     )
     if (known) return fromApi
-    return [{ label: `${name}（历史/未在清单内）`, value: name }, ...fromApi]
+    return [{ label: `${name} (lịch sử/ngoài danh sách)`, value: name }, ...fromApi]
   }, [supportedSpecs, providerEditing])
 
   const applyDefaultBaseUrlForDisplayName = (displayName: string) => {
@@ -143,9 +143,9 @@ export default function ProvidersTab() {
     setTestConnecting(true)
     try {
       await new Promise((r) => setTimeout(r, 800))
-      message.success('连接成功')
+      message.success('Kết nối thành công')
     } catch {
-      message.error('连接失败，请检查 Base URL 与 AK/SK')
+      message.error('kết nối thất bại, vui lòng kiểm tra Base URL và AK/SK')
     } finally {
       setTestConnecting(false)
     }
@@ -169,7 +169,7 @@ export default function ProvidersTab() {
           providerId: providerEditing.id,
           requestBody,
         })
-        message.success('供应商已更新')
+        message.success('Đã cập nhật nhà cung cấp')
       } else {
         const id =
           typeof crypto !== 'undefined' && crypto.randomUUID
@@ -188,7 +188,7 @@ export default function ProvidersTab() {
             api_secret: values.api_secret,
           },
         })
-        message.success('供应商已添加')
+        message.success('Đã thêm nhà cung cấp')
       }
       setProviderModalOpen(false)
       setProviderEditing(null)
@@ -196,7 +196,7 @@ export default function ProvidersTab() {
       void load()
     } catch (e) {
       if (e && typeof e === 'object' && 'errorFields' in e) return
-      message.error('保存失败')
+      message.error('Lưu thất bại')
     }
   }
 
@@ -212,16 +212,16 @@ export default function ProvidersTab() {
       // ignore
     }
     Modal.confirm({
-      title: '删除供应商',
+      title: 'Xóa nhà cung cấp',
       content:
         linked > 0
-          ? `该供应商下还有 ${linked} 个模型，删除后关联模型将失效。确定删除？`
-          : '确定删除该供应商？',
-      okText: '删除',
+          ? `nhà cung cấp này còn ${linked} mô hình, sau khi xóa các mô hình liên kết sẽ mất hiệu lực. Xác nhận xóa?`
+          : 'Xác nhận xóa nhà cung cấp này?',
+      okText: 'Xóa',
       okType: 'danger',
       onOk: async () => {
         await LlmService.deleteProviderApiV1LlmProvidersProviderIdDelete({ providerId: p.id })
-        message.success('已删除')
+        message.success('Đã xóa')
         if (selectedProvider?.id === p.id) setSelectedProvider(null)
         void load()
       },
@@ -248,7 +248,7 @@ export default function ProvidersTab() {
   }
 
   const providerColumns: TableColumnsType<ProviderRead> = [
-    { title: '名称', dataIndex: 'name', key: 'name', ellipsis: true, render: (n) => <Space>{n}</Space> },
+    { title: 'Tên', dataIndex: 'name', key: 'name', ellipsis: true, render: (n) => <Space>{n}</Space> },
     {
       title: 'Base URL',
       dataIndex: 'base_url',
@@ -267,14 +267,14 @@ export default function ProvidersTab() {
       ),
     },
     {
-      title: '描述',
+      title: 'Mô tả',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
       render: (d: string) => <Tooltip title={d}>{d || '—'}</Tooltip>,
     },
     {
-      title: '状态',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       width: 90,
@@ -283,21 +283,21 @@ export default function ProvidersTab() {
       ),
     },
     {
-      title: '创建人',
+      title: 'Người tạo',
       dataIndex: 'created_by',
       key: 'created_by',
       width: 100,
       render: (c: string) => c || '—',
     },
     {
-      title: '操作',
+      title: 'Thao tác',
       key: 'action',
       width: 112,
       fixed: 'right',
       align: 'center',
       render: (_, record) => (
         <Space size={4} className="flex-nowrap justify-center">
-          <Tooltip title="编辑">
+          <Tooltip title="Chỉnh sửa">
             <Button
               type="text"
               size="small"
@@ -309,7 +309,7 @@ export default function ProvidersTab() {
               }}
             />
           </Tooltip>
-          <Tooltip title="测试连接">
+          <Tooltip title="Thử kết nối">
             <Button
               type="text"
               size="small"
@@ -324,12 +324,12 @@ export default function ProvidersTab() {
           <Dropdown
             menu={{
               items: [
-                { key: 'copy', label: '复制', icon: <CopyOutlined /> },
-                { key: 'export', label: '导出配置', icon: <ExportOutlined /> },
+                { key: 'copy', label: 'Sao chép', icon: <CopyOutlined /> },
+                { key: 'export', label: 'Xuất cấu hình', icon: <ExportOutlined /> },
                 { type: 'divider' },
                 {
                   key: 'delete',
-                  label: '删除',
+                  label: 'Xóa',
                   danger: true,
                   icon: <DeleteOutlined />,
                   onClick: ({ domEvent }) => {
@@ -341,7 +341,7 @@ export default function ProvidersTab() {
             }}
             trigger={['click']}
           >
-            <Tooltip title="更多">
+            <Tooltip title="Thêm">
               <Button
                 type="text"
                 size="small"
@@ -360,14 +360,14 @@ export default function ProvidersTab() {
     <>
       <div className="flex-shrink-0 px-4 py-2 border-b border-gray-100 bg-white flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="text-gray-600 text-sm">共 {providers.length} 个供应商</span>
+          <span className="text-gray-600 text-sm">Tổng cộng {providers.length} nhà cung cấp</span>
         </div>
         <Space wrap>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => openProviderModal()}>
-            添加供应商
+            Thêm nhà cung cấp
           </Button>
           <Input
-            placeholder="搜索名称/描述"
+            placeholder="Tìm theo tên/mô tả"
             allowClear
             className="w-48"
             value={search}
@@ -383,7 +383,7 @@ export default function ProvidersTab() {
             }}
           >
             <Button icon={<DownOutlined />}>
-              排序：{SORT_OPTIONS.find((s) => s.value === sortBy)?.label}
+              Sắp xếp:{SORT_OPTIONS.find((s) => s.value === sortBy)?.label}
             </Button>
           </Dropdown>
         </Space>
@@ -404,7 +404,7 @@ export default function ProvidersTab() {
           ) : (
             <>
               <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
-                <span className="text-sm font-medium text-gray-700">筛选</span>
+                <span className="text-sm font-medium text-gray-700">Lọc</span>
                 <Button
                   type="text"
                   size="small"
@@ -412,7 +412,7 @@ export default function ProvidersTab() {
                   onClick={() => setTreeCollapsed(true)}
                 />
               </div>
-              <div className="p-3 text-sm text-gray-500">点击列表项查看详情</div>
+              <div className="p-3 text-sm text-gray-500">Bấm mục trong danh sách để xem chi tiết</div>
             </>
           )}
         </div>
@@ -437,12 +437,12 @@ export default function ProvidersTab() {
             <Card>
               <Empty
                 description={
-                  providers.length === 0 ? '暂无供应商，点击「添加供应商」开始' : '无匹配结果'
+                  providers.length === 0 ? 'Chưa có nhà cung cấp, bấm «添加供应商» để bắt đầu' : 'Không có kết quả phù hợp'
                 }
               >
                 {providers.length === 0 && (
                   <Button type="primary" icon={<PlusOutlined />} onClick={() => openProviderModal()}>
-                    添加第一个供应商
+                    Thêm nhà cung cấp đầu tiên
                   </Button>
                 )}
               </Empty>
@@ -489,7 +489,7 @@ export default function ProvidersTab() {
                         openProviderModal(p)
                       }}
                     >
-                      编辑
+                      Chỉnh sửa
                     </Button>,
                     <Button
                       key="test"
@@ -501,7 +501,7 @@ export default function ProvidersTab() {
                         handleTestConnection(p)
                       }}
                     >
-                      测试
+                      Kiểm thử
                     </Button>,
                     <Dropdown
                       key="more"
@@ -509,7 +509,7 @@ export default function ProvidersTab() {
                         items: [
                           {
                             key: 'delete',
-                            label: '删除',
+                            label: 'Xóa',
                             danger: true,
                             onClick: () => handleDeleteProvider(p),
                           },
@@ -518,7 +518,7 @@ export default function ProvidersTab() {
                       trigger={['click']}
                     >
                       <Button type="text" size="small" onClick={(e) => e.stopPropagation()}>
-                        更多
+                        Thêm
                       </Button>
                     </Dropdown>,
                   ]}
@@ -533,7 +533,7 @@ export default function ProvidersTab() {
                     {PROVIDER_STATUS_MAP[p.status ?? 'active']?.text}
                   </Tag>
                   {p.created_by && (
-                    <span className="text-xs text-gray-400 ml-2">创建：{p.created_by}</span>
+                    <span className="text-xs text-gray-400 ml-2">Tạo: {p.created_by}</span>
                   )}
                 </Card>
               ))}
@@ -547,7 +547,7 @@ export default function ProvidersTab() {
             style={{ width: '36%', minWidth: 320 }}
           >
             <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <span className="font-medium">详情</span>
+              <span className="font-medium">Chi tiết</span>
               <Button
                 type="link"
                 size="small"
@@ -556,30 +556,30 @@ export default function ProvidersTab() {
                   setSelectedProvider(null)
                 }}
               >
-                收起
+                Thu gọn
               </Button>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <div className="text-sm text-gray-500 mb-1">名称</div>
+                <div className="text-sm text-gray-500 mb-1">Tên</div>
                 <div className="font-medium">{selectedProvider.name}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">文本/通用 Base URL</div>
+                <div className="text-sm text-gray-500 mb-1">văn bản/dùng chung Base URL</div>
                 <Tooltip title={selectedProvider.base_url}>
                   <span className="text-sm">{maskUrl(selectedProvider.base_url)}</span>
                 </Tooltip>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">图片 Base URL（可选覆盖）</div>
-                <span className="text-sm">{selectedProvider.image_base_url ? maskUrl(selectedProvider.image_base_url) : '回退到文本/通用'}</span>
+                <div className="text-sm text-gray-500 mb-1">hình ảnh Base URL(chép lên tùy chọn)</div>
+                <span className="text-sm">{selectedProvider.image_base_url ? maskUrl(selectedProvider.image_base_url) : 'Rơi về văn bản/dùng chung'}</span>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">视频 Base URL（可选覆盖）</div>
-                <span className="text-sm">{selectedProvider.video_base_url ? maskUrl(selectedProvider.video_base_url) : '回退到文本/通用'}</span>
+                <div className="text-sm text-gray-500 mb-1">video Base URL(chép lên tùy chọn)</div>
+                <span className="text-sm">{selectedProvider.video_base_url ? maskUrl(selectedProvider.video_base_url) : 'Rơi về văn bản/dùng chung'}</span>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">描述</div>
+                <div className="text-sm text-gray-500 mb-1">Mô tả</div>
                 <div className="text-gray-700 text-sm">{selectedProvider.description || '—'}</div>
               </div>
               <Space>
@@ -588,14 +588,14 @@ export default function ProvidersTab() {
                   icon={<EditOutlined />}
                   onClick={() => openProviderModal(selectedProvider)}
                 >
-                  编辑
+                  Chỉnh sửa
                 </Button>
                 <Button
                   icon={<ThunderboltOutlined />}
                   loading={testConnecting}
                   onClick={() => handleTestConnection()}
                 >
-                  测试连接
+                  Kiểm thử kết nối
                 </Button>
               </Space>
             </div>
@@ -604,7 +604,7 @@ export default function ProvidersTab() {
 
         {selectedProvider && !isLargeScreen && (
           <Drawer
-            title="详情"
+            title="Chi tiết"
             placement="right"
             open={detailPanelOpen}
             onClose={() => setDetailPanelOpen(false)}
@@ -612,20 +612,20 @@ export default function ProvidersTab() {
           >
             <div className="space-y-4">
               <div>
-                <div className="text-sm text-gray-500 mb-1">名称</div>
+                <div className="text-sm text-gray-500 mb-1">Tên</div>
                 <div className="font-medium">{selectedProvider.name}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">文本/通用 Base URL</div>
+                <div className="text-sm text-gray-500 mb-1">văn bản/dùng chung Base URL</div>
                 <span className="text-sm">{maskUrl(selectedProvider.base_url)}</span>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">图片 Base URL（可选覆盖）</div>
-                <span className="text-sm">{selectedProvider.image_base_url ? maskUrl(selectedProvider.image_base_url) : '回退到文本/通用'}</span>
+                <div className="text-sm text-gray-500 mb-1">hình ảnh Base URL(chép lên tùy chọn)</div>
+                <span className="text-sm">{selectedProvider.image_base_url ? maskUrl(selectedProvider.image_base_url) : 'Rơi về văn bản/dùng chung'}</span>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">视频 Base URL（可选覆盖）</div>
-                <span className="text-sm">{selectedProvider.video_base_url ? maskUrl(selectedProvider.video_base_url) : '回退到文本/通用'}</span>
+                <div className="text-sm text-gray-500 mb-1">video Base URL(chép lên tùy chọn)</div>
+                <span className="text-sm">{selectedProvider.video_base_url ? maskUrl(selectedProvider.video_base_url) : 'Rơi về văn bản/dùng chung'}</span>
               </div>
               <Space>
                 <Button
@@ -633,13 +633,13 @@ export default function ProvidersTab() {
                   icon={<EditOutlined />}
                   onClick={() => openProviderModal(selectedProvider)}
                 >
-                  编辑
+                  Chỉnh sửa
                 </Button>
                 <Button
                   icon={<ThunderboltOutlined />}
                   onClick={() => handleTestConnection()}
                 >
-                  测试连接
+                  Kiểm thử kết nối
                 </Button>
               </Space>
             </div>
@@ -648,7 +648,7 @@ export default function ProvidersTab() {
       </Layout>
 
       <Modal
-        title={providerEditing ? '编辑供应商' : '添加供应商'}
+        title={providerEditing ? 'chỉnh sửa nhà cung cấp' : 'thêm nhà cung cấp'}
         open={providerModalOpen}
         onCancel={() => {
           setProviderModalOpen(false)
@@ -660,45 +660,45 @@ export default function ProvidersTab() {
         destroyOnClose
       >
         <Form form={form} layout="vertical" className="pt-2">
-          <Form.Item name="name" label="名称" rules={[{ required: true, message: '请选择供应商' }]}>
+          <Form.Item name="name" label="Tên" rules={[{ required: true, message: 'Vui lòng chọn nhà cung cấp' }]}>
             <Select
               showSearch
               optionFilterProp="label"
               loading={supportedLoading}
-              placeholder={supportedLoading ? '加载供应商清单…' : '选择供应商'}
+              placeholder={supportedLoading ? 'Đang tải danh sách nhà cung cấp…' : 'Chọn nhà cung cấp'}
               options={providerNameOptions}
-              notFoundContent={supportedLoading ? '加载中…' : '暂无数据'}
+              notFoundContent={supportedLoading ? 'Đang tải…' : 'Chưa có dữ liệu'}
               onChange={(v) => applyDefaultBaseUrlForDisplayName(String(v))}
             />
           </Form.Item>
           <Form.Item
             name="base_url"
-            label="文本/通用 Base URL"
-            rules={[{ required: true }, { type: 'url', message: '请输入有效 URL' }]}
+            label="Base URL văn bản/dùng chung"
+            rules={[{ required: true }, { type: 'url', message: 'Vui lòng nhập URL hợp lệ' }]}
           >
             <Input placeholder="https://api.openai.com/v1" />
           </Form.Item>
-          <Form.Item name="image_base_url" label="图片 Base URL（可选覆盖）" rules={[{ type: 'url', message: '请输入有效 URL' }]}>
-            <Input placeholder="留空则回退到文本/通用 Base URL" />
+          <Form.Item name="image_base_url" label="Base URL ảnh (phủ ghi tùy chọn)" rules={[{ type: 'url', message: 'Vui lòng nhập URL hợp lệ' }]}>
+            <Input placeholder="để trống sẽ rơi về văn bản/dùng chung Base URL" />
           </Form.Item>
-          <Form.Item name="video_base_url" label="视频 Base URL（可选覆盖）" rules={[{ type: 'url', message: '请输入有效 URL' }]}>
-            <Input placeholder="留空则回退到文本/通用 Base URL" />
+          <Form.Item name="video_base_url" label="Base URL video (phủ ghi tùy chọn)" rules={[{ type: 'url', message: 'Vui lòng nhập URL hợp lệ' }]}>
+            <Input placeholder="để trống sẽ rơi về văn bản/dùng chung Base URL" />
           </Form.Item>
-          <Form.Item name="api_key" label="API Key" help={providerEditing ? '留空则不修改' : '请勿分享密钥'}>
+          <Form.Item name="api_key" label="API Key" help={providerEditing ? 'Để trống thì không sửa' : 'Vui lòng không chia sẻ khóa secret'}>
             <Input.Password placeholder="AK" />
           </Form.Item>
-          <Form.Item name="api_secret" label="API Secret" help={providerEditing ? '留空则不修改' : undefined}>
+          <Form.Item name="api_secret" label="API Secret" help={providerEditing ? 'Để trống thì không sửa' : undefined}>
             <Input.Password placeholder="SK" />
           </Form.Item>
-          <Form.Item name="description" label="描述">
-            <Input.TextArea rows={2} placeholder="支持 GPT 系列模型" />
+          <Form.Item name="description" label="Mô tả">
+            <Input.TextArea rows={2} placeholder="Hỗ trợ chuỗi mô hình GPT" />
           </Form.Item>
-          <Form.Item name="status" label="状态" initialValue="active">
+          <Form.Item name="status" label="Trạng thái" initialValue="active">
             <Select
               options={[
-                { label: '活跃', value: 'active' },
-                { label: '测试中', value: 'testing' },
-                { label: '禁用', value: 'disabled' },
+                { label: 'Hoạt động', value: 'active' },
+                { label: 'Đang kiểm tra', value: 'testing' },
+                { label: 'Vô hiệu', value: 'disabled' },
               ]}
             />
           </Form.Item>

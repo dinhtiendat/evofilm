@@ -9,7 +9,7 @@ def build_ordered_shot_frame_references(
     *,
     items: list[ShotLinkedAssetItem],
 ) -> list[ShotFramePromptMappingRead]:
-    """按请求入参顺序构造稳定的图片映射关系。"""
+    """Dựng quan hệ ánh xạ ảnh ổn định theo thứ tự tham số yêu cầu."""
     mappings: list[ShotFramePromptMappingRead] = []
     seen_file_ids: set[str] = set()
     for item in items or []:
@@ -30,7 +30,7 @@ def build_ordered_shot_frame_references(
 
 
 class FrameGenerationContext(GenerationContext):
-    """分镜帧图片生成的动态上下文。"""
+    """Bối cảnh động dùng cho tạo ảnh khung hình phân cảnh."""
 
     kind: str = "frame"
     shot_id: str

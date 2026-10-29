@@ -23,7 +23,7 @@ def _settings_model_id(settings_row: ModelSettings | None, category: ModelCatego
 
 
 async def get_provider_by_id_or_obj(db: AsyncSession, provider_or_id: Provider | str) -> Provider:
-    """通过 Provider 实体或 provider_id 获取 Provider。"""
+    """lấy Provider bằng thực thể Provider hoặc provider_id."""
     return await _resolve_provider(db, provider_or_id)
 
 
@@ -34,7 +34,7 @@ async def get_model_by_category(
     model_or_id: Model | str | None = None,
     allow_default_fallback: bool = True,
 ) -> Model:
-    """按类别解析模型，可传入显式模型（或 id），也可从默认设置解析。"""
+    """Phân tích mô hình theo hạng mục, có thể truyền mô hình (hoặc id) tường minh, cũng có thể phân tích từ cài đặt mặc định."""
     if model_or_id is not None:
         model = await _resolve_model(db, model_or_id)
         if model.category != category:
@@ -57,7 +57,7 @@ async def get_model_by_category(
                 ) from e
             raise
 
-    _ = allow_default_fallback  # 保留参数签名兼容，默认模型来源统一为 ModelSettings。
+    _ = allow_default_fallback  # Giữ tương thích chữ ký tham số, nguồn mô hình mặc định thống nhất về ModelSettings.
     raise HTTPException(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         detail=f"No default model configured for category={category.value}",
@@ -65,7 +65,7 @@ async def get_model_by_category(
 
 
 async def get_default_model_by_category(db: AsyncSession, category: ModelCategoryKey) -> Model:
-    """按类别解析默认模型，仅从单例 ModelSettings 读取。"""
+    """Phân tích mô hình mặc định theo hạng mục, chỉ đọc từ singleton ModelSettings."""
     return await get_model_by_category(db, category, allow_default_fallback=True)
 
 
@@ -88,7 +88,7 @@ async def _resolve_provider(db: AsyncSession, provider_or_id: Provider | str) ->
 
 
 async def get_provider_by_model_or_id(db: AsyncSession, model_or_id: Model | str) -> Provider:
-    """通过 Model 实体或 model_id 获取 Provider。"""
+    """Lấy Provider qua thực thể Model hoặc model_id."""
     model = await _resolve_model(db, model_or_id)
     try:
         provider = await get_provider_by_id_or_obj(db, model.provider_id)
@@ -106,7 +106,7 @@ async def build_chat_model_from_provider(
     db: AsyncSession,
     provider_or_id: Provider | str,
 ) -> BaseChatModel:
-    """根据 Provider 配置构造文本对话模型（ChatOpenAI）。"""
+    """dựa theo cấu hình Provider dựng mô hình hội thoại văn bản (ChatOpenAI)."""
     provider = await _resolve_provider(db, provider_or_id)
 
     stmt = (
@@ -135,7 +135,7 @@ async def build_default_text_llm(
     *,
     thinking: bool,
 ) -> BaseChatModel:
-    """基于默认文本模型构造 ChatOpenAI。"""
+    """Dựng ChatOpenAI dựa trên mô hình văn bản mặc định."""
     model = await get_default_model_by_category(db, ModelCategoryKey.text)
     provider = await get_provider_by_model_or_id(db, model)
     return _build_chat_openai_model(

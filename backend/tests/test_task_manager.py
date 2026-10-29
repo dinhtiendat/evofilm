@@ -20,7 +20,7 @@ from app.models.task_links import GenerationTaskLink, GenerationTaskLinkStatus
 
 
 class DummyTask(BaseTask):
-    """用于满足 TaskManager.create 的最小 Task 实现。"""
+    """thực hiện Task tối giản để đáp ứng TaskManager.create."""
 
     run_mode = "async_result"
 
@@ -64,7 +64,7 @@ async def test_inmemory_async_polling_strategy_updates_status_progress_and_resul
 
     await tm.start(task_id=task.id)
 
-    # 等待后台 task 跑完（AsyncPollingDeliveryStrategy 使用 asyncio.create_task）
+    # Chờ task nền chạy xong (AsyncPollingDeliveryStrategy dùng asyncio.create_task)
     for _ in range(50):
         view = await tm.get_status(task_id=task.id)
         if view.status in (TaskStatus.succeeded, TaskStatus.failed):
@@ -113,11 +113,11 @@ async def test_inmemory_streaming_strategy_yields_chunks_and_marks_succeeded() -
 
 @pytest.mark.asyncio
 async def test_sqlalchemy_store_create_and_get_status_view_sqlite_memory() -> None:
-    # 使用 sqlite in-memory，验证 SqlAlchemyTaskStore 的读写与轻量轮询查询
+    # Dùng sqlite in-memory, xác minh đọc-ghi và truy vấn lặp nhẹ của SqlAlchemyTaskStore
     engine = create_async_engine("sqlite+aiosqlite:///:memory:", future=True)
     SessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
-    # 确保 generation_tasks 表在 metadata 中已注册
+    # Đảm bảo bảng generation_tasks đã đăng ký trong metadata
     import app.models.task  # noqa: F401
 
     async with engine.begin() as conn:
@@ -229,7 +229,7 @@ async def test_request_cancel_keeps_running_task_pending_cancellation() -> None:
     task = await tm.create(task=DummyTask(), mode=DeliveryMode.async_polling, run_args={"a": 1})
     await store.set_status(task.id, TaskStatus.running)
 
-    rec = await tm.request_cancel(task_id=task.id, reason="用户取消")
+    rec = await tm.request_cancel(task_id=task.id, reason="Người dùng hủy")
     assert rec.cancel_requested is True
     assert rec.status == TaskStatus.running
 

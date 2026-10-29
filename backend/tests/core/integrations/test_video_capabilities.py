@@ -1,4 +1,4 @@
-"""视频能力映射单测。"""
+"""Kiểm thử đơn lập ánh xạ khả năng video."""
 
 from __future__ import annotations
 

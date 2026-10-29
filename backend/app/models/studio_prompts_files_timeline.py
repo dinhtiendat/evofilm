@@ -9,23 +9,23 @@ from app.models.types import FileType, PromptCategory, TimelineClipType
 
 
 class PromptTemplate(Base,TimestampMixin):
-    """提示词模板表。
+    """Bảng mẫu prompt.。
 
-    应用层保证：
-    - 同一 category 下至多一条 is_default=True，写入/更新时由接口层维护。
-    - is_system=True 的记录由初始化脚本写入，接口层拒绝删除和修改。
+    Đảm bảo ở tầng ứng dụng:：
+    - cùng một category tối đa một is_default=True, được tầng API duy trì khi ghi/cập nhật.
+    - Bản ghi is_system=True do script khởi tạo ghi vào, tầng interface từ chối xóa và sửa.
     """
 
     __tablename__ = "prompt_templates"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="模板 ID（UUID）")
-    category: Mapped[PromptCategory] = mapped_column(String(32), nullable=False, index=True, comment="模板类别")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="模板名称")
-    preview: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="预览文案")
-    content: Mapped[str] = mapped_column(Text, nullable=False, comment="模板内容")
-    variables: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="变量名列表（JSON 数组）")
-    is_default: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, comment="是否为默认提示词（同类别唯一，应用层保证）")
-    is_system: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, comment="是否为系统预置（仅初始化脚本写入，接口层禁止删改）")
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="id: Mapped[str] = mapped_column(String(64), primary_key=True, comment=ID mẫu (UUID)) ID（UUID）")
+    category: Mapped[PromptCategory] = mapped_column(String(32), nullable=False, index=True, comment="category: Mapped[PromptCategory] = mapped_column(String(32), nullable=False, index=True, comment=Hạng mục mẫu)")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="name: Mapped[str] = mapped_column(String(255), nullable=False, comment=Tên mẫu)")
+    preview: Mapped[str] = mapped_column(Text, nullable=False, default="", comment="preview: Mapped[str] = mapped_column(Text, nullable=False, default=, comment=Văn bản xem trước)")
+    content: Mapped[str] = mapped_column(Text, nullable=False, comment="content: Mapped[str] = mapped_column(Text, nullable=False, comment=Nội dung mẫu)")
+    variables: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="Danh sách tên biến (mảng JSON)")
+    is_default: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, comment="Có là prompt mặc định không (duy nhất trong cùng hạng mục, đảm bảo ở tầng ứng dụng)")
+    is_system: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, comment="Có là hệ thống cài sẵn không (chỉ script khởi tạo ghi vào, tầng API cấm xóa sửa)")
 
     __table_args__ = (
         Index("ix_prompt_templates_name", "name"),
@@ -33,19 +33,19 @@ class PromptTemplate(Base,TimestampMixin):
 
 
 class FileItem(Base, TimestampMixin):
-    """素材文件表。"""
+    """Bảng tệp tư liệu.。"""
 
     __tablename__ = "files"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="文件 ID（UUID）")
-    type: Mapped[FileType] = mapped_column(String(16), nullable=False, index=True, comment="文件类型")
-    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="文件名/标题")
-    thumbnail: Mapped[str] = mapped_column(String(1024), nullable=False, default="", comment="缩略图 URL/路径")
-    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="标签（JSON 数组）")
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="id: Mapped[str] = mapped_column(String(64), primary_key=True, comment=ID tệp (UUID)) ID（UUID）")
+    type: Mapped[FileType] = mapped_column(String(16), nullable=False, index=True, comment="type: Mapped[FileType] = mapped_column(String(16), nullable=False, index=True, comment=Loại tệp)")
+    name: Mapped[str] = mapped_column(String(255), nullable=False, comment="Tên tệp/tiêu đề")
+    thumbnail: Mapped[str] = mapped_column(String(1024), nullable=False, default="", comment="Ảnh thu nhỏ URL/Đường")
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list, comment="Thẻ (mảng JSON)")
     storage_key: Mapped[str] = mapped_column(
         String(1024),
         nullable=False,
-        comment="对象存储中的 key（如 files/xxx.png）",
+        comment="key trong bộ lưu trữ đối tượng (ví dụ files/xxx.png)",
     )
 
     usages: Mapped[list["FileUsage"]] = relationship(
@@ -61,25 +61,25 @@ class FileItem(Base, TimestampMixin):
 
 
 class TimelineClip(Base):
-    """时间线片段。
+    """Trích đoạn trục thời gian.。
 
-    说明：
-    - `source_id` 为逻辑引用（例如文件/音频素材 ID），不强制外键，便于接入不同素材来源。
-    - 表内无 project_id/chapter_id，不直接归属项目/章节。
+    Giải thích:：
+    - `source_id` là tham chiếu logic (ví dụ ID tệp/âm thanh), không áp đặt khóa ngoại, thuận tiện kết nối các nguồn nguyên liệu khác nhau.
+    - Trong bảng không có project_id/chapter_id, không trực tiếp thuộc về dự án/chương.
 
-    应用层保证：
-    - 若业务需按项目/章节维度的时间线，需在应用层通过 source_id 或关联表绑定归属。
+    Đảm bảo ở tầng ứng dụng:：
+    - nếu nghiệp vụ cần trục thời gian theo chiều dự án/chương, phải ràng buộc sở hữu ở tầng ứng dụng qua source_id hoặc bảng liên kết.
     """
 
     __tablename__ = "timeline_clips"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="片段 ID")
-    type: Mapped[TimelineClipType] = mapped_column(String(16), nullable=False, index=True, comment="片段类型")
-    source_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True, comment="来源素材 ID（逻辑引用）")
-    label: Mapped[str] = mapped_column(String(255), nullable=False, comment="显示标签")
-    start: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="起始时间（秒）")
-    end: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="结束时间（秒）")
-    track: Mapped[int] = mapped_column(Integer, nullable=False, default=1, comment="轨道号")
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, comment="id: Mapped[str] = mapped_column(String(64), primary_key=True, comment=ID đoạn) ID")
+    type: Mapped[TimelineClipType] = mapped_column(String(16), nullable=False, index=True, comment="type: Mapped[TimelineClipType] = mapped_column(String(16), nullable=False, index=True, comment=Loại clip)")
+    source_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True, comment="ID nguyên liệu nguồn (tham chiếu logic)")
+    label: Mapped[str] = mapped_column(String(255), nullable=False, comment="label: Mapped[str] = mapped_column(String(255), nullable=False, comment=Nhãn hiển thị)")
+    start: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="Thời gian bắt đầu (giây)")
+    end: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="Thời gian kết thúc (giây)")
+    track: Mapped[int] = mapped_column(Integer, nullable=False, default=1, comment="track: Mapped[int] = mapped_column(Integer, nullable=False, default=1, comment=Số thứ tự đạo)")
 
     __table_args__ = (
         Index("ix_timeline_clips_track", "track"),

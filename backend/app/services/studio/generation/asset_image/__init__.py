@@ -1,4 +1,4 @@
-"""资产图片生成准备服务。"""
+"""Dịch vụ chuẩn bị tạo ảnh tài nguyên."""
 
 from app.services.studio.generation.asset_image.build_base import (
     AssetImageBaseDraft,

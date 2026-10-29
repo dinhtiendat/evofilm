@@ -10,7 +10,7 @@ const http: AxiosInstance = axios.create({
 
 http.interceptors.request.use(
   (config) => {
-    // 这里可以注入 token 等信息
+    // Có thể tiêm token và các thông tin khác tại đây
     return config
   },
   (error) => Promise.reject(error),
@@ -19,12 +19,12 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   (error) => {
-    // 这里可以统一处理错误提示、跳转登录等
+    // Tại đây có thể xử lý thống nhất thông báo lỗi, chuyển sang đăng nhập, v.v.
     return Promise.reject(error)
   },
 )
 
-// 响应拦截器已返回 response.data，此处声明为 Promise<T>
+// interceptor phản hồi đã trả về response.data, ở đây khai báo là Promise<T>
 export const get = <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> =>
   http.get<T>(url, config) as Promise<T>
 

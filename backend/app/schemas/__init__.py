@@ -1,1 +1,1 @@
-"""Pydantic 请求/响应模型。"""
+"""Mô hình yêu cầu/phản hồi Pydantic."""

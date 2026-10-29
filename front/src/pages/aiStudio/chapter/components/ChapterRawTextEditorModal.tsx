@@ -65,35 +65,35 @@ export function ChapterRawTextEditorModal({
 
   const applyConsistencyTaskResult = useCallback(async (taskId: string) => {
     await handleTaskResultSafely(taskId, {
-      readErrorMessage: '读取一致性检查结果失败',
-      failedFallbackMessage: '一致性检查失败',
+      readErrorMessage: 'Đọc kết quả kiểm tra tính nhất quán thất bại',
+      failedFallbackMessage: 'Kiểm tra tính nhất quán thất bại',
       onSucceeded: (resultValue) => {
         setConsistencyResult(resultValue as ScriptConsistencyCheckResult)
         const result = resultValue as Record<string, any>
         if (result?.has_issues) {
-          message.warning(`发现 ${Array.isArray(result.issues) ? result.issues.length : 0} 个角色混淆问题`)
+          message.warning(`Phát hiện ${Array.isArray(result.issues) ? result.issues.length : 0} vấn đề nhầm lẫn nhân vật`)
         } else {
-          message.success('未发现角色混淆问题')
+          message.success('Không phát hiện vấn đề nhầm lẫn nhân vật')
         }
       },
       onFailed: (errorMessage) => {
         message.error(errorMessage)
       },
       onReadError: () => {
-        message.error('读取一致性检查结果失败')
+        message.error('Đọc kết quả kiểm tra tính nhất quán thất bại')
       },
     })
   }, [])
 
   const applySimplifyResult = useCallback(async (taskId: string) => {
     await handleTaskResultSafely(taskId, {
-      readErrorMessage: '读取智能精简结果失败',
-      failedFallbackMessage: '智能精简失败',
+      readErrorMessage: 'Đọc kết quả tinh giản thông minh thất bại',
+      failedFallbackMessage: 'Tinh giản thông minh thất bại',
       onSucceeded: (resultValue) => {
         const result = resultValue as Record<string, any>
         const simplified = String(result?.simplified_script_text ?? '').trim()
         if (!simplified) {
-          message.error('智能精简失败：未返回有效内容')
+          message.error('Tinh giản thông minh thất bại: không trả về nội dung hợp lệ')
           return
         }
         setCondensedText(simplified)
@@ -103,39 +103,39 @@ export function ChapterRawTextEditorModal({
           setMode('condensed')
           setEditorText(simplified)
         }
-        message.success('智能精简完成')
+        message.success('Tóm gọn thông minh hoàn tất')
       },
       onFailed: (errorMessage) => {
         message.error(errorMessage)
       },
       onReadError: () => {
-        message.error('读取智能精简结果失败')
+        message.error('Đọc kết quả tóm gọn thông minh thất bại')
       },
     })
   }, [mode])
 
   const applyOptimizeResult = useCallback(async (taskId: string) => {
     await handleTaskResultSafely(taskId, {
-      readErrorMessage: '读取一键优化结果失败',
-      failedFallbackMessage: '一键优化失败',
+      readErrorMessage: 'Đọc kết quả tối ưu hóa một nút thất bại',
+      failedFallbackMessage: 'Tối ưu hóa một nút thất bại',
       onSucceeded: (resultValue) => {
         const result = resultValue as Record<string, any>
         const optimized = String(result?.optimized_script_text ?? '').trim()
         if (!optimized) {
-          message.error('一键优化失败：未返回有效内容')
+          message.error('Tối ưu hóa một nút thất bại: không trả về nội dung hợp lệ')
           return
         }
         setRawText(optimized)
         setEditorText(optimized)
         setMode('raw')
         setCompareRaw(optimized)
-        message.success('一键优化完成')
+        message.success('Tối ưu một chạm hoàn tất')
       },
       onFailed: (errorMessage) => {
         message.error(errorMessage)
       },
       onReadError: () => {
-        message.error('读取一键优化结果失败')
+        message.error('Đọc kết quả tối ưu một chạm thất bại')
       },
     })
   }, [])
@@ -208,14 +208,14 @@ export function ChapterRawTextEditorModal({
         setConsistencyResult(null)
       })
       .catch(() => {
-        message.error('加载章节失败')
+        message.error('Nạp chương thất bại')
       })
       .finally(() => setLoading(false))
   }, [open, chapterId])
 
   const handleSmartSimplify = async () => {
     if (!rawText.trim()) {
-      message.warning('请先输入原文')
+      message.warning('Vui lòng nhập nguyên văn trước')
       return
     }
     if (notifyExistingTask(simplifyTask, {
@@ -237,10 +237,10 @@ export function ChapterRawTextEditorModal({
         trackTaskData: trackSimplifyTaskData,
         startedMessage: simplifyTaskCopy.startedMessage,
         reusedMessage: simplifyTaskCopy.reusedMessage,
-        fallbackErrorMessage: '智能精简失败',
+        fallbackErrorMessage: 'Tinh giản thông minh thất bại',
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setExtracting(false)
     }
@@ -249,7 +249,7 @@ export function ChapterRawTextEditorModal({
   const handleCheckConsistency = async () => {
     const scriptText = rawText.trim()
     if (!scriptText) {
-      message.warning('请先输入原文')
+      message.warning('Vui lòng nhập nguyên văn trước')
       return
     }
     if (notifyExistingTask(consistencyTask, {
@@ -268,10 +268,10 @@ export function ChapterRawTextEditorModal({
         trackTaskData: trackConsistencyTaskData,
         startedMessage: consistencyTaskCopy.startedMessage,
         reusedMessage: consistencyTaskCopy.reusedMessage,
-        fallbackErrorMessage: '一致性检查失败',
+        fallbackErrorMessage: 'Kiểm tra tính nhất quán thất bại',
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setCheckingConsistency(false)
     }
@@ -282,25 +282,25 @@ export function ChapterRawTextEditorModal({
     try {
       await executeTaskCancel({
         taskId: consistencyTask.taskId,
-        reason: '用户在原文编辑弹窗取消一致性检查任务',
+        reason: 'Người dùng hủy tác vụ kiểm tra tính nhất quán trong hộp thoại chỉnh sửa nguyên văn',
         applyCancelData: applyConsistencyCancelData,
         cancelledImmediatelyMessage: consistencyTaskCopy.cancelledImmediatelyMessage,
         cancelRequestedMessage: consistencyTaskCopy.cancelRequestedMessage,
-        fallbackErrorMessage: '取消一致性检查任务失败',
+        fallbackErrorMessage: 'Hủy tác vụ kiểm tra tính nhất quán thất bại',
       })
     } catch {
-      // executeTaskCancel 已统一处理错误提示
+      // executeTaskCancel đã xử lý thống nhất thông báo lỗi
     }
   }
 
   const handleOneClickOptimize = async () => {
     const scriptText = rawText.trim()
     if (!scriptText) {
-      message.warning('请先输入原文')
+      message.warning('Vui lòng nhập nguyên văn trước')
       return
     }
     if (!consistencyResult) {
-      message.info('请先进行角色混淆检查')
+      message.info('Vui lòng kiểm tra nhầm lẫn nhân vật trước')
       return
     }
     if (notifyExistingTask(optimizeTask, {
@@ -323,10 +323,10 @@ export function ChapterRawTextEditorModal({
         trackTaskData: trackOptimizeTaskData,
         startedMessage: optimizeTaskCopy.startedMessage,
         reusedMessage: optimizeTaskCopy.reusedMessage,
-        fallbackErrorMessage: '一键优化失败',
+        fallbackErrorMessage: 'Tối ưu hóa một nút thất bại',
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setOptimizingScript(false)
     }
@@ -337,14 +337,14 @@ export function ChapterRawTextEditorModal({
     try {
       await executeTaskCancel({
         taskId: simplifyTask.taskId,
-        reason: '用户在原文编辑弹窗取消智能精简任务',
+        reason: 'Người dùng hủy tác vụ tinh giản thông minh trong hộp thoại chỉnh sửa nguyên văn',
         applyCancelData: applySimplifyCancelData,
         cancelledImmediatelyMessage: simplifyTaskCopy.cancelledImmediatelyMessage,
         cancelRequestedMessage: simplifyTaskCopy.cancelRequestedMessage,
-        fallbackErrorMessage: '取消智能精简任务失败',
+        fallbackErrorMessage: 'Hủy tác vụ tinh giản thông minh thất bại',
       })
     } catch {
-      // executeTaskCancel 已统一处理错误提示
+      // executeTaskCancel đã xử lý thống nhất thông báo lỗi
     }
   }
 
@@ -353,14 +353,14 @@ export function ChapterRawTextEditorModal({
     try {
       await executeTaskCancel({
         taskId: optimizeTask.taskId,
-        reason: '用户在原文编辑弹窗取消一键优化任务',
+        reason: 'Người dùng hủy tác vụ tối ưu hóa một nút trong hộp thoại chỉnh sửa nguyên văn',
         applyCancelData: applyOptimizeCancelData,
         cancelledImmediatelyMessage: optimizeTaskCopy.cancelledImmediatelyMessage,
         cancelRequestedMessage: optimizeTaskCopy.cancelRequestedMessage,
-        fallbackErrorMessage: '取消一键优化任务失败',
+        fallbackErrorMessage: 'Hủy tác vụ tối ưu một chạm thất bại',
       })
     } catch {
-      // executeTaskCancel 已统一处理错误提示
+      // executeTaskCancel đã xử lý thống nhất thông báo lỗi
     }
   }
 
@@ -368,7 +368,7 @@ export function ChapterRawTextEditorModal({
     task: consistencyTask,
     settledTask: consistencySettledTask,
     title: consistencyTaskCopy.title,
-    sourceLabel: '章节原文编辑',
+    sourceLabel: 'Chỉnh sửa nguyên văn chương',
     runningDescription: consistencyTaskCopy.runningDescription,
     cancellingDescription: consistencyTaskCopy.cancellingDescription,
     successDescription: consistencyTaskCopy.successDescription,
@@ -381,7 +381,7 @@ export function ChapterRawTextEditorModal({
     task: simplifyTask,
     settledTask: simplifySettledTask,
     title: simplifyTaskCopy.title,
-    sourceLabel: '章节原文编辑',
+    sourceLabel: 'Chỉnh sửa nguyên văn chương',
     runningDescription: simplifyTaskCopy.runningDescription,
     cancellingDescription: simplifyTaskCopy.cancellingDescription,
     successDescription: simplifyTaskCopy.successDescription,
@@ -394,7 +394,7 @@ export function ChapterRawTextEditorModal({
     task: optimizeTask,
     settledTask: optimizeSettledTask,
     title: optimizeTaskCopy.title,
-    sourceLabel: '章节原文编辑',
+    sourceLabel: 'Chỉnh sửa nguyên văn chương',
     runningDescription: optimizeTaskCopy.runningDescription,
     cancellingDescription: optimizeTaskCopy.cancellingDescription,
     successDescription: optimizeTaskCopy.successDescription,
@@ -410,7 +410,7 @@ export function ChapterRawTextEditorModal({
 
   const handleViewCondensed = () => {
     if (!condensedText.trim()) {
-      message.info('暂无精简内容')
+      message.info('Chưa có nội dung rút gọn')
       return
     }
     setMode('condensed')
@@ -429,7 +429,7 @@ export function ChapterRawTextEditorModal({
         setRawText(editorText)
         setSavedRawText(editorText)
         onSaved?.({ rawText: editorText })
-        message.success('原文已保存')
+        message.success('Đã lưu nguyên văn')
         return true
       }
 
@@ -441,7 +441,7 @@ export function ChapterRawTextEditorModal({
         setCondensedText(editorText)
         setSavedCondensedText(editorText)
         onSaved?.({ condensedText: editorText })
-        message.success('精简内容已保存')
+        message.success('Đã lưu nội dung tóm gọn')
         return true
       }
 
@@ -454,10 +454,10 @@ export function ChapterRawTextEditorModal({
       setSavedRawText(compareRaw)
       setSavedCondensedText(compareCondensed)
       onSaved?.({ rawText: compareRaw, condensedText: compareCondensed })
-      message.success('已保存')
+      message.success('Đã lưu')
       return true
     } catch {
-      message.error('保存失败')
+      message.error('Lưu thất bại')
       return false
     } finally {
       setSaving(false)
@@ -477,10 +477,10 @@ export function ChapterRawTextEditorModal({
       return
     }
     Modal.confirm({
-      title: '检测到未保存变更',
-      content: '文本输入区有未保存修改，关闭前请选择操作。',
-      okText: '保存',
-      cancelText: '忽略',
+      title: 'Phát hiện thay đổi chưa lưu',
+      content: 'Khu nhập văn bản có thay đổi chưa lưu, vui lòng chọn thao tác trước khi đóng.',
+      okText: 'Lưu',
+      cancelText: 'Bỏ qua',
       onOk: async () => {
         const ok = await handleSave()
         if (ok) onClose()
@@ -496,14 +496,14 @@ export function ChapterRawTextEditorModal({
       {
         id: 'h-1',
         at: Date.now() - 1000 * 60 * 60 * 2,
-        rawText: '【原文】示例版本 1（预置数据）',
-        condensedText: '【精简】示例版本 1（预置数据）',
+        rawText: '【Nguyên văn】Bản ví dụ 1 (dữ liệu có sẵn)',
+        condensedText: '【TINH GIAN】Phiên bản ví dụ 1 (dữ liệu có sẵn)',
       },
       {
         id: 'h-2',
         at: Date.now() - 1000 * 60 * 22,
-        rawText: '【原文】示例版本 2（预置数据）',
-        condensedText: '【精简】示例版本 2（预置数据）',
+        rawText: '【Nguyên văn】Bản ví dụ 2 (dữ liệu có sẵn)',
+        condensedText: '【TINH GIAN】Phiên bản ví dụ 2 (dữ liệu có sẵn)',
       },
     ],
     [],
@@ -516,13 +516,13 @@ export function ChapterRawTextEditorModal({
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2">
               <FileTextOutlined />{' '}
-              {mode === 'raw' ? '原文编辑区' : mode === 'condensed' ? '精简内容编辑区' : '对比模式'}
-              <Tag color="blue">{plainWordCount} 字</Tag>
-              <Tag color="default">{paragraphCount} 段</Tag>
+              {mode === 'raw' ? 'Vùng chỉnh sửa nguyên văn' : mode === 'condensed' ? 'Vùng chỉnh sửa nội dung thu gọn' : 'Chế độ so sánh'}
+              <Tag color="blue">{plainWordCount} chữ</Tag>
+              <Tag color="default">{paragraphCount} đoạn</Tag>
             </div>
             <Space size="small">
               <Button size="small" type="primary" icon={<SaveOutlined />} loading={actionsLoading || saving} disabled={actionsLoading} onClick={() => void handleSave()}>
-                保存
+                Lưu
               </Button>
               <Button
                 size="small"
@@ -531,7 +531,7 @@ export function ChapterRawTextEditorModal({
                 disabled={actionsLoading || !!consistencyTask}
                 onClick={() => void handleCheckConsistency()}
               >
-                {consistencyTask ? '检查中' : '角色混淆检查'}
+                {consistencyTask ? 'Đang kiểm tra' : 'Kiểm tra nhầm lẫn nhân vật'}
               </Button>
               {consistencyTask ? (
                 <Button
@@ -541,7 +541,7 @@ export function ChapterRawTextEditorModal({
                   disabled={consistencyTask.cancelRequested}
                   onClick={() => void handleCancelConsistencyTask()}
                 >
-                  {consistencyTask.cancelRequested ? '正在取消' : '取消检查'}
+                  {consistencyTask.cancelRequested ? 'Đang hủy' : 'Hủy kiểm tra'}
                 </Button>
               ) : null}
               <Button
@@ -551,7 +551,7 @@ export function ChapterRawTextEditorModal({
                 disabled={actionsLoading || !!simplifyTask}
                 onClick={() => void handleSmartSimplify()}
               >
-                {simplifyTask ? '精简中' : '智能精简'}
+                {simplifyTask ? 'Đang tinh giản' : 'Tinh giản thông minh'}
               </Button>
               {simplifyTask ? (
                 <Button
@@ -561,12 +561,12 @@ export function ChapterRawTextEditorModal({
                   disabled={simplifyTask.cancelRequested}
                   onClick={() => void handleCancelSimplifyTask()}
                 >
-                  {simplifyTask.cancelRequested ? '正在取消' : '取消精简'}
+                  {simplifyTask.cancelRequested ? 'đang hủy' : 'hủy rút gọn'}
                 </Button>
               ) : null}
               {mode === 'condensed' ? (
                 <Button size="small" icon={<ReloadOutlined />} loading={actionsLoading} disabled={actionsLoading} onClick={handleBackToRaw}>
-                  回到原文
+                  Quay về nguyên văn
                 </Button>
               ) : (
                 <Button
@@ -576,7 +576,7 @@ export function ChapterRawTextEditorModal({
                   disabled={actionsLoading || !condensedText.trim()}
                   onClick={handleViewCondensed}
                 >
-                  查看精简
+                  Xem bản rút gọn
                 </Button>
               )}
               <Button
@@ -596,10 +596,10 @@ export function ChapterRawTextEditorModal({
                   setMode('compare')
                 }}
               >
-                对比模式
+                Chế độ so sánh
               </Button>
               <Button size="small" icon={<HistoryOutlined />} loading={actionsLoading} disabled={actionsLoading} onClick={() => setHistoryOpen(true)}>
-                版本历史
+                Lịch sử phiên bản
               </Button>
             </Space>
           </div>
@@ -611,7 +611,7 @@ export function ChapterRawTextEditorModal({
         width={900}
         footer={
           <Button type="primary" loading={actionsLoading} disabled={actionsLoading} onClick={handleRequestClose}>
-            关闭
+            Đóng
           </Button>
         }
         styles={{
@@ -626,7 +626,7 @@ export function ChapterRawTextEditorModal({
         ) : mode === 'compare' ? (
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <div className="text-xs text-gray-500 mb-2">原文</div>
+              <div className="text-xs text-gray-500 mb-2">Nguyên văn</div>
               <Input.TextArea
                 value={compareRaw}
                 onChange={(e) => setCompareRaw(e.target.value)}
@@ -636,7 +636,7 @@ export function ChapterRawTextEditorModal({
               />
             </div>
             <div className="flex flex-col">
-              <div className="text-xs text-gray-500 mb-2">精简内容</div>
+              <div className="text-xs text-gray-500 mb-2">Nội dung rút gọn</div>
               <Input.TextArea
                 value={compareCondensed}
                 onChange={(e) => setCompareCondensed(e.target.value)}
@@ -657,18 +657,18 @@ export function ChapterRawTextEditorModal({
                 if (mode === 'condensed') setCondensedText(v)
               }}
             disabled={actionsLoading}
-              placeholder={mode === 'raw' ? '编辑章节原文…' : '编辑精简内容…'}
+              placeholder={mode === 'raw' ? 'Chỉnh sửa nguyên văn chương…' : 'Chỉnh sửa nội dung rút gọn…'}
               rows={16}
               style={{ resize: 'none', background: '#fdfdfd' }}
             />
             {consistencyResult ? (
               <Card
                 size="small"
-                title="角色混淆检查结果"
+                title="Kết quả kiểm tra nhầm lẫn nhân vật"
                 extra={
                   <Space wrap>
                     <Tag color={consistencyResult.has_issues ? 'red' : 'green'}>
-                      {consistencyResult.has_issues ? '发现问题' : '无问题'}
+                      {consistencyResult.has_issues ? 'phát hiện vấn đề' : 'không có vấn đề'}
                     </Tag>
                     <Tag>issues：{consistencyIssues.length}</Tag>
                     <Button
@@ -679,7 +679,7 @@ export function ChapterRawTextEditorModal({
                       disabled={actionsLoading || !!optimizeTask}
                       onClick={() => void handleOneClickOptimize()}
                     >
-                      {optimizeTask ? '优化中' : '一键优化'}
+                      {optimizeTask ? 'Đang tối ưu' : 'Tối ưu một nút'}
                     </Button>
                     {optimizeTask ? (
                       <Button
@@ -689,14 +689,14 @@ export function ChapterRawTextEditorModal({
                         disabled={optimizeTask.cancelRequested}
                         onClick={() => void handleCancelOptimizeTask()}
                       >
-                        {optimizeTask.cancelRequested ? '正在取消' : '取消优化'}
+                        {optimizeTask.cancelRequested ? 'đang hủy' : 'hủy tối ưu'}
                       </Button>
                     ) : null}
                   </Space>
                 }
               >
                 {consistencyIssues.length === 0 ? (
-                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="未发现角色混淆问题" />
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không phát hiện vấn đề nhầm lẫn nhân vật" />
                 ) : (
                   <List
                     size="small"
@@ -710,14 +710,14 @@ export function ChapterRawTextEditorModal({
                           </div>
                           <div className="text-sm">{it?.description}</div>
                           {it?.character_candidates?.length ? (
-                            <div className="text-xs text-gray-500 mt-1">候选角色：{it.character_candidates.join('、')}</div>
+                            <div className="text-xs text-gray-500 mt-1">Ứng viên nhân vật: {it.character_candidates.join('、')}</div>
                           ) : null}
                           {it?.suggestion ? (
-                            <div className="text-xs text-gray-500 mt-1">建议：{it.suggestion}</div>
+                            <div className="text-xs text-gray-500 mt-1">Gợi ý: {it.suggestion}</div>
                           ) : null}
                           {it?.affected_lines ? (
                             <div className="text-xs text-gray-400 mt-1">
-                              影响范围：{it.affected_lines.start_line ?? '-'}–{it.affected_lines.end_line ?? '-'}
+                              Phạm vi ảnh hưởng: {it.affected_lines.start_line ?? '-'}–{it.affected_lines.end_line ?? '-'}
                             </div>
                           ) : null}
                         </div>
@@ -737,7 +737,7 @@ export function ChapterRawTextEditorModal({
       <Modal
         title={
           <div className="flex items-center gap-2">
-            <HistoryOutlined /> 历史版本
+            <HistoryOutlined /> Phiên bản lịch sử
           </div>
         }
         open={historyOpen}
@@ -745,13 +745,13 @@ export function ChapterRawTextEditorModal({
         width={920}
         footer={
           <Button type="primary" onClick={() => setHistoryOpen(false)}>
-            关闭
+            Đóng
           </Button>
         }
         styles={{ body: { maxHeight: '70vh', overflow: 'auto' } }}
       >
-        {/* TODO: 历史版本接口未接入，当前为预置数据；后续接入后按时间线渲染即可 */}
-        <div className="text-xs text-gray-500 mb-3">内容默认折叠，仅展示时间线节点。</div>
+        {/* TODO: API phiên bản lịch sử chưa được nối vào, hiện là dữ liệu sẵn; sau khi nối vào sẽ render theo trục thời gian */}
+        <div className="text-xs text-gray-500 mb-3">Nội dung mặc định thu gọn, chỉ hiển thị nút trên trục thời gian.</div>
         <div className="space-y-3">
           {mockHistory.map((h) => (
             <div key={h.id} className="border border-gray-200 rounded-lg p-3 bg-white">
@@ -760,11 +760,11 @@ export function ChapterRawTextEditorModal({
                 items={[
                   {
                     key: 'content',
-                    label: '展开查看内容',
+                    label: 'Mở rộng để xem nội dung',
                     children: (
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <div className="text-xs text-gray-500 mb-2">原文内容</div>
+                          <div className="text-xs text-gray-500 mb-2">Nội dung nguyên văn</div>
                           <Input.TextArea
                             value={h.rawText}
                             readOnly
@@ -773,7 +773,7 @@ export function ChapterRawTextEditorModal({
                           />
                         </div>
                         <div>
-                          <div className="text-xs text-gray-500 mb-2">精简内容</div>
+                          <div className="text-xs text-gray-500 mb-2">Nội dung rút gọn</div>
                           <Input.TextArea
                             value={h.condensedText}
                             readOnly

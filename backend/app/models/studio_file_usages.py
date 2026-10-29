@@ -14,50 +14,50 @@ if TYPE_CHECKING:
 
 
 class FileUsage(Base, TimestampMixin):
-    """文件在项目业务链上的使用位置（多对一 files；同一 file 可多行）。"""
+    """vị trí dùng tệp trong chuỗi nghiệp vụ dự án (nhiều-một tới files；cùng một tệp có thể nhiều dòng)."""
 
     __tablename__ = "file_usages"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="ID dòng")
     file_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="文件 ID",
+        comment="ID tệp",
     )
     project_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("projects.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="项目 ID",
+        comment="ID dự án",
     )
     chapter_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("chapters.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="章节 ID（可空）",
+        comment="ID chương (để trống được)",
     )
     shot_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("shots.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        comment="镜头 ID（可空）",
+        comment="ID phân cảnh (để trống được)",
     )
     usage_kind: Mapped[FileUsageKind] = mapped_column(
         String(32),
         nullable=False,
         index=True,
-        comment="用途类型",
+        comment="Kiểu mục đích",
     )
     source_ref: Mapped[str] = mapped_column(
         String(128),
         nullable=False,
         default="",
-        comment="幂等键（如同一槽位 upsert；无则空串）",
+        comment="Khóa idempotent (ví dụ upsert cùng vị trí giữ; không có thì chuỗi rỗng)",
     )
 
     file: Mapped["FileItem"] = relationship(back_populates="usages")

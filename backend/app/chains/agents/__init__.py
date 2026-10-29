@@ -1,4 +1,4 @@
-"""Skill 加载与 Agent 运行：通用基类与提取类/提示词类 agent。"""
+"""Nạp Skill và chạy Agent: lớp base chung cùng các agent loại extraction/prompt."""
 
 from app.chains.agents.base import AgentBase, STRUCTURED_OUTPUT_METHOD
 from app.chains.agents.shot_frame_prompt_agents import (

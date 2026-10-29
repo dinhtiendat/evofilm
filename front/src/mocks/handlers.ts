@@ -15,7 +15,7 @@ import {
   timelineClips,
 } from './data'
 
-// 可变的项目列表，支持创建/编辑/删除（会话内生效）
+// Danh sách dự án có thể sửa, hỗ trợ tạo/chỉnh sửa/xóa (hiệu lực trong phiên)
 let projectsList: Project[] = [...initialProjects]
 let chaptersList: Chapter[] = [...chapters]
 let agentsList: Agent[] = [...initialAgents]
@@ -133,9 +133,9 @@ export const handlers = [
     const now = new Date().toISOString().slice(0, 16).replace('T', ' ')
     const newProject: Project = {
       id,
-      name: body.name ?? '未命名项目',
+      name: body.name ?? 'Dự án chưa đặt tên',
       description: body.description ?? '',
-      style: (body.style as Project['style']) ?? '现实主义',
+      style: (body.style as Project['style']) ?? 'Chủ nghĩa hiện thực',
       seed: typeof body.seed === 'number' ? body.seed : Math.floor(Math.random() * 99999),
       unifyStyle: typeof body.unify_style === 'boolean' ? body.unify_style : true,
       progress: typeof body.progress === 'number' ? body.progress : 0,
@@ -150,14 +150,14 @@ export const handlers = [
   http.get('/api/v1/studio/projects/:project_id', ({ params }) => {
     const { project_id } = params as { project_id: string }
     const project = projectsList.find((p) => p.id === project_id)
-    if (!project) return notFound('项目不存在')
+    if (!project) return notFound('Dự án không tồn tại')
     return ok(toProjectRead(project))
   }),
 
   http.patch('/api/v1/studio/projects/:project_id', async ({ params, request }) => {
     const { project_id } = params as { project_id: string }
     const idx = projectsList.findIndex((p) => p.id === project_id)
-    if (idx === -1) return notFound('项目不存在')
+    if (idx === -1) return notFound('Dự án không tồn tại')
 
     const body = (await request.json()) as Partial<{
       name: string
@@ -195,7 +195,7 @@ export const handlers = [
   http.delete('/api/v1/studio/projects/:project_id', ({ params }) => {
     const { project_id } = params as { project_id: string }
     const idx = projectsList.findIndex((p) => p.id === project_id)
-    if (idx === -1) return notFound('项目不存在')
+    if (idx === -1) return notFound('Dự án không tồn tại')
     projectsList = projectsList.filter((p) => p.id !== project_id)
     return ok(null, 200, 'Deleted')
   }),
@@ -237,7 +237,7 @@ export const handlers = [
 
     if (!body.project_id || !body.title) {
       return HttpResponse.json(
-        { code: 422, message: 'project_id 和 title 为必填', data: null },
+        { code: 422, message: 'project_id và title là bắt buộc', data: null },
         { status: 422 },
       )
     }
@@ -271,14 +271,14 @@ export const handlers = [
   http.get('/api/v1/studio/chapters/:chapter_id', ({ params }) => {
     const { chapter_id } = params as { chapter_id: string }
     const chapter = chaptersList.find((c) => c.id === chapter_id)
-    if (!chapter) return notFound('章节不存在')
+    if (!chapter) return notFound('Chương không tồn tại')
     return ok(toChapterRead(chapter))
   }),
 
   http.patch('/api/v1/studio/chapters/:chapter_id', async ({ params, request }) => {
     const { chapter_id } = params as { chapter_id: string }
     const idx = chaptersList.findIndex((c) => c.id === chapter_id)
-    if (idx === -1) return notFound('章节不存在')
+    if (idx === -1) return notFound('Chương không tồn tại')
 
     const body = (await request.json()) as Partial<{
       project_id: string | null
@@ -324,36 +324,36 @@ export const handlers = [
   http.delete('/api/v1/studio/chapters/:chapter_id', ({ params }) => {
     const { chapter_id } = params as { chapter_id: string }
     const idx = chaptersList.findIndex((c) => c.id === chapter_id)
-    if (idx === -1) return notFound('章节不存在')
+    if (idx === -1) return notFound('Chương không tồn tại')
     chaptersList = chaptersList.filter((c) => c.id !== chapter_id)
     return ok(null, 200, 'Deleted')
   }),
 
-  // 项目列表
+  // Danh sách dự án
   http.get('/api/projects', () => {
     return HttpResponse.json(projectsList, { status: 200 })
   }),
 
-  // 单个项目详情
+  // Chi tiết dự án riêng lẻ
   http.get('/api/projects/:projectId', ({ params }) => {
     const { projectId } = params as { projectId: string }
     const project = projectsList.find((p) => p.id === projectId)
     if (!project) {
-      return HttpResponse.json({ message: '项目不存在' }, { status: 404 })
+      return HttpResponse.json({ message: 'Dự án không tồn tại' }, { status: 404 })
     }
     return HttpResponse.json(project, { status: 200 })
   }),
 
-  // 创建项目
+  // Tạo dự án
   http.post('/api/projects', async ({ request }) => {
     const body = (await request.json()) as Partial<Project> & { name: string; description?: string; style?: string; seed?: number; unifyStyle?: boolean }
     const id = nextProjectId()
     const now = new Date().toISOString().slice(0, 16).replace('T', ' ')
     const newProject: Project = {
       id,
-      name: body.name ?? '未命名项目',
+      name: body.name ?? 'Dự án chưa đặt tên',
       description: body.description ?? '',
-      style: (body.style as Project['style']) ?? '现实主义',
+      style: (body.style as Project['style']) ?? 'Chủ nghĩa hiện thực',
       seed: typeof body.seed === 'number' ? body.seed : Math.floor(Math.random() * 99999),
       unifyStyle: body.unifyStyle ?? true,
       progress: 0,
@@ -364,11 +364,11 @@ export const handlers = [
     return HttpResponse.json(newProject, { status: 201 })
   }),
 
-  // 更新项目
+  // Cập nhật dự án
   http.put('/api/projects/:projectId', async ({ params, request }) => {
     const { projectId } = params as { projectId: string }
     const idx = projectsList.findIndex((p) => p.id === projectId)
-    if (idx === -1) return HttpResponse.json({ message: '项目不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Dự án không tồn tại' }, { status: 404 })
     const body = (await request.json()) as Partial<Project>
     const now = new Date().toISOString().slice(0, 16).replace('T', ' ')
     projectsList = projectsList.map((p, i) =>
@@ -379,40 +379,40 @@ export const handlers = [
     return HttpResponse.json(projectsList[idx], { status: 200 })
   }),
 
-  // 删除项目
+  // Xóa dự án
   http.delete('/api/projects/:projectId', ({ params }) => {
     const { projectId } = params as { projectId: string }
     const idx = projectsList.findIndex((p) => p.id === projectId)
-    if (idx === -1) return HttpResponse.json({ message: '项目不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Dự án không tồn tại' }, { status: 404 })
     projectsList = projectsList.filter((p) => p.id !== projectId)
     return new HttpResponse(null, { status: 204 })
   }),
 
-  // 项目下章节列表
+  // Danh sách chương trong dự án
   http.get('/api/projects/:projectId/chapters', ({ params }) => {
     const { projectId } = params as { projectId: string }
     const list = chapters.filter((c) => c.projectId === projectId)
     return HttpResponse.json(list, { status: 200 })
   }),
 
-  // 某章节的分镜列表
+  // Danh sách phân cảnh của một chương nào đó
   http.get('/api/chapters/:chapterId/shots', ({ params }) => {
     const { chapterId } = params as { chapterId: string }
     const list = shots.filter((s) => s.chapterId === chapterId)
     return HttpResponse.json(list, { status: 200 })
   }),
 
-  // 单个分镜详情（镜头属性）
+  // Chi tiết một phân cảnh (thuộc tính phân cảnh)
   http.get('/api/shots/:shotId', ({ params }) => {
     const { shotId } = params as { shotId: string }
     const detail = shotDetails.find((s) => s.id === shotId)
     if (!detail) {
-      return HttpResponse.json({ message: '分镜不存在' }, { status: 404 })
+      return HttpResponse.json({ message: 'Phân cảnh không tồn tại' }, { status: 404 })
     }
     return HttpResponse.json(detail, { status: 200 })
   }),
 
-  // 资产列表（可通过查询参数过滤）
+  // Danh sách tài nguyên (lọc được qua tham số truy vấn)
   http.get('/api/assets', ({ request }) => {
     const url = new URL(request.url)
     const type = url.searchParams.get('type')
@@ -420,42 +420,42 @@ export const handlers = [
     return HttpResponse.json(list, { status: 200 })
   }),
 
-  // 提示词模板列表
+  // Danh sách mẫu prompt
   http.get('/api/prompts/templates', () => {
     return HttpResponse.json(promptTemplates, { status: 200 })
   }),
 
-  // 文件列表
+  // Danh sách tệp
   http.get('/api/files', () => {
     return HttpResponse.json(files, { status: 200 })
   }),
 
-  // 某项目的时间线数据
+  // Dữ liệu trục thời gian của một dự án nào đó
   http.get('/api/projects/:projectId/timeline', () => {
     return HttpResponse.json(timelineClips, { status: 200 })
   }),
 
-  // Agent 列表
+  // Danh sách Agent
   http.get('/api/agents', () => {
     return HttpResponse.json(agentsList, { status: 200 })
   }),
 
-  // 单个 Agent 详情
+  // Chi tiết một Agent
   http.get('/api/agents/:id', ({ params }) => {
     const { id } = params as { id: string }
     const agent = agentsList.find((a) => a.id === id)
-    if (!agent) return HttpResponse.json({ message: 'Agent 不存在' }, { status: 404 })
+    if (!agent) return HttpResponse.json({ message: 'Agent không tồn tại' }, { status: 404 })
     return HttpResponse.json(agent, { status: 200 })
   }),
 
-  // 创建 Agent
+  // Tạo Agent
   http.post('/api/agents', async ({ request }) => {
     const body = (await request.json()) as Partial<Agent> & { name: string; type: Agent['type']; description?: string }
     const id = `agent${Date.now()}`
     const now = new Date().toISOString().slice(0, 10)
     const newAgent: Agent = {
       id,
-      name: body.name ?? '未命名 Agent',
+      name: body.name ?? 'Agent không tên',
       type: body.type ?? 'other',
       description: body.description ?? '',
       isDefault: false,
@@ -469,11 +469,11 @@ export const handlers = [
     return HttpResponse.json(newAgent, { status: 201 })
   }),
 
-  // 更新 Agent（含设置默认）
+  // Cập nhật Agent (kể cả đặt mặc định)
   http.put('/api/agents/:id', async ({ params, request }) => {
     const { id } = params as { id: string }
     const idx = agentsList.findIndex((a) => a.id === id)
-    if (idx === -1) return HttpResponse.json({ message: 'Agent 不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Agent không tồn tại' }, { status: 404 })
     const body = (await request.json()) as Partial<Agent>
     const now = new Date().toISOString().slice(0, 10)
     const updated = { ...agentsList[idx], ...body, id: agentsList[idx].id, updatedAt: now }
@@ -488,23 +488,23 @@ export const handlers = [
     return HttpResponse.json(agentsList[idx], { status: 200 })
   }),
 
-  // 删除 Agent
+  // Xóa Agent
   http.delete('/api/agents/:id', ({ params }) => {
     const { id } = params as { id: string }
     const idx = agentsList.findIndex((a) => a.id === id)
-    if (idx === -1) return HttpResponse.json({ message: 'Agent 不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Agent không tồn tại' }, { status: 404 })
     agentsList = agentsList.filter((a) => a.id !== id)
     return new HttpResponse(null, { status: 204 })
   }),
 
-  // 供应商列表
+  // Danh sách nhà cung cấp
   http.get('/api/models/providers', () => {
     return HttpResponse.json(providersList, { status: 200 })
   }),
   http.get('/api/models/providers/:id', ({ params }) => {
     const { id } = params as { id: string }
     const p = providersList.find((x) => x.id === id)
-    if (!p) return HttpResponse.json({ message: '供应商不存在' }, { status: 404 })
+    if (!p) return HttpResponse.json({ message: 'Nhà cung cấp không tồn tại' }, { status: 404 })
     return HttpResponse.json(p, { status: 200 })
   }),
   http.post('/api/models/providers', async ({ request }) => {
@@ -512,7 +512,7 @@ export const handlers = [
     const id = `prov${Date.now()}`
     const newP: Provider = {
       id,
-      name: body.name ?? '未命名',
+      name: body.name ?? 'Chưa đặt tên',
       base_url: body.base_url ?? '',
       description: body.description ?? '',
       status: body.status ?? 'active',
@@ -524,7 +524,7 @@ export const handlers = [
   http.put('/api/models/providers/:id', async ({ params, request }) => {
     const { id } = params as { id: string }
     const idx = providersList.findIndex((p) => p.id === id)
-    if (idx === -1) return HttpResponse.json({ message: '供应商不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Nhà cung cấp không tồn tại' }, { status: 404 })
     const body = (await request.json()) as Partial<Provider>
     providersList = providersList.map((p, i) =>
       i === idx ? { ...p, ...body, id: p.id } : p
@@ -534,19 +534,19 @@ export const handlers = [
   http.delete('/api/models/providers/:id', ({ params }) => {
     const { id } = params as { id: string }
     const idx = providersList.findIndex((p) => p.id === id)
-    if (idx === -1) return HttpResponse.json({ message: '供应商不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Nhà cung cấp không tồn tại' }, { status: 404 })
     providersList = providersList.filter((p) => p.id !== id)
     return new HttpResponse(null, { status: 204 })
   }),
 
-  // 模型列表
+  // Danh sách mô hình
   http.get('/api/models/list', () => {
     return HttpResponse.json(modelsList, { status: 200 })
   }),
   http.get('/api/models/list/:id', ({ params }) => {
     const { id } = params as { id: string }
     const m = modelsList.find((x) => x.id === id)
-    if (!m) return HttpResponse.json({ message: '模型不存在' }, { status: 404 })
+    if (!m) return HttpResponse.json({ message: 'Mô hình không tồn tại' }, { status: 404 })
     return HttpResponse.json(m, { status: 200 })
   }),
   http.post('/api/models/list', async ({ request }) => {
@@ -554,7 +554,7 @@ export const handlers = [
     const id = `model${Date.now()}`
     const newM: Model = {
       id,
-      name: body.name ?? '未命名',
+      name: body.name ?? 'Chưa đặt tên',
       category: body.category ?? 'text',
       provider_id: body.provider_id ?? '',
       params: body.params ?? {},
@@ -573,7 +573,7 @@ export const handlers = [
   http.put('/api/models/list/:id', async ({ params, request }) => {
     const { id } = params as { id: string }
     const idx = modelsList.findIndex((m) => m.id === id)
-    if (idx === -1) return HttpResponse.json({ message: '模型不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Mô hình không tồn tại' }, { status: 404 })
     const body = (await request.json()) as Partial<Model>
     const updated = { ...modelsList[idx], ...body, id: modelsList[idx].id }
     if (body.is_default === true) {
@@ -589,12 +589,12 @@ export const handlers = [
   http.delete('/api/models/list/:id', ({ params }) => {
     const { id } = params as { id: string }
     const idx = modelsList.findIndex((m) => m.id === id)
-    if (idx === -1) return HttpResponse.json({ message: '模型不存在' }, { status: 404 })
+    if (idx === -1) return HttpResponse.json({ message: 'Mô hình không tồn tại' }, { status: 404 })
     modelsList = modelsList.filter((m) => m.id !== id)
     return new HttpResponse(null, { status: 204 })
   }),
 
-  // 模型全局设置
+  // Cài đặt toàn cục mô hình
   http.get('/api/models/settings', () => {
     return HttpResponse.json(modelSettingsStore, { status: 200 })
   }),

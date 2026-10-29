@@ -1,4 +1,4 @@
-"""健康检查（v1 内）。"""
+"""Kiểm tra sức khỏe (trong v1)."""
 
 from fastapi import APIRouter
 

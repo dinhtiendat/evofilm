@@ -6,7 +6,7 @@ from typing import Any, AsyncIterator, Optional, Protocol, runtime_checkable
 
 
 class TaskStatus(str, Enum):
-    """任务状态枚举。"""
+    """Liệt kê (enum) trạng thái tác vụ.。"""
 
     pending = "pending"
     running = "running"
@@ -17,10 +17,10 @@ class TaskStatus(str, Enum):
 
 
 class DeliveryMode(str, Enum):
-    """结果交付方式。
+    """Cách thức chuyển giao kết quả.。
 
-扩展方式：
-- 新增一种模式时：加一个枚举值 + 实现对应 DeliveryStrategy
+Cách mở rộng:：
+- Khi thêm một chế độ mới: thêm một giá trị enum + thực hiện DeliveryStrategy tương ứng
 """
 
     streaming = "streaming"
@@ -29,18 +29,18 @@ class DeliveryMode(str, Enum):
 
 @runtime_checkable
 class BaseTask(Protocol):
-    """任务抽象基类。
+    """Lớp cơ sở trừu tượng tác vụ.。
 
-    要求：
-    - 必须实现 run、status、is_done、get_result 四个方法
-    - run：执行实际任务逻辑（调用模型 / 外部服务等），参数由 TaskManager.create 传入
-    - status：返回任务当前状态（可用于自定义查询接口）
-    - is_done：判断任务是否完成
-    - get_result：获取任务结果
+    Yêu cầu:：
+    - bắt buộc phải implement 4 phương thức run, status, is_done, get_result
+    - run: thực thi logic tác vụ thực tế (gọi mô hình / dịch vụ bên ngoài, v.v.), tham số truyền bởi TaskManager.create
+    - status: trả về trạng thái hiện tại của tác vụ (dùng cho API truy vấn tùy chỉnh)
+    - is_done：- is_done: xác định tác vụ đã hoàn thành chưa
+    - get_result：- get_result: Lấy kết quả tác vụ
 
-    run 的两种实现方式：
-    - stream 模式：run 返回 AsyncIterator[Any]，调用方直接消费该 iterator
-    - 异步获取模式：run 返回 None，最终结果通过 get_result() 获取
+    run Hai cách thực hiện run:：
+    - Chế độ stream: run trả về AsyncIterator[Any], bên gọi tiêu thụ trực tiếp iterator đó
+    - chế độ lấy không đồng bộ:run trả về None, kết quả cuối cùng lấy qua get_result()
     """
 
     async def run(self, *args: Any, **kwargs: Any) -> AsyncIterator[Any] | None: ...
@@ -54,7 +54,7 @@ class BaseTask(Protocol):
 
 @dataclass(slots=True)
 class TaskRecord:
-    """任务在应用层的统一表示（与存储实现解耦）。"""
+    """Biểu diễn thống nhất tác vụ ở tầng ứng dụng (phân tách khỏi thực thi lưu trữ)."""
 
     id: str
     mode: DeliveryMode
@@ -80,7 +80,7 @@ class TaskRecord:
 
 @dataclass(slots=True)
 class TaskStatusView:
-    """轮询接口的轻量视图（性能友好）。"""
+    """View nhẹ cho giao diện truy vấn lặp (thuận hiệu năng)."""
 
     id: str
     status: TaskStatus
@@ -97,7 +97,7 @@ class TaskStatusView:
 
 @dataclass(slots=True)
 class TaskListItemView:
-    """任务中心列表视图。"""
+    """Góc nhìn danh sách trung tâm tác vụ.。"""
 
     id: str
     task_kind: str

@@ -1,4 +1,4 @@
-"""脚本提取缓存：基于请求签名的进程内缓存。"""
+"""Cache trích xuất kịch bản: cache trong tiến trình dựa trên chữ ký yêu cầu."""
 
 from __future__ import annotations
 

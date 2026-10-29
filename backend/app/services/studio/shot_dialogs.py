@@ -1,4 +1,4 @@
-"""镜头对白服务：ShotDialogLine 的分页查询与 CRUD。"""
+"""Dịch vụ thoại phân cảnh: truy vấn phân trang và CRUD của ShotDialogLine."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ async def list_paginated(
     page_size: int,
     allow_fields: set[str],
 ) -> ApiResponse[PaginatedData[ShotDialogLineRead]]:
-    """分页查询镜头对白。"""
+    """Truy vấn phân trang thoại phân cảnh.。"""
     stmt = select(ShotDialogLine)
     if shot_detail_id is not None:
         stmt = stmt.where(ShotDialogLine.shot_detail_id == shot_detail_id)
@@ -59,7 +59,7 @@ async def list_by_shot(
     *,
     shot_id: str,
 ) -> list[ShotDialogLine]:
-    """按镜头读取全部已保存对白，供准备页聚合状态复用。"""
+    """Đọc toàn bộ thoại đã lưu theo phân cảnh, để trang chuẩn bị tái sử dụng trạng thái tổng hợp."""
     stmt = (
         select(ShotDialogLine)
         .where(ShotDialogLine.shot_detail_id == shot_id)
@@ -73,7 +73,7 @@ async def create(
     *,
     body: ShotDialogLineCreate,
 ) -> ShotDialogLine:
-    """创建镜头对白。"""
+    """Tạo thoại phân cảnh.。"""
     await require_entity(db, ShotDetail, body.shot_detail_id, detail=entity_not_found("ShotDetail"), status_code=400)
     await require_optional_entity(
         db, Character, body.speaker_character_id, detail=entity_not_found("Character"), status_code=400
@@ -90,7 +90,7 @@ async def update(
     line_id: int,
     body: ShotDialogLineUpdate,
 ) -> ShotDialogLine:
-    """更新镜头对白。"""
+    """Cập nhật thoại phân cảnh.。"""
     obj = await get_or_404(db, ShotDialogLine, line_id, detail=entity_not_found("ShotDialogLine"))
     update_data = body.model_dump(exclude_unset=True)
     if "speaker_character_id" in update_data:
@@ -110,7 +110,7 @@ async def delete(
     *,
     line_id: int,
 ) -> None:
-    """删除镜头对白。"""
+    """Xóa thoại phân cảnh.。"""
     obj = await db.get(ShotDialogLine, line_id)
     if obj is None:
         return None

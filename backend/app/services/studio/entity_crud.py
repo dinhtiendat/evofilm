@@ -1,4 +1,4 @@
-"""Studio 实体主资源 CRUD。"""
+"""CRUD tài nguyên chính của thực thể Studio."""
 
 from __future__ import annotations
 

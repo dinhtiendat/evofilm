@@ -1,4 +1,4 @@
-"""剧本分镜 Agent：ScriptDividerAgent"""
+"""Agent phân cảnh kịch bản: ScriptDividerAgent"""
 
 from __future__ import annotations
 
@@ -11,24 +11,24 @@ from app.chains.agents.base import AgentBase, _extract_json_from_text
 from app.schemas.skills.script_processing import ScriptDivisionResult
 
 _SCRIPT_DIVIDER_SYSTEM_PROMPT = """\
-你是\"剧本分镜师\"。将完整剧本分割为多个镜头。每个镜头应是完整的连贯场景。
-为每个镜头提供：
-- index（镜头序号，章节内唯一；从 1 开始）
+Bạn là \"Kỹ sư phân cảnh kịch bản\". Chia kịch bản hoàn chỉnh thành nhiều cảnh quay. Mỗi cảnh phải là một cảnh quay liền mạch, trọn vẹn.
+Với mỗi cảnh, cung cấp:
+- index (số thứ tự cảnh, duy nhất trong chương; bắt đầu từ 1)
 - start_line、end_line
-- shot_name（镜头名称/镜头标题，分镜名；一句话描述该镜头画面/动作；不要把它当作场景名）
-- script_excerpt（镜头对应的剧本摘录/文本）
+- shot_name (tên cảnh/tiêu đề cảnh, tên phân cảnh; một câu mô tả hình ảnh/hành động của cảnh này; không được dùng làm tên bối cảnh)
+- script_excerpt (đoạn trích kịch bản tương ứng với cảnh)
 - time_of_day
-只输出 JSON，符合 ScriptDivisionResult 结构。
+Chỉ xuất JSON, đúng cấu trúc ScriptDivisionResult.
 """
 
 SCRIPT_DIVIDER_PROMPT = PromptTemplate(
     input_variables=["script_text"],
-    template="## 输入脚本\n{script_text}\n\n## 输出\n",
+    template="## Kịch bản đầu vào\n{script_text}\n\n## Đầu ra\n",
 )
 
 
 class ScriptDividerAgent(AgentBase[ScriptDivisionResult]):
-    """剧本自动分镜：输入完整剧本文本，输出分镜列表。"""
+    """Tự động phân cảnh kịch bản: nhận toàn bộ văn bản kịch bản, xuất danh sách cảnh."""
 
     enable_thinking: bool = False
 
@@ -46,11 +46,11 @@ class ScriptDividerAgent(AgentBase[ScriptDivisionResult]):
 
     def format_output(self, raw: str) -> ScriptDivisionResult:
         """
-        更强的兜底解析：
-        LLM 可能输出：
-        - 正常结构：{shots:[...], total_shots:N}
-        - 包裹结构：{"ScriptDivisionResult": {...}}
-        - 直接列表：[{...}, {...}]（视为 shots）
+        Phân tích dự phòng mạnh hơn:
+        LLM có thể xuất:
+        - Cấu trúc chuẩn: {shots:[...], total_shots:N}
+        - Cấu trúc bọc: {"ScriptDivisionResult": {...}}
+        - Danh sách trực tiếp: [{...}, {...}] (coi là shots)
         """
 
         json_str = _extract_json_from_text(raw)
@@ -79,10 +79,10 @@ class ScriptDividerAgent(AgentBase[ScriptDivisionResult]):
         return await self.aextract(script_text=script_text)
 
     def _normalize(self, data: dict[str, Any]) -> dict[str, Any]:
-        """规范化脚本分割结果。"""
+        """Chuẩn hóa kết quả phân chia kịch bản."""
         data = dict(data)
 
-        # 兼容：LLM 可能输出 {"ScriptDivisionResult": {...}} 或 {"ScriptDivisionResult": [...]}
+        # Tương thích: LLM có thể xuất {"ScriptDivisionResult": {...}} hoặc {"ScriptDivisionResult": [...]}
         if "ScriptDivisionResult" in data:
             inner = data.get("ScriptDivisionResult")
             if isinstance(inner, list):
@@ -100,14 +100,14 @@ class ScriptDividerAgent(AgentBase[ScriptDivisionResult]):
                 )
                 if "index" not in shot_dict:
                     shot_dict["index"] = idx + 1
-                # 兼容：LLM 可能用 title/shot_title 代替 shot_name
+                # Tương thích: LLM có thể dùng title/shot_title thay cho shot_name
                 if "shot_name" not in shot_dict:
                     if "title" in shot_dict:
                         shot_dict["shot_name"] = str(shot_dict.pop("title"))
                     elif "shot_title" in shot_dict:
                         shot_dict["shot_name"] = str(shot_dict.pop("shot_title"))
                 shot_dict.setdefault("shot_name", "")
-                # 严格对齐 ShotDivision：移除已废弃的弱语义字段，避免 extra="forbid" 校验失败
+                # Đưa về đúng chuẩn ShotDivision: bỏ các trường ngữ nghĩa yếu đã ngừng dùng, tránh thất bại validation extra="forbid"
                 shot_dict.pop("scene_name", None)
                 shot_dict.pop("character_names_in_text", None)
                 shot_dict.pop("character_ids", None)

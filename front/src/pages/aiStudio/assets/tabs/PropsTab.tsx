@@ -7,7 +7,7 @@ export function PropsTab() {
 
   return (
     <AssetTypeTab
-      label="道具"
+      label="Đạo cụ"
       tabKey="prop"
       listAssets={async ({ q, page, pageSize }) => {
         const res = await StudioEntitiesApi.list('prop', { q: q ?? null, page, pageSize })

@@ -1,7 +1,7 @@
 ---
-title: "v0.1.0-alpha 发布说明"
+title: "Ghi chú phát hành v0.1.0-alpha"
 date: 2026-04-02
-description: "Jellyfish 首个 alpha 版本的能力边界、当前重点和后续方向。"
+description: "Ranh giới năng lực của phiên bản alpha đầu tiên của Jellyfish, trọng điểm hiện tại và hướng tiếp theo."
 tags:
   - release
   - alpha
@@ -10,92 +10,92 @@ authors:
   - Jellyfish Team
 ---
 
-Jellyfish `v0.1.0-alpha` 是项目进入可公开体验阶段后的第一个 alpha 版本。
+Jellyfish `v0.1.0-alpha` là phiên bản alpha đầu tiên sau khi dự án bước vào giai đoạn có thể trải nghiệm công khai.
 
-这个版本的重点不是“功能全部完成”，而是先把 **AI 短剧生产工作台** 的主骨架搭起来，让项目、章节、分镜、资产、模型和生成链路有一个清晰、可继续演进的基础。
+Trọng điểm của phiên bản này không phải "hoàn tất toàn bộ tính năng", mà là dựng trước khung xương chính của **bàn làm việc sản xuất kịch ngắn AI**, để dự án, chương, phân cảnh, tài nguyên, mô hình và chuỗi tạo có một nền tảng rõ ràng, có thể tiếp tục phát triển.
 
-## 这个版本包含什么
+## Bản này bao gồm gì
 
-### 1. Studio 主工作台骨架
+### 1. Khung sườn bàn làm việc chính Studio
 
-当前版本已经具备围绕短剧生产组织页面和数据的基本结构，包括：
+Phiên bản hiện tại đã có cấu trúc cơ bản để tổ chức trang và dữ liệu xoay quanh sản xuất kịch ngắn, gồm:
 
-- 项目列表与项目工作台
-- 章节相关页面
-- 分镜列表与分镜编辑相关页面
-- 资产管理入口
-- 文件、模型、Agent 等管理页
+- Danh sách dự án và không gian làm việc dự án
+- Các trang liên quan chương
+- Các trang liên quan danh sách và chỉnh sửa phân cảnh
+- Cổng vào quản lý tài nguyên
+- Trang quản lý tệp, mô hình, Agent,...
 
-这意味着产品主路径已经不是零散页面，而是一个相对完整的 Studio 结构。
+Điều này có nghĩa là đường chính của sản phẩm không còn là những trang rời rạc, mà đã là một cấu trúc Studio tương đối hoàn chỉnh.
 
-### 2. 前后端分离与 OpenAPI 协作链路
+### 2. Chuỗi hợp tác frontend-backend tách biệt với OpenAPI
 
-前端基于 React + Vite，后端基于 FastAPI。
+Frontend dựa trên React + Vite, backend dựa trên FastAPI.
 
-在这个版本里，前后端已经建立了比较明确的协作方式：
+Ở phiên bản này, frontend và backend đã xây dựng được cách hợp tác khá rõ ràng:
 
-- 后端提供 `studio / llm / film / script-processing` 等 API 路由
-- 前端通过 OpenAPI 生成客户端与后端协作
-- 本地联调和接口同步流程已经可以跑通
+- Backend cung cấp các API route `studio / llm / film / script-processing`
+- Frontend hợp tác với backend thông qua client OpenAPI sinh ra
+- Luồng chạy thử cục bộ và đồng bộ giao diện đã chạy thông
 
-这对后续功能迭代非常关键，因为它决定了项目能否持续稳定扩展。
+Điều này rất quan trọng với việc lặp tính năng sau này, vì nó quyết định dự án có thể mở rộng ổn định liên tục hay không.
 
-### 3. AI 能力接入的基础分层
+### 3. Phân tầng nền tảng để tích hợp năng lực AI
 
-虽然这个 alpha 版本还不是最终完成态，但 AI 相关能力的分层已经具备雏形：
+mặc dù phiên bản alpha này chưa phải trạng thái hoàn thành cuối, nhưng phân tầng năng lực liên quan AI đã có phôi hình:
 
-- `chains/`：承接 Prompt、Agent 与工作流编排
-- `services/`：承接业务与 AI 之间的连接逻辑
-- `core/tasks/`：承接图片 / 视频任务层能力
+- `chains/`: tiếp nhận điều phối Prompt, Agent và quy trình
+- `services/`: tiếp nhận logic kết nối giữa nghiệp vụ và AI
+- `core/tasks/`: tiếp nhận năng lực tầng tác vụ hình ảnh / video
 
-这让 Jellyfish 不只是一个管理后台，而是一个真正围绕 AI 内容生产设计的系统。
+diều này khiến Jellyfish không chỉ là một quản trị backend, mà là một hệ thống thực sự được thiết kế xung quanh sản xuất nội dung AI.
 
-### 4. 本地开发与部署基础能力
+### 4. Khả năng cơ bản phát triển và triển khai cục bộ
 
-当前版本已经支持：
+Bản hiện tại đã hỗ trợ:
 
-- 前后端分别本地启动
-- OpenAPI 生成更新
-- 基于 Docker Compose 启动前端、后端、MySQL 和 RustFS
+- Chạy cục bộ riêng rẽ phía trước và phía sau
+- Cập nhật sinh OpenAPI
+- khởi động phía trước, phía sau, MySQL và RustFS bằng Docker Compose
 
-也就是说，`v0.1.0-alpha` 已经具备比较明确的开发与体验入口。
+Nói cách khác, `v0.1.0-alpha` đã có cửa vào phát triển và trải nghiệm khá rõ ràng.
 
-## 当前仍属于 alpha 的部分
+## Phần hiện vẫn thuộc alpha
 
-这个版本仍然是 alpha，而不是 beta，主要原因也很明确：
+Phiên bản này vẫn là alpha chứ chưa phải beta, nguyên nhân chính cũng rất rõ ràng:
 
-- 分镜编辑与生成流程还在继续深化
-- 高级提示词与智能填充能力还未完全成型
-- 图片 / 视频任务链路仍有继续打磨空间
-- 时间线与最终导出体验还需要更多完善
+- Quy trình chỉnh sửa và tạo phân cảnh vẫn đang tiếp tục làm sâu
+- Năng lực prompt nâng cao và điền thông minh chưa hoàn thiện hẳn
+- Chuỗi tác vụ ảnh / video vẫn còn chỗ để mài giũa tiếp
+- Trải nghiệm trục thời gian và xuất cuối vẫn cần hoàn thiện thêm
 
-换句话说，`v0.1.0-alpha` 更像是：
+Nói cách khác, `v0.1.0-alpha` giống hơn là:
 
-**主架构已经搭起，核心工作流已经成形，但很多细节仍在快速迭代。**
+**Kiến trúc chính đã được dựng, quy trình cốt lõi đã hình thành, nhưng nhiều chi tiết vẫn đang lặp nhanh.**
 
-## 适合谁现在开始关注
+## Ai nên bắt đầu quan tâm bây giờ
 
-这个版本已经适合以下几类人开始了解和试用：
+Phiên bản này đã phù hợp cho những đối tượng sau bắt đầu tìm hiểu và dùng thử:
 
-- 想研究 AI 短剧生产系统结构的开发者
-- 想参与开源协作的前后端工程师
-- 想关注分镜、资产、一致性工作流的人
-- 想基于现有骨架继续扩展能力的团队
+- Lập trình viên muốn nghiên cứu cấu trúc hệ thống sản xuất kịch ngắn AI
+- Lập trình viên phía trước/sau muốn tham gia phối hợp mã nguồn mở
+- Người quan tâm đến luồng phân cảnh, tài nguyên và tính nhất quán
+- Đội muốn tiếp tục mở rộng khả năng dựa trên khung hiện có
 
-如果你期待的是一个已经完全打磨好的成品工具，那现在还不是最终形态。  
-如果你关注的是 **产品方向、工程结构和工作流设计**，这个版本已经值得开始跟进。
+Nếu bạn kỳ vọng một công cụ thành phẩm đã được tinh chỉnh hoàn hảo, thì hiện tại vẫn chưa phải hình thái cuối cùng.
+nếu bạn quan tâm **phương hướng sản phẩm, cấu trúc kỹ thuật và thiết kế workflow**, phiên bản này đã đáng để bắt đầu theo dõi.
 
-## 接下来会继续推进什么
+## Tiếp theo sẽ tiếp tục triển khai gì
 
-围绕这个 alpha 版本，后续重点会继续放在：
+Quanh phiên bản alpha này, trọng tâm các bước sau vẫn đặt vào:
 
-- 分镜编辑和生成链路深化
-- 提示词模板与智能填充增强
-- 任务状态与结果管理完善
-- 文档、官网与协作体验优化
+- Sâu hóa đường dẫn chỉnh sửa và tạo phân cảnh
+- Nâng cấp mẫu prompt và điền thông minh
+- Hoàn thiện quản lý trạng thái và kết quả tác vụ
+- Tối ưu tài liệu, trang web chính và trải nghiệm phối hợp
 
-## 致谢
+## Lời cảm ơn
 
-感谢所有正在关注、试用和参与 Jellyfish 的同学。
+Xin gửi lời cảm ơn tới tất cả những bạn đang quan tâm, thử dùng và tham gia Jellyfish.
 
-`v0.1.0-alpha` 不是终点，而是这个项目真正进入公开演进阶段的起点。
+`v0.1.0-alpha` không phải điểm kết, mà là điểm khởi đầu để dự án này thực sự vào giai đoạn tiến hóa mở.

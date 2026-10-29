@@ -52,7 +52,7 @@ function notifyShotAssetCreatedAndLinked(payload: {
       window.location.origin,
     )
   } catch {
-    // 跨窗口通知失败不阻塞角色创建成功。
+    // Thông báo liên cửa sổ thất bại không chặn việc tạo nhân vật thành công.
   }
 }
 
@@ -195,7 +195,7 @@ export function RolesTab() {
       setActorsById(nextActors)
       setCostumesById(nextCostumes)
     } catch {
-      message.error('加载项目关联演员/服装失败')
+      message.error('Tải diễn viên/trang phục liên kết với dự án thất bại')
       setProjectActorLinks([])
       setProjectCostumeLinks([])
       setActorsById({})
@@ -229,11 +229,11 @@ export function RolesTab() {
     if (!projectId) return
     const name = formName.trim()
     if (!name) {
-      message.warning('请输入角色名称')
+      message.warning('Vui lòng nhập tên nhân vật')
       return
     }
     if (!formActorId) {
-      message.warning('请选择关联演员')
+      message.warning('Vui lòng chọn diễn viên liên kết')
       return
     }
     setCreating(true)
@@ -245,7 +245,7 @@ export function RolesTab() {
         shot_id: pendingShotLinkShotId,
         name,
         description: formDesc.trim() || undefined,
-        visual_style: formVisualStyle || '现实',
+        visual_style: formVisualStyle || 'Hiện thực',
         style: formStyle,
         actor_id: formActorId,
         costume_id: formCostumeId ?? null,
@@ -260,7 +260,7 @@ export function RolesTab() {
           assetName: name,
         })
       }
-      message.success('角色创建成功')
+      message.success('Tạo nhân vật thành công')
       setCreateOpen(false)
       setFormName('')
       setFormDesc('')
@@ -272,7 +272,7 @@ export function RolesTab() {
       setPendingShotLinkChapterId(null)
       await refresh()
     } catch {
-      message.error('创建失败')
+      message.error('Tạo thất bại')
       setPendingShotLinkShotId(null)
       setPendingShotLinkChapterId(null)
     } finally {
@@ -336,23 +336,23 @@ export function RolesTab() {
   return (
     <div className="h-full overflow-auto">
       <Card
-        title="项目角色"
+        title="Nhân vật dự án"
         extra={
           <Space>
             <Button type="primary" icon={<PlusOutlined />} onClick={openNormalRoleCreate}>
-              新建角色
+              Tạo mới nhân vật
             </Button>
           </Space>
         }
       >
         {characters.length === 0 && !loading ? (
           <Empty
-            description="暂无项目角色"
+            description="Chưa có nhân vật trong dự án"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           >
             <Space>
               <Button type="primary" icon={<PlusOutlined />} onClick={openNormalRoleCreate}>
-                新建角色
+                Tạo mới nhân vật
               </Button>
             </Space>
           </Empty>
@@ -377,30 +377,30 @@ export function RolesTab() {
                         navigate(`/projects/${projectId}/roles/${c.id}/edit`)
                       }}
                     >
-                      编辑
+                      Chỉnh sửa
                     </Button>
                     <Button
                       size="small"
                       danger
                       onClick={() => {
                         Modal.confirm({
-                          title: `删除角色「${c.name}」？`,
-                          okText: '删除',
-                          cancelText: '取消',
+                          title: `Xóa nhân vật "${c.name}"?`,
+                          okText: 'Xóa',
+                          cancelText: 'Hủy',
                           okButtonProps: { danger: true },
                           onOk: async () => {
                             try {
                               await StudioEntitiesApi.remove('character', c.id)
-                              message.success('已删除')
+                              message.success('Đã xóa')
                               await refresh()
                             } catch {
-                              message.error('删除失败')
+                              message.error('Xóa thất bại')
                             }
                           },
                         })
                       }}
                     >
-                      删除
+                      Xóa
                     </Button>
                   </Space>
                 }
@@ -408,10 +408,10 @@ export function RolesTab() {
                   <div className="space-y-1">
                     {c.description ? <div className="text-xs text-gray-600 line-clamp-2">{c.description}</div> : null}
                     <div className="text-xs text-gray-500 truncate">
-                      演员：{actor?.name ?? c.actor_id}
+                      Điễn viên: {actor?.name ?? c.actor_id}
                     </div>
                     <div className="text-xs text-gray-500 truncate">
-                      服装：{costume?.name ?? (c.costume_id ?? '—')}
+                      trang phục:{costume?.name ?? (c.costume_id ?? '—')}
                     </div>
                   </div>
                 }
@@ -424,7 +424,7 @@ export function RolesTab() {
                 pageSize={pageSize}
                 total={roleCards.length}
                 showSizeChanger={false}
-                showTotal={(t) => `共 ${t} 条`}
+                showTotal={(t) => `Tổng ${t} mục`}
                 onChange={(p, ps) => {
                   setPage(p)
                   setPageSize(ps)
@@ -436,25 +436,25 @@ export function RolesTab() {
       </Card>
 
       <Modal
-        title="新建角色"
+        title="Tạo nhân vật mới"
         open={createOpen}
         onCancel={() => {
           setCreateOpen(false)
           setPendingShotLinkShotId(null)
         }}
         onOk={handleCreateRole}
-        okText="创建"
-        cancelText="取消"
+        okText="Tạo"
+        cancelText="Hủy"
         confirmLoading={creating}
         width={560}
       >
         <div className="space-y-3">
           <div>
-            <div className="text-sm text-gray-600 mb-1">角色名称</div>
-            <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="例如：小雨" />
+            <div className="text-sm text-gray-600 mb-1">Tên nhân vật</div>
+            <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Ví dụ: Tiểu Vũ" />
           </div>
           <div>
-            <div className="text-sm text-gray-600 mb-1">描述（可选）</div>
+            <div className="text-sm text-gray-600 mb-1">Mô tả (tùy chọn)</div>
             <Input.TextArea rows={3} value={formDesc} onChange={(e) => setFormDesc(e.target.value)} />
           </div>
           <div>
@@ -469,10 +469,10 @@ export function RolesTab() {
             />
           </div>
           <div>
-            <div className="text-sm text-gray-600 mb-1">关联演员（必填）</div>
+            <div className="text-sm text-gray-600 mb-1">Diễn viên liên kết (bắt buộc)</div>
             <Select
               className="w-full"
-              placeholder="选择当前项目已关联的演员"
+              placeholder="Chọn diễn viên đã liên kết trong dự án hiện tại"
               loading={loadingLinks}
               value={formActorId}
               onChange={(v) => setFormActorId(v)}
@@ -483,11 +483,11 @@ export function RolesTab() {
             />
           </div>
           <div>
-            <div className="text-sm text-gray-600 mb-1">关联服装（可选）</div>
+            <div className="text-sm text-gray-600 mb-1">Trang phục liên kết (tùy chọn)</div>
             <Select
               className="w-full"
               allowClear
-              placeholder="选择当前项目已关联的服装"
+              placeholder="Chọn trang phục đã liên kết trong dự án hiện tại"
               loading={loadingLinks}
               value={formCostumeId}
               onChange={(v) => setFormCostumeId(v)}

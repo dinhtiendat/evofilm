@@ -1,32 +1,32 @@
 ---
-title: "贡献指南"
+title: "Hướng dẫn đóng góp"
 weight: 1
-description: "参与 Jellyfish 代码和文档协作的起点。"
+description: "Điểm khởi đầu để cùng code và tài liệu cho Jellyfish."
 ---
 
-## 贡献方式
+## Cách đóng góp
 
-- 提交 Issue 反馈问题或提出建议
-- 提交 Pull Request 改进代码或文档
+- Gửi Issue để phản hồi vấn đề hoặc đóng góp ý kiến
+- Gửi Pull Request để cải thiện mã hoặc tài liệu
 
-## 开发前建议
+## Gợi ý trước khi phát triển
 
-- 先阅读项目结构与本地开发文档
-- 优先沿用现有前后端分层与命名方式
-- 同步更新相关文档
+- Đọc trước cấu trúc dự án và tài liệu phát triển cục bộ
+- Ưu tiên kế thừa cách phân lớp và đặt tên phía trước/sau hiện có
+- Đồng thời cập nhật tài liệu liên quan
 
-## 提交前建议检查
+## Kiểm tra trước khi gửi
 
-- 后端是否能正常启动
-- 前端是否能正常访问
-- 如果修改了接口，是否更新 OpenAPI 生成代码
-- 如果改了站点内容，是否至少本地预览过一次 `site/`
+- Liệu phía sau có khởi động được bình thường không
+- Liệu phía trước có truy cập được bình thường không
+- Nếu đã sửa interface, có cập nhật mã OpenAPI sinh ra không
+- Nếu đã sửa nội dung website, có xem trước `site/` ít nhất một lần ở chế độ cục bộ chưa
 
-## 文档协作建议
+## Gợi ý phối hợp tài liệu
 
-当你修改以下内容时，建议同步更新 `site/` 文档：
+Khi bạn sửa các nội dung sau, nên cập nhật đồng bộ tài liệu `site/`:
 
-- 启动方式
-- 目录结构
-- 接口生成流程
-- 提交与协作规范
+- Cách khởi động
+- Cấu trúc thư mục
+- Quy trình tạo giao diện
+- Quy tắc gửi và hợp tác

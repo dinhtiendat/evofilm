@@ -32,24 +32,24 @@ async def _build_session() -> tuple[AsyncSession, object]:
 async def _seed_base_graph(db: AsyncSession) -> None:
     project = Project(
         id="p1",
-        name="项目一",
+        name="Dự án 1",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
     )
     other_project = Project(
         id="p2",
-        name="项目二",
+        name="Dự án 2",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
     )
-    chapter = Chapter(id="c1", project_id="p1", index=1, title="第一章")
-    shot = Shot(id="s1", chapter_id="c1", index=1, title="镜头一")
+    chapter = Chapter(id="c1", project_id="p1", index=1, title="Chương 1")
+    shot = Shot(id="s1", chapter_id="c1", index=1, title="Phân cảnh 1")
     character_1 = Character(
         id="char1",
         project_id="p1",
-        name="角色一",
+        name="Nhân vật 1",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
@@ -57,7 +57,7 @@ async def _seed_base_graph(db: AsyncSession) -> None:
     character_2 = Character(
         id="char2",
         project_id="p1",
-        name="角色二",
+        name="Nhân vật 2",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
@@ -65,7 +65,7 @@ async def _seed_base_graph(db: AsyncSession) -> None:
     foreign_character = Character(
         id="char3",
         project_id="p2",
-        name="跨项目角色",
+        name="Nhân vật đa dự án",
         description="",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
@@ -145,7 +145,7 @@ async def test_upsert_replaces_existing_same_index_link_marks_previous_candidate
         candidate_1 = ShotExtractedCandidate(
             shot_id="s1",
             candidate_type=ShotCandidateType.character,
-            candidate_name="角色一",
+            candidate_name="Nhân vật 1",
             candidate_status=ShotCandidateStatus.pending,
             source="extraction",
             payload={},
@@ -153,7 +153,7 @@ async def test_upsert_replaces_existing_same_index_link_marks_previous_candidate
         candidate_2 = ShotExtractedCandidate(
             shot_id="s1",
             candidate_type=ShotCandidateType.character,
-            candidate_name="角色二",
+            candidate_name="Nhân vật 2",
             candidate_status=ShotCandidateStatus.pending,
             source="extraction",
             payload={},
@@ -190,7 +190,7 @@ async def test_upsert_marks_matching_character_candidate_as_linked() -> None:
         candidate = ShotExtractedCandidate(
             shot_id="s1",
             candidate_type=ShotCandidateType.character,
-            candidate_name="角色一",
+            candidate_name="Nhân vật 1",
             candidate_status=ShotCandidateStatus.pending,
             source="extraction",
             payload={},

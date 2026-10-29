@@ -1,227 +1,227 @@
 ---
-title: "开发规划"
+title: "Quy hoạch phát triển"
 weight: 6
-description: "Jellyfish 下一阶段的开发重点、优先级与实施方向。"
+description: "Jellyfish Trọng tâm phát triển, thứ tự ưu tiên và hướng triển khai của giai đoạn tiếp theo."
 ---
 
-> 本文属于“任务计划”文档，描述当前仍在推进中的阶段目标与执行优先级。
+> Bài này thuộc tài liệu "Kế hoạch tác vụ", mô tả mục tiêu giai đoạn và ưu tiên thực thi đang triển khai.
 
-当前项目的**核心流程**与**数据架构**已经基本稳定。虽然仍然存在一些细节问题和局部不一致，但整体方向已经明确，具备进入下一阶段系统化优化与功能深化的条件。
+của dự án hiện tại**quy trình cốt lõi**và**Kiến trúc dữ liệu**về cơ bản đã ổn định. Dù vẫn còn một số vấn đề chi tiết và bất nhất cục bộ, nhưng phương hướng tổng thể đã rõ ràng, đủ điều kiện bước sang giai đoạn tối ưu có hệ thống và đào sâu tính năng.
 
-下一阶段将围绕“**先夯实结构，再提升体验，最后补足能力**”的思路推进，整体优先级如下：
+Giai đoạn tiếp theo sẽ xoay quanh “**củng cố cấu trúc trước, nâng trải nghiệm sau, rồi mới bù khả năng**”để đẩy tiến, thứ tự ưu tiên tổng thể như sau:
 
-1. **项目结构优化**
-2. **交互性优化**
-3. **提示词优化**
-4. **剪辑功能完善**
+1. **Tối ưu cấu trúc dự án**
+2. **Tối ưu tính tương tác**
+3. **Tối ưu prompt**
+4. **Hoàn thiện tính năng dựng phim**
 
-## 阶段目标
+## Mục tiêu giai đoạn
 
-接下来的开发重点，不再是继续快速堆叠功能，而是转向以下几个方向：
+Trọng tâm phát triển tiếp theo không còn là tích hợp tính năng nhanh, mà chuyển sang các hướng:
 
-- 提升代码可读性与可维护性
-- 收敛数据模型与接口规范
-- 优化关键流程中的交互体验
-- 提高多 Agent 场景下提示词的稳定性与产出质量
-- 在不过度设计的前提下，逐步补齐剪辑能力
+- Nâng khả năng đọc và bảo trì mã nguồn
+- Gộp mô hình dữ liệu và quy ước giao diện
+- Tối ưu trải nghiệm tương tác trong quy trình quan trọng
+- nâng cao đa Agent độ ổn định và chất lượng đầu ra của prompt trong các kịch bản đa Agent
+- Trên tiền đề không thiết kế quá mức, từng bước bổ khả năng dựng phim
 
-换句话说，项目后续会更加重视“**稳定、清晰、可持续演进**”，而不仅仅是“功能可用”。
+Nói cách khác, dự án về sau sẽ coi trọng hơn “**ổn định, rõ ràng, có thể phát triển lâu dài**”, chứ không đơn thuần là “tính năng hoạt động được”.
 
-## 开发优先级总览
+## Tổng quan mức ưu tiên phát triển
 
-### 1. 项目结构优化
+### 1. Tối ưu cấu trúc dự án
 
-这是当前阶段的**最高优先级**。
+Đây là **ưu tiên cao nhất** của giai đoạn hiện tại.
 
-由于项目主要由个人开发完成，其中包含较多 AI 辅助生成代码。虽然这种方式提升了早期开发速度，但也带来了一些典型问题：
+Vì dự án chủ yếu do một người tự phát triển, nên có khá nhiều AI code do AI hỗ trợ. Cách làm này tuy tăng tốc độ phát triển giai đoạn đầu, nhưng cũng kéo theo một số vấn đề thường gặp:
 
-- 代码复用性不足
-- 命名和职责边界不够统一
-- 局部实现可读性较差
-- 部分层级存在职责混杂
-- 数据关联关系偏多，后续维护成本较高
+- Khả năng tái sử dụng mã nguồn còn thiếu
+- Đặt tên và ranh giới trách nhiệm chưa thống nhất
+- Mã nguồn cục bộ khó đọc
+- Một số tầng bị lẫn trách nhiệm
+- Mối quan hệ dữ liệu hơi nhiều, chi phí bảo trì sau cao
 
-因此，在继续扩展功能之前，必须优先把项目结构整理清楚。
+Vì vậy, trước khi tiếp tục mở rộng tính năng, nhất thiết phải dọn rõ cấu trúc dự án trước.
 
-#### 优化方向
+#### Hướng tối ưu
 
-**数据模型标准化**
+**Chuẩn hóa mô hình dữ liệu**
 
-- 梳理现有数据模型
-- 减少不必要的关联关系
-- 收敛重复字段和重复语义
-- 让核心业务对象边界更清晰
+- Sắp xếp mô hình dữ liệu hiện có
+- Giảm mối liên kết không cần thiết
+- Gộp trường trùng và ngữ nghĩa trùng
+- Làm rõ hơn ranh giới đối tượng nghiệp vụ cốt lõi
 
-**Service 层标准化**
+**Chuẩn hóa tầng Service**
 
-- 明确 service 的职责边界
-- 避免把业务逻辑散落在 API 层或模型层
-- 提升 service 层复用性
-- 让复杂流程有稳定的承载位置
+- Xác định rõ ranh giới trách nhiệm service
+- Tránh để logic nghiệp vụ rải ở tầng API hay tầng mô hình
+- Nâng khả năng tái sử dụng tầng service
+- Cho quy trình phức tạp có nơi chứa ổn định
 
-**API 层优化**
+**Tối ưu tầng API**
 
-- 标准化接口入参
-- 标准化接口返回结构
-- 统一错误响应和状态表达
-- 减少接口行为不一致的问题
+- Chuẩn hóa tham số vào của giao diện
+- Chuẩn hóa cấu trúc trả về của giao diện
+- Thống nhất phản ứng lỗi và cách diễn đạt trạng thái
+- Giảm vấn đề hành vi giao diện không nhất quán
 
-**目录结构梳理**
+**Sửa chữa cấu trúc thư mục**
 
-- 明确各目录职责分工
-- 减少“看名字不清楚做什么”的情况
-- 提升代码定位与协作效率
+- Xác định rõ phân công trách nhiệm của từng thư mục
+- Giảm tình huống “không rõ tên là làm gì”
+- Nâng hiệu suất định vị mã nguồn và hợp tác
 
-**无用代码清理**
+**Dọn mã nguồn vô dụng**
 
-- 清理遗留的试验性实现
-- 删除重复逻辑和低价值兼容代码
-- 降低维护负担
+- Dọn triển khai thử nghiệm còn lại
+- Xóa logic trùng và mã tương thích giá trị thấp
+- Giảm tải bảo trì
 
-### 2. 交互性优化
+### 2. Tối ưu tính tương tác
 
-交互优化是第二优先级。
+Tối ưu tương tác là ưu tiên thứ hai.
 
-当前项目在主流程上已经“基本可用”，但某些关键步骤的交互仍然不够直观，尤其是：
+Dự án hiện tại về quy trình chính đã “sử dụng được cơ bản”, nhưng tương tác ở một số bước quan trọng vẫn chưa đủ trực quan, nhất là:
 
-#### 剧本资产信息提取流程
+#### Quy trình trích xuất thông tin tài nguyên kịch bản
 
-从剧本中提取角色、场景、服装、道具等资产信息这一环节，目前虽然可以使用，但整体体验仍然比较勉强，主要问题包括：
+Bước trích xuất thông tin tài nguyên như nhân vật, bối cảnh, trang phục, đạo cụ từ kịch bản hiện dù đã dùng được nhưng trải nghiệm tổng thể vẫn khá gượng, các vấn đề chính gồm:
 
-- 信息提取过程不够清晰
-- 用户难以快速判断提取结果是否可靠
-- 编辑、确认、修正的链路还不够顺畅
-- 结果与后续分镜、资产管理之间的衔接还可以更自然
+- Quy trình trích xuất thông tin chưa đủ rõ
+- Người dùng khó nhanh quyết kết quả trích xuất có tin cậy không
+- Chuỗi sửa, xác nhận, hiệu chỉnh chưa đủ mượt
+- Sự nối tiếp giữa kết quả với các phân cảnh sau và quản lý tài nguyên vẫn có thể tự nhiên hơn
 
-#### 后续优化重点
+#### Trọng tâm tối ưu tiếp theo
 
-- 提高资产提取流程的可视化程度
-- 优化提取结果的展示方式
-- 增强人工确认与修正的便捷性
-- 强化提取结果与后续页面之间的衔接体验
+- Nâng mức trực quan hóa quy trình trích xuất tài nguyên
+- Tối ưu cách hiển thị kết quả trích xuất
+- Tăng tiện ích xác nhận và sửa thủ công
+- Tăng cường trải nghiệm liên kết giữa kết quả trích xuất và trang tiếp theo
 
-这一部分的目标不是单纯“更好看”，而是让关键业务步骤更**可理解、可确认、可操作**。
+Mục tiêu của phần này không đơn thuần là “đẹp hơn”, mà là giúp các bước nghiệp vụ quan trọng trở nên**hiểu được, xác nhận được, thao tác được**.
 
-### 3. 提示词优化
+### 3. Tối ưu prompt
 
-提示词优化是第三优先级，但对项目产出质量影响很大。
+Tối ưu prompt là ưu tiên hạng ba, nhưng ảnh hưởng rất lớn đến chất lượng đầu ra của dự án.
 
-当前项目已经包含多个 Agent，不同 Agent 分别承担剧本处理、资产提取、图片生成、关键帧生成等任务。下一阶段需要系统性优化这些提示词，以提升：
+Dự án hiện tại đã bao gồm nhiều Agent, khác Agent mỗi cái đảm nhận các tác vụ như xử lý kịch bản, trích xuất tài nguyên, tạo hình ảnh, tạo khung hình chính. Giai đoạn tiếp theo cần tối ưu hóa có hệ thống các prompt này, để nâng cao:
 
-- 输出稳定性
-- 结果一致性
-- 可控性
-- 与业务流程的贴合程度
+- Độ ổn định đầu ra
+- Tính nhất quán kết quả
+- Khả năng kiểm soát
+- Mức độ phù hợp với quy trình nghiệp vụ
 
-#### 重点优化范围
+#### Phạm vi tối ưu trọng điểm
 
-**图片生成相关提示词**
+**Prompt liên quan tạo ảnh**
 
-- 演员图片生成提示词
-- 场景图片生成提示词
-- 服装图片生成提示词
-- 道具图片生成提示词
-- 角色图片生成提示词
+- Prompt tạo ảnh diễn viên
+- Prompt tạo ảnh bối cảnh
+- Prompt tạo ảnh trang phục
+- Prompt tạo ảnh đạo cụ
+- Prompt tạo ảnh nhân vật
 
-**关键帧相关提示词**
+**Prompt liên quan khung hình chính**
 
-- 首尾关键帧图片文案提示词
-- 首尾关键帧图片生成提示词
+- Prompt văn bản ảnh khung hình chính đầu/cuối
+- Prompt tạo ảnh khung hình chính đầu/cuối
 
-**剧本处理相关提示词**
+**Prompt liên quan xử lý kịch bản**
 
-- 剧本优化提示词
-- 剧本资产信息提取提示词
+- Prompt tối ưu kịch bản
+- Prompt trích xuất thông tin tài nguyên kịch bản
 
-#### 优化目标
+#### Mục tiêu tối ưu
 
-- 让提示词更贴近项目实际业务场景
-- 提高同一项目内生成结果的一致性
-- 减少无效输出和偏题输出
-- 让不同 Agent 之间的上下文衔接更稳定
+- Làm prompt gần hơn với bối cảnh nghiệp vụ thực tế của dự án
+- Nâng tính nhất quán kết quả tạo trong cùng dự án
+- Giảm đầu ra vô hiệu và lạc đề
+- để Agent sự nối tiếp ngữ cảnh giữa các phần ổn định hơn
 
-这一阶段的重点不是让提示词变得更复杂，而是让提示词真正服务于产品流程。
+Trọng tâm giai đoạn này không phải là làm cho prompt phức tạp hơn, mà là để prompt thực sự phục vụ quy trình sản phẩm.
 
-### 4. 剪辑功能
+### 4. Tính năng dựng phim
 
-剪辑功能的优先级最低。
+Tính năng dựng phim có ưu tiên thấp nhất.
 
-原因比较明确：
+Nguyên nhân khá rõ ràng:
 
-- 剪辑本身偏前端能力
-- 复杂剪辑能力很难超过专业编辑软件
-- 当前项目已经具备导出能力
-- 从整体产品价值来看，剪辑不是现阶段最核心的差异点
+- Bản thân dựng phim thiên về khả năng phía trước
+- Khả năng dựng phim phức tạp khó vượt phần mềm chỉnh sửa chuyên nghiệp
+- Dự án hiện tại đã có khả năng xuất
+- Xem từ giá trị sản phẩm tổng thể, biên tập không phải điểm khác biệt cốt lõi nhất ở giai đoạn hiện tại
 
-因此，后续对剪辑功能的投入会保持克制，更倾向于满足“**够用、顺畅、能衔接导出**”的目标，而不是朝专业视频编辑器方向演进。
+Vì vậy, đầu tư cho tính năng biên tập ở các bước sau sẽ giữ chừng mực, thiên về đáp ứng “**đủ dùng, trôi chảy, nối được với xuất**”nhằm mục tiêu này, chứ không phải tiến theo hướng trình biên tập video chuyên nghiệp.
 
-#### 当前判断
+#### Đánh giá hiện tại
 
-剪辑功能会继续保留并逐步完善，但不会在近期成为主要开发重点。
+Tính năng biên tập vẫn được giữ và hoàn thiện dần, nhưng không trở thành trọng điểm phát triển chính trong thời gian tới.
 
-#### 后续方向
+#### Hướng tiếp theo
 
-- 优化已有剪辑流程的基础体验
-- 保证与素材、时间线、导出链路的稳定衔接
-- 控制功能边界，避免过度投入到专业编辑能力竞争中
+- Tối ưu trải nghiệm cơ bản của quy trình dựng phim có sẵn
+- Đảm bảo liên kết ổn định với nguyên liệu, trục thời gian, chuỗi xuất
+- Kiểm soát ranh giới tính năng, tránh đổ quá nhiều vào cuộc đua với khả năng biên tập chuyên nghiệp
 
-## 整体开发策略
+## Chiến lược phát triển tổng thể
 
-后续开发将遵循以下原则：
+Phát triển tiếp sẽ tuân theo các nguyên tắc sau:
 
-### 先治理，再扩展
+### Trước tiên sửa chữa, sau đó mở rộng
 
-在结构未整理清楚之前，不盲目增加复杂功能。
+Trước khi cấu trúc được sắp xếp rõ, không vội tăng tính năng phức tạp.
 
-### 先标准化，再做体验优化
+### Trước chuẩn hóa, sau tối ưu trải nghiệm
 
-接口、数据模型、service 分层先收敛，交互优化才更容易稳定落地。
+API, mô hình dữ liệu, service phân lớp trước khi thu hẹp, tối ưu tương tác mới dễ áp dụng ổn định hơn.
 
-### 提示词优化服务于业务，而不是独立存在
+### Tối ưu prompt phục vụ nghiệp vụ, không tồn tại độc lập
 
-提示词不会单独作为“研究项”推进，而是围绕具体业务节点逐步优化。
+Prompt sẽ không được đẩy theo hướng riêng như “mục nghiên cứu”, mà được tối ưu dần quanh các điểm nghiệp vụ cụ thể.
 
-### 剪辑功能保持边界意识
+### Tính năng dựng phim giữ ý thức ranh giới
 
-坚持“实用优先”，避免投入过多精力去复制专业软件能力。
+Giữ vững “thực dụng trước”, tránh bỏ quá nhiều công sức sao chép khả năng của phần mềm chuyên nghiệp.
 
-## 阶段性里程碑建议
+## Gợi ý mốc theo giai đoạn
 
-### 第一阶段：结构治理
+### Giai đoạn 1: Sửa chữa cấu trúc
 
-- 数据模型标准化
-- 接口返回值标准化
-- service 层规范化
-- 目录结构整理
-- 清理无用代码
+- Chuẩn hóa mô hình dữ liệu
+- Chuẩn hóa giá trị trả về của giao diện
+- Chuẩn hóa tầng service
+- Sắp xếp cấu trúc thư mục
+- Dọn mã nguồn vô dụng
 
-### 第二阶段：流程体验优化
+### Giai đoạn 2: Tối ưu trải nghiệm quy trình
 
-- 优化资产提取流程交互
-- 提升关键页面的信息组织和操作体验
-- 收敛主流程中的易混乱节点
+- Tối ưu tương tác quy trình trích xuất tài nguyên
+- Nâng tổ chức thông tin và trải nghiệm thao tác trang quan trọng
+- Gộp các nút dễ lẫn trong luồng chính
 
-### 第三阶段：提示词专项优化
+### Giai đoạn 3: Tối ưu chuyên sâu prompt
 
-- 梳理多 Agent 提示词职责
-- 分模块优化图片、关键帧、剧本相关提示词
-- 提升结果稳定性与一致性
+- Sắp xếp trách nhiệm prompt nhiều Agent
+- Tối ưu prompt liên quan ảnh, khung hình chính, kịch bản theo từng module
+- Nâng tính ổn định và nhất quán của kết quả
 
-### 第四阶段：剪辑能力补强
+### Giai đoạn 4: Bổ sung khả năng dựng phim
 
-- 补充基础可用能力
-- 优化导出前的使用体验
-- 保持轻量化和边界清晰
+- Bổ sung khả năng cơ bản có thể dùng
+- Tối ưu trải nghiệm trước khi xuất
+- Giữ nhẹ gọn và ranh giới rõ ràng
 
-## 总结
+## Tổng kết
 
-项目已经从“快速搭建原型”进入“系统化打磨”的阶段。
+Dự án đã đi từ “xây dựng nhanh nguyên mẫu” sang giai đoạn “giũa có hệ thống”.
 
-接下来的重点，不是继续无序扩张，而是围绕以下主线推进：
+Trọng tâm tiếp theo không phải tiếp tục mở rộng vô thứ tự, mà là đẩy lùi theo các trục sau:
 
-- **把结构理顺**
-- **把流程做顺**
-- **把提示词做稳**
-- **把剪辑做成够用的辅助能力**
+- **Sửa chữa cấu trúc**
+- **Làm mượt quy trình**
+- **Làm ổn định prompt**
+- **Làm dựng phim thành khả năng hỗ trợ đủ dùng**
 
-这会让项目从“可以运行”逐步走向“更稳定、更清晰、更适合长期演进”。
+Điều này sẽ giúp dự án tiến dần từ “chạy được” sang “ổn định hơn, rõ ràng hơn, phù hợp phát triển dài hạn hơn”.

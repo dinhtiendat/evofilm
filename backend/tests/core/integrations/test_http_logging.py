@@ -1,4 +1,4 @@
-"""http_logging 辅助函数单测。"""
+"""Đơn kiểm tra hàm phụ trợ của http_logging."""
 
 from __future__ import annotations
 

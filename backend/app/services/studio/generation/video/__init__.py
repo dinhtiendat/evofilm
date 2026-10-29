@@ -1,4 +1,4 @@
-"""视频生成准备服务。"""
+"""Dịch vụ chuẩn bị tạo video."""
 
 from app.services.studio.generation.video.build_base import VideoBaseDraft, build_video_base_draft
 from app.services.studio.generation.video.build_context import (

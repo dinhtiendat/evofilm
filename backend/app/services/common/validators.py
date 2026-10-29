@@ -1,4 +1,4 @@
-"""通用校验工具：实体存在性与重复性检查。"""
+"""Công cụ kiểm tra dùng chung: kiểm tra tồn tại và trùng lặp của thực thể."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ async def require_entity(
     detail: str,
     status_code: int = status.HTTP_404_NOT_FOUND,
 ) -> ModelT:
-    """确保实体存在，并返回实体对象。"""
+    """Đảm bảo thực thể tồn tại, và trả về đối tượng thực thể."""
     obj = await db.get(model, entity_id)
     if obj is None:
         raise HTTPException(status_code=status_code, detail=detail)
@@ -33,7 +33,7 @@ async def require_optional_entity(
     detail: str,
     status_code: int = status.HTTP_400_BAD_REQUEST,
 ) -> ModelT | None:
-    """如果传入了实体 ID，则校验其存在性。"""
+    """Nếu truyền ID thực thể, thì kiểm chứng sự tồn tại của nó."""
     if entity_id is None:
         return None
     return await require_entity(
@@ -53,7 +53,7 @@ async def ensure_not_exists(
     detail: str,
     status_code: int = status.HTTP_400_BAD_REQUEST,
 ) -> None:
-    """确保给定主键对应的实体不存在。"""
+    """Đảm bảo thực thể ứng với khóa chính cho trước không tồn tại."""
     obj = await db.get(model, entity_id)
     if obj is not None:
         raise HTTPException(status_code=status_code, detail=detail)

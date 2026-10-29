@@ -1,4 +1,4 @@
-"""通用 CRUD 助手：减少路由层样板代码。"""
+"""Trợ lý CRUD dùng chung: giảm mã rập khuôn ở tầng routing."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ ModelT = TypeVar("ModelT")
 
 
 async def create_and_refresh(db: AsyncSession, obj: ModelT) -> ModelT:
-    """写入对象并刷新，返回最新状态。"""
+    """Ghi vào đối tượng và refresh, trả về trạng thái mới nhất."""
     db.add(obj)
     await db.flush()
     await db.refresh(obj)
@@ -20,7 +20,7 @@ async def create_and_refresh(db: AsyncSession, obj: ModelT) -> ModelT:
 
 
 def patch_model(obj: Any, data: dict[str, Any]) -> Any:
-    """将字典字段更新到模型实例。"""
+    """Cập nhật các trường từ điển lên phiên bản mô hình."""
     for field, value in data.items():
         setattr(obj, field, value)
     return obj
@@ -33,12 +33,12 @@ async def get_or_404(
     *,
     detail: str,
 ) -> ModelT:
-    """获取实体，不存在时抛出 404。"""
+    """Lấy thực thể, ném 404 nếu không tồn tại."""
     return await require_entity(db, model, entity_id, detail=detail)
 
 
 async def flush_and_refresh(db: AsyncSession, obj: ModelT) -> ModelT:
-    """刷新已更新对象并返回。"""
+    """Làm mới đối tượng đã cập nhật và trả về."""
     await db.flush()
     await db.refresh(obj)
     return obj
@@ -49,7 +49,7 @@ async def delete_if_exists(
     model: type[Any],
     entity_id: Any,
 ) -> None:
-    """若实体存在则删除；不存在时静默返回。"""
+    """Xóa nếu thực thể tồn tại; im lặng trả về nếu không có."""
     obj = await db.get(model, entity_id)
     if obj is None:
         return

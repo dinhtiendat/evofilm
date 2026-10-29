@@ -1,60 +1,60 @@
 ---
-title: "安装说明"
+title: "Hướng dẫn cài đặt"
 weight: 1
-description: "安装 Jellyfish 所需的基础环境与依赖。"
+description: "Môi trường nền tảng và phụ thuộc cần thiết để cài đặt Jellyfish."
 ---
 
-## 环境要求
+## Yêu cầu môi trường
 
-- Hugo extended `>= 0.146.0`（官网与文档站）
-- Go `>= 1.22`（用于 Hugo Modules 拉取 Hextra）
-- Node.js 与 pnpm
+- Hugo extended `>= 0.146.0` (trang chủ và trang tài liệu)
+- Go `>= 1.22`(dùng để Hugo Modules lấy Hextra)
+- Node.js và pnpm
 - Python 3.11+
 - `uv`
-- Docker 与 Docker Compose（可选）
+- Docker và Docker Compose (tùy chọn)
 
-## 获取代码
+## Lấy mã nguồn
 
 ```bash
 git clone https://github.com/Forget-C/Jellyfish.git
 cd Jellyfish
 ```
 
-## 目录建议
+## Gợi ý thư mục
 
-如果你只是使用应用，优先关注：
+Nếu bạn chỉ dùng ứng dụng, hãy ưu tiên quan tâm:
 
 - `front/`
 - `backend/`
 - `deploy/`
 
-如果你还要维护官网与文档站，再关注：
+Nếu bạn còn duy trì trang chủ và trang tài liệu, hãy chú ý thêm:
 
 - `site/`
 
-## 安装前端依赖
+## Cài đặt phụ thuộc phía trước
 
 ```bash
 cd front
 pnpm install
 ```
 
-## 安装后端依赖
+## Cài đặt phụ thuộc phía sau
 
 ```bash
 cd backend
 uv sync
 ```
 
-## 安装站点主题模块
+## Cài đặt module theme trang
 
 ```bash
 cd site
 hugo mod tidy
 ```
 
-## 建议的安装顺序
+## Thứ tự cài đặt được khuyến nghị
 
-1. 先安装后端依赖，确保 API 能跑起来。
-2. 再安装前端依赖，用于本地联调。
-3. 如果需要维护官网和文档，再初始化 `site/` 的 Hugo Modules。
+1. Trước tiên cài phụ thuộc phía sau, đảm bảo API chạy được.
+2. Sau đó cài phụ thuộc phía trước, dùng để liên động cục bộ.
+3. nếu cần duy trì trang chủ và tài liệu, hãy khởi tạo Hugo Modules của `site/` lần nữa.

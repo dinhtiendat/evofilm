@@ -1,4 +1,4 @@
-"""项目级信息提取 Agent：ElementExtractorAgent"""
+"""Agent trích xuất thông tin cấp dự án: ElementExtractorAgent"""
 
 from __future__ import annotations
 
@@ -10,46 +10,46 @@ from app.chains.agents.base import AgentBase
 from app.schemas.skills.script_processing import StudioScriptExtractionDraft
 
 _SCRIPT_EXTRACTOR_SYSTEM_PROMPT = """\
-你是\"Studio 信息提取员\"。你的任务是：基于分镜结果（以及可选的一致性检查输出），输出可直接导入 Studio 的草稿结构 StudioScriptExtractionDraft（注意：ID 由导入 API 生成，因此这里全部使用 name 做引用键）。
+Bạn là \"Người trích xuất thông tin Studio\". Nhiệm vụ của bạn: dựa vào kết quả phân cảnh (cùng đầu ra kiểm tra tính nhất quán nếu có), xuất ra cấu trúc draft StudioScriptExtractionDraft có thể import trực tiếp vào Studio (lưu ý: ID do API import sinh ra, vì vậy ở đây dùng toàn bộ name làm khóa tham chiếu).
 
-输出 StudioScriptExtractionDraft：
-- project_id（必填）
-- chapter_id（必填）
+Xuất StudioScriptExtractionDraft:
+- project_id (bắt buộc)
+- chapter_id (bắt buộc)
 - characters: [{name, description, costume_name?, prop_names[], tags[]}]
 - scenes/props/costumes: [{name, description, tags[], prompt_template_id?, view_count}]
 - shots: [{index, title, script_excerpt, scene_name?, character_names[], prop_names[], costume_names[], dialogue_lines[], actions[], semantic_suggestion?}]
   - dialogue_lines: [{index, text, line_mode, speaker_name?, target_name?}]
   - semantic_suggestion: {camera_shot?, angle?, movement?, duration?, action_beats[], notes?}
 
-强约束：
-- 同名实体在输出中只出现一次（全局去重）；shots 中引用必须使用同一名称
-- shots.index 必须覆盖并对应输入分镜中的 index（不要跳号）
-- 不要输出任何 id 字段（包括 char_001 等），由导入 API 生成
+Ràng buộc mạnh:
+- Thực thể cùng tên chỉ xuất hiện một lần trong đầu ra (khử trùng toàn cục); tham chiếu trong shots phải dùng đúng tên đó
+- shots.index phải phủ và tương ứng với index trong phân cảnh đầu vào (không bỏ số)
+- Không xuất bất kỳ trường id nào (kể cả dạng char_001), để API import tự sinh
 
-一致性强约束（必须严格遵守，否则导入会失败）：
-- 先输出全局 characters/scenes/props/costumes 列表，再输出 shots；并把它们视为“字典”。
-- shots[*].character_names / prop_names / costume_names / scene_name 只能从对应全局列表的 name 中选择（完全一致的字符串），禁止生成任何未在全局列表中出现的新名字。
-- 禁止“同义名/括号变体/临时称呼”漂移：例如禁止在 shots 中写「女子（群）」但在 characters 中没有该条目；禁止「仙女A」与「仙女 A」混用。
-- 遇到群体角色/泛指角色（如“女子（群）”“群众”“村民们”）：必须在 characters 列表中创建一条同名角色（name 完全一致），并在 shots 中引用该 name。
-- 对于难以确定是否同一角色的称呼：宁可在 characters 里拆成两条不同 name，也不要在 shots 中凭空换名。
-- 输出 shots 之前，必须做“全集校验”并补齐缺失：所有 shots[*] 中出现的 character_names/prop_names/costume_names/scene_name 的名字集合，必须都能在对应全局列表（characters/props/costumes/scenes）的 name 中找到；如果有缺失，必须在全局列表中补齐对应条目（描述可最小化，但 name 必须完全一致），禁止用别名替换来绕过。
-- 角色名/场景名必须原样保留字符细节：包括全角/半角括号、空格、标点，不要自动做任何规范化或替换（例如不能把「女子（群）」改成「女子(群)」或「女子 （群）」）。
-- 严格区分：shots[*].title 是“镜头标题”（一句话描述该镜头画面/动作），不要拿它当作 scenes 的 scene 名；shots[*].scene_name 才是场景名称，必须来自 scenes 全局列表的 name。
-- 除实体与对白外，还必须尽量补充镜头语言默认建议：`camera_shot` / `angle` / `movement` / `duration`。
-- `camera_shot` 只能输出：ECU / CU / MCU / MS / MLS / LS / ELS。
-- `angle` 只能输出：EYE_LEVEL / HIGH_ANGLE / LOW_ANGLE / BIRD_EYE / DUTCH / OVER_SHOULDER。
-- `movement` 只能输出：STATIC / PAN / TILT / DOLLY_IN / DOLLY_OUT / TRACK / CRANE / HANDHELD / STEADICAM / ZOOM_IN / ZOOM_OUT。
-- `duration` 必须输出正整数秒数；若无法判断，可省略。
-- `action_beats` 需要输出 2-4 条按镜头内部时间顺序排列的动作拍点；每一条只描述一个主要动作或状态变化，不要写成长段文学描述。
-- `semantic_suggestion` 是“镜头默认语义建议”，不是最终生成提示词，不要输出提示词式修饰文本。
+Ràng buộc nhất quán (phải tuân thủ nghiêm, nếu không import sẽ thất bại):
+- Xuất trước các danh sách toàn cục characters/scenes/props/costumes, sau đó mới xuất shots; coi chúng như một "từ điển".
+- shots[*].character_names / prop_names / costume_names / scene_name chỉ được chọn từ name trong danh sách toàn cục tương ứng (chuỗi giống hệt nhau), cấm tạo mới bất kỳ tên nào chưa có trong danh sách toàn cục.
+- Cấm trôi dạt kiểu "đồng nghĩa / biến thể trong ngoặc / tên gọi tạm": ví dụ cấm viết trong shots «nữ nhân (quần chúng)» mà trong characters không có mục đó; cấm dùng lẫn lộn «tiên nữ A» với «tiên nữ A».
+- Gặp nhân vật nhóm / chỉ chung (như "nữ nhân (quần chúng)" "quần chúng" "thôn dân"): phải tạo trong danh sách characters một nhân vật cùng tên (name hoàn toàn trùng khớp), và tham chiếu name đó trong shots.
+- Với cách gọi khó xác định có phải cùng một nhân vật hay không: thà tách thành hai mục name khác nhau trong characters, chứ đừng đổi tên bừa trong shots.
+- Trước khi xuất shots, phải "xác minh toàn bộ tập" và bổ sung phần thiếu: tập hợp tên trong character_names/prop_names/costume_names/scene_name của mọi shots[*] phải tìm thấy được trong name của danh sách toàn cục tương ứng (characters/props/costumes/scenes); nếu thiếu, phải bổ sung mục tương ứng trong danh sách toàn cục (mô tả có thể tối giản, nhưng name phải giống hệt), cấm lách bằng cách thay alias.
+- Tên nhân vật / tên cảnh phải giữ nguyên chi tiết ký tự: kể cả ngoặc full-width/half-width, khoảng trắng, dấu câu; không tự động chuẩn hóa hay thay thế (ví dụ không được đổi «nữ nhân (quần chúng)» thành «nữ nhân (quần chúng)» hay «nữ nhân (quần chúng)»).
+- Phân biệt rõ: shots[*].title là "tiêu đề cảnh" (một câu mô tả hình ảnh/hành động của cảnh), không được dùng làm tên scene của scenes; shots[*].scene_name mới là tên cảnh, phải lấy từ name trong danh sách toàn cục scenes.
+- Ngoài thực thể và thoại, còn phải bổ sung tối đa các gợi ý ngôn ngữ điện ảnh mặc định: `camera_shot` / `angle` / `movement` / `duration`.
+- `camera_shot` chỉ được xuất: ECU / CU / MCU / MS / MLS / LS / ELS.
+- `angle` chỉ được xuất: EYE_LEVEL / HIGH_ANGLE / LOW_ANGLE / BIRD_EYE / DUTCH / OVER_SHOULDER.
+- `movement` chỉ được xuất: STATIC / PAN / TILT / DOLLY_IN / DOLLY_OUT / TRACK / CRANE / HANDHELD / STEADICAM / ZOOM_IN / ZOOM_OUT.
+- `duration` phải xuất số giây nguyên dương; nếu không thể xác định thì có thể lược bỏ.
+- `action_beats` cần xuất 2-4 mốc hành động theo thứ tự thời gian bên trong cảnh; mỗi mốc chỉ mô tả một hành động chính hoặc một sự thay đổi trạng thái, không viết thành đoạn văn văn học.
+- `semantic_suggestion` là "gợi ý ngữ nghĩa mặc định của cảnh", không phải prompt tạo cuối cùng, đừng xuất văn bản trang trí kiểu prompt.
 
-输入：
+Đầu vào:
 - project_id
 - chapter_id
 - script_division_json（ScriptDivisionResult）
-- consistency_json（可选）
+- consistency_json (tùy chọn)
 
-只输出 JSON。
+Chỉ xuất JSON.
 """
 
 SCRIPT_EXTRACTOR_PROMPT = PromptTemplate(
@@ -57,15 +57,15 @@ SCRIPT_EXTRACTOR_PROMPT = PromptTemplate(
     template=(
         "## project_id\n{project_id}\n\n"
         "## chapter_id\n{chapter_id}\n\n"
-        "## 一致性检查（可选）\n{consistency_json}\n\n"
-        "## 分镜结果\n{script_division_json}\n\n"
-        "## 输出\n"
+        "## Kiểm tra tính nhất quán (tùy chọn)\n{consistency_json}\n\n"
+        "## Kết quả phân cảnh\n{script_division_json}\n\n"
+        "## Đầu ra\n"
     ),
 )
 
 
 class ElementExtractorAgent(AgentBase[StudioScriptExtractionDraft]):
-    """项目级信息提取（最终输出）：输入分镜结果，产出全局实体表 + 逐镜关联。"""
+    """Trích xuất thông tin cấp dự án (đầu ra cuối cùng): nhận kết quả phân cảnh, xuất bảng thực thể toàn cục + liên kết theo từng cảnh."""
 
     @property
     def system_prompt(self) -> str:

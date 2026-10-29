@@ -66,7 +66,7 @@ export function ActorsTab() {
       })
       setLinks((res.data?.items ?? []) as ProjectActorLinkRead[])
     } catch {
-      message.error('加载项目演员关联失败')
+      message.error('Nạp liên kết diễn viên dự án thất bại')
       setLinks([])
     } finally {
       setLinksLoading(false)
@@ -86,7 +86,7 @@ export function ActorsTab() {
       })
       setActors((res.data?.items ?? []) as ActorLike[])
     } catch {
-      message.error('加载演员失败')
+      message.error('Tải diễn viên thất bại')
       setActors([])
     } finally {
       setActorsLoading(false)
@@ -115,14 +115,14 @@ export function ActorsTab() {
           asset_id: actor.id,
         },
       })
-      message.success(`已关联演员「${actor.name}」到项目`)
+      message.success(`đã liên kết diễn viên 「${actor.name}」 vào dự án`)
       setLinkModalOpen(false)
       await loadLinks()
     } catch (e: unknown) {
       const msg =
         e && typeof e === 'object' && 'body' in e && typeof (e as { body?: { detail?: string } }).body?.detail === 'string'
           ? (e as { body: { detail: string } }).body.detail
-          : '关联失败'
+          : 'Liên kết thất bại'
       message.error(msg)
     } finally {
       setLinkingId(null)
@@ -133,10 +133,10 @@ export function ActorsTab() {
     setUnlinkingId(link.id)
     try {
       await StudioShotLinksService.deleteProjectActorLinkApiV1StudioShotLinksActorLinkIdDelete({ linkId: link.id })
-      message.success('已取消关联')
+      message.success('Đã hủy liên kết')
       await loadLinks()
     } catch {
-      message.error('取消关联失败')
+      message.error('Hủy liên kết thất bại')
     } finally {
       setUnlinkingId(null)
     }
@@ -149,7 +149,7 @@ export function ActorsTab() {
   }, [actors])
 
   useEffect(() => {
-    // 为表格展示补齐 actor 详情（name/thumbnail/description）
+    // bổ sung chi tiết actor (name/thumbnail/description) cho hiển thị bảng
     const missing = Array.from(new Set(links.map((l) => l.actor_id))).filter((id) => !linkedByActorId.has(id))
     if (missing.length === 0) return
     void (async () => {
@@ -184,11 +184,11 @@ export function ActorsTab() {
   return (
     <div className="h-full overflow-auto">
       <Card
-        title="项目演员"
+        title="Diễn viên dự án"
         extra={
           <Space>
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
-              新建
+              Tạo mới
             </Button>
             <Button
               type="primary"
@@ -198,19 +198,19 @@ export function ActorsTab() {
                 setLinkModalOpen(true)
               }}
             >
-              从资产库关联
+              Liên kết từ thư viện tài nguyên
             </Button>
             <Button icon={<PlusOutlined />} onClick={() => navigate('/assets')}>
-              前往资产管理
+              Đến quản lý tài nguyên
             </Button>
           </Space>
         }
       >
         {links.length === 0 && !linksLoading ? (
-          <Empty description="暂无项目演员，可从资产库关联演员到本项目" image={Empty.PRESENTED_IMAGE_SIMPLE}>
+          <Empty description="Chưa có diễn viên nào trong dự án, có thể liên kết diễn viên từ thư viện tài nguyên vào dự án này" image={Empty.PRESENTED_IMAGE_SIMPLE}>
             <Space>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
-                新建
+                Tạo mới
               </Button>
               <Button
                 type="primary"
@@ -220,9 +220,9 @@ export function ActorsTab() {
                   setLinkModalOpen(true)
                 }}
               >
-                从资产库关联
+                Liên kết từ thư viện tài nguyên
               </Button>
-              <Button onClick={() => navigate('/assets')}>前往资产管理</Button>
+              <Button onClick={() => navigate('/assets')}>Đến quản lý tài nguyên</Button>
             </Space>
           </Empty>
         ) : (
@@ -248,7 +248,7 @@ export function ActorsTab() {
                           )
                         }
                       >
-                        编辑
+                        Chỉnh sửa
                       </Button>
                       <Button
                         size="small"
@@ -256,15 +256,15 @@ export function ActorsTab() {
                         loading={unlinkingId === l.id}
                         onClick={() => {
                           Modal.confirm({
-                            title: `取消关联「${a?.name ?? l.actor_id}」？`,
-                            okText: '取消关联',
-                            cancelText: '取消',
+                            title: `hủy liên kết 「${a?.name ?? l.actor_id}」?`,
+                            okText: 'Hủy liên kết',
+                            cancelText: 'Hủy',
                             okButtonProps: { danger: true },
                             onOk: () => handleUnlinkActor(l),
                           })
                         }}
                       >
-                        取消关联
+                        Hủy liên kết
                       </Button>
                     </Space>
                   }
@@ -284,7 +284,7 @@ export function ActorsTab() {
                 pageSize={pageSize}
                 total={links.length}
                 showSizeChanger={false}
-                showTotal={(t) => `共 ${t} 条`}
+                showTotal={(t) => `Tổng ${t} mục`}
                 onChange={(p, ps) => {
                   setPage(p)
                   setPageSize(ps)
@@ -306,7 +306,7 @@ export function ActorsTab() {
       />
 
       <Modal
-        title="从资产库关联演员"
+        title="Liên kết diễn viên từ thư viện tài nguyên"
         open={linkModalOpen}
         onCancel={() => setLinkModalOpen(false)}
         footer={null}
@@ -314,7 +314,7 @@ export function ActorsTab() {
       >
         <div className="mb-3">
           <Input.Search
-            placeholder="搜索演员名称"
+            placeholder="Tìm tên diễn viên"
             allowClear
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -323,9 +323,9 @@ export function ActorsTab() {
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
           {actorsLoading ? (
-            <div className="py-8 text-center text-gray-500">加载中...</div>
+            <div className="py-8 text-center text-gray-500">Đang tải...</div>
           ) : availableActors.length === 0 ? (
-            <Empty description={actors.length === 0 ? '暂无演员，请先在资产管理中创建演员' : '当前项目已关联全部搜索结果'} />
+            <Empty description={actors.length === 0 ? 'Chưa có diễn viên, vui lòng tạo diễn viên trong quản lý tài nguyên trước' : 'Dự án hiện tại đã liên kết toàn bộ kết quả tìm kiếm'} />
           ) : (
             <div className="space-y-2">
               {availableActors.map((actor) => (
@@ -358,7 +358,7 @@ export function ActorsTab() {
                     loading={linkingId === actor.id}
                     onClick={() => handleLinkActor(actor)}
                   >
-                    关联到项目
+                    Liên kết vào dự án
                   </Button>
                 </div>
               ))}

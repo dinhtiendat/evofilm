@@ -8,7 +8,7 @@ SET @has_shot_details_action_beats = (
 
 SET @add_shot_details_action_beats = IF(
   @has_shot_details_action_beats = 0,
-  "ALTER TABLE shot_details ADD COLUMN action_beats JSON NULL COMMENT '镜头动作拍点（按时间顺序排列，用于关键帧与视频生成）'",
+  "ALTER TABLE shot_details ADD COLUMN action_beats JSON NULL COMMENT 'Mốc hành động của phân cảnh (bố trí theo thứ tự thời gian, dùng cho khung hình chính và tạo video)'",
   'SELECT 1'
 );
 PREPARE stmt_add_shot_details_action_beats FROM @add_shot_details_action_beats;
@@ -35,7 +35,7 @@ SET @normalize_shot_details_action_beats = (
 
 SET @alter_shot_details_action_beats = IF(
   @normalize_shot_details_action_beats > 0,
-  "ALTER TABLE shot_details MODIFY COLUMN action_beats JSON NOT NULL COMMENT '镜头动作拍点（按时间顺序排列，用于关键帧与视频生成）'",
+  "ALTER TABLE shot_details MODIFY COLUMN action_beats JSON NOT NULL COMMENT 'Mốc hành động của phân cảnh (xếp theo thứ tự thời gian, dùng cho khung hình chính và tạo video)'",
   'SELECT 1'
 );
 PREPARE stmt_alter_shot_details_action_beats FROM @alter_shot_details_action_beats;

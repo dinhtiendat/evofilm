@@ -1,4 +1,4 @@
-"""film/task_status 接口响应壳测试。"""
+"""Kiểm thử vỏ phản hồi API film/task_status."""
 
 from __future__ import annotations
 
@@ -129,7 +129,7 @@ def test_cancel_task_returns_success_envelope(client: TestClient, monkeypatch) -
     db = _FakeTaskDB()
     app.dependency_overrides[get_db] = _override_db(db)
     try:
-        response = client.post("/api/v1/film/tasks/task-1/cancel", json={"reason": "用户取消"})
+        response = client.post("/api/v1/film/tasks/task-1/cancel", json={"reason": "Người dùng hủy"})
     finally:
         app.dependency_overrides.clear()
 
@@ -185,7 +185,7 @@ def test_cancel_task_revokes_celery_and_marks_cancelled(client: TestClient, monk
     db = _FakeTaskDB()
     app.dependency_overrides[get_db] = _override_db(db)
     try:
-        response = client.post("/api/v1/film/tasks/task-2/cancel", json={"reason": "立即取消"})
+        response = client.post("/api/v1/film/tasks/task-2/cancel", json={"reason": "Hủy ngay"})
     finally:
         app.dependency_overrides.clear()
 

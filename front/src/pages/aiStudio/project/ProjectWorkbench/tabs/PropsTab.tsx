@@ -87,7 +87,7 @@ function LinkedAssetTab({
       })
       setAssetsById(map)
     } catch {
-      message.error(`加载项目${kind === 'prop' ? '道具' : '服装'}关联失败`)
+      message.error(`Tải thất bại liên kết ${kind === 'prop' ? '道具' : '服装'} của dự án`)
       setLinks([])
       setAssetsById({})
     } finally {
@@ -117,7 +117,7 @@ function LinkedAssetTab({
             })
       setAssets((res.data?.items ?? []) as AssetItemLike[])
     } catch {
-      message.error(`加载${kind === 'prop' ? '道具' : '服装'}失败`)
+      message.error(`Tải ${kind === 'prop' ? 'Đạo cụ' : 'Trang phục'} thất bại`)
       setAssets([])
     } finally {
       setListLoading(false)
@@ -152,11 +152,11 @@ function LinkedAssetTab({
           requestBody: { project_id: projectId, chapter_id: null, shot_id: null, asset_id: assetId },
         })
       }
-      message.success(`已关联${kind === 'prop' ? '道具' : '服装'}「${assetName}」`)
+      message.success(`Đã liên kết ${kind === 'prop' ? 'đạo cụ' : 'trang phục'}「${assetName}」`)
       setLinkModalOpen(false)
       await loadLinks()
     } catch {
-      message.error('关联失败')
+      message.error('Liên kết thất bại')
     } finally {
       setLinkingId(null)
     }
@@ -170,10 +170,10 @@ function LinkedAssetTab({
       } else {
         await StudioShotLinksService.deleteProjectCostumeLinkApiV1StudioShotLinksCostumeLinkIdDelete({ linkId: link.id })
       }
-      message.success('已取消关联')
+      message.success('Đã hủy liên kết')
       await loadLinks()
     } catch {
-      message.error('取消关联失败')
+      message.error('Hủy liên kết thất bại')
     } finally {
       setUnlinkingId(null)
     }
@@ -182,11 +182,11 @@ function LinkedAssetTab({
   return (
     <div className="h-full overflow-auto">
       <Card
-        title={`项目${kind === 'prop' ? '道具' : '服装'}`}
+        title={`Dự án${kind === 'prop' ? 'đạo cụ' : 'trang phục'}`}
         extra={
           <Space>
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
-              新建
+              Tạo mới
             </Button>
             <Button
               type="primary"
@@ -196,16 +196,16 @@ function LinkedAssetTab({
                 setLinkModalOpen(true)
               }}
             >
-              从资产库关联
+              Liên kết từ thư viện tài nguyên
             </Button>
             <Button icon={<PlusOutlined />} onClick={() => navigate(`/assets?tab=${kind}`)}>
-              前往资产管理
+              Đến quản lý tài nguyên
             </Button>
           </Space>
         }
       >
         {links.length === 0 && !loading ? (
-          <Empty description={`暂无项目${kind === 'prop' ? '道具' : '服装'}`} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          <Empty description={`Chưa có dự án${kind === 'prop' ? 'đạo cụ' : 'trang phục'}`} image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           <div className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -233,7 +233,7 @@ function LinkedAssetTab({
                           navigate(`${path}?returnTo=${encodeWorkbenchAssetEditReturnTo(projectId, workbenchTab)}`)
                         }}
                       >
-                        编辑
+                        Chỉnh sửa
                       </Button>
                       <Button
                         size="small"
@@ -241,15 +241,15 @@ function LinkedAssetTab({
                         loading={unlinkingId === l.id}
                         onClick={() => {
                           Modal.confirm({
-                            title: `取消关联「${asset?.name ?? assetId}」？`,
-                            okText: '取消关联',
-                            cancelText: '取消',
+                            title: `hủy liên kết 「${asset?.name ?? assetId}」?`,
+                            okText: 'Hủy liên kết',
+                            cancelText: 'Hủy',
                             okButtonProps: { danger: true },
                             onOk: () => handleUnlink(l),
                           })
                         }}
                       >
-                        取消关联
+                        Hủy liên kết
                       </Button>
                     </Space>
                   }
@@ -269,7 +269,7 @@ function LinkedAssetTab({
                 pageSize={pageSize}
                 total={links.length}
                 showSizeChanger={false}
-                showTotal={(t) => `共 ${t} 条`}
+                showTotal={(t) => `Tổng ${t} mục`}
                 onChange={(p, ps) => {
                   setPage(p)
                   setPageSize(ps)
@@ -282,7 +282,7 @@ function LinkedAssetTab({
 
       <StudioAssetTypeFormModal
         open={createModalOpen}
-        label={kind === 'prop' ? '道具' : '服装'}
+        label={kind === 'prop' ? 'Đạo cụ' : 'Trang phục'}
         entityType={kind}
         editing={null}
         linkProjectId={projectId}
@@ -305,7 +305,7 @@ function LinkedAssetTab({
       />
 
       <Modal
-        title={`从资产库关联${kind === 'prop' ? '道具' : '服装'}`}
+        title={`Liên kết từ thư viện tài nguyên${kind === 'prop' ? 'đạo cụ' : 'trang phục'}`}
         open={linkModalOpen}
         onCancel={() => setLinkModalOpen(false)}
         footer={null}
@@ -313,7 +313,7 @@ function LinkedAssetTab({
       >
         <div className="mb-3">
           <Input.Search
-            placeholder={`搜索${kind === 'prop' ? '道具' : '服装'}名称`}
+            placeholder={`Tìm kiếm tên ${kind === 'prop' ? 'Đạo cụ' : 'Trang phục'}`}
             allowClear
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -322,9 +322,9 @@ function LinkedAssetTab({
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
           {listLoading ? (
-            <div className="py-8 text-center text-gray-500">加载中...</div>
+            <div className="py-8 text-center text-gray-500">Đang tải...</div>
           ) : available.length === 0 ? (
-            <Empty description="暂无可关联资产" />
+            <Empty description="Chưa có tài nguyên để liên kết" />
           ) : (
             <div className="space-y-2">
               {available.map((a) => (
@@ -341,7 +341,7 @@ function LinkedAssetTab({
                     </div>
                   </div>
                   <Button type="primary" size="small" loading={linkingId === a.id} onClick={() => handleLink(a.id, a.name)}>
-                    关联到项目
+                    Liên kết vào dự án
                   </Button>
                 </div>
               ))}

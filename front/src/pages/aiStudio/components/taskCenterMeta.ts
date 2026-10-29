@@ -60,7 +60,7 @@ async function resolveTaskMeta(task: TaskUiItem): Promise<ResolvedTaskMeta | nul
     const chapter = res.data
     if (!chapter) return null
     return {
-      sourceLabel: chapter.title ? `章节：${chapter.title}` : `章节：${relationEntityId}`,
+      sourceLabel: chapter.title ? `Chương: ${chapter.title}` : `Chương: ${relationEntityId}`,
       navigateTo: getChapterShotsPath(chapter.project_id, chapter.id),
     }
   }
@@ -77,14 +77,14 @@ async function resolveTaskMeta(task: TaskUiItem): Promise<ResolvedTaskMeta | nul
     const chapter = chapterRes.data
     if (!chapter) {
       return {
-        sourceLabel: shot.title ? `镜头：${shot.title}` : `镜头：${relationEntityId}`,
+        sourceLabel: shot.title ? `Phân cảnh: ${shot.title}` : `Phân cảnh: ${relationEntityId}`,
         navigateTo: null,
       }
     }
     return {
       sourceLabel: shot.title
-        ? `镜头：${shot.title}（第 ${shot.index} 镜）`
-        : `镜头：${relationEntityId}`,
+        ? `Phân cảnh: ${shot.title} (phân cảnh thứ ${shot.index})`
+        : `Phân cảnh: ${relationEntityId}`,
       navigateTo: getChapterStudioPath(chapter.project_id, chapter.id),
     }
   }
@@ -98,14 +98,14 @@ async function resolveTaskMeta(task: TaskUiItem): Promise<ResolvedTaskMeta | nul
       const projectId = typeof data?.project_id === 'string' ? data.project_id.trim() : ''
       const labelPrefix =
         entityType === 'actor'
-          ? '演员'
+          ? 'Diễn viên'
           : entityType === 'scene'
-            ? '场景'
+            ? 'Bối cảnh'
             : entityType === 'prop'
-              ? '道具'
+              ? 'Đạo cụ'
               : entityType === 'costume'
-                ? '服装'
-                : '角色'
+                ? 'Trang phục'
+                : 'Nhân vật'
       const navigateTo =
         entityType === 'character'
           ? projectId
@@ -152,12 +152,12 @@ async function resolveTaskMeta(task: TaskUiItem): Promise<ResolvedTaskMeta | nul
       const name = typeof data?.name === 'string' ? data.name.trim() : ''
       const labelPrefix =
         entityType === 'actor'
-          ? '演员'
+          ? 'Diễn viên'
           : entityType === 'scene'
-            ? '场景'
+            ? 'Bối cảnh'
             : entityType === 'prop'
-              ? '道具'
-              : '服装'
+              ? 'Đạo cụ'
+              : 'Trang phục'
       return {
         sourceLabel: name ? `${labelPrefix}：${name}` : `${labelPrefix}：${assetId}`,
         navigateTo: buildPath(assetId),

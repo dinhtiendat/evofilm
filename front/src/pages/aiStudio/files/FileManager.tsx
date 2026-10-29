@@ -14,7 +14,7 @@ import { DownloadOutlined, FileImageOutlined, VideoCameraOutlined } from '@ant-d
 import api from '../../../services/aiStudioApi'
 import type { FileItem } from '../../../mocks/data'
 
-const PRESET_TAGS = ['首帧', '尾帧', '关键帧', '成片', '版本1', '现实主义', '科幻', '待导出']
+const PRESET_TAGS = ['Khung hình đầu', 'Khung hình cuối', 'Khung hình chính', 'Thành phẩm', 'Phiên bản 1', 'Hiện thực', 'Khoa học viễn tưởng', 'Chờ xuất']
 
 const FileManager: React.FC = () => {
   const [files, setFiles] = useState<FileItem[]>([])
@@ -30,7 +30,7 @@ const FileManager: React.FC = () => {
       const list = await api.files.list()
       setFiles(Array.isArray(list) ? list : [])
     } catch {
-      message.error('加载文件失败')
+      message.error('Nạp tệp thất bại')
     } finally {
       setLoading(false)
     }
@@ -60,14 +60,14 @@ const FileManager: React.FC = () => {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-4">
         <Input.Search
-          placeholder="搜索文件名或标签"
+          placeholder="Tìm theo tên tệp hoặc nhãn"
           allowClear
           className="max-w-sm"
           onSearch={setSearch}
           onChange={(e) => setSearch(e.target.value)}
         />
         <Select
-          placeholder="按标签筛选"
+          placeholder="Lọc theo nhãn"
           allowClear
           style={{ width: 160 }}
           value={tagFilter}
@@ -75,22 +75,22 @@ const FileManager: React.FC = () => {
           options={allTags.map((t) => ({ label: t, value: t }))}
         />
         <Select
-          placeholder="快捷标记（预设/添加）"
+          placeholder="Đánh dấu nhanh (mẫu có sẵn/thêm)"
           allowClear
           style={{ width: 160 }}
           value={quickTag || undefined}
           onChange={(v) => setQuickTag(v ?? '')}
           options={effectiveTags.map((t) => ({ label: t, value: t }))}
           onSelect={(v) => {
-            if (selectedFileIds.length) message.success(`已为 ${selectedFileIds.length} 个文件添加标签「${v}」（Mock）`)
+            if (selectedFileIds.length) message.success(`Đã thêm thẻ「${v}」cho ${selectedFileIds.length} tệp (Mock)`)
           }}
         />
         <Button icon={<DownloadOutlined />} disabled={selectedFileIds.length === 0}>
-          批量导出{selectedFileIds.length ? ` (${selectedFileIds.length})` : ''}
+          Xuất hàng loạt{selectedFileIds.length ? ` (${selectedFileIds.length})` : ''}
         </Button>
       </div>
 
-      <Card title="文件列表" loading={loading}>
+      <Card title="Danh sách tệp" loading={loading}>
         <Row gutter={[16, 16]}>
           {filtered.map((f) => (
             <Col xs={24} sm={12} md={8} lg={6} key={f.id}>
@@ -120,7 +120,7 @@ const FileManager: React.FC = () => {
                 </Space>
                 <div className="mt-2">
                   <Button type="link" size="small" icon={<DownloadOutlined />} onClick={(e) => e.stopPropagation()}>
-                    导出
+                    Xuất
                   </Button>
                 </div>
               </Card>
@@ -128,7 +128,7 @@ const FileManager: React.FC = () => {
           ))}
         </Row>
         {filtered.length === 0 && (
-          <div className="text-center text-gray-500 py-8">暂无文件</div>
+          <div className="text-center text-gray-500 py-8">Chưa có tệp</div>
         )}
       </Card>
     </div>

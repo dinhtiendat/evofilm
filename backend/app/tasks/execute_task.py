@@ -1,9 +1,9 @@
-"""统一 Celery 执行入口。
+"""Điểm vào thực thi Celery thống nhất.
 
-职责：
-- Celery 统一只接收业务 task_id；
-- 通过 GenerationTask.task_kind + registry 找到具体 WorkerTaskExecutor；
-- 回写 executor_type / executor_task_id，便于排障。
+Trách nhiệm:
+- Celery chỉ nhận task_id nghiệp vụ;
+- Qua GenerationTask.task_kind + registry để tìm WorkerTaskExecutor cụ thể;
+- Ghi ngược executor_type / executor_task_id, tiện cho việc gỡ lỗi.
 """
 
 from __future__ import annotations

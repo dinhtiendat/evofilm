@@ -5,7 +5,7 @@ from app.services.studio.generation.shared.types import GenerationBaseDraft
 
 
 class FrameBaseDraft(GenerationBaseDraft):
-    """分镜帧图片生成的基础提示词真值。"""
+    """Giá trị gốc của prompt cơ bản cho tạo ảnh khung hình phân cảnh."""
 
     kind: str = "frame"
     shot_id: str
@@ -29,7 +29,7 @@ def build_frame_base_draft(
     composition_anchor: str = "",
     screen_direction_guidance: str = "",
 ) -> FrameBaseDraft:
-    """构造分镜帧基础草稿，并附带最终渲染阶段仍需保留的高优先级约束。"""
+    """Xây dựng bản nháp cơ bản khung hình phân cảnh, kèm ràng buộc ưu tiên cao vẫn phải giữ ở giai đoạn render cuối."""
     return FrameBaseDraft(
         shot_id=shot_id,
         frame_type=frame_type,

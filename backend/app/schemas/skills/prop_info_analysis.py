@@ -1,4 +1,4 @@
-"""道具信息缺失分析：结构化输出 schema。"""
+"""Phân tích thiếu thông tin đạo cụ: schema đầu ra có cấu trúc."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class PropInfoAnalysisResult(BaseModel):
-    """根据原文道具描述，分析缺少的信息，并给出优化后的可生成道具描述。"""
+    """Dựa mô tả đạo cụ gốc, phân tích thông tin thiếu và đưa ra mô tả đạo cụ có thể tạo đã tối ưu."""
 
     model_config = ConfigDict(extra="forbid")
 

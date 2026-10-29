@@ -1,4 +1,4 @@
-"""film 路由公共模型与工具：请求体、任务视图、绑定工具。"""
+"""Mô hình và tiện ích dùng chung cho route film: body yêu cầu, view tác vụ, công cụ liên kết."""
 
 from __future__ import annotations
 
@@ -15,94 +15,94 @@ from app.core.task_manager.types import TaskStatus
 
 
 class TextChunkInput(BaseModel):
-    """单个文本块。"""
+    """Khối văn bản đơn lẻ.。"""
 
-    chunk_id: str = Field(..., description="块 ID，如 chapter1_p03")
-    text: str = Field(..., description="原文内容")
+    chunk_id: str = Field(..., description="ID khối, ví dụ chapter1_p03")
+    text: str = Field(..., description="text: str = Field(..., description=nội dung nguyên văn)")
 
 
 class EntityExtractRequest(BaseModel):
-    """实体抽取请求。"""
+    """Yêu cầu trích xuất thực thể.。"""
 
-    source_id: str = Field(..., description="小说/章节标识，如 novel_ch01")
-    language: str | None = Field(None, description="语言，如 zh / en")
-    chunks: list[TextChunkInput] = Field(..., description="文本块列表")
+    source_id: str = Field(..., description="danh định tiểu thuyết/chương, như novel_ch01")
+    language: str | None = Field(None, description="ngôn ngữ, như zh / en")
+    chunks: list[TextChunkInput] = Field(..., description="chunks: list[TextChunkInput] = Field(..., description=Danh sách khối văn bản)")
 
 
 class ShotlistExtractRequest(BaseModel):
-    """分镜抽取请求。"""
+    """Yêu cầu trích xuất phân cảnh.。"""
 
-    source_id: str = Field(..., description="小说/章节标识")
-    source_title: str | None = Field(None, description="书名/章节名")
-    language: str | None = Field(None, description="语言，如 zh / en")
-    chunks: list[TextChunkInput] = Field(..., description="文本块列表")
+    source_id: str = Field(..., description="Định danh tiểu thuyết/chương")
+    source_title: str | None = Field(None, description="tên sách/tên chương")
+    language: str | None = Field(None, description="ngôn ngữ, như zh / en")
+    chunks: list[TextChunkInput] = Field(..., description="chunks: list[TextChunkInput] = Field(..., description=Danh sách khối văn bản)")
 
 
 class BindTarget(BaseModel):
-    """任务绑定对象：三选一。"""
+    """Đối tượng gắn tác vụ: chọn một trong ba."""
 
-    project_id: str | None = Field(None, description="绑定项目 ID（可选）")
-    chapter_id: str | None = Field(None, description="绑定章节 ID（可选）")
-    shot_id: str | None = Field(None, description="绑定镜头 ID（可选）")
+    project_id: str | None = Field(None, description="ID dự án liên kết (tùy chọn)")
+    chapter_id: str | None = Field(None, description="ID chương liên kết (tùy chọn)")
+    shot_id: str | None = Field(None, description="ID phân cảnh liên kết (tùy chọn)")
 
 
 class EntityExtractTaskRequest(EntityExtractRequest, BindTarget):
-    """实体抽取任务请求：在抽取参数基础上增加绑定目标。"""
+    """Yêu cầu tác vụ trích xuất thực thể: thêm đối tượng gắn kết trên cơ sở tham số trích xuất."""
 
 
 class ShotlistExtractTaskRequest(ShotlistExtractRequest, BindTarget):
-    """分镜抽取任务请求：在抽取参数基础上增加绑定目标。"""
+    """Yêu cầu tác vụ trích xuất phân cảnh: thêm đối tượng gắn kết trên cơ sở tham số trích xuất."""
 
 
 class ShotFramePromptRequest(BaseModel):
-    """镜头分镜帧提示词生成任务请求。"""
+    """Yêu cầu tác vụ tạo prompt khung hình phân cảnh.。"""
 
-    shot_id: str = Field(..., description="镜头 ID")
+    shot_id: str = Field(..., description="shot_id: str = Field(..., description=ID phân cảnh) ID")
     frame_type: str = Field(..., description="first | last | key")
 
 
 class TaskCreated(BaseModel):
-    task_id: str = Field(..., description="任务 ID")
+    task_id: str = Field(..., description="task_id: str = Field(..., description=ID tác vụ) ID")
 
 
 class AsyncTaskCreateRead(BaseModel):
-    task_id: str = Field(..., description="任务 ID")
-    status: TaskStatus = Field(..., description="任务状态")
-    reused: bool = Field(False, description="是否复用了当前业务实体已有的活跃任务")
-    relation_type: str | None = Field(None, description="业务关联类型")
-    relation_entity_id: str | None = Field(None, description="业务关联实体 ID")
+    task_id: str = Field(..., description="task_id: str = Field(..., description=ID tác vụ) ID")
+    status: TaskStatus = Field(..., description="status: TaskStatus = Field(..., description=Trạng thái tác vụ)")
+    reused: bool = Field(False, description="reused: bool = Field(False, description=liệu đã tái sử dụng tác vụ đang hoạt động có sẵn của thực thể nghiệp vụ hiện tại hay chưa)")
+    relation_type: str | None = Field(None, description="relation_type: str | None = Field(None, description=loại liên kết nghiệp vụ)")
+    relation_entity_id: str | None = Field(None, description="relation_entity_id: str | None = Field(None, description=thực thể liên kết nghiệp vụ ID) ID")
 
 
 class TaskStatusRead(BaseModel):
     task_id: str
     status: TaskStatus
     progress: int = Field(..., ge=0, le=100)
-    cancel_requested: bool = Field(False, description="是否已请求取消")
-    cancel_requested_at_ts: float | None = Field(None, description="请求取消时间戳")
-    started_at_ts: float | None = Field(None, description="任务开始执行时间戳")
-    finished_at_ts: float | None = Field(None, description="任务结束时间戳")
-    elapsed_ms: int | None = Field(None, description="任务累计执行耗时（毫秒）")
+    cancel_requested: bool = Field(False, description="cancel_requested: bool = Field(False, description=Đã yêu cầu hủy chưa)")
+    cancel_requested_at_ts: float | None = Field(None, description="cancel_requested_at_ts: float | None = Field(None, description=Định thời gian yêu cầu hủy)")
+    started_at_ts: float | None = Field(None, description="started_at_ts: float | None = Field(None, description=Định thời gian bắt đầu thực thi tác vụ)")
+    finished_at_ts: float | None = Field(None, description="finished_at_ts: float | None = Field(None, description=Định thời gian kết thúc tác vụ)")
+    elapsed_ms: int | None = Field(None, description="Tổng thời gian thực thi tác vụ ( mili giây)")
 
 
 class TaskListItemRead(BaseModel):
     task_id: str
-    task_kind: str = Field(..., description="业务任务类型")
+    task_kind: str = Field(..., description="task_kind: str = Field(..., description=Loại tác vụ nghiệp vụ)")
     status: TaskStatus
     progress: int = Field(..., ge=0, le=100)
-    cancel_requested: bool = Field(False, description="是否已请求取消")
-    cancel_requested_at_ts: float | None = Field(None, description="请求取消时间戳")
-    started_at_ts: float | None = Field(None, description="任务开始执行时间戳")
-    finished_at_ts: float | None = Field(None, description="任务结束时间戳")
-    elapsed_ms: int | None = Field(None, description="任务累计执行耗时（毫秒）")
-    created_at_ts: float | None = Field(None, description="任务创建时间戳")
-    updated_at_ts: float | None = Field(None, description="任务更新时间戳")
-    executor_type: str | None = Field(None, description="执行器类型，如 celery")
-    executor_task_id: str | None = Field(None, description="执行器侧任务 ID")
-    relation_type: str | None = Field(None, description="业务关联类型")
-    relation_entity_id: str | None = Field(None, description="业务关联实体 ID")
-    resource_type: str | None = Field(None, description="资源类型")
-    navigate_relation_type: str | None = Field(None, description="前端默认跳转关联类型")
-    navigate_relation_entity_id: str | None = Field(None, description="前端默认跳转关联实体 ID")
+    cancel_requested: bool = Field(False, description="cancel_requested: bool = Field(False, description=Đã yêu cầu hủy chưa)")
+    cancel_requested_at_ts: float | None = Field(None, description="cancel_requested_at_ts: float | None = Field(None, description=Định thời gian yêu cầu hủy)")
+    started_at_ts: float | None = Field(None, description="started_at_ts: float | None = Field(None, description=Định thời gian bắt đầu thực thi tác vụ)")
+    finished_at_ts: float | None = Field(None, description="finished_at_ts: float | None = Field(None, description=Định thời gian kết thúc tác vụ)")
+    elapsed_ms: int | None = Field(None, description="Tổng thời gian thực thi tác vụ ( mili giây)")
+    created_at_ts: float | None = Field(None, description="created_at_ts: float | None = Field(None, description=dấu thời gian tạo tác vụ)")
+    updated_at_ts: float | None = Field(None, description="updated_at_ts: float | None = Field(None, description=dấu thời gian cập nhật tác vụ)")
+    executor_type: str | None = Field(None, description="Loại executor, ví dụ celery")
+    executor_task_id: str | None = Field(None, description="executor_task_id: str | None = Field(None, description=ID tác vụ phía executor) ID")
+    relation_type: str | None = Field(None, description="relation_type: str | None = Field(None, description=loại liên kết nghiệp vụ)")
+    relation_entity_id: str | None = Field(None, description="relation_entity_id: str | None = Field(None, description=thực thể liên kết nghiệp vụ ID) ID")
+    resource_type: str | None = Field(None, description="resource_type: str | None = Field(None, description=Loại tài nguyên)")
+    navigate_relation_type: str | None = Field(None, description="navigate_relation_type: str | None = Field(None, description=Loại liên kết chuyển hướng mặc định phía frontend)")
+    navigate_relation_entity_id: str | None = Field(None, description="navigate_relation_entity_id: str | None = Field(None, description=ID thực thể liên kết để phía trước chuyển hướng mặc định) ID")
 
 
 class TaskResultRead(BaseModel):
@@ -111,42 +111,42 @@ class TaskResultRead(BaseModel):
     progress: int = Field(..., ge=0, le=100)
     result: dict | None = None
     error: str = ""
-    cancel_requested: bool = Field(False, description="是否已请求取消")
-    cancel_requested_at_ts: float | None = Field(None, description="请求取消时间戳")
-    started_at_ts: float | None = Field(None, description="任务开始执行时间戳")
-    finished_at_ts: float | None = Field(None, description="任务结束时间戳")
-    elapsed_ms: int | None = Field(None, description="任务累计执行耗时（毫秒）")
+    cancel_requested: bool = Field(False, description="cancel_requested: bool = Field(False, description=Đã yêu cầu hủy chưa)")
+    cancel_requested_at_ts: float | None = Field(None, description="cancel_requested_at_ts: float | None = Field(None, description=Định thời gian yêu cầu hủy)")
+    started_at_ts: float | None = Field(None, description="started_at_ts: float | None = Field(None, description=Định thời gian bắt đầu thực thi tác vụ)")
+    finished_at_ts: float | None = Field(None, description="finished_at_ts: float | None = Field(None, description=Định thời gian kết thúc tác vụ)")
+    elapsed_ms: int | None = Field(None, description="Tổng thời gian thực thi tác vụ ( mili giây)")
 
 
 class TaskCancelRequest(BaseModel):
-    reason: str | None = Field(None, description="取消原因（可选）")
+    reason: str | None = Field(None, description="Lý do hủy (tùy chọn)")
 
 
 class TaskCancelRead(BaseModel):
     task_id: str
     status: TaskStatus
-    cancel_requested: bool = Field(..., description="是否已登记取消请求")
-    cancel_requested_at_ts: float | None = Field(None, description="请求取消时间戳")
-    effective_immediately: bool = Field(False, description="是否已立即取消完成")
+    cancel_requested: bool = Field(..., description="cancel_requested: bool = Field(..., description=liệu yêu cầu hủy đã được đăng ký hay chưa)")
+    cancel_requested_at_ts: float | None = Field(None, description="cancel_requested_at_ts: float | None = Field(None, description=Định thời gian yêu cầu hủy)")
+    effective_immediately: bool = Field(False, description="effective_immediately: bool = Field(False, description=Liệu đã hoàn tất hủy lập tức chưa)")
 
 
 class TaskLinkAdoptRequest(BindTarget):
-    """更新采用状态请求：task_id + 三选一绑定对象（project_id/chapter_id/shot_id）。"""
+    """Yêu cầu cập nhật trạng thái áp dụng: task_id + đối tượng liên kết chọn một trong ba (project_id/chapter_id/shot_id)."""
 
-    task_id: str = Field(..., description="任务 ID")
+    task_id: str = Field(..., description="task_id: str = Field(..., description=ID tác vụ) ID")
 
 
 class TaskLinkAdoptRead(BaseModel):
-    """采用状态更新结果。"""
+    """Kết quả cập nhật trạng thái chấp nhận.。"""
 
     task_id: str
     link_type: str = Field(..., description="project | chapter | shot")
-    entity_id: str = Field(..., description="项目/章节/镜头 ID")
-    is_adopted: bool = Field(..., description="是否采用（仅可正向变更为 true）")
+    entity_id: str = Field(..., description="ID dự án/chương/phân cảnh")
+    is_adopted: bool = Field(..., description="liệu đã áp dụng hay không (chỉ được đổi thuận chiều sang true)")
 
 
 class _CreateOnlyTask:
-    """仅用于 TaskManager.create：提供 __class__.__name__，避免传入 lambda。"""
+    """Chỉ dùng cho TaskManager.create: cung cấp __class__.__name__, tránh truyền vào lambda."""
 
     async def run(self, *args: object, **kwargs: object):  # noqa: ANN001, ANN003
         return None
@@ -162,7 +162,7 @@ class _CreateOnlyTask:
 
 
 def ensure_single_bind_target(body: BindTarget) -> Tuple[str, str]:
-    """校验并返回 (target_type, target_id)。"""
+    """Xác thực và trả về (target_type, target_id). (target_type, target_id)。"""
     targets = [
         ("project", body.project_id),
         ("chapter", body.chapter_id),
@@ -185,13 +185,13 @@ async def bind_task(
     target_id: str,
     relation_type: str,
 ) -> None:
-    """在 studio 域与 GenerationTask 之间建立关联。
+    """Thiết lập liên kết giữa miền studio và GenerationTask."
 
-    目前 target_type 仍是 project/chapter/shot 三选一，这里保持校验逻辑不变，
-    但不再在关联表中保存 project_id/chapter_id/shot_id，而是通过：
-    - resource_type: 固定为 "task_link"（上层按需扩展）
-    - relation_type: 使用调用方传入的业务类型（如 entities/shotlist/shot_first_frame_prompt 等）
-    - relation_entity_id: 使用具体的业务实体 ID（目前为 project_id/chapter_id/shot_id）
+    Hiện tại target_type vẫn là ba-một-lựa-một project/chapter/shot, ở đây giữ nguyên logic xác thực,
+    nhưng không còn lưu project_id/chapter_id/shot_id trong bảng liên kết nữa, mà thông qua:
+    - resource_type: cố định là "task_link" (cấp trên mở rộng theo nhu cầu)
+    - relation_type: sử dụng loại nghiệp vụ do bên gọi truyền vào (như entities/shotlist/shot_first_frame_prompt...)
+    - relation_entity_id: dùng ID thực thể nghiệp vụ cụ thể (hiện là project_id/chapter_id/shot_id)
     """
     if target_type == "project":
         if await db.get(Project, target_id) is None:

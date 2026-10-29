@@ -1,4 +1,4 @@
-"""SQLAlchemy 异步引擎与会话。"""
+"""Engine và phiên không đồng bộ SQLAlchemy."""
 
 from typing import Any
 
@@ -32,11 +32,11 @@ def _build_session_maker(bind_engine: AsyncEngine) -> async_sessionmaker[AsyncSe
 
 
 class _AsyncSessionMakerProxy:
-    """可重绑定的 sessionmaker 代理。
+    """Proxy sessionmaker có thể gắn lại.
 
-    Celery prefork 模式下，worker 子进程不能继续复用父进程里初始化的
-    async engine / sessionmaker。这里保持导入对象稳定，同时允许在子进程
-    启动后重新绑定底层 sessionmaker。
+    dưới chế độ Celery prefork, tiến trình con worker không thể tiếp tục tái sử dụng
+    async engine / sessionmaker. Ở đây giữ đối tượng import ổn định, đồng thời cho phép ở tiến trình con
+    Sau khi khởi động, gắn lại sessionmaker phía dưới.
     """
 
     def __init__(self, maker: async_sessionmaker[AsyncSession]) -> None:
@@ -54,14 +54,14 @@ async_session_maker = _AsyncSessionMakerProxy(_build_session_maker(engine))
 
 
 class Base(DeclarativeBase):
-    """所有 ORM 模型的基类。"""
+    """Lớp cơ sở của tất cả mô hình ORM."""
 
     pass
 
 
 async def init_db() -> None:
-    """创建所有表（开发/迁移用）。"""
-    # 确保 ORM 模型已导入，从而注册到 Base.metadata
+    """Tạo mọi bảng (dùng cho phát triển/di trú)."""
+    # Đảm bảo các mô hình ORM đã được import, từ đó đăng ký vào Base.metadata
     import app.models.llm  # noqa: F401  # pylint: disable=unused-import
     import app.models.studio  # noqa: F401
     import app.models.task  # noqa: F401
@@ -72,15 +72,15 @@ async def init_db() -> None:
 
 
 async def close_db() -> None:
-    """关闭数据库连接。"""
+    """Đóng kết nối cơ sở dữ liệu."""
     await engine.dispose()
 
 
 def reset_db_runtime() -> None:
-    """在 Celery worker 子进程中重建 engine 与 sessionmaker。
+    """khôi phục lại engine và sessionmaker trong tiến trình con Celery worker.
 
-    这样可以避免 prefork 继承父进程中的 async engine，导致连接对象和事件循环
-    绑定错乱，触发 Future attached to a different loop。
+    diều này tránh prefork kế thừa async engine từ tiến trình cha, khiến object kết nối và event loop
+    Rối loạn ràng buộc, kích hoạt Future attached to a different loop.
     """
 
     global engine

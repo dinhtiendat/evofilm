@@ -1,4 +1,4 @@
-"""任务执行器注册入口。"""
+"""Lối vào đăng ký bộ thực thi tác vụ."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ TASK_ADAPTER_SPECS = (
 
 
 def bootstrap_task_adapters() -> None:
-    """注册内置任务执行器（幂等）。"""
+    """Đăng ký trình thực thi tác vụ tích hợp (idempotent)."""
 
     for task_kind, provider, factory in TASK_ADAPTER_SPECS:
         register_task_adapter(task_kind, provider, factory)

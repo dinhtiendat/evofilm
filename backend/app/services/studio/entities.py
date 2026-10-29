@@ -1,4 +1,4 @@
-"""Studio 实体与实体图片的协调服务。"""
+"""Dịch vụ điều phối giữa thực thể Studio và ảnh thực thể."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from app.services.studio.entity_images import (
 
 
 class StudioEntitiesService:
-    """封装 studio 通用实体与图片的协调调用。"""
+    """Ném gọn các cuộc gọi điều phối thực thể và hình ảnh chung của studio."""
 
     def __init__(self, db: AsyncSession) -> None:
         self._db = db

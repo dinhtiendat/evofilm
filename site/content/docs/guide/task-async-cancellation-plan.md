@@ -1,12 +1,12 @@
 ---
-title: "任务异步化与取消方案"
-description: "面向开发者说明 script-processing 等长耗时智能体接口的任务化、页面恢复与取消能力设计。"
+title: "Phương án tác vụ hóa không đồng bộ và hủy"
+description: "Giải thích cho người phát triển script-processing v.v., thiết kế tác vụ hóa, khôi phục trang và khả năng hủy cho các điểm API agent thời gian dài."
 weight: 8
 ---
 
-## 背景
+## Bối cảnh
 
-当前系统里已经有一套可用的任务基础设施：
+Hệ thống hiện tại đã có một bộ hạ tầng tác vụ có thể dùng:
 
 - `TaskManager`
 - `GenerationTask`
@@ -14,122 +14,122 @@ weight: 8
 - `/api/v1/film/tasks/{task_id}/status`
 - `/api/v1/film/tasks/{task_id}/result`
 
-但 `script-processing` 路由下仍有一批接口是**同步直接调用 Agent**。其中最典型的是：
+nhưng `script-processing` dưới route vẫn còn một loạt API**đồng bộ gọi trực tiếp Agent**. Trong đó điển hình nhất là:
 
 - `/api/v1/script-processing/divide`
 
-这类接口一旦耗时变长，会带来几个明显问题：
+Giao diện loại này một khi thời gian kéo dài sẽ sinh một số vấn đề rõ rệt:
 
-- 请求长时间阻塞
-- 页面刷新后丢失上下文
-- 用户无法明确知道当前是否已有任务在运行
-- 当前任务体系有 `cancelled` 状态，但缺少真正的取消入口和取消执行机制
+- Yêu cầu bị chặn trong thời gian dài
+- Mất ngữ cảnh sau khi làm mới trang
+- Người dùng không rõ hiện đã có tác vụ nào chạy chưa
+- Hệ thống tác vụ hiện tại có `cancelled` trạng thái, nhưng thiếu điểm vào hủy thực sự và cơ chế thực thi hủy
 
-这份文档的目标，是给出一套可以渐进落地的方案：
+Mục tiêu của tài liệu này là đưa ra một phương án có thể áp dụng dần theo từng bước:
 
 ```text
-长耗时智能体接口任务化
-→ 页面刷新后可恢复
-→ 任务状态可见
-→ 先支持请求取消与协作式停止
-→ 强终止能力后置
+Tác vụ hóa giao diện agent có thời gian dài
+→ Có thể khôi phục sau khi làm mới trang
+→ Trạng thái tác vụ hiển thị được
+→ Trước tiên hỗ trợ yêu cầu hủy và dừng hợp tác
+→ Khả năng kết thúc bắt buộc đưa về sau
 ```
 
-## 核心结论
+## Kết luận cốt lõi
 
-### 1. `divide` 应优先改为异步任务接口
+### 1. `divide` nên ưu tiên đổi thành API tác vụ bất đồng bộ
 
-建议新增：
+Nên thêm mới:
 
 ```text
 POST /api/v1/script-processing/divide-async
 ```
 
-并保留原同步接口：
+Và giữ lại giao diện đồng bộ ban đầu:
 
 ```text
 POST /api/v1/script-processing/divide
 ```
 
-这样可以兼顾：
+Cách này có thể cân bằng:
 
-- 前端主流程迁移
-- 管理端或脚本调试
-- 单测与回归验证
+- Chuyển đổi luồng chính phía trước
+- Đầu quản trị hoặc gỡ lỗi kịch bản
+- Kiểm thử đơn và kiểm chứng hồi quy
 
-### 2. 页面恢复应复用现有任务体系
+### 2. Khôi phục trang nên tái dùng hệ thống tác vụ có sẵn
 
-不建议为 `divide` 单独造一套新的任务模型。  
-推荐直接复用：
+Không nên cho `divide` tự tạo một mô hình tác vụ mới riêng.
+Nên tái sử dụng trực tiếp:
 
 - `GenerationTask`
 - `GenerationTaskLink`
 
-并通过下面这组业务关联恢复页面状态：
+Và khôi phục trạng thái trang qua bộ liên kết nghiệp vụ dưới đây:
 
 ```text
 relation_type = "chapter_division"
 relation_entity_id = chapter_id
 ```
 
-### 3. 取消能力要分阶段做
+### 3. Khả năng hủy cần làm theo giai đoạn
 
-当前技术栈下，很多长任务本质上还是：
+Trong stack kỹ thuật hiện tại, nhiều tác vụ dài về bản chất vẫn là:
 
-- 单次同步 Agent 调用
-- 不一定暴露可中断句柄
+- Gọi Agent đồng bộ một lần
+- Không nhất thiết phải phơi bày câu xử lý có thể ngắt
 
-因此第一阶段不要承诺“立即强终止”，而应先做：
+Vì vậy giai đoạn đầu đừng cam kết “kết thúc mạnh ngay lập tức”, mà nên làm trước:
 
-- 请求取消
-- 页面显示“已请求取消”
-- worker 在检查点协作式停止
+- Yêu cầu hủy
+- Trang hiển thị “Đã yêu cầu hủy”
+- worker dừng hợp tác tại điểm kiểm tra
 
-如果未来要强终止，再升级到：
+Nếu sau này cần kết thúc bắt buộc, hãy nâng cấp lên:
 
-- 运行句柄注册表
-- 独立 worker 进程 / 队列系统
+- Bảng đăng ký xử lý thời gian chạy
+- Tiến trình worker độc lập / hệ thống hàng đợi
 
-### 4. 当前最小执行层方案：MySQL + Redis + Celery
+### 4. Phương án tầng thực thi tối thiểu hiện tại: MySQL + Redis + Celery
 
-当前阶段不需要先迁移业务库。推荐最小方案为：
+Giai đoạn hiện tại không cần di trú trước cơ sở dữ liệu nghiệp vụ. Phương án tối thiểu được khuyến nghị là:
 
 ```text
-业务库：MySQL
+CSDL nghiệp vụ: MySQL
 Broker：Redis
-执行器：Celery Worker
-任务真相：继续使用 GenerationTask / GenerationTaskLink
+Trình thực thi: Celery Worker
+nguồn đúng của tác vụ:tiếp tục dùng GenerationTask / GenerationTaskLink
 ```
 
-说明：
+Giải thích:
 
 - `GenerationTask`
-  - 继续作为任务状态、结果与取消请求的唯一真相源
+  - Tiếp tục là nguồn chân duy nhất của trạng thái tác vụ, kết quả và yêu cầu hủy
 - `Redis`
-  - 仅作为 Celery broker
+  - Chỉ dùng làm broker Celery
 - `Celery Worker`
-  - 真正执行 `divide / extract` 等长耗时任务
+  - Thực sự thực thi các tác vụ tốn thời gian dài như `divide / extract`
 
-后端配置上：
+Ở cấu hình backend:
 
-- 若未单独指定 `CELERY_BROKER_URL`
-- 会自动按 Redis 配置拼接：
+- Nếu chưa chỉ định `CELERY_BROKER_URL` riêng
+- Sẽ tự động ghép theo cấu hình Redis:
 
 ```text
 redis://[:password@]REDIS_HOST:REDIS_PORT/REDIS_DB
 ```
 
-这让本地、compose、后续部署环境都能统一走同一套配置语义。
+Điều này giúp môi trường cục bộ, compose, các môi trường triển khai sau đều dùng thống nhất một bộ ngữ nghĩa cấu hình.
 
-## Compose 联调与首轮验证
+## Liên động Compose và kiểm chứng vòng đầu
 
-这套最小方案的验收重点不是“任务能不能跑”，而是：
+Trọng tâm nghiệm thu của phương án tối thiểu này không phải là “tác vụ có chạy được không”, mà là:
 
-> `divide / extract` 跑起来后，backend 是否还保持轻量可响应。
+> `divide / extract` chạy được rồi, backend có còn giữ được nhẹ và phản hồi tốt không.
 
-### 启动顺序
+### Thứ tự khởi chạy
 
-建议按下面这条链确认服务状态：
+Khuyến nghị xác nhận trạng thái dịch vụ theo chuỗi sau:
 
 ```text
 mysql
@@ -141,111 +141,111 @@ mysql
 → front
 ```
 
-### 基础检查
+### Kiểm tra cơ bản
 
-先确认新增的两个服务已经可用：
+Trước tiên xác nhận hai dịch vụ mới đã khả dụng:
 
 - `redis`
-  - `docker compose ... ps` 中应为 `healthy`
+  - Trong `docker compose ... ps` phải là `healthy`
 - `celery-worker`
-  - 日志中应出现 `ready`
-  - 并注册任务：
+  - Trong nhật ký nên xuất hiện `ready`
+  - và đăng ký tác vụ:
     - `task.execute`
 
-### 第一轮功能验证
+### Xác minh tính năng vòng một
 
-#### 场景 1：分镜管理页提取分镜
+#### Trường hợp 1: Trích xuất phân cảnh trên trang quản lý phân cảnh
 
-验证链路：
-
-```text
-点击“一键提取分镜”
-→ divide-async 立即返回 task_id
-→ celery-worker 开始执行
-→ backend 仍能继续响应章节、分镜、task status 等接口
-```
-
-成功标准：
-
-- 页面刷新后仍能恢复任务状态
-- `/api/v1/film/tasks/{task_id}/status` 能正常返回
-- 章节详情、分镜列表等接口不再被长任务拖住
-- `backend` 日志只承担建任务、查状态、查结果
-- 真正耗时的执行日志主要出现在 `celery-worker`
-
-#### 场景 2：分镜编辑页提取资产
-
-验证链路：
+Chuỗi kiểm chứng:
 
 ```text
-点击“提取并刷新候选”
-→ extract-async 立即返回 task_id
-→ celery-worker 执行 extract
-→ 页面刷新后继续恢复 task
-→ backend 其他接口仍然可响应
+Nhấn “Trích xuất phân cảnh một chạm”
+→ divide-async trả về task_id ngay
+→ celery-worker bắt đầu thực thi
+→ backend vẫn tiếp tục xử lý các interface chương, phân cảnh, task status
 ```
 
-成功标准与 `divide` 相同。
+Tiêu chuẩn thành công:
 
-### 取消链路验证
+- Sau khi tải lại trang vẫn khôi phục được trạng thái tác vụ
+- `/api/v1/film/tasks/{task_id}/status` trả về bình thường
+- Các giao diện như chi tiết chương, danh sách phân cảnh không còn bị tác vụ dài giữ lại
+- Nhật ký `backend` chỉ đảm nhận tạo tác vụ, tra trạng thái, tra kết quả
+- Nhật ký thực thi thực sự tốn thời gian chủ yếu xuất hiện ở `celery-worker`
 
-在基础联调通过后，再验证：
+#### Trường hợp 2: Trích xuất tài nguyên trên trang chỉnh sửa phân cảnh
 
-1. 发起 `divide-async` 或 `extract-async`
-2. 立即点击取消
-3. 刷新页面
-4. 确认状态经过：
+Chuỗi kiểm chứng:
+
+```text
+Nhấn “Trích xuất và làm mới ứng viên”
+→ extract-async trả về task_id ngay lập tức
+→ celery-worker thực hiện extract
+→ tiếp tục khôi phục task sau khi tải lại trang
+→ các giao diện khác của backend vẫn đáp ứng được
+```
+
+Tiêu chí thành công giống với `divide`.
+
+### Xác minh đường dẫn hủy
+
+Sau khi kiểm thử liên động cơ bản thông, hãy kiểm chứng thêm:
+
+1. Khởi động `divide-async` hoặc `extract-async`
+2. Nhấn hủy ngay
+3. Làm mới trang
+4. Trạng thái xác nhận đi qua:
    - `cancel_requested = true`
-   - 后续在检查点进入 `cancelled`
+   - Sau đó tại điểm kiểm tra chuyển sang `cancelled`
 
-### 若联调后仍然阻塞，优先检查
+### Nếu sau liên động vẫn tắc, ưu tiên kiểm tra
 
-1. `celery-worker` 是否真正启动成功
-2. 是否仍有漏网的 `asyncio.create_task(...)`
-3. 页面是否误用了老的同步接口，而不是 `*-async`
+1. `celery-worker` có khởi động thành công thật không
+2. Có còn sót `asyncio.create_task(...)` nào không
+3. Trang có dùng nhầm API đồng bộ cũ thay vì `*-async`
 
-## 为什么 `divide` 要优先任务化
+## Vì sao `divide` phải được ưu tiên tác vụ hóa
 
-### 当前问题
+### Vấn đề hiện tại
 
-`/api/v1/script-processing/divide` 当前是同步 Agent 调用：
+`/api/v1/script-processing/divide` hiện là đồng bộ Agent gọi:
 
 ```text
-请求进入
+Yêu cầu đi vào
 → ScriptDividerAgent.divide_script(...)
-→ 结果返回
+→ Kết quả trả về
 ```
 
-这条链一旦慢下来，用户会直接感受到：
+Chuỗi này một khi chậm lại, người dùng sẽ cảm nhận trực tiếp:
 
-- 页面一直 loading
-- 刷新页面后不知道任务是否还在跑
-- 同一章节可能被重复触发提取
+- Trang cứ loading mãi
+- Sau khi làm mới trang không rõ tác vụ còn chạy không
+- Cùng một chương có thể bị kích hoạt trích xuất nhiều lần
 
-### 任务化后的目标
+### Mục tiêu sau khi tác vụ hóa
 
-应改成：
+Nên đổi thành:
 
 ```text
 POST divide-async
-→ 创建任务
-→ 创建 task_link
-→ 立即返回 task_id
-→ 后台执行 divide
-→ 页面按 chapter_id 恢复任务状态
+→ Tạo tác vụ
+→ Tạo task_link
+→ Trả về task_id ngay
+→ Thực thi divide ở nền
+→ Trang theo chapter_id khôi phục trạng thái tác vụ
 ```
 
-## `divide-async` 设计
+## Thiết kế `divide-async`
 
-### 路由
+### Định tuyến
 
 ```text
 POST /api/v1/script-processing/divide-async
 ```
 
-### 请求体
+### Thân yêu cầu
 
-建议复用当前同步接口的请求体：
+Nên tái sử dụng thân yêu cầu của giao diện đồng bộ hiện tại:
 
 ```json
 {
@@ -255,7 +255,7 @@ POST /api/v1/script-processing/divide-async
 }
 ```
 
-### 返回体
+### Thân trả về
 
 ```json
 {
@@ -272,35 +272,35 @@ POST /api/v1/script-processing/divide-async
 }
 ```
 
-### 同章节活跃任务复用
+### Tái sử dụng tác vụ đang hoạt động cùng chương
 
-建议增加业务约束：
+Nên thêm ràng buộc nghiệp vụ:
 
-> 同一 `chapter_id` 同时只允许一个活跃的 `chapter_division` 任务。
+> cùng một `chapter_id` đồng thời chỉ cho phép một `chapter_division` tác vụ.
 
-活跃状态包括：
+Các trạng thái hoạt động gồm:
 
 - `pending`
 - `running`
 - `streaming`
 
-如果存在活跃任务，则：
+Nếu có tác vụ đang hoạt động, thì:
 
-- 不重复创建
-- 直接返回已有 `task_id`
+- Không tạo trùng
+- Trả về luôn `task_id` có sẵn
 - `reused = true`
 
-这样可以解决：
+Cách này có thể giải quyết:
 
-- 重复点击
-- 页面刷新后再次点击
-- 多标签页并发触发
+- Nhấp lặp lại
+- Nhấp lại sau khi làm mới trang
+- Nhiều tab kích hoạt đồng thời
 
-## 页面刷新后的关联与恢复
+## Liên kết và khôi phục sau khi làm mới trang
 
-### 业务关联写法
+### Cách viết liên kết nghiệp vụ
 
-`divide` 任务创建时写入：
+Khi tạo tác vụ `divide` ghi vào:
 
 ```text
 resource_type = "task"
@@ -308,15 +308,15 @@ relation_type = "chapter_division"
 relation_entity_id = chapter_id
 ```
 
-### 页面恢复方式
+### Cách khôi phục trang
 
-当用户进入这些页面时：
+Khi người dùng vào các trang này:
 
-- 章节页
-- 分镜列表页
-- 项目工作台
+- Trang chương
+- Trang danh sách phân cảnh
+Bàn làm việc dự án
 
-可按 `chapter_id` 查询最新活跃任务：
+Có thể theo `chapter_id` truy vấn tác vụ đang chạy mới nhất:
 
 ```text
 chapter_id
@@ -324,115 +324,115 @@ chapter_id
 → latest active task
 ```
 
-如果存在：
+Nếu tồn tại:
 
-- 显示“正在提取分镜”
-- 轮询任务状态
-- 任务完成后刷新分镜列表
+- Hiển thị “Đang trích xuất phân cảnh”
+- Truy vấn lặp trạng thái tác vụ
+- Làm mới danh sách phân cảnh sau khi tác vụ xong
 
-### 页面提示建议
+### Gợi ý thông báo trên trang
 
-统一展示：
+Hiển thị thống nhất:
 
-- `正在提取分镜`
-- `已请求取消`
-- `提取失败`
-- `提取完成`
+- `Đang trích xuất phân cảnh`
+- `Đã yêu cầu hủy`
+- `Trích xuất thất bại`
+- `Trích xuất hoàn tất`
 
-## 取消能力设计
+## Thiết kế khả năng hủy
 
-## 第一阶段：请求取消
+## Giai đoạn 1: Yêu cầu hủy
 
-新增接口：
+Giao diện mới thêm:
 
 ```text
 POST /api/v1/film/tasks/{task_id}/cancel
 ```
 
-建议在 `generation_tasks` 表上新增字段：
+Nên ở `generation_tasks` thêm trường mới lên bảng:
 
 - `cancel_requested`
 - `cancel_requested_at`
 - `cancel_reason`
 - `cancelled_at`
 
-这阶段先解决的是：
+Giai đoạn này trước hết giải quyết:
 
-- 用户可以发起取消
-- 页面知道取消请求已存在
-- 任务状态接口能显示取消请求状态
+- Người dùng có thể khởi động việc hủy
+- Trang biết yêu cầu hủy đã tồn tại
+- Giao diện trạng thái tác vụ hiển thị được trạng thái yêu cầu hủy
 
-这不等于任务一定能立刻停下。
+Điều này không có nghĩa là tác vụ nhất định dừng ngay.
 
-## 第二阶段：协作式取消
+## Giai đoạn 2: Hủy hợp tác
 
-在 worker 中增加取消检查点：
+Thêm điểm kiểm tra hủy trong worker:
 
-1. 任务启动前
-2. 调用下一个 Agent 前
-3. 多阶段流程的阶段边界
-4. 写库前
+1. Trước khi khởi động tác vụ
+2. Trước khi gọi Agent kế tiếp
+3. Ranh giới giai đoạn trong quy trình nhiều giai đoạn
+4. Trước khi ghi vào CSDL
 
-如果检测到：
+Nếu phát hiện:
 
 ```text
 cancel_requested = true
 ```
 
-则：
+Thì:
 
-- 停止后续步骤
-- 将任务写成 `cancelled`
-- 记录 `cancelled_at`
+- Dừng các bước tiếp theo
+- Ghi tác vụ thành `cancelled`
+- Ghi `cancelled_at`
 
-### 这种方式的限制
+### Hạn chế của cách này
 
-如果当前代码正卡在：
+Nếu mã nguồn hiện tại đang bị kẹt ở:
 
-- 单次长时间同步模型调用
-- 阻塞式 SDK 调用
+- Gọi mô hình đồng bộ thời gian dài một lần
+- Gọi SDK kiểu chặn
 
-那么第一阶段无法做到“立刻中断”，只能等待当前步骤结束后再停。
+Thì giai đoạn một không thể “ngắt ngay”, chỉ có thể đợi bước hiện tại kết thúc rồi mới dừng.
 
-所以产品与开发文档里都应该明确：
+Vì vậy tài liệu sản phẩm và phát triển đều nên nêu rõ:
 
-> 第一阶段的取消能力属于“请求取消 + 协作式取消”，不是强终止。
+> Khả năng hủy ở giai đoạn một thuộc loại “yêu cầu hủy + hủy phối hợp”, chứ không phải kết thúc bắt buộc.
 
-## 第三阶段：运行句柄注册表
+## Giai đoạn 3: Bảng đăng ký xử lý thời gian chạy
 
-如果后续要增强取消能力，建议在 `TaskManager` 上新增运行句柄注册表：
+Nếu sau này muốn tăng cường khả năng hủy, nên trên `TaskManager` thêm mới bảng đăng ký handle chạy:
 
 ```text
 task_id -> asyncio.Task
 ```
 
-这样对真正的异步后台任务，可以尝试：
+Như vậy với tác vụ nền không đồng bộ thực sự, có thể thử:
 
 - `task.cancel()`
 
-但要注意：
+Nhưng cần lưu ý:
 
-> 即使有运行句柄，也不代表所有同步 LLM 调用都能立即停住。
+> Dù có handle chạy, cũng không có nghĩa là mọi LLM gọi đều dừng được ngay lập tức.
 
-## 第四阶段：强终止能力预留
+## Giai đoạn 4: Dự phòng khả năng kết thúc bắt buộc
 
-如果未来业务明确要求“立即终止长任务”，就需要进一步升级架构，例如：
+Nếu sau này nghiệp vụ rõ ràng yêu cầu “kết thúc ngay tác vụ dài”, thì phải nâng cấp kiến trúc sâu hơn, ví dụ:
 
-- 独立 worker 进程
-- 队列系统
-- 执行进程与 Web 进程隔离
+- Tiến trình worker độc lập
+- Hệ thống hàng đợi
+- Cách ly tiến trình thực thi và tiến trình Web
 
-到那时，才能更可靠地支持：
+Đến khi đó, mới có thể hỗ trợ tin cậy hơn:
 
 - kill worker
-- 回收阻塞任务
-- 更强的取消语义
+- Thu hồi tác vụ bị chặn
+- Ngữ nghĩa hủy mạnh hơn
 
-当前阶段，不建议直接跳到这一步。
+Ở giai đoạn hiện tại, không nên nhảy thẳng đến bước này.
 
-## 当前落地状态
+## Trạng thái triển khai hiện tại
 
-### 主线接口：已完成任务化并接入真实页面
+### Giao diện chính: Đã hoàn thành tác vụ hóa và kết nối trang thực
 
 - `/api/v1/script-processing/divide`
 - `/api/v1/script-processing/extract`
@@ -444,29 +444,29 @@ task_id -> asyncio.Task
 - `/api/v1/script-processing/analyze-scene-info`
 - `/api/v1/script-processing/analyze-costume-info`
 
-这些接口当前都已经进入：
+Các giao diện này hiện đều đã đi vào:
 
 ```text
-异步任务
-→ 页面按业务实体恢复任务
-→ 可请求取消
-→ 协作式取消
+Tác vụ không đồng bộ
+→ Trang khôi phục tác vụ theo thực thể nghiệp vụ
+→ Có thể yêu cầu hủy
+→ Hủy hợp tác
 ```
 
-### 预备能力：已任务化但当前无真实前端入口
+### Khả năng dự bị: đã tác vụ hóa nhưng hiện chưa có điểm vào frontend thực
 
 - `/api/v1/script-processing/merge-entities`
 - `/api/v1/script-processing/analyze-variants`
 
-这两条接口当前不再列为前端主线整改项，处理策略是：
+Hai API này hiện không còn được xếp vào mục chỉnh sửa chính của frontend, chiến lược xử lý là:
 
-- 保留后端实现、测试与 OpenAPI
-- 在路由描述与代码注释中标明“预备能力”
-- 等未来出现真实页面入口后，再按同一套任务恢复模型接入
+- Giữ triển khai phía sau, kiểm thử và OpenAPI
+- Trong mô tả định tuyến và chú thích mã nguồn, ghi rõ “khả năng dự bị”
+- v.v., đến khi điểm vào trang thực sự xuất hiện, sẽ gắn vào theo cùng một mô hình khôi phục tác vụ
 
-## 推荐的 relation_type 约定
+## khuyến nghị relation_type quy ước
 
-建议统一使用这批值：
+Nên dùng thống nhất bộ giá trị này:
 
 ```text
 chapter_division
@@ -482,7 +482,7 @@ script_optimization
 script_simplification
 ```
 
-当前已落地：
+Đã triển khai hiện tại:
 
 - `chapter_division`
 - `script_extraction`
@@ -496,80 +496,80 @@ script_simplification
 - `entity_merge`
 - `variant_analysis`
 
-## 实施顺序回顾与后续建议
+## Ôn lại thứ tự thực hiện và gợi ý tiếp theo
 
-### 已完成阶段
+### Giai đoạn đã hoàn thành
 
-1. `generation_tasks` 增加取消字段
-2. `TaskStore / TaskManager` 增加取消请求能力
-3. 新增 `script_processing_tasks.py`
-4. `divide-async / extract-async` 落地
-5. 页面按业务实体恢复 `divide / extract` 任务
-6. `check-consistency / optimize-script / simplify-script` 接入任务体系
-7. 资产分析类接口接入任务体系
-8. worker 协作式取消检查点补齐第一轮
+1. `generation_tasks` thêm trường hủy
+2. `TaskStore / TaskManager` thêm khả năng yêu cầu hủy
+3. Thêm `script_processing_tasks.py`
+4. `divide-async / extract-async` Áp dụng
+5. Trang khôi phục theo thực thể nghiệp vụ `divide / extract` tác vụ
+6. `check-consistency / optimize-script / simplify-script` gắn vào hệ thống tác vụ
+7. Giao diện loại phân tích tài nguyên kết nối vào hệ thống tác vụ
+8. worker Bù vòng một checkpoint hủy phối hợp cho worker
 
-### 当前收口重点
+### Trọng tâm chốt hiện tại
 
-1. 清理未启用接口的前端接入预期
-2. 在路由描述、代码注释、开发文档中明确：
-   - 哪些是主线接口
-   - 哪些是预备能力
-   - 哪些同步接口只用于兼容与调试
+1. Dọn kỳ vọng kết nối phía trước của giao diện chưa kích hoạt
+2. nêu rõ trong mô tả route, chú thích code, tài liệu phát triển:
+   - Giao diện nào thuộc luồng chính
+   - Nền tảng nào là khả năng dự bị
+   - Giao diện đồng bộ nào chỉ dùng cho tương thích và gỡ lỗi
 
-### 后续建议
+### Gợi ý tiếp theo
 
-1. 继续观察是否会新增真实页面入口
-2. 如果未来重新启用 `merge-entities / analyze-variants`，再按同一套任务恢复模型接入
-3. 如果业务明确要求更强的终止能力，再推进运行句柄注册表或独立 worker
+1. Tiếp tục quan sát có thêm đầu vào trang thực nào không
+2. Nếu sau này bật lại `merge-entities / analyze-variants`, sau đó gắn vào theo cùng một mô hình khôi phục tác vụ
+3. Nếu nghiệp vụ sau này rõ ràng yêu cầu khả năng kết thúc mạnh hơn, hãy nâng cấp tiếp bảng đăng ký handle chạy hoặc worker
 
-## 对前端的约束
+## Ràng buộc với phía trước
 
-页面不应只依赖本地缓存 taskId。  
-正确做法是：
-
-```text
-页面打开
-→ 根据业务实体查最新活跃任务
-→ 恢复轮询
-→ 根据任务状态更新 UI
-```
-
-也就是说：
-
-- 章节页看 `chapter_division`
-- 分镜编辑页看 `script_extraction`
-- 不以“页面是否没刷新”为前提
-
-## 对产品语义的建议
-
-当前阶段建议统一对外说明：
-
-### 用户可看到
-
-- 任务进行中
-- 已请求取消
-- 已完成
-- 已失败
-
-### 用户暂时不要期待
-
-- 点击取消后立即硬停止
-
-更准确的提示文案应是：
-
-> 已请求取消，系统会在当前步骤结束后停止。
-
-## 最终建议
-
-这轮最值得先做的，不是一步到位上强终止，而是：
+Trang không nên chỉ dựa vào taskId cache cục bộ.
+Cách làm đúng là:
 
 ```text
-divide 异步任务化
-→ 页面刷新可恢复
-→ 任务状态可见
-→ 取消请求可登记
-→ worker 协作式停止
+Trang được mở
+→ Tìm tác vụ hoạt động mới nhất theo thực thể nghiệp vụ
+→ Khôi phục truy vấn lặp
+→ Cập nhật UI theo trạng thái tác vụ
 ```
 
-这样能先解决绝大多数体验问题，同时为后续更强的任务控制能力留好扩展点。
+Nói cách khác:
+
+- Trang chương xem `chapter_division`
+- Trang chỉnh sửa phân cảnh xem `script_extraction`
+- Không lấy “trang có làm mới không” làm tiên đề
+
+## Gợi ý về ngữ nghĩa sản phẩm
+
+Giai đoạn hiện tại nên thống nhất thông báo ra bên ngoài:
+
+### Người dùng có thể thấy
+
+- Tác vụ đang thực thi
+- Đã yêu cầu hủy
+- Đã hoàn thành
+- Đã thất bại
+
+### Người dùng tạm thời không nên mong đợi
+
+- Ngừng ngay lập tức sau khi nhấn hủy
+
+Cụ từ thông báo chính xác hơn nên là:
+
+> Đã yêu cầu hủy, hệ thống sẽ dừng sau khi bước hiện tại kết thúc.
+
+## Gợi ý cuối cùng
+
+Điều đáng làm trước nhất trong vòng này không phải áp dụng ngay kết thúc mạnh, mà là:
+
+```text
+divide tác vụ không đồng bộ
+→ Làm mới trang có thể khôi phục
+→ Trạng thái tác vụ hiển thị được
+→ Yêu cầu hủy có thể đăng ký
+→ worker dừng hợp tác
+```
+
+Cách này trước tiên giải quyết hầu hết vấn đề trải nghiệm, đồng thời chừa sẵn điểm mở rộng cho khả năng điều khiển tác vụ mạnh hơn về sau.

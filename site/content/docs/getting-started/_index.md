@@ -1,7 +1,7 @@
 ---
-title: "快速开始"
+title: "Bắt đầu nhanh"
 weight: 1
-description: "从安装、开发到 Docker 部署，快速跑通项目。"
+description: "Từ cài đặt, phát triển đến triển khai Docker, chạy nhanh dự án."
 ---
 
-先从本地开发和 Docker 部署开始，快速跑通前后端联调环境。
+Bắt đầu từ phát triển cục bộ và triển khai Docker, chạy nhanh môi trường liên động frontend-backend.

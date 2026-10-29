@@ -9,51 +9,51 @@ from app.models.types import AssetQualityLevel, AssetViewAngle
 
 
 class CharacterImage(Base, TimestampMixin):
-    """角色图片（多角度/多精度）。归属角色；同一角色下至多一张 is_primary=True。
+    """ảnh nhân vật (nhiều góc/nhiều độ phân giải). Thuộc nhân vật；cùng một nhân vật tối đa một ảnh is_primary=True.
 
-    应用层保证：
-    - 同一 character_id 下至多一条 is_primary=True。
+    Đảm bảo ở tầng ứng dụng:
+    - Cùng một character_id chỉ có tối đa một is_primary=True.
     """
 
     __tablename__ = "character_images"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="图片行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="ID hàng ảnh")
     character_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("characters.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属角色 ID",
+        comment="ID nhân vật sở thuộc",
     )
     file_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
-        comment="关联的文件 ID（FileItem，可空，支持先创建槽位后填充）",
+        comment="ID tệp liên kết (FileItem, để trống được, hỗ trợ tạo trước vị trí giữ rồi điền sau)",
     )
     quality_level: Mapped[AssetQualityLevel] = mapped_column(
         String(16),
         nullable=False,
         default=AssetQualityLevel.low,
         index=True,
-        comment="精度等级",
+        comment="Cấp độ chi tiết",
     )
     view_angle: Mapped[AssetViewAngle] = mapped_column(
         String(32),
         nullable=False,
         default=AssetViewAngle.front,
         index=True,
-        comment="视角",
+        comment="Góc nhìn",
     )
-    width: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="宽（px）")
-    height: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="高（px）")
-    format: Mapped[str] = mapped_column(String(32), nullable=True, default="png", comment="格式")
+    width: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Rộng (px)")
+    height: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Cao (px)")
+    format: Mapped[str] = mapped_column(String(32), nullable=True, default="png", comment="Định dạng")
     is_primary: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
         default=False,
-        comment="是否主图；应用层需保证同一角色下至多一张主图",
+        comment="Có phải ảnh chính không; tầng ứng dụng cần đảm bảo mỗi nhân vật tối đa một ảnh chính",
     )
 
     character: Mapped["Character"] = relationship(back_populates="images")
@@ -69,46 +69,46 @@ class CharacterImage(Base, TimestampMixin):
 
 
 class ActorImage(Base, TimestampMixin):
-    """演员形象/立绘多角度图片。
+    """Ảnh hình tượng diễn viên/character nhiều góc.
 
-    应用层保证：
-    - 同一 `actor_id` 下至多一条 `is_primary=True`；库表无唯一约束，需在写入/更新时保证。
+    Đảm bảo ở tầng ứng dụng:
+    - Cùng một `actor_id` có tối đa một `is_primary=True`; bảng trong CSDL không có constraint duy nhất, phải bảo đảm khi ghi/cập nhật.
     """
 
     __tablename__ = "actor_images"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="图片行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="ID hàng ảnh")
     actor_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("actors.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属演员 ID",
+        comment="ID diễn viên sở thuộc",
     )
     file_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
-        comment="关联的文件 ID（FileItem，可空，支持先创建槽位后填充）",
+        comment="ID tệp liên kết (FileItem, để trống được, hỗ trợ tạo trước vị trí giữ rồi điền sau)",
     )
     quality_level: Mapped[AssetQualityLevel] = mapped_column(
         String(16),
         nullable=False,
         default=AssetQualityLevel.low,
         index=True,
-        comment="精度等级",
+        comment="Cấp độ chi tiết",
     )
     view_angle: Mapped[AssetViewAngle] = mapped_column(
         String(32),
         nullable=False,
         default=AssetViewAngle.front,
         index=True,
-        comment="视角",
+        comment="Góc nhìn",
     )
-    width: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="宽（px）")
-    height: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="高（px）")
-    format: Mapped[str] = mapped_column(String(32), nullable=False, default="png", comment="格式")
+    width: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Rộng (px)")
+    height: Mapped[int | None] = mapped_column(Integer, nullable=True, comment="Cao (px)")
+    format: Mapped[str] = mapped_column(String(32), nullable=False, default="png", comment="Định dạng")
 
     actor: Mapped["Actor"] = relationship(back_populates="images")
 
@@ -118,42 +118,42 @@ class ActorImage(Base, TimestampMixin):
 
 
 class SceneImage(Base, TimestampMixin):
-    """场景多角度图片。
+    """Ảnh nhiều góc bối cảnh.
 
-    应用层保证：
-    - 同一 `scene_id` 下至多一条 `is_primary=True`；库表无唯一约束，需在写入/更新时保证。
+    Đảm bảo ở tầng ứng dụng:
+    - Cùng một `scene_id` có tối đa một `is_primary=True`; bảng trong CSDL không có constraint duy nhất, phải bảo đảm khi ghi/cập nhật.
     """
 
     __tablename__ = "scene_images"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="图片行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="ID hàng ảnh")
     scene_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("scenes.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属场景 ID",
+        comment="ID bối cảnh sở thuộc",
     )
     file_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
-        comment="关联的文件 ID（FileItem，可空，支持先创建槽位后填充）",
+        comment="ID tệp liên kết (FileItem, để trống được, hỗ trợ tạo trước vị trí giữ rồi điền sau)",
     )
     quality_level: Mapped[AssetQualityLevel] = mapped_column(
         String(16),
         nullable=False,
         default=AssetQualityLevel.low,
         index=True,
-        comment="精度等级",
+        comment="Cấp độ chi tiết",
     )
     view_angle: Mapped[AssetViewAngle] = mapped_column(
         String(32),
         nullable=False,
         default=AssetViewAngle.front,
         index=True,
-        comment="视角",
+        comment="Góc nhìn",
     )
     width: Mapped[int | None] = mapped_column(Integer, nullable=True)
     height: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -167,28 +167,28 @@ class SceneImage(Base, TimestampMixin):
 
 
 class PropImage(Base, TimestampMixin):
-    """道具多角度图片。
+    """Ảnh nhiều góc đạo cụ.
 
-    应用层保证：
-    - 同一 `prop_id` 下至多一条 `is_primary=True`；库表无唯一约束，需在写入/更新时保证。
+    Đảm bảo ở tầng ứng dụng:
+    - Cùng một `prop_id` có tối đa một `is_primary=True`; bảng trong CSDL không có constraint duy nhất, phải bảo đảm khi ghi/cập nhật.
     """
 
     __tablename__ = "prop_images"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="图片行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="ID hàng ảnh")
     prop_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("props.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属道具 ID",
+        comment="ID đạo cụ sở thuộc",
     )
     file_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
-        comment="关联的文件 ID（FileItem，可空，支持先创建槽位后填充）",
+        comment="ID tệp liên kết (FileItem, để trống được, hỗ trợ tạo trước vị trí giữ rồi điền sau)",
     )
     quality_level: Mapped[AssetQualityLevel] = mapped_column(
         String(16),
@@ -214,28 +214,28 @@ class PropImage(Base, TimestampMixin):
 
 
 class CostumeImage(Base, TimestampMixin):
-    """服装多角度图片。
+    """Ảnh nhiều góc trang phục.
 
-    应用层保证：
-    - 同一 `costume_id` 下至多一条 `is_primary=True`；库表无唯一约束，需在写入/更新时保证。
+    Đảm bảo ở tầng ứng dụng:
+    - Dưới cùng một `costume_id` chỉ có tối đa một `is_primary=True`; bảng thư viện không có ràng buộc duy nhất, cần đảm bảo khi ghi/cập nhật.
     """
 
     __tablename__ = "costume_images"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="图片行 ID")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="ID hàng ảnh")
     costume_id: Mapped[str] = mapped_column(
         String(64),
         ForeignKey("costumes.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
-        comment="所属服装 ID",
+        comment="ID trang phục sở thuộc",
     )
     file_id: Mapped[str | None] = mapped_column(
         String(64),
         ForeignKey("files.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
-        comment="关联的文件 ID（FileItem，可空，支持先创建槽位后填充）",
+        comment="ID tệp liên kết (FileItem, để trống được, hỗ trợ tạo trước vị trí giữ rồi điền sau)",
     )
     quality_level: Mapped[AssetQualityLevel] = mapped_column(
         String(16),

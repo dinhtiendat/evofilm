@@ -1,4 +1,4 @@
-"""Shot 相关 CRUD：Shot / ShotDetail / ShotDialogLine / 资源 Link。"""
+"""CRUD liên quan Shot: Shot / ShotDetail / ShotDialogLine / Link tài nguyên."""
 
 from __future__ import annotations
 
@@ -117,12 +117,12 @@ FRAME_IMAGE_ORDER_FIELDS = {"id", "frame_type", "created_at", "updated_at"}
 @router.get(
     "",
     response_model=ApiResponse[PaginatedData[ShotRead]],
-    summary="镜头列表（分页）",
+    summary="Danh sách phân cảnh (phân trang)",
 )
 async def list_shots(
     db: AsyncSession = Depends(get_db),
-    chapter_id: str | None = Query(None, description="按章节过滤"),
-    q: str | None = Query(None, description="关键字，过滤 title/script_excerpt"),
+    chapter_id: str | None = Query(None, description="Lọc theo chương"),
+    q: str | None = Query(None, description="Từ khóa, lọc title/script_excerpt"),
     order: str | None = Query(None),
     is_desc: bool = Query(False),
     page: int = Query(1, ge=1),
@@ -144,7 +144,7 @@ async def list_shots(
     "",
     response_model=ApiResponse[ShotRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建镜头",
+    summary="Tạo phân cảnh",
 )
 async def create_shot(
     body: ShotCreate,
@@ -157,10 +157,10 @@ async def create_shot(
 @router.get(
     "/runtime-summary",
     response_model=ApiResponse[list[ShotRuntimeSummaryRead]],
-    summary="按章节获取镜头运行时任务态摘要",
+    summary="Lấy tóm tắt trạng thái tác vụ runtime của phân cảnh theo chương",
 )
 async def list_shot_runtime_summary(
-    chapter_id: str = Query(..., description="章节 ID"),
+    chapter_id: str = Query(..., description="ID chương"),
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[list[ShotRuntimeSummaryRead]]:
     rows = await list_shot_runtime_summary_by_chapter(db, chapter_id=chapter_id)
@@ -170,7 +170,7 @@ async def list_shot_runtime_summary(
 @router.get(
     "/{shot_id}/extraction-draft",
     response_model=ApiResponse[StudioScriptExtractionDraft],
-    summary="分镜详情：按镜头关联拼装 StudioScriptExtractionDraft",
+    summary="Chi tiết phân cảnh: lắp ráp StudioScriptExtractionDraft theo phân cảnh liên kết",
 )
 async def get_shot_extraction_draft(
     shot_id: str,
@@ -183,7 +183,7 @@ async def get_shot_extraction_draft(
 @router.get(
     "/{shot_id}/extracted-candidates",
     response_model=ApiResponse[list[ShotExtractedCandidateRead]],
-    summary="获取镜头提取候选项",
+    summary="Lấy ứng viên trích xuất của phân cảnh",
 )
 async def get_shot_extracted_candidates(
     shot_id: str,
@@ -196,7 +196,7 @@ async def get_shot_extracted_candidates(
 @router.get(
     "/{shot_id}/extracted-dialogue-candidates",
     response_model=ApiResponse[list[ShotExtractedDialogueCandidateRead]],
-    summary="获取镜头提取对白候选项",
+    summary="Lấy ứng viên thoại trích xuất của phân cảnh",
 )
 async def get_shot_extracted_dialogue_candidates(
     shot_id: str,
@@ -209,7 +209,7 @@ async def get_shot_extracted_dialogue_candidates(
 @router.get(
     "/{shot_id}/assets-overview",
     response_model=ApiResponse[ShotAssetsOverviewRead],
-    summary="获取镜头资产总览（已关联资产 + 提取候选）",
+    summary="Lấy tổng quan tài nguyên của phân cảnh (tài nguyên đã liên kết + ứng viên trích xuất)",
 )
 async def get_shot_assets_overview_api(
     shot_id: str,
@@ -222,7 +222,7 @@ async def get_shot_assets_overview_api(
 @router.get(
     "/{shot_id}/preparation-state",
     response_model=ApiResponse[ShotPreparationStateRead],
-    summary="获取镜头准备页聚合状态",
+    summary="Lấy trạng thái tổng hợp trang chuẩn bị của phân cảnh",
 )
 async def get_shot_preparation_state_api(
     shot_id: str,
@@ -235,7 +235,7 @@ async def get_shot_preparation_state_api(
 @router.post(
     "/{shot_id}/preparation-link",
     response_model=ApiResponse[ShotPreparationMutationResultRead],
-    summary="准备页关联现有实体并返回最新聚合状态",
+    summary="Trang chuẩn bị liên kết thực thể có sẵn và trả về trạng thái tổng hợp mới nhất",
 )
 async def link_existing_asset_for_preparation_api(
     shot_id: str,
@@ -261,11 +261,11 @@ async def link_existing_asset_for_preparation_api(
 @router.get(
     "/{shot_id}/video-prompt-preview",
     response_model=ApiResponse[ShotVideoPromptPreviewRead],
-    summary="预览镜头视频提示词",
+    summary="Xem trước prompt video phân cảnh",
 )
 async def preview_shot_video_prompt(
     shot_id: str,
-    template_id: str | None = Query(None, description="指定视频提示词模板 ID；不传则使用默认模板"),
+    template_id: str | None = Query(None, description="Chỉ định ID mẫu prompt video; không truyền thì dùng mẫu mặc định"),
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[ShotVideoPromptPreviewRead]:
     derived = await derive_video_preview(
@@ -285,11 +285,11 @@ async def preview_shot_video_prompt(
 @router.get(
     "/{shot_id}/video-readiness",
     response_model=ApiResponse[ShotVideoReadinessRead],
-    summary="获取镜头视频生成准备度",
+    summary="Lấy độ sẵn sàng tạo video của phân cảnh",
 )
 async def get_shot_video_readiness_api(
     shot_id: str,
-    reference_mode: str = Query("text_only", description="参考模式：first/last/key/first_last/first_last_key/text_only"),
+    reference_mode: str = Query("text_only", description="Chế độ tham chiếu: first/last/key/first_last/first_last_key/text_only"),
     db: AsyncSession = Depends(get_db),
 ) -> ApiResponse[ShotVideoReadinessRead]:
     data = await get_shot_video_readiness(db, shot_id=shot_id, reference_mode=reference_mode)
@@ -299,7 +299,7 @@ async def get_shot_video_readiness_api(
 @router.patch(
     "/{shot_id}/skip-extraction",
     response_model=ApiResponse[ShotPreparationMutationResultRead],
-    summary="设置是否跳过镜头信息提取",
+    summary="Đặt có bỏ qua trích xuất thông tin phân cảnh hay không",
 )
 async def update_shot_skip_extraction(
     shot_id: str,
@@ -323,7 +323,7 @@ async def update_shot_skip_extraction(
 @router.patch(
     "/extracted-candidates/{candidate_id}/link",
     response_model=ApiResponse[ShotPreparationMutationResultRead],
-    summary="确认并关联镜头提取候选项",
+    summary="Xác nhận và liên kết ứng viên trích xuất của phân cảnh",
 )
 async def link_extracted_candidate(
     candidate_id: int,
@@ -347,7 +347,7 @@ async def link_extracted_candidate(
 @router.patch(
     "/extracted-candidates/{candidate_id}/ignore",
     response_model=ApiResponse[ShotPreparationMutationResultRead],
-    summary="忽略镜头提取候选项",
+    summary="Bỏ qua ứng viên trích xuất của phân cảnh",
 )
 async def ignore_extracted_candidate(
     candidate_id: int,
@@ -366,7 +366,7 @@ async def ignore_extracted_candidate(
 @router.patch(
     "/extracted-dialogue-candidates/{candidate_id}/accept",
     response_model=ApiResponse[ShotPreparationMutationResultRead],
-    summary="接受镜头提取对白候选项",
+    summary="Chấp nhận ứng viên thoại trích xuất của phân cảnh",
 )
 async def accept_extracted_dialogue_candidate(
     candidate_id: int,
@@ -386,7 +386,7 @@ async def accept_extracted_dialogue_candidate(
 @router.patch(
     "/extracted-dialogue-candidates/{candidate_id}/ignore",
     response_model=ApiResponse[ShotPreparationMutationResultRead],
-    summary="忽略镜头提取对白候选项",
+    summary="Bỏ qua ứng viên thoại trích xuất của phân cảnh",
 )
 async def ignore_extracted_dialogue_candidate(
     candidate_id: int,
@@ -405,7 +405,7 @@ async def ignore_extracted_dialogue_candidate(
 @router.get(
     "/{shot_id}",
     response_model=ApiResponse[ShotRead],
-    summary="获取镜头",
+    summary="Lấy phân cảnh",
 )
 async def get_shot(
     shot_id: str,
@@ -418,7 +418,7 @@ async def get_shot(
 @router.patch(
     "/{shot_id}",
     response_model=ApiResponse[ShotRead],
-    summary="更新镜头",
+    summary="Cập nhật phân cảnh",
 )
 async def update_shot(
     shot_id: str,
@@ -432,7 +432,7 @@ async def update_shot(
 @router.delete(
     "/{shot_id}",
     response_model=ApiResponse[None],
-    summary="删除镜头",
+    summary="Xóa phân cảnh",
 )
 async def delete_shot(
     shot_id: str,
@@ -445,7 +445,7 @@ async def delete_shot(
 @router.get(
     "/{shot_id}/linked-assets",
     response_model=ApiResponse[PaginatedData[ShotLinkedAssetItem]],
-    summary="获取镜头关联的角色/道具/场景/服装（分页）",
+    summary="Lấy nhân vật/đạo cụ/bối cảnh/trang phục liên kết với phân cảnh (phân trang)",
 )
 async def list_shot_linked_assets(
     shot_id: str,
@@ -467,11 +467,11 @@ async def list_shot_linked_assets(
 @details_router.get(
     "",
     response_model=ApiResponse[PaginatedData[ShotDetailRead]],
-    summary="镜头细节列表（分页）",
+    summary="Danh sách chi tiết phân cảnh (phân trang)",
 )
 async def list_shot_details(
     db: AsyncSession = Depends(get_db),
-    shot_id: str | None = Query(None, description="按镜头过滤（id 同 shot_id）"),
+    shot_id: str | None = Query(None, description="Lọc theo phân cảnh (id trùng shot_id)"),
     order: str | None = Query(None),
     is_desc: bool = Query(False),
     page: int = Query(1, ge=1),
@@ -492,7 +492,7 @@ async def list_shot_details(
     "",
     response_model=ApiResponse[ShotDetailRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建镜头细节",
+    summary="Tạo chi tiết phân cảnh",
 )
 async def create_shot_detail(
     body: ShotDetailCreate,
@@ -505,7 +505,7 @@ async def create_shot_detail(
 @details_router.get(
     "/{shot_id}",
     response_model=ApiResponse[ShotDetailRead],
-    summary="获取镜头细节",
+    summary="Lấy chi tiết phân cảnh",
 )
 async def get_shot_detail(
     shot_id: str,
@@ -518,7 +518,7 @@ async def get_shot_detail(
 @details_router.patch(
     "/{shot_id}",
     response_model=ApiResponse[ShotDetailRead],
-    summary="更新镜头细节",
+    summary="Cập nhật chi tiết phân cảnh",
 )
 async def update_shot_detail(
     shot_id: str,
@@ -532,7 +532,7 @@ async def update_shot_detail(
 @details_router.delete(
     "/{shot_id}",
     response_model=ApiResponse[None],
-    summary="删除镜头细节",
+    summary="Xóa chi tiết phân cảnh",
 )
 async def delete_shot_detail(
     shot_id: str,
@@ -548,12 +548,12 @@ async def delete_shot_detail(
 @dialog_router.get(
     "",
     response_model=ApiResponse[PaginatedData[ShotDialogLineRead]],
-    summary="镜头对话行列表（分页）",
+    summary="Danh sách dòng thoại phân cảnh (phân trang)",
 )
 async def list_shot_dialog_lines(
     db: AsyncSession = Depends(get_db),
-    shot_detail_id: str | None = Query(None, description="按镜头细节过滤"),
-    q: str | None = Query(None, description="关键字，过滤 text"),
+    shot_detail_id: str | None = Query(None, description="lọc theo chi tiết phân cảnh"),
+    q: str | None = Query(None, description="Từ khóa, lọc text"),
     order: str | None = Query(None),
     is_desc: bool = Query(False),
     page: int = Query(1, ge=1),
@@ -575,7 +575,7 @@ async def list_shot_dialog_lines(
     "",
     response_model=ApiResponse[ShotDialogLineRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建镜头对话行",
+    summary="Tạo dòng thoại phân cảnh",
 )
 async def create_shot_dialog_line(
     body: ShotDialogLineCreate,
@@ -588,7 +588,7 @@ async def create_shot_dialog_line(
 @dialog_router.patch(
     "/{line_id}",
     response_model=ApiResponse[ShotDialogLineRead],
-    summary="更新镜头对话行",
+    summary="Cập nhật dòng thoại phân cảnh",
 )
 async def update_shot_dialog_line(
     line_id: int,
@@ -602,7 +602,7 @@ async def update_shot_dialog_line(
 @dialog_router.delete(
     "/{line_id}",
     response_model=ApiResponse[None],
-    summary="删除镜头对话行",
+    summary="Xóa dòng thoại phân cảnh",
 )
 async def delete_shot_dialog_line(
     line_id: int,
@@ -618,11 +618,11 @@ async def delete_shot_dialog_line(
 @frames_router.get(
     "",
     response_model=ApiResponse[PaginatedData[ShotFrameImageRead]],
-    summary="镜头分镜帧图片列表（分页）",
+    summary="Danh sách ảnh khung phân cảnh của shot (phân trang)",
 )
 async def list_shot_frame_images(
     db: AsyncSession = Depends(get_db),
-    shot_detail_id: str | None = Query(None, description="按镜头细节过滤"),
+    shot_detail_id: str | None = Query(None, description="lọc theo chi tiết phân cảnh"),
     order: str | None = Query(None),
     is_desc: bool = Query(False),
     page: int = Query(1, ge=1),
@@ -643,7 +643,7 @@ async def list_shot_frame_images(
     "",
     response_model=ApiResponse[ShotFrameImageRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建镜头分镜帧图片",
+    summary="Tạo ảnh khung hình phân cảnh",
 )
 async def create_shot_frame_image(
     body: ShotFrameImageCreate,
@@ -656,7 +656,7 @@ async def create_shot_frame_image(
 @frames_router.patch(
     "/{image_id}",
     response_model=ApiResponse[ShotFrameImageRead],
-    summary="更新镜头分镜帧图片",
+    summary="Cập nhật ảnh khung hình phân cảnh",
 )
 async def update_shot_frame_image(
     image_id: int,
@@ -670,7 +670,7 @@ async def update_shot_frame_image(
 @frames_router.delete(
     "/{image_id}",
     response_model=ApiResponse[None],
-    summary="删除镜头分镜帧图片",
+    summary="Xóa ảnh khung hình phân cảnh",
 )
 async def delete_shot_frame_image(
     image_id: int,
@@ -680,13 +680,13 @@ async def delete_shot_frame_image(
     return empty_response()
 
 
-# ---------- Links（镜头引用资产） ----------
+# ---------- Links (tài nguyên tham chiếu từ phân cảnh) ----------
 
 
 @links_router.get(
     "/{entity_type}",
     response_model=ApiResponse[PaginatedData[Any]],
-    summary="项目-章节-镜头-实体关联列表（分页）",
+    summary="Danh sách liên kết dự án-chương-phân cảnh-thực thể (phân trang)",
 )
 async def list_project_entity_links(
     entity_type: str,
@@ -719,7 +719,7 @@ async def list_project_entity_links(
     "/actor",
     response_model=ApiResponse[ProjectActorLinkRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建项目-章节-镜头-演员关联",
+    summary="Tạo liên kết dự án-chương-phân cảnh-diễn viên",
 )
 async def create_project_actor_link(
     body: ProjectAssetLinkCreate,
@@ -733,7 +733,7 @@ async def create_project_actor_link(
 @links_router.delete(
     "/actor/{link_id}",
     response_model=ApiResponse[None],
-    summary="删除项目-章节-镜头-演员关联",
+    summary="Xóa liên kết dự án-chương-phân cảnh-diễn viên",
 )
 async def delete_project_actor_link(
     link_id: int,
@@ -747,7 +747,7 @@ async def delete_project_actor_link(
     "/scene",
     response_model=ApiResponse[ProjectSceneLinkRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建项目-章节-镜头-场景关联",
+    summary="Tạo liên kết dự án-chương-phân cảnh-bối cảnh",
 )
 async def create_project_scene_link(
     body: ProjectAssetLinkCreate,
@@ -761,7 +761,7 @@ async def create_project_scene_link(
 @links_router.delete(
     "/scene/{link_id}",
     response_model=ApiResponse[None],
-    summary="删除项目-章节-镜头-场景关联",
+    summary="Xóa liên kết dự án-chương-phân cảnh-bối cảnh",
 )
 async def delete_project_scene_link(
     link_id: int,
@@ -775,7 +775,7 @@ async def delete_project_scene_link(
     "/prop",
     response_model=ApiResponse[ProjectPropLinkRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建项目-章节-镜头-道具关联",
+    summary="Tạo liên kết dự án-chương-phân cảnh-đạo cụ",
 )
 async def create_project_prop_link(
     body: ProjectAssetLinkCreate,
@@ -789,7 +789,7 @@ async def create_project_prop_link(
 @links_router.delete(
     "/prop/{link_id}",
     response_model=ApiResponse[None],
-    summary="删除项目-章节-镜头-道具关联",
+    summary="Xóa liên kết dự án-chương-phân cảnh-đạo cụ",
 )
 async def delete_project_prop_link(
     link_id: int,
@@ -803,7 +803,7 @@ async def delete_project_prop_link(
     "/costume",
     response_model=ApiResponse[ProjectCostumeLinkRead],
     status_code=status.HTTP_201_CREATED,
-    summary="创建项目-章节-镜头-服装关联",
+    summary="Tạo liên kết dự án-chương-phân cảnh-trang phục",
 )
 async def create_project_costume_link(
     body: ProjectAssetLinkCreate,
@@ -816,7 +816,7 @@ async def create_project_costume_link(
 @links_router.delete(
     "/costume/{link_id}",
     response_model=ApiResponse[None],
-    summary="删除项目-章节-镜头-服装关联",
+    summary="Xóa liên kết dự án-chương-phân cảnh-trang phục",
 )
 async def delete_project_costume_link(
     link_id: int,

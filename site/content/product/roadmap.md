@@ -1,12 +1,12 @@
 ---
-title: "路线图"
+title: "Tầm nhìn phát triển"
 weight: 4
-description: "了解 Jellyfish 已完成能力与后续重点方向。"
+description: "hiểu năng lực đã hoàn thành của Jellyfish và phương hướng trọng điểm sắp tới."
 ---
 
-当前版本已具备项目管理、章节工作台、模型管理等核心交互与部分后端能力。后续重点方向包括：
+Phiên bản hiện tại đã có các tương tác cốt lõi như quản lý dự án, workbench chương, quản lý mô hình cùng một số năng lực phía sau. Phương hướng trọng điểm sắp tới bao gồm:
 
-- 继续深化分镜编辑与生成流程
-- 强化提示词模板与智能填充
-- 完善图片 / 视频任务状态追踪
-- 补强时间线和成片导出体验
+- Tiếp tục làm sâu quá trình chỉnh sửa và tạo phân cảnh
+- Tăng cường mẫu prompt và điền thông minh
+- Hoàn thiện theo dõi trạng thái tác vụ hình ảnh / video
+- Tăng cường trải nghiệm trục thời gian và xuất phim hoàn chỉnh

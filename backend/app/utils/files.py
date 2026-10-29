@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""文件相关工具：从 URL 或 base64 内容创建 FileItem，并上传到对象存储。"""
+"""Công cụ liên quan tệp: tạo FileItem từ URL hoặc nội dung base64, và tải lên bộ lưu trữ đối tượng."""
 
 import base64
 import os
@@ -21,13 +21,13 @@ async def _infer_file_type_from_ext(ext: str) -> FileType:
         return FileType.image
     if ext in {".mp4", ".mov", ".mkv", ".avi", ".webm"}:
         return FileType.video
-    # 默认按图片处理，调用方若有更精细需求可在外层再封装
+    # Mặc định xử lý như ảnh, nếu người gọi có yêu cầu chi tiết hơn thì bọc thêm ở lớp ngoài
     return FileType.image
 
 
 @dataclass(frozen=True)
 class FileUsageCreateParams:
-    """创建 FileItem 后写入 file_usages 的参数。"""
+    """Tham số ghi vào file_usages sau khi tạo FileItem."""
 
     project_id: str
     chapter_id: str | None = None
@@ -58,15 +58,15 @@ async def create_file_from_url_or_b64(
     httpx_timeout: float | None = None,
     usage: FileUsageCreateParams | None = None,
 ) -> FileItem:
-    """从远端 URL 或 base64 内容创建 FileItem。
+    """Tạo FileItem từ nội dung URL remote hoặc base64.
 
-    - 若提供 url：会先下载内容，推断 content_type 和后缀；
-    - 若提供 b64_data：优先解析 data URL 前缀中的 MIME 类型，否则默认 image/png；
-    - 始终通过 storage.upload_file 上传到对象存储，再创建 FileItem 记录并返回。
-    - url_request_headers / httpx_timeout：用于需鉴权或大文件下载（如 OpenAI /videos/{id}/content）。
+    - Nếu có url: sẽ tải xuống nội dung trước, suy ra content_type và phần mở rộng;
+    - Nếu cung cấp b64_data: ưu tiên phân tích MIME type trong tiền tố data URL, nếu không thì mặc định image/png;
+    - Luôn tải lên bộ lưu trữ đối tượng qua storage.upload_file, sau đó tạo bản ghi FileItem và trả về.
+    - url_request_headers / httpx_timeout: dùng cho trường hợp cần xác thực hoặc tải tệp lớn (ví dụ OpenAI /videos/{id}/content).
     """
     if not url and not b64_data:
-        raise ValueError("create_file_from_url_or_b64 需要提供 url 或 b64_data 至少其一")
+        raise ValueError("create_file_from_url_or_b64 cần cung cấp ít nhất một trong url hoặc b64_data")
 
     content: bytes
     content_type: str | None = None
@@ -82,15 +82,15 @@ async def create_file_from_url_or_b64(
             content = resp.content
             content_type = resp.headers.get("Content-Type")
 
-        # 从 URL 推断文件名
+        # Suy tên tệp từ URL
         path = Path(httpx.URL(url).path)
         filename = path.name or "file"
     else:
         raw = b64_data or ""
-        # 支持 data URL 形式：data:image/png;base64,xxxxxx
+        # hỗ trợ dạng data URL: data:image/png;base64,xxxxxx
         if raw.startswith("data:") and ";base64," in raw:
             header, encoded = raw.split(";base64,", 1)
-            # 形如 data:image/png
+            # Dạng data:image/png
             mime = header[5:]
             content_type = mime or "image/png"
             content = base64.b64decode(encoded)
@@ -100,11 +100,11 @@ async def create_file_from_url_or_b64(
 
         filename = "image.png"
 
-    # 推断扩展名和 FileType
+    # Suy ra phần mở rộng và FileType
     _, ext = os.path.splitext(filename)
     file_type = await _infer_file_type_from_content_type(content_type)
     if not ext:
-        # 根据类型给一个默认后缀
+        # Gán hậu tố mặc định theo kiểu
         ext = ".png" if file_type == FileType.image else ".mp4"
 
     display_name = name or os.path.splitext(filename)[0] or filename

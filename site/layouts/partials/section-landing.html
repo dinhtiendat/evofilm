@@ -12,8 +12,8 @@
     <section class="jf-section">
       <div class="jf-heading">
         <div class="jf-kicker">Sections</div>
-        <h2>内容分组</h2>
-        <p class="jf-lead">按主题继续深入阅读。</p>
+        <h2>Phân nhóm nội dung</h2>
+        <p class="jf-lead">Tiếp tục đọc sâu theo từng chủ đề.</p>
       </div>
       <div class="jf-landing-grid">
         {{ range .Sections.ByWeight }}
@@ -31,8 +31,8 @@
     <section class="jf-section">
       <div class="jf-heading">
         <div class="jf-kicker">Pages</div>
-        <h2>{{ if eq $current.Section "docs" }}推荐页面{{ else }}产品页面{{ end }}</h2>
-        <p class="jf-lead">{{ if eq $current.Section "docs" }}优先从这些页面开始阅读。{{ else }}这些页面帮助你快速理解 Jellyfish 的产品结构。{{ end }}</p>
+        <h2>{{ if eq $current.Section "docs" }}Trang được đề xuất{{ else }}Trang sản phẩm{{ end }}</h2>
+        <p class="jf-lead">{{ if eq $current.Section "docs" }}Nên bắt đầu đọc từ những trang này trước.{{ else }}Những trang này giúp bạn nhanh hiểu cấu trúc sản phẩm của Jellyfish.{{ end }}</p>
       </div>
       <div class="jf-landing-grid">
         {{ range .RegularPages.ByWeight }}

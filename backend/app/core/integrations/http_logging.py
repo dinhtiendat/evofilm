@@ -1,4 +1,4 @@
-"""HTTP 请求日志辅助：脱敏与可打印 body 摘要。"""
+"""Hàm hỗ trợ nhậtlog yêu cầu HTTP: làm ẩn danh và tóm tắt body có thể in."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Any
 
-# 与 tasks 一致：保证在默认 uvicorn 日志级别下可见。
+# Nhất quán với tasks: đảm bảo hiển thị được ở mức log uvicorn mặc định.
 logger = logging.getLogger("uvicorn.error")
 
 
@@ -51,7 +51,7 @@ def safe_body_for_log_openai(body: dict[str, Any]) -> dict[str, Any]:
 
 
 def safe_body_for_log_volcengine_image(body: dict[str, Any]) -> dict[str, Any]:
-    """火山 ImageGenerations：日志中省略 image 数组正文，仅保留条数。"""
+    """Volcano ImageGenerations: log lược bỏ nội dung mảng image, chỉ giữ số dòng."""
     return {
         **(
             {

@@ -1,4 +1,4 @@
-"""与 LLM 相关的 Pydantic Schema（Provider/Model/ModelSettings）。"""
+"""Pydantic Schema liên quan LLM (Provider/Model/ModelSettings)."""
 
 from __future__ import annotations
 
@@ -10,146 +10,146 @@ from app.models.llm import LogLevel, ModelCategoryKey, ProviderStatus
 
 
 class ProviderBase(BaseModel):
-    """供应商通用字段（不含敏感字段）。"""
+    """Các trường dùng chung của nhà cung cấp (không chứa trường nhạy cảm)."""
 
-    name: str = Field(..., description="供应商名称")
-    base_url: str = Field(..., description="文本/通用 API Base URL")
-    image_base_url: str | None = Field(None, description="图片能力 API Base URL（可选覆盖）")
-    video_base_url: str | None = Field(None, description="视频能力 API Base URL（可选覆盖）")
-    description: str = Field("", description="说明")
+    name: str = Field(..., description="name: str = Field(..., description=tên nhà cung cấp)")
+    base_url: str = Field(..., description="Base URL API văn bản/thông dụng")
+    image_base_url: str | None = Field(None, description="Khả năng hình ảnh API Base URL(chép lên tùy chọn)")
+    video_base_url: str | None = Field(None, description="Khả năng video API Base URL(chép lên tùy chọn)")
+    description: str = Field("", description="description: str = Field(, description=Mô tả)")
     status: ProviderStatus = Field(
         ProviderStatus.testing,
-        description="状态：active/testing/disabled",
+        description="description=Trạng thái:active/testing/disabled,：active/testing/disabled",
     )
-    created_by: str = Field("", description="创建人")
+    created_by: str = Field("", description="created_by: str = Field(, description=Người tạo)")
 
 
 class ProviderCreate(ProviderBase):
-    """创建供应商时的请求体，允许填写敏感字段。"""
+    """Body yêu cầu khi tạo nhà cung cấp, cho phép điền trường nhạy cảm."""
 
-    id: str = Field(..., description="供应商 ID")
-    api_key: str = Field("", description="API Key（敏感，不在响应中回显）")
-    api_secret: str = Field("", description="API Secret（敏感，不在响应中回显）")
+    id: str = Field(..., description="id: str = Field(..., description=nhà cung cấp ID) ID")
+    api_key: str = Field("", description="API Key (nhạy cảm, không trả lại trong phản hồi)")
+    api_secret: str = Field("", description="API Secret (nhạy cảm, không hiển thị lại trong phản hồi)")
 
 
 class ProviderUpdate(BaseModel):
-    """更新供应商时的可选字段。"""
+    """Trường tùy chọn khi cập nhật nhà cung cấp.。"""
 
-    name: str | None = Field(None, description="供应商名称")
-    base_url: str | None = Field(None, description="文本/通用 API Base URL")
-    image_base_url: str | None = Field(None, description="图片能力 API Base URL（可选覆盖）")
-    video_base_url: str | None = Field(None, description="视频能力 API Base URL（可选覆盖）")
-    description: str | None = Field(None, description="说明")
+    name: str | None = Field(None, description="name: str | None = Field(None, description=Tên nhà cung cấp)")
+    base_url: str | None = Field(None, description="API Base URL cho văn bản / dùng chung")
+    image_base_url: str | None = Field(None, description="Khả năng hình ảnh API Base URL(chép lên tùy chọn)")
+    video_base_url: str | None = Field(None, description="Khả năng video API Base URL(chép lên tùy chọn)")
+    description: str | None = Field(None, description="description: str | None = Field(None, description=Mô tả)")
     status: ProviderStatus | None = Field(
         None,
-        description="状态：active/testing/disabled",
+        description="description=Trạng thái:active/testing/disabled,：active/testing/disabled",
     )
-    api_key: str | None = Field(None, description="API Key（敏感，不在响应中回显）")
-    api_secret: str | None = Field(None, description="API Secret（敏感，不在响应中回显）")
+    api_key: str | None = Field(None, description="API Key (nhạy cảm, không hiển thị ngược trong response)")
+    api_secret: str | None = Field(None, description="API Secret (nhạy cảm, không hiển thị ngược trong response)")
 
 
 class ProviderRead(ProviderBase):
-    """对外返回的供应商信息（不包含 api_key/api_secret）。"""
+    """thông tin nhà cung cấp trả ra đối ngoại (không chứa api_key/api_secret)."""
 
     model_config = ConfigDict(from_attributes=True)
 
-    id: str = Field(..., description="供应商 ID")
+    id: str = Field(..., description="id: str = Field(..., description=nhà cung cấp ID) ID")
 
 
 class ProviderSupportedRead(BaseModel):
-    """系统支持的供应商能力清单。"""
+    """Danh sách khả năng nhà cung cấp do hệ thống hỗ trợ.。"""
 
-    key: str = Field(..., description="供应商稳定键")
-    display_name: str = Field(..., description="供应商展示名")
-    aliases: list[str] = Field(default_factory=list, description="可识别别名")
+    key: str = Field(..., description="key: str = Field(..., description=khóa ổn định của nhà cung cấp)")
+    display_name: str = Field(..., description="display_name: str = Field(..., description=Tên hiển thị của nhà cung cấp)")
+    aliases: list[str] = Field(default_factory=list, description="aliases: list[str] = Field(default_factory=list, description=Biệt danh có thể nhận diện)")
     supported_categories: list[ModelCategoryKey] = Field(
         default_factory=list,
-        description="支持的模型类别",
+        description="description=Hạng mục mô hình được hỗ trợ,",
     )
-    default_base_url: str | None = Field(None, description="默认 API Base URL")
-    requires_api_key: bool = Field(True, description="是否要求 api_key")
-    requires_api_secret: bool = Field(False, description="是否要求 api_secret")
-    is_experimental: bool = Field(False, description="是否实验性供应商")
+    default_base_url: str | None = Field(None, description="default_base_url: str | None = Field(None, description=API Base URL mặc định) API Base URL")
+    requires_api_key: bool = Field(True, description="requires_api_key: bool = Field(True, description=liệu yêu cầu api_key hay không) api_key")
+    requires_api_secret: bool = Field(False, description="requires_api_secret: bool = Field(False, description=Có yêu cầu api_secret không) api_secret")
+    is_experimental: bool = Field(False, description="is_experimental: bool = Field(False, description=liệu là nhà cung cấp thử nghiệm hay không)")
 
 
 class VideoGenerationOptionsRead(BaseModel):
-    """当前默认视频模型对应的生成参数选项。"""
+    """Tuỳ chọn tham số tạo tương ứng với mô hình video mặc định hiện tại.。"""
 
-    provider: str = Field(..., description="供应商稳定键")
-    model_id: str = Field(..., description="默认视频模型 ID")
-    model_name: str = Field(..., description="默认视频模型名称")
-    allowed_ratios: list[str] = Field(default_factory=list, description="当前模型允许的比例选项")
-    default_ratio: str = Field(..., description="当前模型默认比例")
+    provider: str = Field(..., description="provider: str = Field(..., description=khóa ổn định của nhà cung cấp)")
+    model_id: str = Field(..., description="model_id: str = Field(..., description=ID mô hình video mặc định) ID")
+    model_name: str = Field(..., description="model_name: str = Field(..., description=Tên mô hình video mặc định)")
+    allowed_ratios: list[str] = Field(default_factory=list, description="allowed_ratios: list[str] = Field(default_factory=list, description=Các lựa chọn tỷ lệ được phép của mô hình hiện tại)")
+    default_ratio: str = Field(..., description="default_ratio: str = Field(..., description=Tỷ lệ mặc định của mô hình hiện tại)")
 
 
 class ImageGenerationOptionsRead(BaseModel):
-    """当前默认图片模型对应的关键帧规格选项。"""
+    """Tuỳ chọn spec khung hình chính tương ứng với mô hình ảnh mặc định hiện tại.。"""
 
-    provider: str = Field(..., description="供应商稳定键")
-    model_id: str = Field(..., description="默认图片模型 ID")
-    model_name: str = Field(..., description="默认图片模型名称")
-    supported_ratios: list[str] = Field(default_factory=list, description="当前模型支持的目标比例")
-    default_resolution_profile: str = Field(..., description="当前模型默认分辨率档位")
+    provider: str = Field(..., description="provider: str = Field(..., description=khóa ổn định của nhà cung cấp)")
+    model_id: str = Field(..., description="model_id: str = Field(..., description=ID mô hình ảnh mặc định) ID")
+    model_name: str = Field(..., description="model_name: str = Field(..., description=Tên mô hình ảnh mặc định)")
+    supported_ratios: list[str] = Field(default_factory=list, description="supported_ratios: list[str] = Field(default_factory=list, description=Tỷ lệ đích được hỗ trợ bởi mô hình hiện tại)")
+    default_resolution_profile: str = Field(..., description="default_resolution_profile: str = Field(..., description=Hạng phân giải mặc định của mô hình hiện tại)")
     ratio_size_profiles: dict[str, dict[str, str]] = Field(
         default_factory=dict,
-        description="按比例和分辨率档位映射得到的像素尺寸",
+        description="description=Kích thước pixel thu được từ ánh xạ theo tỉ lệ và bậc độ phân giải,",
     )
 
 
 class ModelBase(BaseModel):
-    """模型通用字段。"""
+    """Trường dùng chung của mô hình.。"""
 
-    name: str = Field(..., description="模型名称")
-    category: ModelCategoryKey = Field(..., description="模型类别：text/image/video")
-    provider_id: str = Field(..., description="所属供应商 ID")
-    params: dict[str, Any] = Field(default_factory=dict, description="模型参数（JSON）")
-    description: str = Field("", description="说明")
-    created_by: str = Field("", description="创建人")
+    name: str = Field(..., description="name: str = Field(..., description=tên mô hình)")
+    category: ModelCategoryKey = Field(..., description="category: ModelCategoryKey = Field(..., description=Hạng mục mô hình: text/image/video)：text/image/video")
+    provider_id: str = Field(..., description="provider_id: str = Field(..., description=ID nhà cung cấp sở thuộc) ID")
+    params: dict[str, Any] = Field(default_factory=dict, description="params: dict[str, Any] = Field(default_factory=dict, description=Tham số mô hình (JSON))（JSON）")
+    description: str = Field("", description="description: str = Field(, description=Mô tả)")
+    created_by: str = Field("", description="created_by: str = Field(, description=Người tạo)")
 
 
 class ModelCreate(ModelBase):
-    """创建模型请求体。"""
+    """Thân yêu cầu tạo mô hình.。"""
 
-    id: str = Field(..., description="模型 ID")
+    id: str = Field(..., description="id: str = Field(..., description=mô hình ID) ID")
 
 
 class ModelUpdate(BaseModel):
-    """更新模型请求体（全部可选）。"""
+    """Body yêu cầu cập nhật mô hình (tất cả tùy chọn)."""
 
-    name: str | None = Field(None, description="模型名称")
-    category: ModelCategoryKey | None = Field(None, description="模型类别")
-    provider_id: str | None = Field(None, description="所属供应商 ID")
-    params: dict[str, Any] | None = Field(None, description="模型参数（JSON）")
-    description: str | None = Field(None, description="说明")
+    name: str | None = Field(None, description="name: str | None = Field(None, description=Tên mô hình)")
+    category: ModelCategoryKey | None = Field(None, description="category: ModelCategoryKey | None = Field(None, description=Hạng mục mô hình)")
+    provider_id: str | None = Field(None, description="provider_id: str | None = Field(None, description=ID nhà cung cấp sở hữu) ID")
+    params: dict[str, Any] | None = Field(None, description="params: dict[str, Any] | None = Field(None, description=Tham số mô hình (JSON))（JSON）")
+    description: str | None = Field(None, description="description: str | None = Field(None, description=Mô tả)")
 
 
 class ModelRead(ModelBase):
-    """对外返回的模型信息。"""
+    """Thông tin mô hình trả về phía ngoài.。"""
 
     model_config = ConfigDict(from_attributes=True)
 
-    id: str = Field(..., description="模型 ID")
+    id: str = Field(..., description="id: str = Field(..., description=mô hình ID) ID")
 
 
 class ModelSettingsBase(BaseModel):
-    """模型全局设置通用字段。"""
+    """Trường dùng chung cài đặt toàn cục mô hình.。"""
 
-    default_text_model_id: str | None = Field(None, description="默认文本模型 ID")
-    default_image_model_id: str | None = Field(None, description="默认图片模型 ID")
-    default_video_model_id: str | None = Field(None, description="默认视频模型 ID")
-    api_timeout: int = Field(30, description="API 超时（秒）")
-    log_level: LogLevel = Field(LogLevel.info, description="日志级别")
+    default_text_model_id: str | None = Field(None, description="default_text_model_id: str | None = Field(None, description=ID mô hình văn bản mặc định) ID")
+    default_image_model_id: str | None = Field(None, description="default_image_model_id: str | None = Field(None, description=ID mô hình ảnh mặc định) ID")
+    default_video_model_id: str | None = Field(None, description="default_video_model_id: str | None = Field(None, description=ID mô hình video mặc định) ID")
+    api_timeout: int = Field(30, description="API timeout (giây)")
+    log_level: LogLevel = Field(LogLevel.info, description="log_level: LogLevel = Field(LogLevel.info, description=cấp nhật ký)")
 
 
 class ModelSettingsUpdate(ModelSettingsBase):
-    """更新或保存模型全局设置请求体。"""
+    """Body yêu cầu cập nhật hoặc lưu cấu hình toàn cục của mô hình.。"""
 
     pass
 
 
 class ModelSettingsRead(ModelSettingsBase):
-    """对外返回的模型全局设置。"""
+    """Cài đặt toàn cục mô hình trả về phía ngoài.。"""
 
     model_config = ConfigDict(from_attributes=True)
 
-    id: int = Field(..., description="设置行 ID（通常为 1）")
+    id: int = Field(..., description="ID dòng cấu hình (thường là 1)")

@@ -92,7 +92,7 @@ def resolve_provider_key_from_name(name: str) -> str:
         key = _KEY_BY_ALIAS.get(alias)
     if key:
         return key
-    # 兼容历史“包含式”命名（如 Doubao Video / bytedance-xxx）。
+    # tương thích đặt tên "bao hàm" lịch sử (như Doubao Video / bytedance-xxx).
     if "volc" in alias or "doubao" in alias or "bytedance" in alias:
         return "volcengine"
     raise HTTPException(

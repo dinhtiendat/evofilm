@@ -1,4 +1,4 @@
-"""文件服务：封装文件上传、下载、列表、详情、更新与删除。"""
+"""Dịch vụ tệp: đóng gói tải lên, tải xuống, danh sách, chi tiết, cập nhật và xóa tệp."""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ def _detect_file_type(filename: str) -> FileType:
         return FileType.image
     if ext in {".mp4", ".mov", ".mkv", ".avi", ".webm"}:
         return FileType.video
-    raise HTTPException(status_code=400, detail=f"不支持的文件类型: {ext or '未知后缀'}")
+    raise HTTPException(status_code=400, detail=f"Loại tệp không hỗ trợ: {ext or 'Phần mở rộng không rõ'}")
 
 
 def _build_display_name(filename: str, name: str | None) -> str:
@@ -68,7 +68,7 @@ async def list_files_paginated(
     page: int,
     page_size: int,
 ) -> ApiResponse[PaginatedData[FileRead]]:
-    """分页查询文件。"""
+    """Truy vấn phân trang tệp.。"""
     stmt = select(FileItem)
     stmt = apply_keyword_filter(stmt, q=q, fields=[FileItem.name])
     stmt = apply_order(
@@ -93,7 +93,7 @@ async def get_file_detail(
     *,
     file_id: str,
 ) -> FileDetailRead:
-    """获取文件详情。"""
+    """Lấy chi tiết tệp.。"""
     stmt = select(FileItem).options(selectinload(FileItem.usages)).where(FileItem.id == file_id)
     res = await db.execute(stmt)
     obj = res.scalars().first()
@@ -110,7 +110,7 @@ async def update_file_meta(
     file_id: str,
     body: FileUpdate,
 ) -> FileItem:
-    """更新文件元信息，并按需写入 usage。"""
+    """Cập nhật siêu dữ liệu tệp và ghi usage khi cần."""
     obj = await get_or_404(db, FileItem, file_id, detail=entity_not_found("File"))
     data = body.model_dump(exclude_unset=True)
     usage_payload = data.pop("usage", None)
@@ -140,9 +140,9 @@ async def upload_file(
     usage_kind: str | None = None,
     source_ref: str | None = None,
 ) -> FileItem:
-    """上传文件到对象存储，并创建 FileItem 记录。"""
+    """Tải tệp lên object storage và tạo bản ghi FileItem."""
     if not file.filename:
-        raise HTTPException(status_code=400, detail="上传文件缺少文件名")
+        raise HTTPException(status_code=400, detail="Tệp tải lên thiếu tên tệp")
 
     file_type = _detect_file_type(file.filename)
     display_name = _build_display_name(file.filename, name)
@@ -187,7 +187,7 @@ async def build_download_response(
     *,
     file_id: str,
 ) -> StreamingResponse:
-    """根据 file_id 构建下载响应。"""
+    """Dựng phản hồi tải xuống theo file_id."""
     file_item = await get_or_404(db, FileItem, file_id, detail=entity_not_found("File"))
     content = await storage.download_file(key=file_item.storage_key)
 
@@ -206,7 +206,7 @@ async def get_storage_info(
     *,
     file_id: str,
 ) -> dict[str, Any]:
-    """读取对象存储信息。"""
+    """Đọc thông tin lưu trữ đối tượng.。"""
     file_item = await get_or_404(db, FileItem, file_id, detail=entity_not_found("File"))
     info = await storage.get_file_info(key=file_item.storage_key)
     return {
@@ -223,7 +223,7 @@ async def delete_file(
     *,
     file_id: str,
 ) -> None:
-    """删除文件记录与对象存储中的内容；若记录不存在则静默返回。"""
+    """Xóa bản ghi tệp và nội dung trong object storage; nếu bản ghi không tồn tại thì trả về im lặng."""
     file_item = await db.get(FileItem, file_id)
     if file_item is None:
         return
@@ -231,7 +231,7 @@ async def delete_file(
     try:
         await storage.delete_file(key=file_item.storage_key)
     except Exception:
-        # 存储删除失败不阻塞记录删除，保持当前接口语义。
+        # Xóa lưu trữ thất bại không chặn việc xóa bản ghi, giữ nguyên nghĩa interface hiện tại.
         pass
 
     await db.delete(file_item)

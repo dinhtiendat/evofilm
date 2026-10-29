@@ -1,4 +1,4 @@
-"""镜头提取候选项服务。"""
+"""Dịch vụ ứng viên trích xuất phân cảnh."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ async def _flush_refresh_candidate(
     db: AsyncSession,
     row: ShotExtractedCandidate,
 ) -> ShotExtractedCandidate:
-    """刷新 candidate，避免响应序列化时触发异步懒加载。"""
+    """làm mới candidate, tránh kích hoạt tải lười bất đồng bộ khi chuỗi hóa phản hồi."""
     await db.flush()
     await db.refresh(row)
     return row
@@ -118,7 +118,7 @@ async def sync_from_extraction_draft(
     chapter_id: str,
     draft: StudioScriptExtractionDraft,
 ) -> None:
-    """将 chapter 级提取结果同步到各镜头候选项表。"""
+    """Đồng bộ kết quả trích xuất cấp chapter sang các bảng ứng viên của từng phân cảnh."""
     chapter = await db.get(Chapter, chapter_id)
     if chapter is None:
         raise ValueError(entity_not_found("Chapter"))
@@ -304,10 +304,10 @@ async def mark_linked_by_name(
     candidate_name: str,
     linked_entity_id: str,
 ) -> ShotExtractedCandidate | None:
-    """按镜头、候选类型与名称匹配候选项，并标记为已关联。
+    """Khớp ứng viên theo phân cảnh, loại ứng viên và tên, sau đó đánh dấu là đã liên kết.
 
-    用于真实资产关联动作发生后，将提取候选同步回写为 linked。
-    若当前镜头没有匹配候选，则静默返回 None。
+    Dùng để sau khi có hành động liên kết tài nguyên thực, ghi ngược ứng viên trích xuất thành linked.
+    Nếu phân cảnh hiện tại không có ứng viên khớp, sẽ trả về None im lặng.
     """
     normalized_name = str(candidate_name).strip()
     if not normalized_name:
@@ -339,7 +339,7 @@ async def mark_pending_by_name(
     candidate_type: ShotCandidateType | str,
     candidate_name: str,
 ) -> ShotExtractedCandidate | None:
-    """按镜头、候选类型与名称回退候选为待处理状态。"""
+    """Quay ứng viên về trạng thái chờ xử lý theo phân cảnh, loại ứng viên và tên."""
     normalized_name = str(candidate_name).strip()
     if not normalized_name:
         return None
@@ -370,7 +370,7 @@ async def mark_pending_by_linked_entity(
     candidate_type: ShotCandidateType | str,
     linked_entity_id: str,
 ) -> ShotExtractedCandidate | None:
-    """按镜头、候选类型与已关联实体 ID 回退候选为待处理状态。"""
+    """Đưa ứng viên về trạng thái chờ xử lý theo phân cảnh, loại ứng viên và ID thực thể đã liên kết."""
     normalized_type = ShotCandidateType(str(candidate_type))
     stmt = (
         select(ShotExtractedCandidate)

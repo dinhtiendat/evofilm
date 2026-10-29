@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="./README.en.md">English</a> ·
-  <a href="./README.ja.md">日本語</a>
+  <a href="./README.ja.md">Tiếng Nhật</a>
 </p>
 
 An end-to-end production tool for AI-generated short dramas (vertical / micro drama).  

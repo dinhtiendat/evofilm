@@ -1,54 +1,54 @@
 ---
-title: "项目结构"
+title: "Cấu trúc dự án"
 weight: 1
-description: "快速理解 Jellyfish 当前真实生效的顶层目录与主业务链路。"
+description: "nhanh chóng hiểu các thư mục top-level và chuỗi nghiệp vụ chính đang hiệu lực thật sự của Jellyfish hiện tại."
 ---
 
-> 本文属于“当前架构”文档，描述的是当前项目的真实目录结构与职责分层。
+> Bài này thuộc tài liệu "Kiến trúc hiện tại", mô tả cấu trúc thư mục thực và phân tầng trách nhiệm của dự án hiện tại.
 
-## 顶层目录
+## Thư mục cấp trên cùng
 
 ```text
 jellyfish/
-├── backend/    # FastAPI、服务层、模型层、AI 工作流
-├── front/      # React + Vite 前端工作台
-├── deploy/     # Docker 与 Compose 配置
-├── docs/       # 仓库内文档与图片素材
-└── site/       # Hugo 官网与文档站
+├── backend/    # FastAPI, lớp dịch vụ, lớp mô hình, AI Work flow
+├── front/      # React + Vite Trang làm việc frontend
+├── deploy/     # Docker và Compose Cấu hình
+├── docs/       # Tài liệu và chất liệu hình ảnh trong kho
+└── site/       # Hugo website chính và trang tài liệu
 ```
 
-## 主业务链路
+## Chuỗi nghiệp vụ chính
 
 ```text
-项目 -> 章节 -> 分镜 -> 资产 / 帧图 -> 时间线
+dự án -> chương -> phân cảnh -> Tài nguyên / Hình khung -> Trục thời gian
 ```
 
-## 前端职责
+## Trách nhiệm phía trước
 
-- 承接 Studio 工作台页面
-- 使用 OpenAPI 生成客户端与后端协作
-- 管理项目、章节、分镜、资产、模型与 Agent 相关 UI
+- Nhận trang bàn làm việc Studio
+- Sử dụng OpenAPI Hợp tác client với backend
+- Quản lý dự án, chương, phân cảnh, tài nguyên, mô hình và Agent liên quan UI
 
-## 后端职责
+## Trách nhiệm phía sau
 
-- 提供 `studio / llm / film / script-processing` 等 API
-- 管理数据库模型、文件存储与任务状态
-- 通过 `chains / services / core.tasks` 接入 AI 能力
+- cung cấp `studio / llm / film / script-processing` v.v. API
+- Quản lý mô hình CSDL, lưu trữ tệp và trạng thái tác vụ
+- Đạt `chains / services / core.tasks` gắn vào AI khả năng
 
-## 生成能力分层约束
+## Ràng buộc phân tầng năng lực tạo
 
-- 通用生成契约（输入/输出 DTO、供应商配置等）统一放在 `app/core/contracts`。
-- `app/core/tasks` 仅保留任务封装、分派与执行编排，不定义跨层 DTO。
-- `app/core/integrations` 仅实现供应商协议适配，依赖 `contracts`，不依赖 `tasks` 类型模块。
+- Hợp đồng tạo chung (DTO vào/ra, cấu hình nhà cung cấp, v.v.) thống nhất đặt trong `app/core/contracts`.
+- `app/core/tasks` chỉ giữ đóng gói tác vụ, điều phối và dàn dựng thực thi, không định nghĩa DTO chéo tầng.
+- `app/core/integrations` chỉ thực hiện thích ứng giao thức nhà cung cấp, phụ thuộc `contracts`, không phụ thuộc module kiểu `tasks`.
 
-## 站点职责
+## Trách nhiệm của site
 
-- 官网首页与产品介绍
-- 安装、开发、部署与贡献文档
-- 后续可以承接版本日志和更新公告
+- Trang chủ chính thức và giới thiệu sản phẩm
+- Tài liệu cài đặt, phát triển, triển khai và đóng góp
+- Sau này có thể nhận nhật ký phiên bản và thông báo cập nhật
 
-## 推荐阅读路径
+## Đường dẫn đọc được khuyến nghị
 
-1. 先看 [前端说明](/docs/guide/frontend/)
-2. 再看 [后端说明](/docs/guide/backend/)
-3. 最后看 [AI 工作流](/docs/guide/ai-workflow/)
+1. Xem trước [Giải thích frontend](/docs/guide/frontend/)
+2. Xem tiếp [Giải thích backend](/docs/guide/backend/)
+3. Xem cuối [AI Work flow](/docs/guide/ai-workflow/)

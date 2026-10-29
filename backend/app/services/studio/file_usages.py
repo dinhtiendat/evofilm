@@ -1,4 +1,4 @@
-"""文件在项目中的使用位置：写入与按项目/章节标题/镜头标题分页查询。"""
+"""Vị trí dùng tệp trong dự án: ghi và truy vấn phân trang theo tiêu đề dự án/chương/phân cảnh."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ async def upsert_file_usage(
     usage_kind: FileUsageKind | str,
     source_ref: str | None = None,
 ) -> FileUsage:
-    """按 (file_id, usage_kind, source_ref) 幂等写入或更新行列。"""
+    """Viết hoặc cập nhật dòng cột idempotent theo (file_id, usage_kind, source_ref)."""
     ref = (source_ref or "")[:128]
     kind_str = usage_kind.value if isinstance(usage_kind, FileUsageKind) else str(usage_kind)
 
@@ -65,7 +65,7 @@ async def upsert_file_usage(
 
 
 async def delete_usages_by_file_id(session: AsyncSession, file_id: str) -> None:
-    """删除某文件的全部 usage（若未使用 ON DELETE CASCADE 时备用）。"""
+    """xóa toàn bộ usage của một tệp (dự phòng khi không dùng ON DELETE CASCADE)."""
     await session.execute(delete(FileUsage).where(FileUsage.file_id == file_id))
     await session.flush()
 
@@ -125,7 +125,7 @@ def _scope_filters(
     chapter_title: str | None,
     shot_title: str | None,
 ) -> list:
-    """返回与 FileUsage 行组合的 WHERE 条件（不含 project_id 基条件）。"""
+    """Trả về điều kiện WHERE kết hợp với dòng FileUsage (không gồm điều kiện cơ sở project_id)."""
     conds: list = []
 
     ch_title = normalize_q(chapter_title)
@@ -179,7 +179,7 @@ async def list_files_by_scope_paginated(
     allow_order_fields: set[str] | None = None,
     default_order: str = "created_at",
 ) -> tuple[list[FileItem], int]:
-    """按项目及可选章节标题、镜头标题过滤文件（标题多命中时并集），去重后分页。"""
+    """lọc tệp theo dự án và tùy chọn tiêu đề chương, tiêu đề shot(tiêu đề hit nhiều lấy hợp), khử trùng rồi phân trang."""
     allow_fields = allow_order_fields or {"name", "created_at", "updated_at"}
     order_col = order if order and order in allow_fields else default_order
     ord_attr = getattr(FileItem, order_col)

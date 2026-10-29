@@ -130,12 +130,12 @@ export function ChaptersTab() {
   const openCreateNextStep = (chapter: Chapter, hasRawText: boolean) => {
     if (!projectId) return
     Modal.confirm({
-      title: '章节创建成功',
+      title: 'Tạo chương thành công',
       content: hasRawText
-        ? '这一章已经有原文内容，接下来更适合直接提取分镜。'
-        : '这一章还没有原文内容，建议先补章节原文。',
-      okText: hasRawText ? '立即提取分镜' : '继续编辑原文',
-      cancelText: '稍后处理',
+        ? 'Chương này đã có nội dung nguyên bản, bước tiếp phù hợp hơn là trích xuất phân cảnh trực tiếp.'
+        : 'Chương này chưa có nội dung nguyên văn, đề nghị bổ sung nguyên văn chương trước.',
+      okText: hasRawText ? 'trích xuất phân cảnh ngay' : 'tiếp tục chỉnh sửa nguyên văn',
+      cancelText: 'Xử lý sau',
       onOk: () => {
         if (hasRawText) {
           navigate(getChapterShotsPath(projectId, chapter.id))
@@ -148,7 +148,7 @@ export function ChaptersTab() {
 
   const handleCreateChapter = async () => {
     if (!createTitle.trim()) {
-      message.warning('请输入章节标题')
+      message.warning('Vui lòng nhập tiêu đề chương')
       return
     }
     if (!projectId) return
@@ -180,21 +180,21 @@ export function ChaptersTab() {
           status: 'draft',
         },
       })
-      message.success('章节创建成功')
+      message.success('Tạo chương thành công')
       setCreateOpen(false)
       setCreateTitle('')
       setCreateContent('')
       await refresh()
       openCreateNextStep(draftChapter, !!rawText.trim())
     } catch {
-      message.error('创建章节失败')
+      message.error('Tạo chương thất bại')
     }
   }
 
   const useMock = import.meta.env.VITE_USE_MOCK === 'true'
   const handleCreateChapterMock = () => {
     if (!createTitle.trim()) {
-      message.warning('请输入章节标题')
+      message.warning('Vui lòng nhập tiêu đề chương')
       return
     }
     if (!projectId) return
@@ -213,7 +213,7 @@ export function ChaptersTab() {
       status: 'draft',
       updatedAt: new Date().toISOString(),
     }
-    message.success('创建成功（Mock）')
+    message.success('Tạo thành công (Mock)')
     setCreateOpen(false)
     setCreateTitle('')
     setCreateContent('')
@@ -252,7 +252,7 @@ export function ChaptersTab() {
   const handleDivideAsync = async (record: Chapter) => {
     const scriptText = record.rawText?.trim()
     if (!scriptText) {
-      message.warning('请先补章节原文')
+      message.warning('Vui lòng bổ sung nguyên văn chương trước')
       return
     }
     setChapterDivisionActionId(record.id)
@@ -273,10 +273,10 @@ export function ChaptersTab() {
         },
         startedMessage: taskCopy.startedMessage,
         reusedMessage: taskCopy.reusedMessage,
-        fallbackErrorMessage: '启动分镜提取失败',
+        fallbackErrorMessage: 'Khởi động trích xuất phân cảnh thất bại',
       })
     } catch {
-      // executeAsyncTaskCreate 已统一处理错误提示
+      // executeAsyncTaskCreate đã xử lý thống nhất thông báo lỗi
     } finally {
       setChapterDivisionActionId(null)
     }
@@ -289,7 +289,7 @@ export function ChaptersTab() {
     try {
       await executeTaskCancel({
         taskId: activeTask.taskId,
-        reason: '用户在章节页取消分镜提取',
+        reason: 'Người dùng hủy trích xuất phân cảnh tại trang chương',
         applyCancelData: (data) => {
           if (!data?.task_id || !data?.status) return null
           const tracked = createRelationTaskState(
@@ -304,10 +304,10 @@ export function ChaptersTab() {
         },
         cancelledImmediatelyMessage: taskCopy.cancelledImmediatelyMessage,
         cancelRequestedMessage: taskCopy.cancelRequestedMessage,
-        fallbackErrorMessage: '取消任务失败',
+        fallbackErrorMessage: 'Hủy tác vụ thất bại',
       })
     } catch {
-      // executeTaskCancel 已统一处理错误提示
+      // executeTaskCancel đã xử lý thống nhất thông báo lỗi
     } finally {
       setChapterDivisionActionId(null)
     }
@@ -323,7 +323,7 @@ export function ChaptersTab() {
       taskUiUpsert({
         taskId: task.taskId,
         title: taskCopy.title,
-        sourceLabel: chapter.title ? `章节：${chapter.title}` : '项目工作台章节列表',
+        sourceLabel: chapter.title ? `Chương: ${chapter.title}` : 'Danh sách chương trong bàn làm việc dự án',
         status: task.status,
         progress: task.progress,
         cancelRequested: task.cancelRequested,
@@ -356,28 +356,28 @@ export function ChaptersTab() {
     return [
       {
         key: 'shots',
-        label: '查看分镜',
+        label: 'Xem phân cảnh',
         icon: <ScissorOutlined />,
         onClick: () => navigate(getChapterShotsPath(projectId, record.id)),
       },
       state.key !== 'prepare_shots' && (record.storyboardCount ?? 0) > 0
         ? {
             key: 'studio',
-            label: '进入工作室',
+            label: 'Vào studio',
             icon: <FileSearchOutlined />,
             onClick: () => navigate(getChapterStudioPath(projectId, record.id)),
           }
         : null,
       {
         key: 'raw',
-        label: '编辑原文',
+        label: 'Sửa nguyên văn',
         icon: <EditOutlined />,
         onClick: () => openEditModal(record),
       },
       activeTask
         ? {
             key: 'cancel_divide',
-            label: activeTask.cancelRequested ? '取消请求已发出' : '取消分镜提取',
+            label: activeTask.cancelRequested ? 'Đã gửi yêu cầu hủy' : 'Huy trích xuất phân cảnh',
             icon: <StopOutlined />,
             disabled: activeTask.cancelRequested || chapterDivisionActionId === record.id,
             onClick: () => void handleCancelDivideTask(record),
@@ -387,9 +387,9 @@ export function ChaptersTab() {
   }
 
   const columns: TableColumnsType<Chapter> = [
-    { title: '章节', dataIndex: 'index', key: 'index', width: 80, render: (v: number) => `第${v}集` },
+    { title: 'Chương', dataIndex: 'index', key: 'index', width: 80, render: (v: number) => `Chương ${v}` },
     {
-      title: '标题',
+      title: 'Tiêu đề',
       dataIndex: 'title',
       key: 'title',
       ellipsis: true,
@@ -400,13 +400,13 @@ export function ChaptersTab() {
           style={{ paddingInline: 0 }}
           onClick={() => openEditModal(record)}
         >
-          {title || '未命名章节'}
+          {title || 'Chương chưa đặt tên'}
         </Button>
       ),
     },
-    { title: '分镜数', dataIndex: 'storyboardCount', key: 'storyboardCount', width: 90 },
+    { title: 'Số phân cảnh', dataIndex: 'storyboardCount', key: 'storyboardCount', width: 90 },
     {
-      title: '准备状态',
+      title: 'Trạng thái chuẩn bị',
       key: 'preparation',
       width: 180,
       render: (_, record) => {
@@ -415,10 +415,10 @@ export function ChaptersTab() {
           return (
             <div className="space-y-1">
               <Tag color={activeTask.cancelRequested ? 'orange' : 'processing'}>
-                {activeTask.cancelRequested ? '正在取消提取' : '分镜提取中'}
+                {activeTask.cancelRequested ? 'Đang hủy trích xuất' : 'Đang trích xuất phân cảnh'}
               </Tag>
               <div className="text-[11px] text-gray-500 leading-5">
-                {activeTask.cancelRequested ? '已请求取消，将在当前步骤结束后停止' : '系统正在异步提取当前章节分镜'}
+                {activeTask.cancelRequested ? 'Đã yêu cầu hủy, sẽ dừng sau khi bước hiện tại kết thúc' : 'Hệ thống đang trích xuất phân cảnh của chương hiện tại (không đồng bộ)'}
               </div>
             </div>
           )
@@ -433,7 +433,7 @@ export function ChaptersTab() {
       },
     },
     {
-      title: '分镜流转',
+      title: 'Quy trình phân cảnh',
       key: 'shotFlow',
       width: 220,
       render: (_, record) => {
@@ -441,20 +441,20 @@ export function ChaptersTab() {
         return (
           <div className="flex flex-wrap gap-1">
             <Tag bordered={false} color="gold" className="mr-0">
-              待确认 {stats?.pendingConfirmShots ?? 0}
+              Chờ xác nhận {stats?.pendingConfirmShots ?? 0}
             </Tag>
             <Tag bordered={false} color="green" className="mr-0">
-              已就绪 {stats?.readyShots ?? 0}
+              Đã sẵn sàng {stats?.readyShots ?? 0}
             </Tag>
             <Tag bordered={false} color="processing" className="mr-0">
-              生成中 {stats?.generatingShots ?? 0}
+              Đang tạo {stats?.generatingShots ?? 0}
             </Tag>
           </div>
         )
       },
     },
     {
-      title: '状态',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       width: 100,
@@ -462,9 +462,9 @@ export function ChaptersTab() {
         <Tag color={chapterStatusMap[status].color}>{chapterStatusMap[status].text}</Tag>
       ),
     },
-    { title: '更新时间', dataIndex: 'updatedAt', key: 'updatedAt', width: 160 },
+    { title: 'Thời gian cập nhật', dataIndex: 'updatedAt', key: 'updatedAt', width: 160 },
     {
-      title: '操作',
+      title: 'Thao tác',
       key: 'action',
       width: 230,
       render: (_, record) => {
@@ -477,8 +477,8 @@ export function ChaptersTab() {
           : state.primaryIcon
         const primaryText = activeTask
           ? activeTask.cancelRequested
-            ? '查看取消进度'
-            : '查看提取进度'
+            ? 'Xem tiến độ hủy'
+            : 'Xem tiến độ trích xuất'
           : state.primaryAction
         const primaryLoading = chapterDivisionActionId === record.id && state.key === 'extract_shots' && !activeTask
 
@@ -507,7 +507,7 @@ export function ChaptersTab() {
               <Button
                 size="small"
                 icon={<MoreOutlined />}
-                aria-label="更多操作"
+                aria-label="Thao tác khác"
                 loading={chapterDivisionActionId === record.id && !!activeTask}
               />
             </Dropdown>
@@ -521,37 +521,37 @@ export function ChaptersTab() {
     return (
       <>
         <Card>
-          <Empty description="还没有任何章节，立即创建第一章吧" image={Empty.PRESENTED_IMAGE_SIMPLE}>
+          <Empty description="Chưa có chương nào, hãy tạo ngay chương đầu tiên" image={Empty.PRESENTED_IMAGE_SIMPLE}>
           <Space>
             <Button type="primary" size="large" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-              创建第一章
+              Tạo chương 1
             </Button>
           </Space>
         </Empty>
         </Card>
         <Modal
-          title="新建章节"
+          title="Tạo mới chương"
           open={createOpen}
           onCancel={() => setCreateOpen(false)}
           onOk={useMock ? handleCreateChapterMock : handleCreateChapter}
-          okText="创建"
+          okText="Tạo"
           width={560}
         >
           <div className="space-y-3">
             <div>
-              <span className="text-gray-600 text-sm">章节标题</span>
+              <span className="text-gray-600 text-sm">Tiêu đề chương</span>
               <Input
-                placeholder="例如：第1集 出租屋里的争吵"
+                placeholder="Ví dụ: Tập1tập cãi vã trong phòng thuê"
                 value={createTitle}
                 onChange={(e) => setCreateTitle(e.target.value)}
                 className="mt-1"
               />
             </div>
             <div>
-              <span className="text-gray-600 text-sm">章节内容（可粘贴剧本）</span>
+              <span className="text-gray-600 text-sm">Nội dung chương (dán kịch bản được)</span>
               <TextArea
                 rows={6}
-                placeholder="粘贴文学剧本..."
+                placeholder="Dán kịch bản văn học..."
                 value={createContent}
                 onChange={(e) => setCreateContent(e.target.value)}
                 className="mt-1 font-mono text-sm"
@@ -565,11 +565,11 @@ export function ChaptersTab() {
 
   return (
     <Card
-      title="章节列表"
+      title="Danh sách chương"
       extra={
         <Space>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-            新建章节
+            Tạo chương mới
           </Button>
         </Space>
       }
@@ -599,28 +599,28 @@ export function ChaptersTab() {
       />
 
       <Modal
-        title="新建章节"
+        title="Tạo mới chương"
         open={createOpen}
         onCancel={() => setCreateOpen(false)}
         onOk={useMock ? handleCreateChapterMock : handleCreateChapter}
-        okText="创建"
+        okText="Tạo"
         width={560}
       >
         <div className="space-y-3">
           <div>
-            <span className="text-gray-600 text-sm">章节标题</span>
+            <span className="text-gray-600 text-sm">Tiêu đề chương</span>
             <Input
-              placeholder="例如：第1集 出租屋里的争吵"
+              placeholder="Ví dụ: Tập1tập cãi vã trong phòng thuê"
               value={createTitle}
               onChange={(e) => setCreateTitle(e.target.value)}
               className="mt-1"
             />
           </div>
           <div>
-            <span className="text-gray-600 text-sm">章节内容（可粘贴剧本）</span>
+            <span className="text-gray-600 text-sm">Nội dung chương (dán kịch bản được)</span>
             <TextArea
               rows={6}
-              placeholder="粘贴文学剧本..."
+              placeholder="Dán kịch bản văn học..."
               value={createContent}
               onChange={(e) => setCreateContent(e.target.value)}
               className="mt-1 font-mono text-sm"

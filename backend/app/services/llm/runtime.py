@@ -1,4 +1,4 @@
-"""给 Celery worker 使用的同步 LLM runtime。"""
+"""LLM runtime đồng bộ dành cho Celery worker."""
 
 from __future__ import annotations
 

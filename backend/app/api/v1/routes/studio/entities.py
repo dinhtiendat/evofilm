@@ -1,4 +1,4 @@
-"""统一实体 CRUD：actor/character/scene/prop/costume。"""
+"""CRUD thực thể thống nhất: actor/character/scene/prop/costume."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ router = APIRouter()
 @router.post(
     "/existence-check",
     response_model=ApiResponse[EntityNameExistenceCheckResponse],
-    summary="批量检测资产名称是否存在（模糊匹配，不分页）",
+    summary="Kiểm tra hàng loạt tên tài nguyên có tồn tại không (khớp mờ, không phân trang)",
 )
 async def check_entity_names_existence(
     body: EntityNameExistenceCheckRequest,
@@ -39,13 +39,13 @@ async def check_entity_names_existence(
     return success_response(EntityNameExistenceCheckResponse.model_validate(data))
 
 
-@router.get("/{entity_type}", response_model=ApiResponse[PaginatedData[dict[str, Any]]], summary="统一实体列表（分页）")
+@router.get("/{entity_type}", response_model=ApiResponse[PaginatedData[dict[str, Any]]], summary="Danh sách thực thể thống nhất (phân trang)")
 async def list_entities(
     entity_type: str,
     db: AsyncSession = Depends(get_db),
-    q: str | None = Query(None, description="关键字，过滤 name/description"),
-    style: str | None = Query(None, description="题材/风格（单值）"),
-    visual_style: str | None = Query(None, description="画面表现形式（单值：真人/动漫）"),
+    q: str | None = Query(None, description="Từ khóa, lọc theo name/description"),
+    style: str | None = Query(None, description="Thể loại/phong cách (một giá trị)"),
+    visual_style: str | None = Query(None, description="Hình thức biểu diễn khung hình (giá trị đơn: người thật/hoạt hình)"),
     order: str | None = Query(None),
     is_desc: bool = Query(False),
     page: int = Query(1, ge=1),
@@ -65,7 +65,7 @@ async def list_entities(
     return paginated_response(payload, page=page, page_size=page_size, total=total)
 
 
-@router.post("/{entity_type}", response_model=ApiResponse[dict[str, Any]], status_code=status.HTTP_201_CREATED, summary="统一创建实体")
+@router.post("/{entity_type}", response_model=ApiResponse[dict[str, Any]], status_code=status.HTTP_201_CREATED, summary="Tạo thực thể thống nhất")
 async def create_entity(
     entity_type: str,
     body: dict[str, Any],
@@ -76,14 +76,14 @@ async def create_entity(
     return created_response(payload)
 
 
-@router.get("/{entity_type}/{entity_id}", response_model=ApiResponse[dict[str, Any]], summary="统一获取实体")
+@router.get("/{entity_type}/{entity_id}", response_model=ApiResponse[dict[str, Any]], summary="Lấy thực thể thống nhất")
 async def get_entity(entity_type: str, entity_id: str, db: AsyncSession = Depends(get_db)) -> ApiResponse[dict[str, Any]]:
     service = StudioEntitiesService(db)
     payload = await service.get_entity(entity_type=entity_type, entity_id=entity_id)
     return success_response(payload)
 
 
-@router.patch("/{entity_type}/{entity_id}", response_model=ApiResponse[dict[str, Any]], summary="统一更新实体")
+@router.patch("/{entity_type}/{entity_id}", response_model=ApiResponse[dict[str, Any]], summary="Cập nhật thực thể thống nhất")
 async def update_entity(
     entity_type: str,
     entity_id: str,
@@ -95,7 +95,7 @@ async def update_entity(
     return success_response(payload)
 
 
-@router.delete("/{entity_type}/{entity_id}", response_model=ApiResponse[None], summary="统一删除实体")
+@router.delete("/{entity_type}/{entity_id}", response_model=ApiResponse[None], summary="Xóa thực thể thống nhất")
 async def delete_entity(entity_type: str, entity_id: str, db: AsyncSession = Depends(get_db)) -> ApiResponse[None]:
     service = StudioEntitiesService(db)
     await service.delete_entity(entity_type=entity_type, entity_id=entity_id)
@@ -105,7 +105,7 @@ async def delete_entity(entity_type: str, entity_id: str, db: AsyncSession = Dep
 @router.get(
     "/{entity_type}/{entity_id}/images",
     response_model=ApiResponse[PaginatedData[dict[str, Any]]],
-    summary="统一实体图片列表（分页）",
+    summary="Liệt kê ảnh thực thể thống nhất (phân trang)",
 )
 async def list_entity_images(
     entity_type: str,
@@ -132,7 +132,7 @@ async def list_entity_images(
     "/{entity_type}/{entity_id}/images",
     response_model=ApiResponse[dict[str, Any]],
     status_code=status.HTTP_201_CREATED,
-    summary="统一创建实体图片",
+    summary="Tạo ảnh thực thể thống nhất",
 )
 async def create_entity_image(
     entity_type: str,
@@ -148,7 +148,7 @@ async def create_entity_image(
 @router.patch(
     "/{entity_type}/{entity_id}/images/{image_id}",
     response_model=ApiResponse[dict[str, Any]],
-    summary="统一更新实体图片",
+    summary="Cập nhật ảnh thực thể thống nhất",
 )
 async def update_entity_image(
     entity_type: str,
@@ -170,7 +170,7 @@ async def update_entity_image(
 @router.delete(
     "/{entity_type}/{entity_id}/images/{image_id}",
     response_model=ApiResponse[None],
-    summary="统一删除实体图片",
+    summary="Xóa ảnh thực thể thống nhất",
 )
 async def delete_entity_image(
     entity_type: str,

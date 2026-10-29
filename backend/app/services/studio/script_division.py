@@ -1,4 +1,4 @@
-"""剧本分镜写库服务：将分镜结果落到 Chapter/Shot/ShotDetail。"""
+"""dịch vụ ghi DB phân cảnh kịch bản:lưu kết quả phân cảnh vào Chapter/Shot/ShotDetail."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def _append_division_rows(
     result: ScriptDivisionResult,
 ) -> None:
     for shot_division in result.shots:
-        title = (shot_division.shot_name or "").strip() or f"镜头 {shot_division.index}"
+        title = (shot_division.shot_name or "").strip() or f"Phân cảnh {shot_division.index}"
         shot_id = str(uuid.uuid4())
         db_add(
             Shot(
@@ -51,7 +51,7 @@ async def write_division_result_to_chapter(
     chapter_id: str,
     result: ScriptDivisionResult,
 ) -> None:
-    """将分镜结果写入指定章节；若章节已有镜头则拒绝写入。"""
+    """Viết kết quả phân cảnh vào chương chỉ định; nếu chương đã có phân cảnh thì từ chối ghi."""
     await require_entity(
         db,
         Chapter,
@@ -69,7 +69,7 @@ async def write_division_result_to_chapter(
 
     _append_division_rows(db.add, chapter_id=chapter_id, result=result)
 
-    # 触发唯一约束与外键检查，确保在返回前失败。
+    # Kích hoạt kiểm tra ràng buộc duy nhất và khóa ngoại, đảm bảo thất bại trước khi trả về.
     await db.flush()
 
 

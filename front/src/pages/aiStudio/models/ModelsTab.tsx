@@ -87,7 +87,7 @@ export default function ModelsTab() {
       setModels(modelsRes.data?.items ?? [])
       setSupportedProviders(supportedRes.data ?? [])
     } catch {
-      message.error('加载失败')
+      message.error('Tải thất bại')
     } finally {
       setLoading(false)
       setProviderOptionsLoading(false)
@@ -146,7 +146,7 @@ export default function ModelsTab() {
     const alreadyInOptions = filteredProviderOptions.some((opt) => opt.value === provider.id)
     if (alreadyInOptions) return null
     return {
-      label: `${provider.name}（历史/当前不支持所选类别）`,
+      label: `${provider.name} (lịch sử/hiện không hỗ trợ hạng mục đã chọn)`,
       value: provider.id,
     }
   }, [filteredProviderOptions, modelEditing, providers])
@@ -163,7 +163,7 @@ export default function ModelsTab() {
     const provider = providers.find((p) => p.id === editingUnsupportedProviderOption.value)
     if (!provider) return null
     const categoryLabel = categoryLabelMap[selectedFormCategory]
-    return `当前模型绑定供应商「${provider.name}」不支持「${categoryLabel}」类别，保存前建议切换到支持该类别的供应商。`
+    return `Mô hình hiện tại liên kết với nhà cung cấp 「${provider.name}」 không hỗ trợ hạng mục 「${categoryLabel}」, đề xuất chuyển sang nhà cung cấp hỗ trợ hạng mục này trước khi lưu.`
   }, [editingUnsupportedProviderOption, providers, selectedFormCategory])
 
   useEffect(() => {
@@ -174,7 +174,7 @@ export default function ModelsTab() {
     const keepHistoricalEditingProvider = modelEditing?.provider_id === providerId
     if (!stillSupported && !keepHistoricalEditingProvider) {
       form.setFieldsValue({ provider_id: undefined })
-      message.warning('当前供应商不支持所选模型类别，请重新选择')
+      message.warning('Nhà cung cấp hiện tại không hỗ trợ hạng mục mô hình đã chọn, vui lòng chọn lại')
     }
   }, [filteredProviderOptions, form, modelEditing, selectedFormCategory])
 
@@ -186,7 +186,7 @@ export default function ModelsTab() {
         if (values.params && String(values.params).trim())
           params = JSON.parse(String(values.params))
       } catch {
-        message.error('参数格式需为合法 JSON')
+        message.error('Định dạng tham số phải là JSON hợp lệ')
         return
       }
       if (modelEditing) {
@@ -200,10 +200,10 @@ export default function ModelsTab() {
             params,
           },
         })
-        message.success('模型已更新')
+        message.success('Đã cập nhật mô hình')
       } else {
         if (!values.provider_id) {
-          message.warning('请先添加供应商后再添加模型')
+          message.warning('Vui lòng thêm nhà cung cấp trước rồi mới thêm mô hình')
           return
         }
         const modelId =
@@ -220,7 +220,7 @@ export default function ModelsTab() {
             params,
           },
         })
-        message.success('模型已添加')
+        message.success('Đã thêm mô hình')
       }
       setModelModalOpen(false)
       setModelEditing(null)
@@ -228,19 +228,19 @@ export default function ModelsTab() {
       void load()
     } catch (e) {
       if (e && typeof e === 'object' && 'errorFields' in e) return
-      message.error('保存失败')
+      message.error('Lưu thất bại')
     }
   }
 
   const handleDeleteModel = (m: ModelRead) => {
     Modal.confirm({
-      title: '删除模型',
-      content: `确定删除「${m.name}」？`,
-      okText: '删除',
+      title: 'Xóa mô hình',
+      content: `Xác nhận xóa "${m.name}"?`,
+      okText: 'Xóa',
       okType: 'danger',
       onOk: async () => {
         await LlmService.deleteModelApiV1LlmModelsModelIdDelete({ modelId: m.id })
-        message.success('已删除')
+        message.success('Đã xóa')
         if (selectedModel?.id === m.id) setSelectedModel(null)
         void load()
       },
@@ -264,12 +264,12 @@ export default function ModelsTab() {
     setModelModalOpen(true)
   }
 
-  /** 基于已有模型打开「添加模型」浮窗，预填字段，名称追加「-复制」。 */
+  /** Mở popup "Thêm mô hình" dựa trên mô hình có sẵn, điền trước trường, tên thêm "-bản sao". */
   const openCopyModelModal = (source: ModelRead) => {
     setModelEditing(null)
     form.resetFields()
     form.setFieldsValue({
-      name: `${source.name}-复制`,
+      name: `${source.name}-bản sao`,
       category: source.category,
       provider_id: source.provider_id,
       description: source.description ?? '',
@@ -280,14 +280,14 @@ export default function ModelsTab() {
 
   const modelColumns: TableColumnsType<ModelRead> = [
     {
-      title: '名称',
+      title: 'Tên',
       dataIndex: 'name',
       key: 'name',
       ellipsis: true,
       render: (n) => <Space>{n}</Space>,
     },
     {
-      title: '类别',
+      title: 'Hạng mục',
       dataIndex: 'category',
       key: 'category',
       width: 100,
@@ -296,14 +296,14 @@ export default function ModelsTab() {
       ),
     },
     {
-      title: '关联供应商',
+      title: 'Liên kết nhà cung cấp',
       dataIndex: 'provider_id',
       key: 'provider_id',
       width: 120,
       render: (id: string) => getProviderName(id),
     },
     {
-      title: '参数',
+      title: 'Tham số',
       dataIndex: 'params',
       key: 'params',
       ellipsis: true,
@@ -316,28 +316,28 @@ export default function ModelsTab() {
       ),
     },
     {
-      title: '描述',
+      title: 'Mô tả',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
       render: (d: string) => <Tooltip title={d}>{d || '—'}</Tooltip>,
     },
     {
-      title: '创建人',
+      title: 'Người tạo',
       dataIndex: 'created_by',
       key: 'created_by',
       width: 100,
       render: (c: string) => c || '—',
     },
     {
-      title: '操作',
+      title: 'Thao tác',
       key: 'action',
       width: 112,
       fixed: 'right',
       align: 'center',
       render: (_, record) => (
         <Space size={4} className="flex-nowrap justify-center">
-          <Tooltip title="编辑">
+          <Tooltip title="Chỉnh sửa">
             <Button
               type="text"
               size="small"
@@ -349,7 +349,7 @@ export default function ModelsTab() {
               }}
             />
           </Tooltip>
-          <Tooltip title="测试生成">
+          <Tooltip title="Tạo thử">
             <Button
               type="text"
               size="small"
@@ -365,7 +365,7 @@ export default function ModelsTab() {
               items: [
                 {
                   key: 'copy',
-                  label: '复制',
+                  label: 'Sao chép',
                   icon: <CopyOutlined />,
                   onClick: ({ domEvent }) => {
                     domEvent.stopPropagation()
@@ -374,7 +374,7 @@ export default function ModelsTab() {
                 },
                 {
                   key: 'delete',
-                  label: '删除',
+                  label: 'Xóa',
                   danger: true,
                   icon: <DeleteOutlined />,
                   onClick: ({ domEvent }) => {
@@ -386,7 +386,7 @@ export default function ModelsTab() {
             }}
             trigger={['click']}
           >
-            <Tooltip title="更多">
+            <Tooltip title="Thêm">
               <Button
                 type="text"
                 size="small"
@@ -405,14 +405,14 @@ export default function ModelsTab() {
     <>
       <div className="flex-shrink-0 px-4 py-2 border-b border-gray-100 bg-white flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="text-gray-600 text-sm">共 {models.length} 个模型</span>
+          <span className="text-gray-600 text-sm">Tổng cộng {models.length} mô hình</span>
         </div>
         <Space wrap>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => openModelModal()}>
-            添加模型
+            Thêm mô hình
           </Button>
           <Input
-            placeholder="搜索名称/类型"
+            placeholder="Tìm theo tên/loại"
             allowClear
             className="w-48"
             value={search}
@@ -428,7 +428,7 @@ export default function ModelsTab() {
             }}
           >
             <Button icon={<DownOutlined />}>
-              排序：{SORT_OPTIONS.find((s) => s.value === sortBy)?.label}
+              Sắp xếp:{SORT_OPTIONS.find((s) => s.value === sortBy)?.label}
             </Button>
           </Dropdown>
         </Space>
@@ -449,7 +449,7 @@ export default function ModelsTab() {
           ) : (
             <>
               <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
-                <span className="text-sm font-medium text-gray-700">筛选</span>
+                <span className="text-sm font-medium text-gray-700">Lọc</span>
                 <Button
                   type="text"
                   size="small"
@@ -489,12 +489,12 @@ export default function ModelsTab() {
             <Card>
               <Empty
                 description={
-                  models.length === 0 ? '暂无模型，请先添加供应商再添加模型' : '无匹配结果'
+                  models.length === 0 ? 'Chưa có mô hình, vui lòng thêm nhà cung cấp trước rồi thêm mô hình' : 'Không có kết quả khớp'
                 }
               >
                 {providers.length > 0 && models.length === 0 && (
                   <Button type="primary" icon={<PlusOutlined />} onClick={() => openModelModal()}>
-                    添加第一个模型
+                    Thêm mô hình đầu tiên
                   </Button>
                 )}
               </Empty>
@@ -541,10 +541,10 @@ export default function ModelsTab() {
                         openModelModal(m)
                       }}
                     >
-                      编辑
+                      Chỉnh sửa
                     </Button>,
                     <Button key="test" type="text" size="small" icon={<ThunderboltOutlined />}>
-                      测试生成
+                      Tạo thử nghiệm
                     </Button>,
                     <Dropdown
                       key="more"
@@ -552,7 +552,7 @@ export default function ModelsTab() {
                         items: [
                           {
                             key: 'copy',
-                            label: '复制',
+                            label: 'Sao chép',
                             icon: <CopyOutlined />,
                             onClick: ({ domEvent }) => {
                               domEvent.stopPropagation()
@@ -561,7 +561,7 @@ export default function ModelsTab() {
                           },
                           {
                             key: 'delete',
-                            label: '删除',
+                            label: 'Xóa',
                             danger: true,
                             icon: <DeleteOutlined />,
                             onClick: ({ domEvent }) => {
@@ -574,7 +574,7 @@ export default function ModelsTab() {
                       trigger={['click']}
                     >
                       <Button type="text" size="small" onClick={(e) => e.stopPropagation()}>
-                        更多
+                        Thêm
                       </Button>
                     </Dropdown>,
                   ]}
@@ -584,11 +584,11 @@ export default function ModelsTab() {
                   </div>
                   <div className="font-medium mb-1">{m.name}</div>
                   <div className="text-gray-500 text-sm mb-1">
-                    供应商：{getProviderName(m.provider_id)}
+                    Nhà cung cấp: {getProviderName(m.provider_id)}
                   </div>
                   <div className="text-gray-500 text-sm line-clamp-2 mb-2">{m.description || '—'}</div>
                   {m.created_by && (
-                    <span className="text-xs text-gray-400">创建：{m.created_by}</span>
+                    <span className="text-xs text-gray-400">Người tạo: {m.created_by}</span>
                   )}
                 </Card>
               ))}
@@ -602,7 +602,7 @@ export default function ModelsTab() {
             style={{ width: '36%', minWidth: 320 }}
           >
             <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <span className="font-medium">详情</span>
+              <span className="font-medium">Chi tiết</span>
               <Button
                 type="link"
                 size="small"
@@ -611,26 +611,26 @@ export default function ModelsTab() {
                   setSelectedModel(null)
                 }}
               >
-                收起
+                Thu gọn
               </Button>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <div className="text-sm text-gray-500 mb-1">名称</div>
+                <div className="text-sm text-gray-500 mb-1">Tên</div>
                 <div className="font-medium">{selectedModel.name}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">类别</div>
+                <div className="text-sm text-gray-500 mb-1">Danh mục</div>
                 <Tag color={categoryColorMap[selectedModel.category]}>
                   {categoryLabelMap[selectedModel.category]}
                 </Tag>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">关联供应商</div>
+                <div className="text-sm text-gray-500 mb-1">Nhà cung cấp liên kết</div>
                 <div>{getProviderName(selectedModel.provider_id)}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">描述</div>
+                <div className="text-sm text-gray-500 mb-1">Mô tả</div>
                 <div className="text-gray-700 text-sm">{selectedModel.description || '—'}</div>
               </div>
               <Space>
@@ -639,9 +639,9 @@ export default function ModelsTab() {
                   icon={<EditOutlined />}
                   onClick={() => openModelModal(selectedModel)}
                 >
-                  编辑
+                  Chỉnh sửa
                 </Button>
-                <Button icon={<ThunderboltOutlined />}>快速测试</Button>
+                <Button icon={<ThunderboltOutlined />}>Kiểm tra nhanh</Button>
               </Space>
             </div>
           </div>
@@ -649,7 +649,7 @@ export default function ModelsTab() {
 
         {selectedModel && !isLargeScreen && (
           <Drawer
-            title="详情"
+            title="Chi tiết"
             placement="right"
             open={detailPanelOpen}
             onClose={() => setDetailPanelOpen(false)}
@@ -657,11 +657,11 @@ export default function ModelsTab() {
           >
             <div className="space-y-4">
               <div>
-                <div className="text-sm text-gray-500 mb-1">名称</div>
+                <div className="text-sm text-gray-500 mb-1">Tên</div>
                 <div className="font-medium">{selectedModel.name}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-500 mb-1">类别</div>
+                <div className="text-sm text-gray-500 mb-1">Danh mục</div>
                 <Tag color={categoryColorMap[selectedModel.category]}>
                   {categoryLabelMap[selectedModel.category]}
                 </Tag>
@@ -672,9 +672,9 @@ export default function ModelsTab() {
                   icon={<EditOutlined />}
                   onClick={() => openModelModal(selectedModel)}
                 >
-                  编辑
+                  Chỉnh sửa
                 </Button>
-                <Button icon={<ThunderboltOutlined />}>快速测试</Button>
+                <Button icon={<ThunderboltOutlined />}>Kiểm tra nhanh</Button>
               </Space>
             </div>
           </Drawer>
@@ -682,7 +682,7 @@ export default function ModelsTab() {
       </Layout>
 
       <Modal
-        title={modelEditing ? '编辑模型' : '添加模型'}
+        title={modelEditing ? 'Chỉnh sửa mô hình' : 'Thêm mô hình'}
         open={modelModalOpen}
         onCancel={() => {
           setModelModalOpen(false)
@@ -694,31 +694,31 @@ export default function ModelsTab() {
         destroyOnClose
       >
         <Form form={form} layout="vertical" className="pt-2">
-          <Form.Item name="name" label="名称" rules={[{ required: true }]}>
-            <Input placeholder="例如：GPT-4" />
+          <Form.Item name="name" label="Tên" rules={[{ required: true }]} >
+            <Input placeholder="Ví dụ: GPT-4" />
           </Form.Item>
-          <Form.Item name="category" label="类别" rules={[{ required: true }]}>
+          <Form.Item name="category" label="Hạng mục" rules={[{ required: true }]}>
             <Select options={MODEL_CATEGORIES.map((c) => ({ label: c.label, value: c.key }))} />
           </Form.Item>
           <Form.Item
             name="provider_id"
-            label="关联供应商"
-            rules={[{ required: true, message: '请选择供应商' }]}
+            label="Nhà cung cấp liên kết"
+            rules={[{ required: true, message: 'vui lòng chọn nhà cung cấp' }]}
           >
             <Select
               loading={providerOptionsLoading}
               placeholder={
                 selectedFormCategory
-                  ? `选择支持${categoryLabelMap[selectedFormCategory]}的供应商`
-                  : '选择供应商（请先添加供应商）'
+                  ? `Chọn nhà cung cấp hỗ trợ ${categoryLabelMap[selectedFormCategory]}`
+                  : 'Chọn nhà cung cấp (vui lòng thêm nhà cung cấp trước)'
               }
               options={providerSelectOptions}
               notFoundContent={
                 providerOptionsLoading
-                  ? '加载中…'
+                  ? 'Đang tải…'
                   : selectedFormCategory
-                    ? '暂无支持该类别的供应商'
-                    : '暂无供应商'
+                    ? 'Chưa có nhà cung cấp hỗ trợ hạng mục này'
+                    : 'Chưa có nhà cung cấp'
               }
             />
           </Form.Item>
@@ -730,10 +730,10 @@ export default function ModelsTab() {
               message={unsupportedProviderWarning}
             />
           )}
-          <Form.Item name="params" label="参数（JSON）">
+          <Form.Item name="params" label="tham số(JSON)">
             <Input.TextArea rows={3} placeholder='{"max_tokens": 4096, "temperature": 0.7}' />
           </Form.Item>
-          <Form.Item name="description" label="描述">
+          <Form.Item name="description" label="Mô tả">
             <Input.TextArea rows={2} />
           </Form.Item>
         </Form>

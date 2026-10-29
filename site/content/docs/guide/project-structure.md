@@ -1,46 +1,46 @@
 ---
-title: "项目结构"
+title: "Cấu trúc dự án"
 weight: 1
-description: "快速理解 Jellyfish 的顶层目录和主业务链路。"
+description: "nhanh chóng hiểu thư mục top-level và chuỗi nghiệp vụ chính của Jellyfish."
 ---
 
-## 顶层目录
+## Thư mục cấp trên cùng
 
 ```text
 jellyfish/
-├── backend/    # FastAPI、服务层、模型层、AI 工作流
-├── front/      # React + Vite 前端工作台
-├── deploy/     # Docker 与 Compose 配置
-├── docs/       # 仓库内文档与图片素材
-└── site/       # Hugo 官网与文档站
+├── backend/    # FastAPI, lớp dịch vụ, lớp mô hình, AI Work flow
+├── front/      # React + Vite Trang làm việc frontend
+├── deploy/     # Docker và Compose Cấu hình
+├── docs/       # Tài liệu và chất liệu hình ảnh trong kho
+└── site/       # Hugo website chính và trang tài liệu
 ```
 
-## 主业务链路
+## Chuỗi nghiệp vụ chính
 
 ```text
-项目 -> 章节 -> 分镜 -> 资产 / 帧图 -> 时间线
+dự án -> chương -> phân cảnh -> Tài nguyên / Hình khung -> Trục thời gian
 ```
 
-## 前端职责
+## Trách nhiệm phía trước
 
-- 承接 Studio 工作台页面
-- 使用 OpenAPI 生成客户端与后端协作
-- 管理项目、章节、分镜、资产、模型与 Agent 相关 UI
+- Nhận trang bàn làm việc Studio
+- Sử dụng OpenAPI Hợp tác client với backend
+- Quản lý dự án, chương, phân cảnh, tài nguyên, mô hình và Agent liên quan UI
 
-## 后端职责
+## Trách nhiệm phía sau
 
-- 提供 `studio / llm / film / script-processing` 等 API
-- 管理数据库模型、文件存储与任务状态
-- 通过 `chains / services / core.tasks` 接入 AI 能力
+- cung cấp `studio / llm / film / script-processing` v.v. API
+- Quản lý mô hình CSDL, lưu trữ tệp và trạng thái tác vụ
+- Đạt `chains / services / core.tasks` gắn vào AI khả năng
 
-## 站点职责
+## Trách nhiệm của site
 
-- 官网首页与产品介绍
-- 安装、开发、部署与贡献文档
-- 后续可以承接版本日志和更新公告
+- Trang chủ chính thức và giới thiệu sản phẩm
+- Tài liệu cài đặt, phát triển, triển khai và đóng góp
+- Sau này có thể nhận nhật ký phiên bản và thông báo cập nhật
 
-## 推荐阅读路径
+## Đường dẫn đọc được khuyến nghị
 
-1. 先看 [前端说明](/docs/guide/frontend/)
-2. 再看 [后端说明](/docs/guide/backend/)
-3. 最后看 [AI 工作流](/docs/guide/ai-workflow/)
+1. Xem trước [Giải thích frontend](/docs/guide/frontend/)
+2. Xem tiếp [Giải thích backend](/docs/guide/backend/)
+3. Xem cuối [AI Work flow](/docs/guide/ai-workflow/)

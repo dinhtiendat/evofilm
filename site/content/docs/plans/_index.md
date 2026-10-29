@@ -1,15 +1,15 @@
 ---
-title: "任务计划"
+title: "Kế hoạch tác vụ"
 weight: 4
-description: "记录当前正在推进的开发计划、改造方案与阶段性执行清单。"
+description: "ghi lại kế hoạch phát triển, phương án cải tạo và danh sách thực thi theo giai đoạn đang triển khai hiện tại."
 ---
 
-这里记录 Jellyfish 当前仍在推进中的任务计划与重构方案。
+Ở đây ghi nhận các kế hoạch tác vụ và phương án tái cấu trúc của Jellyfish đang tiếp tục triển khai.
 
-- 放这里的内容允许持续更新，因为它描述的是**接下来做什么**。
-- 当某项计划已经稳定落地后，应优先沉淀到 [当前架构](/docs/architecture/) 或发布到 `blog` 中。
+- Nội dung đặt ở đây được phép cập nhật liên tục vì nó mô tả **sẽ làm gì tiếp theo**.
+- Khi một kế hoạch đã ổn định triển khai xong, nên ưu tiên chuyển vào [Kiến trúc hiện tại](/docs/architecture/) hoặc phát hành ra `blog`.
 
-当前计划入口：
+Điểm vào kế hoạch hiện tại:
 
-- [开发规划](/docs/plans/development-plan/)
-- [任务异步化与取消方案](/docs/plans/task-async-cancellation-plan/)
+- [Lộ trình phát triển](/docs/plans/development-plan/)
+- [Phương án bất đồng bộ hóa và hủy tác vụ](/docs/plans/task-async-cancellation-plan/)

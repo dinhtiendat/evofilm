@@ -1,4 +1,4 @@
-"""镜头服务：Shot 的分页查询与 CRUD。"""
+"""Service phân cảnh: truy vấn phân trang và CRUD của Shot."""
 
 from __future__ import annotations
 
@@ -177,7 +177,7 @@ async def list_paginated(
     page_size: int,
     allow_fields: set[str],
 ) -> ApiResponse[PaginatedData[ShotRead]]:
-    """分页查询镜头。"""
+    """Truy vấn phân trang phân cảnh.。"""
     stmt = select(Shot)
     if chapter_id is not None:
         stmt = stmt.where(Shot.chapter_id == chapter_id)
@@ -204,7 +204,7 @@ async def create(
     *,
     body: ShotCreate,
 ) -> Shot:
-    """创建镜头。"""
+    """Tạo phân cảnh.。"""
     await ensure_not_exists(db, Shot, body.id, detail=entity_already_exists("Shot"))
     await require_entity(db, Chapter, body.chapter_id, detail=entity_not_found("Chapter"), status_code=400)
     return await create_and_refresh(db, Shot(**body.model_dump()))
@@ -215,7 +215,7 @@ async def get(
     *,
     shot_id: str,
 ) -> Shot:
-    """获取镜头。"""
+    """Lấy phân cảnh.。"""
     return await get_or_404(db, Shot, shot_id, detail=entity_not_found("Shot"))
 
 
@@ -225,7 +225,7 @@ async def update(
     shot_id: str,
     body: ShotUpdate,
 ) -> Shot:
-    """更新镜头。"""
+    """Cập nhật phân cảnh.。"""
     obj = await get_or_404(db, Shot, shot_id, detail=entity_not_found("Shot"))
     update_data = body.model_dump(exclude_unset=True)
     if "chapter_id" in update_data:
@@ -245,5 +245,5 @@ async def delete(
     *,
     shot_id: str,
 ) -> None:
-    """删除镜头。"""
+    """Xóa phân cảnh.。"""
     await delete_if_exists(db, Shot, shot_id)

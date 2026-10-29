@@ -1,4 +1,4 @@
-"""将提取草稿中的镜头语言默认建议回写到 ShotDetail。"""
+"""Ghi ngược gợi ý mặc định ngôn ngữ điện ảnh trong bản nháp trích xuất vào ShotDetail."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from app.models.studio import CameraAngle, CameraMovement, CameraShotType, Shot,
 
 
 def _get_value(obj: Any, key: str) -> Any:
-    """兼容 dict / Pydantic model / 普通对象的字段读取。"""
+    """đọc trường tương thích dict / Pydantic model / object thường."""
 
     if isinstance(obj, dict):
         return obj.get(key)
@@ -20,7 +20,7 @@ def _get_value(obj: Any, key: str) -> Any:
 
 
 def _coerce_enum(enum_cls: type, value: Any) -> Any:
-    """将提取结果里的字符串安全转换为枚举；非法值直接忽略。"""
+    """Chuyển chuỗi trong kết quả trích xuất thành enum an toàn; giá trị không hợp lệ sẽ bị bỏ qua."""
 
     if value in (None, ""):
         return None
@@ -33,7 +33,7 @@ def _coerce_enum(enum_cls: type, value: Any) -> Any:
 
 
 def _coerce_duration(value: Any) -> int | None:
-    """将提取结果里的时长安全转换为正整数秒数。"""
+    """Chuyển đổi an toàn thời lượng trong kết quả trích xuất thành số giây nguyên dương."""
 
     if value in (None, ""):
         return None
@@ -45,7 +45,7 @@ def _coerce_duration(value: Any) -> int | None:
 
 
 def _apply_detail_defaults_from_shot_draft(detail: ShotDetail, shot_draft: Any) -> None:
-    """将单镜提取草稿中的默认镜头语言写入到现有 ShotDetail。"""
+    """Ghi ngôn ngữ điện ảnh mặc định trong bản nháp trích xuất một phân cảnh vào ShotDetail hiện có."""
 
     semantic = _get_value(shot_draft, "semantic_suggestion")
     source = semantic or shot_draft
@@ -78,7 +78,7 @@ async def apply_shot_semantic_defaults_from_draft(
     chapter_id: str,
     draft: Any,
 ) -> None:
-    """按镜头序号匹配草稿，并将镜头语言默认建议回写到 ShotDetail。"""
+    """ghép nháp theo số thứ tự shot, và ghi ngược đề xuất mặc định ngôn ngữ điện ảnh vào ShotDetail."""
 
     shot_rows = (
         await db.execute(
@@ -106,7 +106,7 @@ def apply_shot_semantic_defaults_from_draft_sync(
     chapter_id: str,
     draft: Any,
 ) -> None:
-    """同步任务执行器版本：将镜头语言默认建议回写到 ShotDetail。"""
+    """Đồng bộ phiên bản executor tác vụ: ghi ngược gợi ý mặc định ngôn ngữ điện ảnh vào ShotDetail."""
 
     shot_rows = db.execute(select(Shot.id, Shot.index).where(Shot.chapter_id == chapter_id)).all()
     shot_id_by_index = {int(row.index): str(row.id) for row in shot_rows}

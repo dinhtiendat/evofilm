@@ -1,22 +1,22 @@
 ---
-title: "开发指南"
+title: "Hướng dẫn phát triển"
 weight: 2
-description: "聚焦怎么开发、怎么协作、怎么接入前后端能力的实践说明。"
+description: "tập trung thực hành về cách phát triển, cách cộng tác, cách nối năng lực phía trước phía sau."
 ---
 
-这里聚焦“怎么做”的开发说明，不再混放当前架构事实和未来任务计划。
+Ở đây tập trung hướng dẫn phát triển “làm thế nào”, không còn lẫn lộn với sự thật kiến trúc hiện tại và kế hoạch tác vụ tương lai.
 
-- [前端说明](/docs/guide/frontend/)
-- [后端说明](/docs/guide/backend/)
+- [Giải thích frontend](/docs/guide/frontend/)
+- [Giải thích backend](/docs/guide/backend/)
 - [OpenAPI](/docs/guide/openapi/)
-- [AI 工作流](/docs/guide/ai-workflow/)
-- [LLM 供应商注册与扩展](/docs/guide/llm-provider-registration/)
+- [AI Work flow](/docs/guide/ai-workflow/)
+- [Đăng ký và mở rộng nhà cung cấp LLM](/docs/guide/llm-provider-registration/)
 
-相关文档已拆分到独立栏目：
+Tài liệu liên quan đã tách sang chuyên mục riêng:
 
-- 当前事实与边界请看 [当前架构](/docs/architecture/)
-- 后续执行方案请看 [任务计划](/docs/plans/)
+- Sự thật và ranh giới hiện tại xem tại [Kiến trúc hiện tại](/docs/architecture/)
+- Phương án thực thi tiếp theo xem tại [Kế hoạch tác vụ](/docs/plans/)
 
-相关发布与阶段记录：
+Bản phát hành và bản ghi giai đoạn liên quan:
 
-- [后端重构阶段总结：路由瘦身、Service 分层与测试补强](/blog/backend-refactor-phase-1/)
+- [Tổng kết giai đoạn tái cấu trúc phía sau: tinh giản route, phân tầng Service và củng cố test](/blog/backend-refactor-phase-1/)

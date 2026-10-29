@@ -4,33 +4,33 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class EntityNameExistenceCheckRequest(BaseModel):
-    """批量检测项目内/全局资产名称是否存在（模糊匹配）。"""
+    """Kiểm tra hàng loạt tên tài nguyên trong dự án/toàn cục có tồn tại không (khớp mờ)."""
 
     model_config = ConfigDict(extra="forbid")
 
-    project_id: str = Field(..., description="项目 ID（必填）", min_length=1)
-    shot_id: str | None = Field(None, description="镜头 ID（可选；不传则 linked_to_shot 恒为 false）")
-    character_names: list[str] = Field(default_factory=list, description="角色名称列表")
-    prop_names: list[str] = Field(default_factory=list, description="道具名称列表")
-    scene_names: list[str] = Field(default_factory=list, description="场景名称列表")
-    costume_names: list[str] = Field(default_factory=list, description="服装名称列表")
+    project_id: str = Field(..., description="ID dự án (bắt buộc)", min_length=1)
+    shot_id: str | None = Field(None, description="ID phân cảnh (tùy chọn; không truyền thì linked_to_shot luôn là false)")
+    character_names: list[str] = Field(default_factory=list, description="Danh sách tên nhân vật")
+    prop_names: list[str] = Field(default_factory=list, description="Danh sách tên đạo cụ")
+    scene_names: list[str] = Field(default_factory=list, description="Danh sách tên bối cảnh")
+    costume_names: list[str] = Field(default_factory=list, description="Danh sách tên trang phục")
 
 
 class EntityNameExistenceItem(BaseModel):
-    """单个名称的存在性结果。"""
+    """Kết quả tồn tại của một tên."""
 
     model_config = ConfigDict(extra="forbid")
 
-    name: str = Field(..., description="输入名称（原样回传）")
-    exists: bool = Field(..., description="数据库中是否存在（模糊命中）")
-    linked_to_project: bool = Field(..., description="是否已关联到该项目（角色等同于 exists）")
-    linked_to_shot: bool = Field(False, description="是否已关联到请求中的 shot（未传 shot_id 时为 false）")
-    asset_id: str | None = Field(None, description="命中的资产 ID（如 prop_id/scene_id/costume_id/character_id）")
-    link_id: int | None = Field(None, description="若已关联到项目，对应 Project*Link 的 id；否则为空")
+    name: str = Field(..., description="tên đầu vào (trả nguyên như vậy)")
+    exists: bool = Field(..., description="Có tồn tại trong cơ sở dữ liệu không (trùng khớp mơ hồ)")
+    linked_to_project: bool = Field(..., description="Đã liên kết tới dự án này chưa (đối với nhân vật tương đương với exists)")
+    linked_to_shot: bool = Field(False, description="Có liên kết với shot trong yêu cầu không (false nếu chưa truyền shot_id)")
+    asset_id: str | None = Field(None, description="ID tài nguyên khớp (ví dụ prop_id/scene_id/costume_id/character_id)")
+    link_id: int | None = Field(None, description="Nếu đã liên kết tới dự án, là id tương ứng của Project*Link; nếu không thì để trống")
 
 
 class EntityNameExistenceCheckResponse(BaseModel):
-    """批量存在性检测结果（按资产类型分组）。"""
+    """Kết quả kiểm tra tồn tại hàng loạt (nhóm theo loại tài nguyên)."""
 
     model_config = ConfigDict(extra="forbid")
 

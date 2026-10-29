@@ -1,4 +1,4 @@
-"""变体分析 Agent：VariantAnalyzerAgent"""
+"""Agent phân tích biến thể: VariantAnalyzerAgent"""
 
 from __future__ import annotations
 
@@ -10,24 +10,24 @@ from app.chains.agents.base import AgentBase
 from app.schemas.skills.script_processing import VariantAnalysisResult
 
 _VARIANT_ANALYZER_SYSTEM_PROMPT = """\
-你是\"变体分析师\"。分析实体变体（特别是角色服装变化），构建时间线，生成变体建议。
-输出 VariantAnalysisResult：costume_timelines.timeline_entries 使用 {shot_index, scene_id, costume_note, changes, evidence}；variant_suggestions 可带 evidence。
-只输出 JSON，符合 VariantAnalysisResult 结构。
+Bạn là \"Nhà phân tích biến thể\". Phân tích biến thể của thực thể (đặc biệt là thay đổi trang phục của nhân vật), dựng timeline, tạo đề xuất biến thể.
+Xuất VariantAnalysisResult: costume_timelines.timeline_entries dùng {shot_index, scene_id, costume_note, changes, evidence}; variant_suggestions có thể kèm evidence.
+Chỉ xuất JSON, đúng cấu trúc VariantAnalysisResult.
 """
 
 VARIANT_ANALYZER_PROMPT = PromptTemplate(
     input_variables=["merged_library_json", "all_extractions_json", "script_division_json"],
     template=(
-        "## 脚本分镜(来自上一步)\n{script_division_json}\n\n"
-        "## 合并后的实体库\n{merged_library_json}\n\n"
-        "## 所有镜头提取结果\n{all_extractions_json}\n\n"
-        "## 输出\n"
+        "## Phân cảnh kịch bản (từ bước trước)\n{script_division_json}\n\n"
+        "## Thư viện thực thể đã gộp\n{merged_library_json}\n\n"
+        "## Kết quả trích xuất của mọi cảnh\n{all_extractions_json}\n\n"
+        "## Đầu ra\n"
     ),
 )
 
 
 class VariantAnalyzerAgent(AgentBase[VariantAnalysisResult]):
-    """服装/外形变体检测与建议：输入实体库+全镜提取，输出变体分析结果。"""
+    """Phát hiện và đề xuất biến thể trang phục/ngoại hình: nhận thư viện thực thể + trích xuất toàn cảnh, xuất kết quả phân tích biến thể."""
 
     @property
     def system_prompt(self) -> str:
@@ -42,7 +42,7 @@ class VariantAnalyzerAgent(AgentBase[VariantAnalysisResult]):
         return VariantAnalysisResult
 
     def _normalize(self, data: dict[str, Any]) -> dict[str, Any]:
-        """规范化变体分析结果。"""
+        """Chuẩn hóa kết quả phân tích biến thể."""
         data = dict(data)
         if "costume_timelines" not in data or not isinstance(data["costume_timelines"], list):
             data["costume_timelines"] = []
@@ -50,7 +50,7 @@ class VariantAnalyzerAgent(AgentBase[VariantAnalysisResult]):
             data["variant_suggestions"] = []
         if "chapter_variants" not in data or not isinstance(data["chapter_variants"], dict):
             data["chapter_variants"] = {}
-        # 补齐可选 evidence 字段，避免 strict schema 校验失败
+        # Bổ sung trường evidence tùy chọn để tránh thất bại validation schema strict
         for tl in data.get("costume_timelines", []) or []:
             if not isinstance(tl, dict):
                 continue

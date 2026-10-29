@@ -1,4 +1,4 @@
-"""镜头子资源接口响应壳测试：细节 / 对白 / 分镜帧。"""
+"""Kiểm thử vỏ phản hồi API con tài nguyên của phân cảnh: chi tiết / thoại / khung hình phân cảnh."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ from app.models.studio import (
 
 
 class _FakeShotSubresourceDB:
-    """最小 DB 替身：仅覆盖镜头子资源接口测试所需行为。"""
+    """Thế thân CSDL tối thiểu: chỉ phủ các hành vi cần cho kiểm thử giao diện con tài nguyên của phân cảnh."""
 
     def __init__(self) -> None:
         self.projects: dict[str, Project] = {}
@@ -117,8 +117,8 @@ def _seed_project_and_shot(db: _FakeShotSubresourceDB) -> None:
     now = datetime.now(UTC)
     project = Project(
         id="proj-1",
-        name="测试项目",
-        description="项目说明",
+        name="Dự án thử",
+        description="Giải thích dự án",
         style=ProjectStyle.real_people_city,
         visual_style=ProjectVisualStyle.live_action,
         seed=1,
@@ -134,10 +134,10 @@ def _seed_project_and_shot(db: _FakeShotSubresourceDB) -> None:
         id="ch-1",
         project_id=project.id,
         index=1,
-        title="第一章",
-        summary="章节摘要",
-        raw_text="原文",
-        condensed_text="精简原文",
+        title="Chương 1",
+        summary="Tóm tắt chương",
+        raw_text="Nguyên văn",
+        condensed_text="Nguyên văn rút gọn",
         storyboard_count=0,
         status=ChapterStatus.draft,
     )
@@ -149,10 +149,10 @@ def _seed_project_and_shot(db: _FakeShotSubresourceDB) -> None:
         id="shot-1",
         chapter_id=chapter.id,
         index=1,
-        title="镜头一",
+        title="Phân cảnh 1",
         thumbnail="",
         status=ShotStatus.pending,
-        script_excerpt="剧本摘录",
+        script_excerpt="Trích dẫn kịch bản",
         generated_video_file_id=None,
     )
     shot.created_at = now
@@ -259,7 +259,7 @@ def test_create_shot_dialog_line_returns_created_envelope(client: TestClient) ->
             json={
                 "shot_detail_id": "shot-1",
                 "index": 1,
-                "text": "你好",
+                "text": "Xin chào",
                 "line_mode": "DIALOGUE",
                 "speaker_character_id": None,
                 "target_character_id": None,
@@ -273,7 +273,7 @@ def test_create_shot_dialog_line_returns_created_envelope(client: TestClient) ->
     assert response.status_code == 201
     body = response.json()
     assert body["code"] == 201
-    assert body["data"]["text"] == "你好"
+    assert body["data"]["text"] == "Xin chào"
     assert body["data"]["id"] == 1
 
 
@@ -283,7 +283,7 @@ def test_update_shot_dialog_line_not_found_returns_api_response(client: TestClie
     try:
         response = client.patch(
             "/api/v1/studio/shot-dialog-lines/999",
-            json={"text": "更新后的台词"},
+            json={"text": "Lời thoại sau khi cập nhật"},
         )
     finally:
         app.dependency_overrides.clear()
@@ -299,7 +299,7 @@ def test_delete_shot_dialog_line_returns_empty_envelope(client: TestClient) -> N
     line = ShotDialogLine(
         shot_detail_id="shot-1",
         index=1,
-        text="你好",
+        text="Xin chào",
         line_mode=DialogueLineMode.dialogue,
         speaker_character_id=None,
         target_character_id=None,

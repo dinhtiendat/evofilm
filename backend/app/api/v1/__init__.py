@@ -1,4 +1,4 @@
-"""API v1 路由聚合。"""
+"""Tổng hợp định tuyến API v1."""
 
 from fastapi import APIRouter
 

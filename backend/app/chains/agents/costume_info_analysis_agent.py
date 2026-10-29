@@ -1,4 +1,4 @@
-"""服装信息缺失分析 Agent：CostumeInfoAnalysisAgent"""
+"""Agent phân tích thông tin còn thiếu về trang phục: CostumeInfoAnalysisAgent"""
 
 from __future__ import annotations
 
@@ -10,36 +10,36 @@ from app.chains.agents.base import AgentBase
 from app.schemas.skills.costume_info_analysis import CostumeInfoAnalysisResult
 
 _COSTUME_INFO_SYSTEM_PROMPT = """\
-你是"服装信息分析师"。你的任务是：当给定一份“原文服装/造型描述”时，判断其中缺少哪些关键信息，导致无法生成合理的服装资产图（版型结构/层次搭配/材质与纹理/颜色与图案/配饰与鞋帽/时代与风格/做旧与状态等）。
+Bạn là "Nhà phân tích thông tin trang phục". Nhiệm vụ của bạn: khi nhận được một "mô tả trang phục/tạo hình trong nguyên văn", hãy xác định những thông tin quan trọng nào còn thiếu khiến không thể tạo được hình ảnh tài nguyên trang phục hợp lý (cấu trúc form / phối layer / chất liệu và hoa văn / màu sắc và họa tiết / phụ kiện và giày mũ / thời đại và phong cách / làm cũ và tình trạng, v.v.).
 
-要求：
-- 输出必须严格服务于“可直接用于AI图像生成”的目的，optimized_description 需是一段连贯、正面、画面感强的描述。
-- 原文仅作参照：只能在原文已明确给出的内容基础上进行顺滑连接或不改变原意的重排，不能修改、替换或弱化原文中的任何关键信息（服装款式、颜色、材质、身份与阶层暗示、状态等）。
-- 当原文信息不足时，进行合理的保守补全式扩展，使 optimized_description 至少覆盖以下维度：整体穿搭风格与时代感、上装/下装/外套层次、版型与廓形、材质与表面质感、主色与辅色、图案与工艺细节（如缝线/金属件/刺绣/纽扣/拉链等）、配饰（腰带/首饰/包/手套等）、鞋靴与袜类、发饰或帽子（如适用）、以及服装状态（整洁/皱褶/磨损/污渍/破损/湿润等）。
-- issues：列出原文真正缺失的关键维度或存在的歧义点，并具体说明这些缺失如何影响服装资产生成的一致性、层次可读性或风格准确性。
-- optimized_description：在尽量保留原文原词原意的基础上，完整保留所有明确信息，并通过正面肯定句式补全缺失部分，形成一段可直接复制用于AI图像生成模型的完整服装描述。
+Yêu cầu:
+- Đầu ra phải phục vụ đúng mục đích "dùng trực tiếp cho tạo hình ảnh bằng AI", optimized_description phải là một đoạn mô tả liền mạch, mang tính khẳng định, giàu sức gợi hình.
+- Nguyên văn chỉ dùng làm tham chiếu: chỉ được nối mượt hoặc sắp xếp lại không đổi ý gốc trên những nội dung nguyên văn đã nêu rõ; không được sửa, thay hay làm suy yếu bất kỳ thông tin quan trọng nào trong nguyên văn (kiểu trang phục, màu sắc, chất liệu, gợi ý thân phận và tầng lớp, tình trạng, v.v.).
+- Khi nguyên văn còn thiếu, hãy mở rộng bổ sung thận trọng và hợp lý, sao cho optimized_description bao phủ ít nhất các khía cạnh: phong cách phối đồ tổng thể và cảm giác thời đại, lớp áo trên/áo dưới/áo khoác, form dáng và silhouette, chất liệu và kết cấu bề mặt, màu chủ đạo và màu phụ, họa tiết và chi tiết xử lý (như đường may / phụ kiện kim loại / thêu / cúc / kéo, v.v.), phụ kiện (đai / trang sức / túi / găng tay, v.v.), giày và đồ tất, phụ kiện tóc hoặc mũ (nếu phù hợp), cùng tình trạng trang phục (gọn gàng / nhăn / sờn / bẩn / rách / ẩm, v.v.).
+- issues: liệt kê các khía cạnh quan trọng thực sự bị thiếu hoặc các điểm mơ hồ trong nguyên văn, và nói rõ những thiếu sót đó ảnh hưởng thế nào đến tính nhất quán khi tạo tài nguyên trang phục, khả năng đọc tầng lớp hoặc độ chính xác của phong cách.
+- optimized_description: trên cơ sở giữ nguyên tối đa từ ngữ và ý gốc, giữ lại đầy đủ mọi thông tin rõ ràng, dùng câu văn khẳng định để bổ sung phần còn thiếu, tạo thành một đoạn mô tả trang phục hoàn chỉnh có thể sao chép trực tiếp đưa vào mô hình tạo hình ảnh AI.
 
-禁止项（严格执行）：
-- optimized_description 中绝对不允许出现“未被详细说明”“信息不详”“未知”“不明确”“假设”“比如”“可以设想”“类似”“通常”“可能”“大概”等任何模糊、不稳定、占位或推测性词语。
-- 所有描述必须使用肯定、具体的正面语言，直接给出可视觉化的细节。
-- issues 中只分析缺失或歧义，不在 optimized_description 中重复提及缺少的内容。
-- 若原文已足够完整，issues 可为空或极简，optimized_description 仍需做结构化顺滑表达，但不得添加原文未暗示的关键事实。
+Các điều cấm (thi hành nghiêm ngặt):
+- optimized_description tuyệt đối không được xuất hiện các từ mơ hồ, thiếu ổn định, mang tính chỗ giữ (placeholder) hoặc suy đoán như "chưa được mô tả chi tiết" "thông tin không rõ" "không xác định" "không rõ ràng" "giả định" "ví dụ" "có thể hình dung" "tương tự" "thường" "có thể" "đại khái".
+- Mọi mô tả phải dùng ngôn ngữ khẳng định, cụ thể, tích cực, trực tiếp đưa ra chi tiết có thể hình dung được.
+- issues chỉ phân tích chỗ thiếu hoặc điểm mơ hồ, không nhắc lại nội dung bị thiếu trong optimized_description.
+- Nếu nguyên văn đã đủ đầy, issues có thể để trống hoặc tối giản, optimized_description vẫn cần diễn đạt có cấu trúc, thuận mạch, nhưng không được thêm sự kiện quan trọng mà nguyên văn không hề gợi ý.
 
-只输出 JSON，符合 CostumeInfoAnalysisResult 结构。
+Chỉ xuất JSON, đúng cấu trúc CostumeInfoAnalysisResult.
 """
 
 COSTUME_INFO_PROMPT = PromptTemplate(
     input_variables=["costume_context", "costume_description"],
     template=(
-        "## 原文服装上下文（可为空）\n{costume_context}\n\n"
-        "## 原文服装描述\n{costume_description}\n\n"
-        "## 输出\n"
+        "## Bối cảnh trang phục trong nguyên văn (có thể để trống)\n{costume_context}\n\n"
+        "## Mô tả trang phục trong nguyên văn\n{costume_description}\n\n"
+        "## Đầu ra\n"
     ),
 )
 
 
 class CostumeInfoAnalysisAgent(AgentBase[CostumeInfoAnalysisResult]):
-    """根据原文服装/造型描述分析缺失信息，并输出优化后的可生成服装描述。"""
+    """Phân tích thông tin còn thiếu từ mô tả trang phục/tạo hình trong nguyên văn và xuất mô tả trang phục đã tối ưu, sẵn sàng tạo ảnh."""
 
     @property
     def system_prompt(self) -> str:
@@ -70,7 +70,7 @@ class CostumeInfoAnalysisAgent(AgentBase[CostumeInfoAnalysisResult]):
         )
 
     def _normalize(self, data: dict[str, Any]) -> dict[str, Any]:
-        # 宽松兼容：issues/optimized_description 字段类型兜底，避免 strict schema 校验失败
+        # Tương thích nới lỏng: chặn đáy kiểu dữ liệu các trường issues/optimized_description để tránh thất bại validation schema strict
         data = dict(data)
         issues = data.get("issues", [])
         if not isinstance(issues, list):
@@ -81,15 +81,15 @@ class CostumeInfoAnalysisAgent(AgentBase[CostumeInfoAnalysisResult]):
         optimized = data.get("optimized_description") or ""
         if isinstance(optimized, str) and optimized:
             fuzzy_markers = (
-                "信息不详",
-                "不详",
-                "未知",
-                "不明确",
-                "未提及",
-                "看不出来",
-                "无法判断",
-                "不确定",
-                "暂时无法判断",
+                "thông tin không rõ",
+                "không rõ",
+                "không xác định",
+                "không rõ ràng",
+                "không đề cập",
+                "không thể nhận ra",
+                "không thể đánh giá",
+                "không chắc",
+                "tạm thời không thể đánh giá",
             )
             if any(m in optimized for m in fuzzy_markers):
                 parts = optimized.replace("\n", " ").split("。")

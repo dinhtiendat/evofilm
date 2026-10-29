@@ -1,4 +1,4 @@
-"""SQLAlchemy ORM 模型。"""
+"""Mô hình ORM SQLAlchemy."""
 
 from app.core.db import Base
 from app.models.base import TimestampMixin

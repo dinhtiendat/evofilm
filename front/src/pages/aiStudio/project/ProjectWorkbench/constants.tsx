@@ -43,21 +43,21 @@ export function isTabKey(s: string): s is TabKey {
 export const DEFAULT_TAB: TabKey = 'dashboard'
 
 export const TAB_CONFIG: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-  { key: 'dashboard', label: '仪表盘', icon: <HomeOutlined /> },
-  { key: 'chapters', label: '章节', icon: <UnorderedListOutlined /> },
-  { key: 'actors', label: '演员', icon: <UserOutlined /> },
-  { key: 'roles', label: '角色', icon: <UserOutlined /> },
-  { key: 'scenes', label: '场景', icon: <PictureOutlined /> },
-  { key: 'props', label: '道具', icon: <ScissorOutlined /> },
-  { key: 'costumes', label: '服装', icon: <ScissorOutlined /> },
-  { key: 'files', label: '文件', icon: <FileImageOutlined /> },
-  { key: 'edit', label: '剪辑', icon: <VideoCameraOutlined /> },
-  { key: 'settings', label: '设置', icon: <SettingOutlined /> },
+  { key: 'dashboard', label: 'Bảng điều khiển', icon: <HomeOutlined /> },
+  { key: 'chapters', label: 'Chương', icon: <UnorderedListOutlined /> },
+  { key: 'actors', label: 'Diễn viên', icon: <UserOutlined /> },
+  { key: 'roles', label: 'Nhân vật', icon: <UserOutlined /> },
+  { key: 'scenes', label: 'Bối cảnh', icon: <PictureOutlined /> },
+  { key: 'props', label: 'Đạo cụ', icon: <ScissorOutlined /> },
+  { key: 'costumes', label: 'Trang phục', icon: <ScissorOutlined /> },
+  { key: 'files', label: 'Tệp', icon: <FileImageOutlined /> },
+  { key: 'edit', label: 'Dàn dựng', icon: <VideoCameraOutlined /> },
+  { key: 'settings', label: 'Cài đặt', icon: <SettingOutlined /> },
 ]
 
 export const chapterStatusMap: Record<Chapter['status'], { color: string; text: string }> = {
-  draft: { color: 'default', text: '草稿' },
-  shooting: { color: 'processing', text: '拍摄中' },
-  done: { color: 'success', text: '完成' },
+  draft: { color: 'default', text: 'Bản nháp' },
+  shooting: { color: 'processing', text: 'đang quay' },
+  done: { color: 'success', text: 'Hoàn thành' },
 }
 

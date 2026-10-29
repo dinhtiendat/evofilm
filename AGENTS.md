@@ -1,126 +1,126 @@
 # Jellyfish Agent Guide
 
-## 代码规范
+## Quy tắc mã nguồn
 
-1. API 变更后，必须运行 `pnpm run openapi:update` 同步 OpenAPI 接口。
-2. 前端调用后端接口时，统一走 OpenAPI generated client，不再新增手写 service 封装。
-3. 当前端样式重复度大于 1 次时，应优先抽离为可复用组件或公共样式结构。
-4. 后端必须严格区分 `api` 层与 `service` 层职责：
-   - `api` 层负责收参、鉴权、响应组织。
-   - `service` 层负责业务逻辑、状态流转、数据编排。
-5. 函数、类等代码块必须添加注释：
-   - 至少包含功能介绍（说明“做什么”与“为什么存在”）。
-   - 复杂函数需补充参数说明、返回值说明（如适用）与关键内部逻辑注释。
-   - 注释应与实现保持同步，避免过时或空泛描述。
-6. `site` 文档目录中：
-   - `site/content/blog` 用于存放 release note。
-   - 已固化版本的 release note，在未被明确指定时不得修改。
-7. `site/content/docs` 的栏目职责必须严格区分：
-   - `guide` = 开发指南 / how-to，回答“怎么做”。
-   - `architecture` = 当前架构，回答“现在是什么”。
-   - `plans` = 任务计划，回答“接下来做什么”。
-   - `reference` = 稳定参考资料，回答“查什么”。
-8. 新增或调整文档时，必须先判断内容归属：
-   - 当前真实实现、当前边界、当前状态流转，放 `architecture`。
-   - 正在推进或待推进的改造方案、任务拆解、阶段计划，放 `plans`。
-   - 操作说明、开发流程、接入方式，放 `guide`。
-9. 生成能力相关的通用契约（输入/输出 DTO、供应商配置等）统一放在 `app/core/contracts`：
-   - `tasks` 仅保留任务封装、分派与执行编排，不定义跨层 DTO。
-   - `integrations` 仅依赖 `contracts`，不依赖 `tasks` 类型模块。
+1. Sau khi thay đổi API, bắt buộc chạy `pnpm run openapi:update` để đồng bộ OpenAPI.
+2. Khi frontend gọi API backend, thống nhất dùng OpenAPI generated client, không thêm service bọc thủ công mới.
+3. Khi mức lặp lại style phía trước lớn hơn 1 lần, nên ưu tiên tách thành component tái sử dụng hoặc cấu trúc style dùng chung.
+4. Backend phải phân định rõ ràng trách nhiệm giữa tầng `api` và tầng `service`:
+   - Tầng `api` chịu trách nhiệm nhận tham số, xác thực, tổ chức phản hồi.
+   - Tầng `service` chịu trách nhiệm logic nghiệp vụ, chu chuyển trạng thái, điều phối dữ liệu.
+5. Khối mã như hàm, lớp bắt buộc thêm chú thích:
+   - Đưa ra giới thiệu chức năng (nói rõ “làm gì” và “tồn tại vì sao”).
+   - Hàm phức tạp cần bổ sung chú thích về tham số, giá trị trả về (nếu có) và logic bên trong chính.
+   - Chú thích cần đồng bộ với thực hiện, tránh mô tả lỗi thời hoặc sáo rỗng.
+6. Trong thư mục tài liệu `site`:
+   - `site/content/blog` dùng để lưu release note.
+   - Release note của phiên bản đã đóng băng, khi chưa được chỉ định rõ thì không được sửa.
+7. Trách nhiệm các chuyên mục của `site/content/docs` phải được phân định rõ ràng:
+   - `guide` = hướng dẫn phát triển / how-to, trả lời “làm thế nào”.
+   - `architecture` = kiến trúc hiện tại, trả lời “bây giờ là gì”.
+   - `plans` = kế hoạch tác vụ, trả lời “tiếp theo làm gì”.
+   - `reference` = tài liệu tham khảo ổn định, trả lời “tra gì”.
+8. Khi thêm hoặc điều chỉnh tài liệu, phải xác định trước nội dung thuộc về:
+   - Thực tế hiện tại, ranh giới hiện tại, luân chuyển trạng thái hiện tại, đặt vào `architecture`.
+   - Phương án cải tạo đang hoặc sẽ triển khai, phân rã tác vụ, kế hoạch từng giai đoạn, đặt vào `plans`.
+   - Hướng dẫn thao tác, quy trình phát triển, cách kết nối, đặt vào `guide`.
+9. Hợp đồng chung liên quan năng lực tạo (DTO vào/ra, cấu hình nhà cung cấp, v.v.) thống nhất đặt trong `app/core/contracts`:
+   - `tasks` chỉ giữ đóng gói, điều phối và điều phối thực thi tác vụ, không định nghĩa DTO vượt tầng.
+   - `integrations` chỉ phụ thuộc `contracts`, không phụ thuộc module type của `tasks`.
 
-## 前端页面职责
+## Trách nhiệm trang phía trước
 
-1. 分镜编辑页 = 准备
-   - 负责资产/对白提取、候选确认、基础信息修正。
-   - 负责将镜头推进到 `ready`。
-2. 分镜工作室 = 生成
-   - 负责视频准备度、关键帧、图片、视频参数与视频生成。
-   - 不应承担主要的提取确认职责。
-3. 任务中心 = 通用任务状态面板
-   - 只负责展示通用、轻量的任务信息，如状态、进度、成功失败、取消与回跳入口。
-   - 不承载业务专属上下文摘要，不展示提示词调试上下文、图文映射细节等重信息。
-   - 业务细节应留在对应业务面板内展示，例如提示词弹窗、生成面板、诊断面板。
+1. Trang chỉnh sửa phân cảnh = Chuẩn bị
+   - Phụ trách trích xuất tài nguyên/lời thoại, xác nhận ứng viên, chỉnh sửa thông tin cơ bản.
+   - Chịu trách nhiệm đẩy phân cảnh tới `ready`.
+2. Studio phân cảnh = Tạo
+   - Chịu trách nhiệm độ sẵn sàng tạo video, khung hình chính, ảnh, tham số video và tạo video.
+   - Không nên chịu trách nhiệm chính về xác nhận trích xuất.
+3. Trung tâm tác vụ = bảng trạng thái tác vụ dùng chung
+   - Chỉ chịu trách nhiệm hiển thị thông tin tác vụ dùng chung, nhẹ, như trạng thái, tiến độ, thành công/thất bại, hủy và cổng quay lại.
+   - Không mang tóm tắt ngữ cảnh nghiệp vụ riêng, không hiển thị ngữ cảnh gỡ lỗi prompt, chi tiết ánh xạ hình-văn và các thông tin nặng khác.
+   - Chi tiết nghiệp vụ nên để trong panel nghiệp vụ tương ứng để hiển thị, ví dụ popup prompt, panel tạo, panel chẩn đoán.
 
-## 状态语义约定
+## Quy ước ngữ nghĩa trạng thái
 
-1. `shot.status` 只表示**信息提取确认状态**：
-   - `pending` = 当前镜头仍有提取确认工作未完成。
-   - `ready` = 当前镜头已完成提取确认，可进入后续生成准备。
-2. `shot.status` 不用于表达运行时生成状态：
-   - `generating` 不再作为正式 `shot.status` 使用。
-   - 运行中状态统一来自任务系统与 runtime summary。
-3. `video-readiness` 单独表示**是否具备视频生成条件**：
-   - 它与 `shot.status` 分离。
-   - `shot.status = ready` 不等于一定可以立即生成视频。
-4. 页面展示时必须明确区分三类状态：
-   - 信息确认状态
-   - 运行时任务状态
-   - 视频生成准备度
-5. 状态语义变更后，必须同步：
-   - 后端实现
+1. `shot.status` chỉ biểu thị **trạng thái xác nhận trích xuất thông tin**:
+   - `pending` = phân cảnh hiện tại vẫn còn việc xác nhận trích xuất chưa hoàn tất.
+   - `ready` = phân cảnh hiện tại đã hoàn tất xác nhận trích xuất, có thể vào bước chuẩn bị tạo.
+2. `shot.status` không dùng để diễn đạt trạng thái tạo ở runtime:
+   - `generating` không còn được dùng làm `shot.status` chính thức.
+   - Trạng thái đang chạy thống nhất lấy từ hệ thống tác vụ và runtime summary.
+3. `video-readiness` riêng thể hiện **có đủ điều kiện tạo video hay không**:
+   - Nó tách biệt với `shot.status`.
+   - `shot.status = ready` không đồng nghĩa chắc chắn có thể tạo video ngay.
+4. Khi hiển thị trang phải phân biệt rõ ba loại trạng thái:
+   - Trạng thái xác nhận thông tin
+   - Trạng thái tác vụ runtime
+   - Độ sẵn sàng tạo video
+5. Sau khi thay đổi ngữ nghĩa trạng thái, phải đồng bộ:
+   - Triển khai phía sau
    - OpenAPI
-   - 前端 generated types
-   - 开发文档 / 说明文档
+   - Kiểu generated phía trước
+   - Tài liệu phát triển / tài liệu mô tả
 
-## 分镜主流程约定
+## Quy ước quy trình chính phân cảnh
 
-1. 标准主流程为：
-   - 章节内容提取分镜
-   - 分镜编辑页完成资产/对白等基础信息提取与确认
-   - 分镜工作室完成关键帧、参考图、视频参数与视频准备度检查
-   - 分镜工作室发起视频生成
-2. 默认职责边界：
-   - 分镜编辑页负责“提取、确认、修正”。
-   - 分镜工作室负责“生成准备、执行生成、查看结果”。
-3. 若工作室中保留提取相关能力：
-   - 仅作为快捷入口或诊断入口存在。
-   - 不应重新成为提取确认主入口。
-4. 涉及页面交互调整时，优先保证这条流转成立：
-   - 编辑页准备完成后，明确引导进入工作室继续生成。
-   - 工作室发现镜头未 ready 时，明确引导回编辑页确认。
+1. Quy trình chính chuẩn là:
+   - Trích xuất phân cảnh từ nội dung chương
+   - Trang chỉnh sửa phân cảnh hoàn tất trích xuất và xác nhận các thông tin cơ bản như tài nguyên/lời thoại
+   - Studio phân cảnh hoàn tất khung hình chính, ảnh tham chiếu, tham số video và kiểm tra độ sẵn sàng tạo video
+   - Studio phân cảnh khởi động tạo video
+2. Ranh giới trách nhiệm mặc định:
+   - Trang chỉnh sửa phân cảnh phụ trách "trích xuất, xác nhận, chỉnh sửa".
+   - Studio phân cảnh phụ trách “chuẩn bị tạo, thực thi tạo, xem kết quả”.
+3. Nếu trong studio vẫn giữ các khả năng liên quan trích xuất:
+   - Chỉ tồn tại với vai trò lối vào nhanh hoặc lối vào chẩn đoán.
+   - Không nên trở lại làm lối vào chính xác nhận trích xuất.
+4. Khi điều chỉnh tương tác trang, ưu tiên đảm bảo luồng này được duy trì:
+   - Sau khi trang chỉnh sửa chuẩn bị xong, dẫn rõ ràng vào studio để tiếp tục tạo.
+   - Khi studio phát hiện phân cảnh chưa ready, dẫn về trang chỉnh sửa để xác nhận một cách rõ ràng.
 
-## 协作约定
+## Quy ước phối hợp
 
-1. 修改 API、类型、状态模型后，优先同步：
-   - 后端实现
+1. Sau khi sửa API, kiểu, mô hình trạng thái, ưu tiên đồng bộ:
+   - Triển khai phía sau
    - OpenAPI
-   - 前端 generated types
-   - 对应开发文档
-2. 涉及职责边界调整时，优先保持：
-   - 分镜编辑页负责“准备”
-   - 分镜工作室负责“生成”
-3. 未经明确要求，不修改已固化的历史 release note。
-4. 涉及系统结构、状态语义、页面职责边界调整时，必须同步更新 `site` 文档：
-   - 当前已生效的规则，更新到 `site/content/docs/architecture/`
-   - 尚在推进中的方案，更新到 `site/content/docs/plans/`
-5. `architecture` 与 `plans` 必须保持动态更新，不允许长期滞后于真实代码状态：
-   - 架构已落地但文档未更新，视为未完成
-   - 计划已变更但文档未更新，视为未完成
-6. 涉及任务系统 UI 调整时，优先保持：
-   - 任务中心只展示通用任务信息
-   - 业务上下文与调试信息留在具体业务界面
-   - 不把任务中心演化成新的业务详情页
+   - Kiểu generated phía trước
+   - Tài liệu phát triển tương ứng
+2. Khi điều chỉnh ranh giới trách nhiệm, ưu tiên giữ nguyên:
+   - Trang chỉnh sửa phân cảnh phụ trách “chuẩn bị”
+   - Studio phân cảnh phụ trách “tạo”
+3. Khi chưa được yêu cầu rõ, không sửa release note lịch sử đã đóng băng.
+4. khi liên quan điều chỉnh cấu trúc hệ thống, ngữ nghĩa trạng thái, ranh giới trách nhiệm trang, bắt buộc phải đồng bộ cập nhật tài liệu `site`:
+   - quy tắc hiện đang hiệu lực, cập nhật vào `site/content/docs/architecture/`
+   - các phương án đang triển khai, cập nhật vào `site/content/docs/plans/`
+5. `architecture` và `plans` phải luôn cập nhật động, không được để trôi chậm lâu so với trạng thái mã thực tế:
+   - Kiến trúc đã triển khai nhưng tài liệu chưa cập nhật được coi là chưa xong
+   - Kế hoạch đã thay đổi nhưng tài liệu chưa cập nhật được coi là chưa xong
+6. Khi điều chỉnh UI hệ thống tác vụ, ưu tiên giữ nguyên:
+   - Trung tâm tác vụ chỉ hiển thị thông tin tác vụ dùng chung
+   - Bối cảnh nghiệp vụ và thông tin gỡ lỗi giữ trong giao diện nghiệp vụ tương ứng
+   - Không để trung tâm tác vụ biến thành trang chi tiết nghiệp vụ mới
 
-## 文档更新约定
+## Quy ước cập nhật tài liệu
 
-1. `architecture` 文档的更新原则：
-   - 只记录当前真实生效的实现
-   - 不混入“未来准备怎么改”的内容
-   - 当代码行为、状态语义、页面职责发生变化时，必须同步修订
-2. `plans` 文档的更新原则：
-   - 记录当前仍在推进中的计划、分阶段任务和方案
-   - 当计划范围、优先级、执行路径发生变化时，必须同步修订
-   - 某项计划稳定落地后，应沉淀到 `architecture` 或发布到 `blog`
-3. 若同一主题同时涉及“当前事实”和“未来计划”：
-   - 当前事实写入 `architecture`
-   - 未来执行写入 `plans`
-   - 不得混写在同一篇 how-to 中
-4. release note（`site/content/blog`）格式与风格规范：
-   - 必须采用稳定章节结构（按需裁剪，但顺序保持一致）：
+1. Nguyên tắc cập nhật tài liệu `architecture`:
+   - Chỉ ghi lại phần triển khai hiện đang thực sự hiệu lực
+   - Không trộn nội dung “sau này định sửa thế nào”
+   - Khi hành vi mã, ngữ nghĩa trạng thái, trách nhiệm trang thay đổi, bắt buộc phải chỉnh sửa đồng bộ
+2. Nguyên tắc cập nhật tài liệu `plans`:
+   - Ghi lại các kế hoạch, tác vụ theo giai đoạn và phương án đang triển khai
+   - Khi phạm vi kế hoạch, mức ưu tiên, đường thực thi thay đổi, phải cập nhật đồng bộ
+   - sau khi một kế hoạch ổn định triển khai, nên tích lũy vào `architecture` hoặc phát hành lên `blog`
+3. Nếu cùng một chủ đề liên quan cả “thực tế hiện tại” lẫn “kế hoạch tương lai”:
+   - Viết thực tế hiện tại vào `architecture`
+   - Thực thi tương lai ghi vào `plans`
+   - Không được viết lẫn trong cùng một bài how-to
+4. quy phạm định dạng và văn phong release note(`site/content/blog`):
+   - Bắt buộc dùng cấu trúc mục ổn định (cắt tỉa theo nhu cầu, nhưng giữ nguyên thứ tự):
      - `Highlights`
      - `Added` / `Changed` / `Fixed`
-     - `Breaking Changes`（如有行为或契约变化必须填写）
-     - `Deprecations`（如有弃用路径必须填写）
+     - `Breaking Changes` (bắt buộc ghi nếu có thay đổi hành vi hoặc hợp đồng)
+     - `Deprecations` (nếu có đường loại bỏ thì phải ghi)
      - `Security`
      - `Known Issues`
      - `Migration Guide`
@@ -131,40 +131,40 @@
      - `References`
      - `Notes for Contributors`
      - `Acknowledgements`
-   - 必须包含 frontmatter：`title`、`date`、`description`、`tags`、`authors`。
-   - 文风要求：
-     - 使用“维护者发布口径”，优先结论与可执行信息，避免冗长叙事。
-     - 术语必须稳定一致（如 `shot.status`、runtime task status、`video-readiness`）。
-     - 升级步骤、回滚步骤、验证命令必须可直接执行，避免模糊描述。
-   - 对外可读性要求：
-     - 优先短段落与清单化表达；避免重复解释同一事实。
-     - 明确区分“新增能力”“行为变化”“兼容风险”“已知问题”。
+   - Bắt buộc phải có frontmatter: `title`, `date`, `description`, `tags`, `authors`.
+   - Yêu cầu văn phong:
+     - Dùng “giọng văn phát hành của người bảo trì”, ưu tiên kết luận và thông tin có thể thực thi, tránh kể lể dài dòng.
+     - Thuật ngữ phải ổn định, nhất quán (như `shot.status`, runtime task status, `video-readiness`).
+     - Các bước nâng cấp, hoàn tác, lệnh xác thực phải thực thi được trực tiếp, tránh mô tả mơ hồ.
+   - Yêu cầu dễ đọc bên ngoài:
+     - Ưu tiên đoạn ngắn và cách diễn đạt dạng danh sách; tránh giải thích cùng một sự thật nhiều lần.
+     - Phân biệt rõ “năng lực mới”, “thay đổi hành vi”, “rủi ro tương thích”, “vấn đề đã biết”.
 
-## 标准完成状态
+## Trạng thái hoàn thành chuẩn
 
-以下场景在默认情况下，满足全部条件才算“完成”：
+Các trường hợp dưới đây trong điều kiện mặc định, đạt đủ mọi điều kiện mới được coi là “hoàn thành”:
 
-1. 代码实现完成：
-   - 功能代码已落地
-   - 无明显遗留占位实现
-   - 无无效兼容代码残留
-   - 新增或改动的函数、类等代码块已补充必要注释，并与实现一致
-2. 接口/类型完成：
-   - 若后端 API 有变化，已运行 `pnpm run openapi:update`
-   - 前端 generated types 已同步
-   - 前端调用已切到 OpenAPI generated client
-3. 文档完成：
-   - 若影响当前系统行为，已更新 `architecture`
-   - 若影响后续执行计划，已更新 `plans`
-   - 若为发布说明，按需更新 `blog`
-4. 页面职责完成：
-   - 分镜编辑页继续保持“准备”定位
-   - 分镜工作室继续保持“生成”定位
-   - 未引入新的职责混淆
-5. 验证完成：
-   - 前端改动后，至少通过 `pnpm exec tsc --noEmit`
-   - 后端改动后，至少通过相关测试或最低限度的语法/导入校验
-6. 结果汇报完成：
-   - 明确说明改了什么
-   - 明确说明验证结果
-   - 若有未完成项或后续建议，需单独说明
+1. Mã thực hiện hoàn thành:
+   - Mã tính năng đã triển khai xong
+   - Không có mã giữ chỗ (placeholder) rõ ràng còn sót
+   - Không còn mã tương thích vô hiệu tồn đọng
+   - Các khối mã hàm, class thêm mới hoặc thay đổi đã bổ sung chú thích cần thiết và nhất quán với triển khai
+2. Hoàn thành giao diện/ký hiệu:
+   - nếu API phía sau có thay đổi, đã chạy `pnpm run openapi:update`
+   - generated types phía frontend đã được đồng bộ
+   - Các cuộc gọi frontend đã chuyển sang OpenAPI generated client
+3. Hoàn thành tài liệu:
+   - Nếu ảnh hưởng hành vi hệ thống hiện tại, đã cập nhật `architecture`
+   - Nếu ảnh hưởng kế hoạch thực thi tiếp theo, đã cập nhật `plans`
+   - Nếu là ghi chú phát hành, cập nhật `blog` khi cần
+4. Hoàn thành trách nhiệm trang:
+   - Trang chỉnh sửa phân cảnh tiếp tục giữ định vị “chuẩn bị”
+   - Studio phân cảnh tiếp tục giữ định vị “tạo”
+   - Không đưa nhầm lẫn trách nhiệm mới vào
+5. Hoàn thành xác minh:
+   - Sau khi sửa phía trước, tối thiểu phải qua `pnpm exec tsc --noEmit`
+   - Sau khi sửa backend, tối thiểu phải qua các kiểm thử liên quan hoặc xác thực cú pháp/import ở mức tối thiểu
+6. Hoàn thành báo cáo kết quả:
+   - Nêu rõ đã thay đổi gì
+   - Nêu rõ kết quả xác minh
+   - Nếu có mục chưa hoàn thành hoặc đề xuất tiếp theo, cần nêu riêng

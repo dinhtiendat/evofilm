@@ -1,4 +1,7 @@
-"""FastAPI 应用入口。"""
+"""Điểm vào ứng dụng FastAPI."""
+
+# logo marker
+_logo_marker = True
 
 from contextlib import asynccontextmanager
 
@@ -14,7 +17,7 @@ from app.schemas.common import ApiResponse
 
 
 def _error_message(detail: object) -> str:
-    """将异常 detail 转为前端可读的 message。"""
+    """Đổi detail của ngoại lệ thành message đọc được ở phía front-end."""
     if isinstance(detail, str):
         return detail
     if isinstance(detail, list):
@@ -31,7 +34,7 @@ def _error_message(detail: object) -> str:
 
 
 async def http_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    """HTTP 异常统一为 { code, message, data: null }。"""
+    """Gộp ngoại lệ HTTP về dạng { code, message, data: null }."""
     from fastapi import HTTPException
 
     if isinstance(exc, HTTPException):
@@ -45,7 +48,7 @@ async def http_exception_handler(request: Request, exc: Exception) -> JSONRespon
 
 
 async def validation_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    """422 校验异常统一为 { code: 422, message, data: null }。"""
+    """Gộp ngoại lệ validation 422 về dạng { code: 422, message, data: null }."""
     assert isinstance(exc, RequestValidationError)
     message = _error_message(exc.errors())
     body = ApiResponse[None](code=422, message=message, data=None, meta=None).model_dump()
@@ -54,11 +57,11 @@ async def validation_exception_handler(request: Request, exc: Exception) -> JSON
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """应用生命周期：启动时初始化，关闭时清理。"""
-    # 启动时：供应商注册 + 任务执行器注册（幂等）
+    """Vòng đời ứng dụng: khởi tạo khi start, dọn dẹp khi shutdown."""
+    # Khi khởi động: đăng ký providers + đăng ký task executor (idempotent)
     bootstrap_all_registries()
     yield
-    # 关闭时：清理资源
+    # Khi đóng: dọn dẹp tài nguyên
     pass
 
 
@@ -70,7 +73,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# 统一错误响应格式：{ code, message, data: null }
+# Định dạng lỗi thống nhất: { code, message, data: null }
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(Exception, http_exception_handler)
@@ -84,11 +87,11 @@ app.add_middleware(
 )
 
 app.include_router(api_v1_router, prefix=settings.api_v1_prefix)
-# 影视技能路由同时挂到主应用，保证 /api/v1/film 一定可访问
+# Đường dẫn film skill cũng được gắn vào app chính để /api/v1/film luôn truy cập được
 
 
 @app.get("/health")
 async def health():
-    """健康检查。"""
+    """Kiểm tra sức khỏe (health check)."""
     from app.schemas.common import success_response
     return success_response({"status": "ok"})
