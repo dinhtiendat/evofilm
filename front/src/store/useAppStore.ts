@@ -21,7 +21,7 @@ export const useAppStore = create<AppState>((set) => ({
     name: 'Admin',
     role: 'Quản trị viên hệ thống',
   },
-  language: 'zh-CN',
+  language: 'vi-VN',
   setUser: (user) =>
     set((state) => ({
       user: {

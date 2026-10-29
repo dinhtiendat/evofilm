@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ConfigProvider } from 'antd'
-import zhCN from 'antd/locale/zh_CN'
+import viVN from 'antd/locale/vi_VN'
 import enUS from 'antd/locale/en_US'
 import App from './App.tsx'
 import 'antd/dist/reset.css'
@@ -12,7 +12,7 @@ import { useAppStore } from './store/useAppStore'
 
 const RootApp: React.FC = () => {
   const language = useAppStore((state) => state.language)
-  const antdLocale = language === 'en-US' ? enUS : zhCN
+  const antdLocale = language === 'en-US' ? enUS : viVN
 
   return (
     <ConfigProvider

@@ -34,7 +34,7 @@ function formatElapsedMs(elapsedMs?: number | null): string | null {
 
 function formatStartedAt(startedAtTs?: number | null): string | null {
   if (!startedAtTs) return null
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat('vi-VN', {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',

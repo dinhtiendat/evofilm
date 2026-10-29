@@ -3676,7 +3676,7 @@ function Inspector(props: {
   const shotExtractStatusText = useMemo(() => {
     if (!shotExtractStatus.message) return ''
     if (!shotExtractStatus.updatedAt) return shotExtractStatus.message
-    const time = new Date(shotExtractStatus.updatedAt).toLocaleTimeString('zh-CN', {
+    const time = new Date(shotExtractStatus.updatedAt).toLocaleTimeString('vi-VN', {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',

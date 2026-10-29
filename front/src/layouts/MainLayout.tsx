@@ -230,10 +230,10 @@ const MainLayout: React.FC = () => {
                 setLanguage(value)
                 void i18n.changeLanguage(value)
                 window.localStorage.setItem('jellyfish_language', value)
-                document.documentElement.lang = value === 'en-US' ? 'en' : 'zh-CN'
+                document.documentElement.lang = value === 'en-US' ? 'en' : 'vi'
               }}
               options={[
-                { label: t('lang.zh'), value: 'zh-CN' },
+                { label: t('lang.vi'), value: 'vi-VN' },
                 { label: t('lang.en'), value: 'en-US' },
               ]}
             />
