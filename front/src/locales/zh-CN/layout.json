@@ -1,7 +1,7 @@
 {
-  "title": "Jellyfish",
-  "subtitle": "Bàn làm việc kịch ngắn AI",
-  "welcome": "Chào mừng bạn sử dụng Jellyfish",
+  "title": "EvoFilm",
+  "subtitle": "Studio AI drama",
+  "welcome": "Chào mừng bạn sử dụng EvoFilm",
   "menu": {
     "settings": "Cài đặt hệ thống"
   },
@@ -10,7 +10,7 @@
     "logout": "Đăng xuất"
   },
   "lang": {
-    "zh": "Tiếng Trung giản thể",
+    "zh": "Tiếng Việt",
     "en": "English"
   }
 }

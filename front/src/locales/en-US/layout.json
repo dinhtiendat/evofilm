@@ -1,7 +1,7 @@
 {
-  "title": "Jellyfish",
+  "title": "EvoFilm",
   "subtitle": "AI Short-form Studio",
-  "welcome": "Welcome to Jellyfish",
+  "welcome": "Welcome to Evofilm",
   "menu": {
     "settings": "Settings"
   },
@@ -10,7 +10,7 @@
     "logout": "Logout"
   },
   "lang": {
-    "zh": "Tiếng Trung giản thể",
+    "zh": "Tiếng Việt",
     "en": "English"
   }
 }
